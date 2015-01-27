@@ -2,6 +2,9 @@
 #define GLPRIMITIVES_H
 
 
+#include <glheaders.h>
+
+
 //#include "common.h"
 
 #define RADPERDEG 0.0174533

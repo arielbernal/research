@@ -1,6 +1,7 @@
 #ifndef SPIDER_H
 #define SPIDER_H
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 struct Servo {
@@ -15,8 +16,8 @@ struct Servo {
   Servo() {
     angle = 0;
     angleNew = 0;
-    vmod = 60 / 0.17;
-    dangle = v * 0.0001;
+    vmod = 60 / 0.17f;
+    dangle = v * 0.0001f;
     moving = false;
   }
   void move(float val) {

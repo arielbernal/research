@@ -76,7 +76,7 @@ class GLSpider {
 //    update(0.001);
     glPushMatrix();
     glTranslatef(0, 0, 0);
-    glRotatef(-90, 1, 0, 0);
+//    glRotatef(90, 1, 0, 0);
     glColor4f(0.3, 0.2, 0.8, 1.0);
 
     vec4 *coxa = sp->coxa;
@@ -191,7 +191,7 @@ class GLSpider {
     svector::float4 qAxis = qCamera.axis();
     glRotatef(qAxis.w / pi * 180, qAxis.x, qAxis.y, qAxis.z);
 
-    draw_axes_arrow(15, 15, 15, 0.05);
+    draw_axes_arrow(15, 15, 15, 0.1);
 
     drawBody();
 

@@ -25,7 +25,7 @@ public:
 
   inline float4(const float4 &t) : xmm(_mm_set_ps(t.z, t.y, t.x, t.w)) {};
 
-  inline float4(float x, float y, float z, float w)
+  inline float4(float x, float y, float z, float w = 0.0f)
       : xmm(_mm_set_ps(z, y, x, w)) {};
 
   inline float4(float v) : xmm(_mm_set1_ps(v)) {};
@@ -124,11 +124,19 @@ public:
 
   // math
   inline float norm(const unsigned char mask = 0xF1) {
+#if WIN32
+	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, 0xF1)));
+#else
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, mask)));
+#endif
   }
 
   inline float norm2(const unsigned char mask = 0xF1) {
+#if WIN32
+   return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, 0xF1));
+#else
     return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, mask));
+#endif
   }
 
   inline void normalize(const unsigned char mask = 0xF1) {
@@ -159,8 +167,13 @@ public:
   inline void euler(float xe, float ye, float ze) {
     __m128 mmh = _mm_set_ps(ze, ye, xe, 0);
     mmh = _mm_div_ps(mmh, mm_two);
-    float h[4];
+#if WIN32
+	__declspec(align(16)) float h[4] = { 0 };
+#else
+	float h[4] = { 0 };
+#endif
     _mm_store_ps(h, mmh);
+
     float c[3] = { float(cos(h[1])), float(cos(h[2])), float(cos(h[3])) };
     float s[3] = { float(sin(h[1])), float(sin(h[2])), float(sin(h[3])) };
     float tw = c[0] * c[1] * c[2] + s[0] * s[2] * s[1];
@@ -302,8 +315,26 @@ inline float dot3d(const float4 &v, const float4 &w) {
 
 inline float dot(const float4 &v, const float4 &w,
                  const unsigned char mask = 0xF1) {
+#if WIN32
+  return _mm_cvtss_f32(_mm_dp_ps(v.xmm, w.xmm, 0xF1));
+#else
   return _mm_cvtss_f32(_mm_dp_ps(v.xmm, w.xmm, mask));
+#endif
 }
+
+
+
+inline float4 cross3d(const float4 &v, const float4 &w) {
+	float4 x(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x);
+	return x;
+}
+
+inline float4 normal3d(const float4 &v, const float4 &w) {
+	float4 x = cross3d(v, w);
+	x.normalize();
+	return x;
+}
+
 
 inline float4 sqrt(const float4 &v) { return _mm_sqrt_ps(v.xmm); }
 
