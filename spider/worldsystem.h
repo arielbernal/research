@@ -12,10 +12,16 @@ struct Triangle {
 	calculateNormal();
   }
 
+  bool isInside(float4 &x) {
+    if (dot3d(x - p[0], N) <= 0)
+      return true;
+	  return false;
+  }
+
   void calculateNormal() {
 	float4 v1 = p[1] - p[0];
 	float4 v2 = p[2] - p[0];
-	normal = normal3d(v1, v2);
+	N = normal3d(v1, v2);
   }
   void scale(float k) {
     p[0] *= k;
@@ -40,7 +46,7 @@ struct Triangle {
   }
 
   float4 p[3];
-  float4 normal;
+  float4 N;
 };
 
 class ConvexObject {
@@ -59,6 +65,13 @@ class ConvexObject {
     for (Iterator I = t.begin(), E = t.end(); I != E; ++I) {
       I->scale(k);
     }
+  }
+
+  bool isInside(float4 &x) {
+    int i = 0;
+    for (Iterator I = t.begin(), E = t.end(); I != E; ++I)
+      if (!I->isInside(x)) return false;
+	  return true;
   }
 
   void translate(float dx, float dy, float dz) {
@@ -123,7 +136,7 @@ class TriangularPrismObject : public ConvexObject {
     addQuad(v3, v2, v1, v0);  // bottom face
     addQuad(v0, v1, v6, v7);  // top face
     addQuad(v2, v3, v7, v6);  // back face
-    addTriangle(v0, v3, v7);  // left face
+    addTriangle(v0, v7, v3);  // left face
     addTriangle(v1, v2, v6);  // right face
     setOrigin(w / 2, d, 0);
   }

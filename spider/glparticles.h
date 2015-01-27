@@ -11,9 +11,8 @@
 void GLDrawObject(ConvexObject &obj) {
   std::vector<Triangle> &t = obj.getTriangles();
   glBegin(GL_TRIANGLES);
-  int i = 0;
   for (ConvexObject::Iterator I = t.begin(), E = t.end(); I != E; ++I) {
-	float4 n = I->normal;
+	  float4 n = I->N;
     glNormal3f(n.x, n.y, n.z);
     glVertex3f(I->p[0].x, I->p[0].y, I->p[0].z);
     glNormal3f(n.x, n.y, n.z);
@@ -29,7 +28,8 @@ void GLDrawObject(ConvexObject &obj) {
 class GLParticleSystem {
  public:
   ParticleSystem *ps;
-  TriangularPrismObject cube;
+  //TriangularPrismObject cube;
+  CubeObject cube;
   CubeObject ground;
   TetrahedronObject tetra;
 
@@ -44,6 +44,7 @@ class GLParticleSystem {
     tetra.scale(5);
     tetra.translate(10, 10, 0);
     ground.translate(-20, -20, -0.5f);
+
     al = 0;
   }
 
