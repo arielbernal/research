@@ -9,6 +9,13 @@ struct Triangle {
     p[0] = p0;
     p[1] = p1;
     p[2] = p2;
+	calculateNormal();
+  }
+
+  void calculateNormal() {
+	float4 v1 = p[1] - p[0];
+	float4 v2 = p[2] - p[0];
+	normal = normal3d(v1, v2);
   }
   void scale(float k) {
     p[0] *= k;
@@ -33,6 +40,7 @@ struct Triangle {
   }
 
   float4 p[3];
+  float4 normal;
 };
 
 class ConvexObject {

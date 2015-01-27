@@ -13,9 +13,7 @@ void GLDrawObject(ConvexObject &obj) {
   glBegin(GL_TRIANGLES);
   int i = 0;
   for (ConvexObject::Iterator I = t.begin(), E = t.end(); I != E; ++I) {
-    float4 v1 = I->p[1] - I->p[0];
-    float4 v2 = I->p[2] - I->p[0];
-    float4 n = normal3d(v1, v2);
+	float4 n = I->normal;
     glNormal3f(n.x, n.y, n.z);
     glVertex3f(I->p[0].x, I->p[0].y, I->p[0].z);
     glNormal3f(n.x, n.y, n.z);

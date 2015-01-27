@@ -1,4 +1,11 @@
-.exe
-.sdf
+*.exe
+*.sdf
+*.obj
+*.opensdf
+*.ilk
+*.log
+*.idb
+*.pdb
+*.tlog
 Debug
 Release
