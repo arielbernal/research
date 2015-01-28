@@ -9,7 +9,7 @@
 namespace svector {
 
 class float4 {
-public:
+ public:
   union {
     struct {
       float w, x, y, z;
@@ -125,7 +125,7 @@ public:
   // math
   inline float norm(const unsigned char mask = 0xF1) {
 #if WIN32
-	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, 0xF1)));
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, 0xF1)));
 #else
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, mask)));
 #endif
@@ -133,7 +133,7 @@ public:
 
   inline float norm2(const unsigned char mask = 0xF1) {
 #if WIN32
-   return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, 0xF1));
+    return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, 0xF1));
 #else
     return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, mask));
 #endif
@@ -163,19 +163,18 @@ public:
     return *this;
   }
 
-
   inline void euler(float xe, float ye, float ze) {
     __m128 mmh = _mm_set_ps(ze, ye, xe, 0);
     mmh = _mm_div_ps(mmh, mm_two);
 #if WIN32
-	__declspec(align(16)) float h[4] = { 0 };
+    __declspec(align(16)) float h[4] = {0};
 #else
-	float h[4] = { 0 };
+    float h[4] = {0};
 #endif
     _mm_store_ps(h, mmh);
 
-    float c[3] = { float(cos(h[1])), float(cos(h[2])), float(cos(h[3])) };
-    float s[3] = { float(sin(h[1])), float(sin(h[2])), float(sin(h[3])) };
+    float c[3] = {float(cos(h[1])), float(cos(h[2])), float(cos(h[3]))};
+    float s[3] = {float(sin(h[1])), float(sin(h[2])), float(sin(h[3]))};
     float tw = c[0] * c[1] * c[2] + s[0] * s[2] * s[1];
     float tx = s[0] * c[1] * c[2] - c[0] * s[2] * s[1];
     float ty = c[0] * s[1] * c[2] + s[0] * c[2] * s[1];
@@ -207,7 +206,8 @@ public:
     Matrix[9] = 2 * (yz + xw);
     Matrix[10] = 1 - 2 * (xx + yy);
 
-    Matrix[3]  = Matrix[7] = Matrix[11] = Matrix[12] = Matrix[13] = Matrix[14] = 0;
+    Matrix[3] = Matrix[7] = Matrix[11] = Matrix[12] = Matrix[13] = Matrix[14] =
+        0;
     Matrix[15] = 1;
   }
 
@@ -322,19 +322,16 @@ inline float dot(const float4 &v, const float4 &w,
 #endif
 }
 
-
-
 inline float4 cross3d(const float4 &v, const float4 &w) {
-	float4 x(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x);
-	return x;
+  float4 x(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x);
+  return x;
 }
 
 inline float4 normal3d(const float4 &v, const float4 &w) {
-	float4 x = cross3d(v, w);
-	x.normalize();
-	return x;
+  float4 x = cross3d(v, w);
+  x.normalize();
+  return x;
 }
-
 
 inline float4 sqrt(const float4 &v) { return _mm_sqrt_ps(v.xmm); }
 
@@ -344,6 +341,6 @@ inline float4 quaternion_mult(const float4 &v, const float4 &w) {
   return x;
 }
 
-} // namespace svector
+}  // namespace svector
 
-#endif // SVECTOR_H
+#endif  // SVECTOR_H

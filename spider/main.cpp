@@ -6,13 +6,14 @@
 #include "particles.h"
 #include "worldsystem.h"
 
-
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "SpiderQuad";
-ParticleSystem ps(1);
-GLParticleSystem glps(&ps);
+WorldSystem world;
+ParticleSystem ps(&world, 100);
+GLParticleSystem glps(&world, &ps);
+bool runSim = false;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -33,8 +34,6 @@ void set3DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
-
-
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int viewport[4];
@@ -43,11 +42,12 @@ void display() {
   int height = viewport[3];
   set3DMode(width, height);
   glps.draw();
+  if (runSim)
+    ps.eulerStep(0.033f);
   glutSwapBuffers();
 }
 
-void init_display() {
-}
+void init_display() {}
 
 void reshape(int w, int h) {
   glViewport(0, 0, w, h);
@@ -59,16 +59,12 @@ void reshape(int w, int h) {
 void mouse_wheel(int wheel, int direction, int x, int y) {}
 
 void mouse_button(int button, int state, int x, int y) {
-	glps.mouse_button(button, state, x, y);
+  glps.mouse_button(button, state, x, y);
 }
 
-void mouse_active_motion(int x, int y) {
-	glps.mouse_active_motion(x, y);
-}
+void mouse_active_motion(int x, int y) { glps.mouse_active_motion(x, y); }
 
-void mouse_passive_motion(int x, int y) {
-	glps.mouse_passive_motion(x, y);
-}
+void mouse_passive_motion(int x, int y) { glps.mouse_passive_motion(x, y); }
 
 void special_keys(int key, int x, int y) {
   switch (key) {
@@ -87,6 +83,12 @@ void special_keys(int key, int x, int y) {
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
+    case 'r':
+      runSim = !runSim;
+      break;
+    case 's':
+      ps.eulerStep(0.033f);
+      break;
     case 'h':
       glutPostRedisplay();
       break;
@@ -98,7 +100,28 @@ void normal_keys(unsigned char key, int x, int y) {
   }
 }
 
-void init_glut_window(int argc, char* argv[]) {
+void setWorld() {
+  CubeObject *c = new CubeObject();
+  c->setColor(float4(0.3f, 0.2f, 0.7f, 1.0f));
+  c->scale(5);
+  c->setFriction(0.8f);
+  world.push_back(c);
+
+  CubeObject *g = new CubeObject(40, 40, 5.0f);  // ground
+  g->setColor(float4(0.3f, 0.5f, 0.4f, 1.0f));
+  g->translate(-20, -20, -5.0f);
+  world.push_back(g);
+
+  TetrahedronObject *t = new TetrahedronObject();
+  t->scale(8);
+  t->translate(8, 8, 0);
+  t->setColor(float4(0.6f, 0.2f, 0.3f, 1.0f));
+  world.push_back(t);
+
+  ps.testParticles();
+}
+
+void init_glut_window(int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowPosition(2800, 100);
@@ -114,11 +137,11 @@ void init_glut_window(int argc, char* argv[]) {
   glutPassiveMotionFunc(mouse_passive_motion);
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
-  //glewInit();
-  ps.testParticles();
+  // glewInit();
+  setWorld();
   glutMainLoop();
 }
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }

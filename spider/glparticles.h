@@ -6,50 +6,49 @@
 #include "particles.h"
 #include "worldsystem.h"
 
-
-
-void GLDrawObject(ConvexObject &obj) {
-  std::vector<Triangle> &t = obj.getTriangles();
-  glBegin(GL_TRIANGLES);
-  for (ConvexObject::Iterator I = t.begin(), E = t.end(); I != E; ++I) {
-	  float4 n = I->N;
-    glNormal3f(n.x, n.y, n.z);
-    glVertex3f(I->p[0].x, I->p[0].y, I->p[0].z);
-    glNormal3f(n.x, n.y, n.z);
-    glVertex3f(I->p[1].x, I->p[1].y, I->p[1].z);
-    glNormal3f(n.x, n.y, n.z);
-    glVertex3f(I->p[2].x, I->p[2].y, I->p[2].z);
-     // std::cout <<i++<< " " << I->p[0].str()<< " " << I->p[1].str() << " " <<
-     // I->p[2].str() << " " << n.str() << std::endl;
-  }
-  glEnd();
-}
-
 class GLParticleSystem {
  public:
+  WorldSystem *world;
   ParticleSystem *ps;
-  //TriangularPrismObject cube;
-  CubeObject cube;
-  CubeObject ground;
-  TetrahedronObject tetra;
 
-  GLParticleSystem(ParticleSystem *ps) : ps(ps) , ground(40, 40, 0.5f) {
+  GLParticleSystem(WorldSystem *world, ParticleSystem *ps) : world(world), ps(ps) {
     qCamera(0, 0, 0, 1);
     mouse_vx = 0;
     mouse_vy = 0;
     mouse_vz = -20;
-	
-    cube.scale(5);
-    cube.rotateZ(3.1415/6*0);
-    tetra.scale(5);
-    tetra.translate(10, 10, 0);
-    ground.translate(-20, -20, -0.5f);
-
     al = 0;
   }
 
-  float al;
+  void GLDrawObject(ConvexObject *obj) {
+    float4 color = obj->getColor();
+    glColor4f(color.x, color.y, color.z, color.w);
+    std::vector<size_t> &f = obj->getFaces();
 
+    glBegin(GL_TRIANGLES);
+    for (size_t i = 0; i < f.size(); ++i) {
+      size_t nt = obj->getNumTriangles(i);
+      float4 n = obj->getNormal(i);
+      for (size_t j = 0; j < nt; ++j) {
+        float4 v0 = obj->getFaceVertex(i, j, 0);
+        float4 v1 = obj->getFaceVertex(i, j, 1);
+        float4 v2 = obj->getFaceVertex(i, j, 2);
+        glNormal3f(n.x, n.y, n.z);
+        glVertex3f(v0.x, v0.y, v0.z);
+        glNormal3f(n.x, n.y, n.z);
+        glVertex3f(v1.x, v1.y, v1.z);
+        glNormal3f(n.x, n.y, n.z);
+        glVertex3f(v2.x, v2.y, v2.z);
+      }
+    }
+    glEnd();
+  }
+
+  void drawWorld() {
+    for (WorldSystem::Iterator I = world->begin(), E = world->end(); I != E; ++I)
+      GLDrawObject(*I);
+  }
+
+  float al;
   void enableLight() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -62,11 +61,11 @@ class GLParticleSystem {
     GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
     glPushMatrix();
-    glRotatef(al, 0, 0, 1);
+    // glRotatef(al, 0, 0, 1);
     al += 1;
     if (al >= 360) al = 0;
 
-    glTranslatef(50, 50, 3);
+    glTranslatef(10, 10, 20);
     glColor3f(1, 1, 1);
     glutSolidSphere(0.2, 20, 20);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
@@ -74,16 +73,16 @@ class GLParticleSystem {
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
     glPopMatrix();
     glPushMatrix();
-    glTranslatef(10, 10, 10);
+    glTranslatef(-10, -10, 20);
     glColor3f(1, 1, 1);
     glutSolidSphere(0.2, 20, 20);
     glLightfv(GL_LIGHT1, GL_POSITION, position);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
     glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
     glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
-    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.3f);
-    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.02f);
-    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.008f);
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.01f);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.05f);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0008f);
     glPopMatrix();
   }
 
@@ -124,17 +123,9 @@ class GLParticleSystem {
 
     draw_axes_arrow(15, 15, 15, 0.08);
     drawParticles();
+    drawWorld();
 
     enableLight();
-    glColor3f(0.3f, 0.2f, 0.7f);
-    GLDrawObject(cube);
-
-    glColor3f(0.6f, 0.2f, 0.3f);
-    GLDrawObject(tetra);
-
-
-    glColor3f(0.3f, 0.5f, 0.4f);
-    GLDrawObject(ground);
 
     glPopMatrix();
   }

@@ -2,6 +2,8 @@
 #define PARTICLES_H
 #include <stdlib.h>
 #include <svector.h>
+#include <malloc.h>
+#include "worldsystem.h"
 
 using namespace svector;
 
@@ -13,28 +15,38 @@ struct Particle {
 };
 
 class ParticleSystem {
-public:
-  ParticleSystem() : p(0), n(0), t(0), tmp1(0), tmp2(0), g(-9.8f) {}
+ public:
+  ParticleSystem() : world(0), p(0), n(0), t(0), tmp1(0), tmp2(0), g(-9.8f) {}
 
-  ParticleSystem(size_t num_particles) : n(num_particles), t(0), g(-9.8f) {
-	p = (Particle*)_aligned_malloc(n * sizeof(Particle), 0x100);
-	tmp1 = (float4*)_aligned_malloc(2 * n * sizeof(float4), 0x100);
-	tmp2 = (float4*)_aligned_malloc(2 * n * sizeof(float4), 0x100);
+  ParticleSystem(WorldSystem *world, size_t num_particles) : world(world), n(num_particles), t(0), g(-9.8f) {
+    create(num_particles);
   }
 
   ~ParticleSystem() { clear(); }
 
   void clear() {
     if (p) {
+#if WIN32
       _aligned_free(p);
+#else
+      free(p);
+#endif
       p = 0;
     }
     if (tmp1) {
+#if WIN32
       _aligned_free(tmp1);
+#else
+      free(tmp1);
+#endif
       tmp1 = 0;
     }
     if (tmp2) {
+#if WIN32
       _aligned_free(tmp2);
+#else
+      free(tmp2);
+#endif
       tmp2 = 0;
     }
   }
@@ -43,12 +55,16 @@ public:
     clear();
     n = num_particles;
     t = 0;
-	p = (Particle*)_aligned_malloc(n * sizeof(Particle), 0x100);
-	tmp1 = (float4*)_aligned_malloc(2 * n * sizeof(float4), 0x100);
-	tmp2 = (float4*)_aligned_malloc(2 * n * sizeof(float4), 0x100);
+#if WIN32
+    p = (Particle *)_aligned_malloc(n * sizeof(Particle), 0x100);
+    tmp1 = (float4 *)_aligned_malloc(2 * n * sizeof(float4), 0x100);
+    tmp2 = (float4 *)_aligned_malloc(2 * n * sizeof(float4), 0x100);
+#else
+    p = (Particle *)memalign(0x100, n * sizeof(Particle));
+    tmp1 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
+    tmp2 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
+#endif
   }
-
-
 
   void eulerStep(float dt) {
     computeDerivative(tmp1);  // tmp1 = dY/dt
@@ -57,29 +73,57 @@ public:
     addVectors(tmp2, tmp1);   // tmp2 += tmp1;
     setParticleState(tmp2);   // p <- tmp2
     t += dt;
+    checkCollisions();
+  }
+
+  void checkCollisions() {
+    Collision c;
+    for (size_t i  = 0; i < n; ++i) {
+      if (world->checkCollision(p[i].x, c)) {
+        float4 N = c.N;
+        float d = c.d;
+        float friction = c.obj->getFriction();
+        float4 Vn = dot3d(p[i].v, N) * N;
+        float4 Vt = p[i].v - Vn;
+
+        if (fabs(d) > 0) {
+          float4 U = p[i].v;
+          U.normalize();
+          float vn = Vn.norm();
+          float vt = Vt.norm();
+          float k = vt / vn;
+          float h = sqrt(1 + k * k) * fabs(d);
+          //std::cout << "i=" << i << " d=" << d << " h=" << h << " x0=" << p[i].x.str() <<  " x1=" ;
+          p[i].x += -U * h;
+          //std::cout << p[i].x.str() << "  U=" << U.str()<< std::endl;
+        }
+        p[i].f += -friction * dot3d(p[i].f, N) * Vt;
+
+        Vn *= -0.5;
+        p[i].v = Vt + Vn;
+      }
+    }
   }
 
   void testParticles() {
     for (size_t i = 0; i < n; ++i) {
       float x = rand() / float(RAND_MAX) * 10;
       float y = rand() / float(RAND_MAX) * 10;
-      x = 5;
-      y = 5;
-      float z = 10;
+      float z = rand() / float(RAND_MAX) * 10 + 6;
+      float vx = rand() / float(RAND_MAX) * 4 - 2;
+      float vy = rand() / float(RAND_MAX) * 4 - 2;
+      float vz = rand() / float(RAND_MAX) * 10;
       p[i].m = 1;
       p[i].x = float4(x, y, z);
+      p[i].v = float4(vx, vy, vz);
     }
   }
 
-  float4 getParticlePosition(size_t id) {
-  	return p[id].x;
-  }
+  float4 getParticlePosition(size_t id) { return p[id].x; }
 
-  size_t getNumParticles() {
-  	return n;
-  }
+  size_t getNumParticles() { return n; }
 
-protected:  
+ protected:
   void getParticleState(float4 *dst) {
     for (size_t i = 0; i < n; ++i) {
       *(dst++) = p[i].x;
@@ -91,7 +135,7 @@ protected:
     for (size_t i = 0; i < n; ++i) {
       p[i].x = *(src++);
       p[i].v = *(src++);
-      std::cout << "p[i].x = " << p[i].x.str() << std::endl;
+      //std::cout << "p[i].x = " << p[i].x.str() << std::endl;
     }
   }
 
@@ -124,13 +168,14 @@ protected:
     for (size_t i = 0; i < 2 * n; ++i) dst[i] += src[i];
   }
 
-private:
+ private:
+  WorldSystem *world;
   Particle *p;
   size_t n;
   float t;
   float4 *tmp1;
   float4 *tmp2;
-  const float g;  
+  const float g;
 };
 
 #endif
