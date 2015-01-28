@@ -97,22 +97,20 @@ class ParticleSystem {
           p[i].x += -U * h;
           //std::cout << p[i].x.str() << "  U=" << U.str()<< std::endl;
         }
-        p[i].f += -friction * dot3d(p[i].f, N) * Vt;
-
-        Vn *= -0.5;
-        p[i].v = Vt + Vn;
+        //p[i].f += -friction * dot3d(p[i].f, N) * Vt;
+        p[i].v = Vt - 0.3f * Vn;
       }
     }
   }
 
   void testParticles() {
     for (size_t i = 0; i < n; ++i) {
-      float x = rand() / float(RAND_MAX) * 10;
-      float y = rand() / float(RAND_MAX) * 10;
-      float z = rand() / float(RAND_MAX) * 10 + 6;
-      float vx = rand() / float(RAND_MAX) * 4 - 2;
-      float vy = rand() / float(RAND_MAX) * 4 - 2;
-      float vz = rand() / float(RAND_MAX) * 10;
+      float x = rand() / float(RAND_MAX) * 1 + 5;
+      float y = rand() / float(RAND_MAX) * 1 + 5;
+      float z = rand() / float(RAND_MAX) * 1 + 20;
+      float vx = 3.8f * rand() / float(RAND_MAX) - 2;
+      float vy = 3.8f * rand() / float(RAND_MAX) - 2;
+      float vz = 0 * rand() / float(RAND_MAX);
       p[i].m = 1;
       p[i].x = float4(x, y, z);
       p[i].v = float4(vx, vy, vz);
@@ -143,6 +141,10 @@ class ParticleSystem {
     for (size_t i = 0; i < n; ++i) p[i].f.z += p[i].m * g;
   }
 
+  void applyDrag() {
+    for (size_t i = 0; i < n; ++i) p[i].f += -0.1f * p[i].v;
+  }
+
   void zeroForces() {
     for (size_t i = 0; i < n; ++i) p[i].f = 0;
   }
@@ -150,6 +152,7 @@ class ParticleSystem {
   void computeForces() {
     zeroForces();
     applyGravity();
+    applyDrag();
   }
 
   void computeDerivative(float4 *dst) {

@@ -88,7 +88,7 @@ class GLParticleSystem {
 
   void drawParticles() {
     glColor3f(1, 1, 1);
-    glPointSize(3);
+    glPointSize(4);
     glBegin(GL_POINTS);
     for (size_t i = 0; i < ps->getNumParticles(); ++i) {
       float4 x = ps->getParticlePosition(i);
@@ -136,8 +136,8 @@ class GLParticleSystem {
     if ((button == 3) || (button == 4)) {
       if (status == GLUT_DOWN) {
         mouse_vz += button == 3 ? 0.9 : -0.9;
-        if (mouse_vz > 20) mouse_vz = 10;
-        if (mouse_vz < -100) mouse_vz = -100;
+        if (mouse_vz > 40) mouse_vz = 30;
+        if (mouse_vz < -200) mouse_vz = -200;
       }
     } else {
       if (button == GLUT_LEFT_BUTTON) {

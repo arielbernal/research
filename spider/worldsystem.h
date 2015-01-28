@@ -168,10 +168,10 @@ class TriangularPrismObject : public ConvexObject {
     v.push_back(float4(w, d, h));
     v.push_back(float4(0, d, h));
     addQuadFace(3, 2, 1, 0);   // bottom face
-    addQuadFace(0, 1, 6, 7);   // top face
-    addQuadFace(2, 3, 7, 6);   // back face
-    addTriangleFace(0, 7, 3);  // left face
-    addTriangleFace(1, 2, 6);  // right face
+    addQuadFace(0, 1, 4, 5);   // top face
+    addQuadFace(2, 3, 5, 4);   // back face
+    addTriangleFace(0, 5, 3);  // left face
+    addTriangleFace(1, 2, 4);  // right face
     setOrigin(w / 2, d, 0);
   }
 };

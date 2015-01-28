@@ -11,7 +11,7 @@ int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "SpiderQuad";
 WorldSystem world;
-ParticleSystem ps(&world, 100);
+ParticleSystem ps(&world, 200000);
 GLParticleSystem glps(&world, &ps);
 bool runSim = false;
 }
@@ -43,7 +43,7 @@ void display() {
   set3DMode(width, height);
   glps.draw();
   if (runSim)
-    ps.eulerStep(0.033f);
+    ps.eulerStep(0.001f);
   glutSwapBuffers();
 }
 
@@ -87,7 +87,7 @@ void normal_keys(unsigned char key, int x, int y) {
       runSim = !runSim;
       break;
     case 's':
-      ps.eulerStep(0.033f);
+      ps.eulerStep(0.01f);
       break;
     case 'h':
       glutPostRedisplay();
@@ -111,6 +111,12 @@ void setWorld() {
   g->setColor(float4(0.3f, 0.5f, 0.4f, 1.0f));
   g->translate(-20, -20, -5.0f);
   world.push_back(g);
+
+  TriangularPrismObject *p = new TriangularPrismObject();
+  p->scale(5);
+  p->translate(8, 0, 0);
+  p->setColor(float4(0.3f, 0.6f, 0.6f, 1.0f));
+  world.push_back(p);
 
   TetrahedronObject *t = new TetrahedronObject();
   t->scale(8);
