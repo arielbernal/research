@@ -9,16 +9,21 @@ using namespace svector;
 class ConvexObject;
 
 struct Collision {
-  float d;            // distance from triangle plane
+  float d;            // distance from face
   float4 N;           // normal to plane
-  size_t i;           // Object face
+  float4 p;           // collision point
+  size_t i;           // face
+  float t;            // time to collision
   ConvexObject *obj;  // object
-  Collision() : d(-1), N(0), i(0), obj(0) {}
+  bool contact;
+  Collision() : d(-1), N(0), i(0), t(0), obj(0), contact(false) {}
   void clear() {
     d = -1;
     N = 0;
     i = 0;
+    t = 0;
     obj = 0;
+    contact = false;
   }
 };
 
@@ -27,41 +32,40 @@ class ConvexObject {
   typedef std::vector<float4>::iterator Iterator;
   ConvexObject() : triangleCounter(0), friction(0) {}
 
-  bool getCollision(const float4 &x, Collision &c) {
-    c.d = 1E10;
-    for (size_t i = 0; i < f.size(); ++i) {
-      float4 v0 = v[t[f[i]]];
-      float d = dot3d(x - v0, N[i]);
-      // std::cout << "i = " << i << "  d = " << d << std::endl;
-      if (d > 0) {
-        c.clear();
-        return false;
-      }
-      if (fabs(d) < c.d) {
-        c.d = fabs(d);
-        c.N = N[i];
-        c.i = i;
-      }
-    }
-    c.obj = this;
-    return true;
-  }
-
-  bool getCollision(const float4 &p0, const float4 &p1, float &d) {
+  bool getCollision(const float4 &p0, const float4 &p1, Collision &c) {
+    c.clear();
+    for (size_t i = 0; i < f.size(); ++i)
+      if (dot3d(p1 - v[t[f[i]]], N[i]) > 0) return false;
+    
     float4 dp = p1 - p0;
+    float tmax = 0;
     for (size_t i = 0; i < f.size(); ++i) {
-      float4 dv = v[t[f[i]]] - p0;
-      float tnum = dot3d(dv, N[i]);
-      float tden = dot3d(dp, N[i]);
-      if (tden == 0) {
-        d = 0;
-        return true;
+      if (dot3d(dp, N[i]) < 0) {
+        float tnum = dot3d(v[t[f[i]]] - p0, N[i]);
+        float tden = dot3d(dp, N[i]);
+        if (tden == 0) {
+          c.N = N[i];
+          c.p = p1;
+          c.i = i;
+          c.contact = true;
+          std::cout << "Contact\n";
+          return true;
+        }
+        float t = tnum / tden;
+        
+        if (t > tmax && t <= 1) {
+          c.N = N[i];
+          c.p = p0 + t * dp;
+          c.i = i;
+          c.t = t;
+          c.contact = false;
+          tmax = t;
+        }
       }
-      float t = tnum / tden;
-      if (t <= 0 || t > 1) continue;
-
-
     }
+  //  std::cout << "t=" << tmax << "\n";
+    if (tmax > 0) return true;
+    return false;
   }
 
 
@@ -229,16 +233,9 @@ class WorldSystem {
     ob.push_back(p);
   }
 
-  bool checkCollision(const float4 &x) {
+  bool checkCollision(const float4 &p0, const float4 &p1, Collision &c) {
     for (Iterator I = begin(), E = end(); I != E; ++I)
-      if ((*I)->getCollision(x, c)) return true;
-    c.clear();
-    return false;
-  }
-
-  bool checkCollision(const float4 &x, Collision &c) {
-    for (Iterator I = begin(), E = end(); I != E; ++I)
-      if ((*I)->getCollision(x, c)) return true;
+      if ((*I)->getCollision(p0, p1, c)) return true;
     c.clear();
     return false;
   }

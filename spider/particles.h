@@ -70,26 +70,16 @@ class ParticleSystem {
   void checkCollisions(float4 *s0, float4 *s1) {
     Collision c;
     for (size_t i = 0; i < n; ++i) {
-      if (world->checkCollision(s1[2 * i], c)) {
-        float4 N = c.N;
-        float d = c.d;
-        float4 Vn = dot3d(p[i].v, N) * N;
-        float4 Vt = p[i].v - Vn;
-
-        if (fabs(d) > 0) {
-          float4 U = p[i].v;
-          U.normalize();
-          float vn = Vn.norm();
-          float vt = Vt.norm();
-          float k = vt / vn;
-          float h = sqrt(1 + k * k) * fabs(d);
-          // std::cout << "i=" << i << " d=" << d << " h=" << h << " s0=" <<
-          // p[i].x.str() <<  " s1=" ;
-          p[i].x += -U * h;
-          // std::cout << p[i].x.str() << "  U=" << U.str()<< std::endl;
+      // std::cout << "p0=" << s0[2*i].str() << " p1=" << s1[2 * i].str();
+      // std::cout << "v0=" << s0[2*i + 1].str() << " v1=" << s1[2 * i + 1].str()<< std::endl;
+      if (world->checkCollision(s0[2 * i], s1[2 * i], c)) {
+        if (!c.contact) {
+          float4 N = c.N;
+          s1[2 * i] = c.p;
+          float4 Vn = dot3d(s0[2 * i + 1], N) * N;
+          float4 Vt = s0[2 * i + 1] - Vn;
+          s1[2 * i + 1] = Vt - 0.3f * Vn;
         }
-        // p[i].f += -friction * dot3d(p[i].f, N) * Vt;
-        p[i].v = Vt - 0.3f * Vn;
       }
     }
   }
@@ -102,12 +92,12 @@ class ParticleSystem {
       float vx = 3.8f * rand() / float(RAND_MAX) - 2;
       float vy = 3.8f * rand() / float(RAND_MAX) - 2;
       float vz = 0 * rand() / float(RAND_MAX);
-      x = 5;
-      y = 2.5;
-      z = 10;
-      vx = 0;
-      vy = 0;
-      vz = 0;
+      // x = 10;
+      // y = 2.5;
+      // z = 25;
+      // vx = 0;
+      // vy = 0;
+      // vz = 0;
       p[i].m = 1;
       p[i].x = float4(x, y, z);
       p[i].v = float4(vx, vy, vz);

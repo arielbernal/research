@@ -11,7 +11,7 @@ int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "SpiderQuad";
 WorldSystem world;
-ParticleSystem ps(&world, 1);
+ParticleSystem ps(&world, 1000);
 GLParticleSystem glps(&world, &ps);
 bool runSim = false;
 }
