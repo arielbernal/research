@@ -11,7 +11,7 @@ int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "SpiderQuad";
 WorldSystem world;
-ParticleSystem ps(&world, 200000);
+ParticleSystem ps(&world, 1);
 GLParticleSystem glps(&world, &ps);
 bool runSim = false;
 }
@@ -43,7 +43,7 @@ void display() {
   set3DMode(width, height);
   glps.draw();
   if (runSim)
-    ps.eulerStep(0.001f);
+    ps.eulerStep(0.033f);
   glutSwapBuffers();
 }
 

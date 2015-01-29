@@ -12,13 +12,15 @@ struct Particle {
   float4 x;  // position
   float4 v;  // velocity
   float4 f;  // force
+  Particle() : m(1) {}
 };
 
 class ParticleSystem {
  public:
-  ParticleSystem() : world(0), p(0), n(0), t(0), tmp1(0), tmp2(0), g(-9.8f) {}
+  ParticleSystem() : world(0), p(0), n(0), t(0), dydt(0), s0(0), s1(0), g(-9.8f) {}
 
-  ParticleSystem(WorldSystem *world, size_t num_particles) : world(world), n(num_particles), t(0), g(-9.8f) {
+  ParticleSystem(WorldSystem *world, size_t num_particles)
+      : world(world), n(num_particles), t(0), g(-9.8f) {
     create(num_particles);
   }
 
@@ -26,28 +28,20 @@ class ParticleSystem {
 
   void clear() {
     if (p) {
-#if WIN32
-      _aligned_free(p);
-#else
       free(p);
-#endif
       p = 0;
     }
-    if (tmp1) {
-#if WIN32
-      _aligned_free(tmp1);
-#else
-      free(tmp1);
-#endif
-      tmp1 = 0;
+    if (dydt) {
+      free(dydt);
+      dydt = 0;
     }
-    if (tmp2) {
-#if WIN32
-      _aligned_free(tmp2);
-#else
-      free(tmp2);
-#endif
-      tmp2 = 0;
+    if (s0) {
+      free(s0);
+      s0 = 0;
+    }
+    if (s1) {
+      free(s1);
+      s1 = 0;
     }
   }
 
@@ -55,34 +49,30 @@ class ParticleSystem {
     clear();
     n = num_particles;
     t = 0;
-#if WIN32
-    p = (Particle *)_aligned_malloc(n * sizeof(Particle), 0x100);
-    tmp1 = (float4 *)_aligned_malloc(2 * n * sizeof(float4), 0x100);
-    tmp2 = (float4 *)_aligned_malloc(2 * n * sizeof(float4), 0x100);
-#else
     p = (Particle *)memalign(0x100, n * sizeof(Particle));
-    tmp1 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
-    tmp2 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
-#endif
+    dydt = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
+    s0 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
+    s1 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
   }
 
-  void eulerStep(float dt) {
-    computeDerivative(tmp1);  // tmp1 = dY/dt
-    scaleVector(tmp1, dt);    // tmp1 *= dt
-    getParticleState(tmp2);   // tmp2 <- p
-    addVectors(tmp2, tmp1);   // tmp2 += tmp1;
-    setParticleState(tmp2);   // p <- tmp2
-    t += dt;
-    checkCollisions();
+  void eulerStep(float dt) {    
+    computeForces();
+    computeDerivative(dydt);  // dY/dt
+    scaleVector(dydt, dt);    // dY/dt * dt
+    getParticleState(s0);   // s0 <- p
+    getParticleState(s1);   // s1 <- p
+    addVectors(s1, dydt);   // s1 += dY/dt * dt;
+    checkCollisions(s0, s1);
+    setParticleState(s1);   // p <- s1
+    t += dt;  
   }
 
-  void checkCollisions() {
+  void checkCollisions(float4 *s0, float4 *s1) {
     Collision c;
-    for (size_t i  = 0; i < n; ++i) {
-      if (world->checkCollision(p[i].x, c)) {
+    for (size_t i = 0; i < n; ++i) {
+      if (world->checkCollision(s1[2 * i], c)) {
         float4 N = c.N;
         float d = c.d;
-        float friction = c.obj->getFriction();
         float4 Vn = dot3d(p[i].v, N) * N;
         float4 Vt = p[i].v - Vn;
 
@@ -93,11 +83,12 @@ class ParticleSystem {
           float vt = Vt.norm();
           float k = vt / vn;
           float h = sqrt(1 + k * k) * fabs(d);
-          //std::cout << "i=" << i << " d=" << d << " h=" << h << " x0=" << p[i].x.str() <<  " x1=" ;
+          // std::cout << "i=" << i << " d=" << d << " h=" << h << " s0=" <<
+          // p[i].x.str() <<  " s1=" ;
           p[i].x += -U * h;
-          //std::cout << p[i].x.str() << "  U=" << U.str()<< std::endl;
+          // std::cout << p[i].x.str() << "  U=" << U.str()<< std::endl;
         }
-        //p[i].f += -friction * dot3d(p[i].f, N) * Vt;
+        // p[i].f += -friction * dot3d(p[i].f, N) * Vt;
         p[i].v = Vt - 0.3f * Vn;
       }
     }
@@ -111,6 +102,12 @@ class ParticleSystem {
       float vx = 3.8f * rand() / float(RAND_MAX) - 2;
       float vy = 3.8f * rand() / float(RAND_MAX) - 2;
       float vz = 0 * rand() / float(RAND_MAX);
+      x = 5;
+      y = 2.5;
+      z = 10;
+      vx = 0;
+      vy = 0;
+      vz = 0;
       p[i].m = 1;
       p[i].x = float4(x, y, z);
       p[i].v = float4(vx, vy, vz);
@@ -133,7 +130,6 @@ class ParticleSystem {
     for (size_t i = 0; i < n; ++i) {
       p[i].x = *(src++);
       p[i].v = *(src++);
-      //std::cout << "p[i].x = " << p[i].x.str() << std::endl;
     }
   }
 
@@ -156,7 +152,6 @@ class ParticleSystem {
   }
 
   void computeDerivative(float4 *dst) {
-    computeForces();
     for (size_t i = 0; i < n; ++i) {
       *(dst++) = p[i].v;
       *(dst++) = p[i].f / p[i].m;
@@ -176,8 +171,9 @@ class ParticleSystem {
   Particle *p;
   size_t n;
   float t;
-  float4 *tmp1;
-  float4 *tmp2;
+  float4 *dydt;
+  float4 *s0;
+  float4 *s1;
   const float g;
 };
 

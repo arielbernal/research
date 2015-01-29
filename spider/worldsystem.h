@@ -47,6 +47,24 @@ class ConvexObject {
     return true;
   }
 
+  bool getCollision(const float4 &p0, const float4 &p1, float &d) {
+    float4 dp = p1 - p0;
+    for (size_t i = 0; i < f.size(); ++i) {
+      float4 dv = v[t[f[i]]] - p0;
+      float tnum = dot3d(dv, N[i]);
+      float tden = dot3d(dp, N[i]);
+      if (tden == 0) {
+        d = 0;
+        return true;
+      }
+      float t = tnum / tden;
+      if (t <= 0 || t > 1) continue;
+
+
+    }
+  }
+
+
   void scale(const float k) {
     for (Iterator I = v.begin(), E = v.end(); I != E; ++I) *I *= k;
   }
