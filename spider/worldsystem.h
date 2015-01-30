@@ -15,15 +15,13 @@ struct Collision {
   size_t i;           // face
   float t;            // time to collision
   ConvexObject *obj;  // object
-  bool contact;
-  Collision() : d(-1), N(0), i(0), t(0), obj(0), contact(false) {}
+  Collision() : d(-1), N(0), i(0), t(0), obj(0) {}
   void clear() {
     d = -1;
     N = 0;
     i = 0;
     t = 0;
     obj = 0;
-    contact = false;
   }
 };
 
@@ -34,40 +32,31 @@ class ConvexObject {
 
   bool getCollision(const float4 &p0, const float4 &p1, Collision &c) {
     c.clear();
+    c.obj = this;
     for (size_t i = 0; i < f.size(); ++i)
       if (dot3d(p1 - v[t[f[i]]], N[i]) > 0) return false;
-    
     float4 dp = p1 - p0;
     float tmax = 0;
     for (size_t i = 0; i < f.size(); ++i) {
-      if (dot3d(dp, N[i]) < 0) {
-        float tnum = dot3d(v[t[f[i]]] - p0, N[i]);
-        float tden = dot3d(dp, N[i]);
-        if (tden == 0) {
-          c.N = N[i];
-          c.p = p1;
-          c.i = i;
-          c.contact = true;
-          std::cout << "Contact\n";
-          return true;
-        }
-        float t = tnum / tden;
-        
-        if (t > tmax && t <= 1) {
+      float dpN = dot3d(dp, N[i]);
+      if (dpN <= 0) {
+        float vp0N = dot3d(v[t[f[i]]] - p0, N[i]);
+
+        if (vp0N > 0 || dpN > vp0N) continue;  // early exit t > 1
+        float t = vp0N / dpN;
+
+        if (t > tmax) {
           c.N = N[i];
           c.p = p0 + t * dp;
           c.i = i;
           c.t = t;
-          c.contact = false;
           tmax = t;
         }
       }
     }
-  //  std::cout << "t=" << tmax << "\n";
     if (tmax > 0) return true;
     return false;
   }
-
 
   void scale(const float k) {
     for (Iterator I = v.begin(), E = v.end(); I != E; ++I) *I *= k;

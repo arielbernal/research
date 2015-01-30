@@ -8,16 +8,18 @@
 using namespace svector;
 
 struct Particle {
-  float m;   // mass
-  float4 x;  // position
-  float4 v;  // velocity
-  float4 f;  // force
+  float m;          // mass
+  float4 x;         // position
+  float4 v;         // velocity
+  float4 f;         // force
+  float4 contact;  // contact force
   Particle() : m(1) {}
 };
 
 class ParticleSystem {
  public:
-  ParticleSystem() : world(0), p(0), n(0), t(0), dydt(0), s0(0), s1(0), g(-9.8f) {}
+  ParticleSystem()
+      : world(0), p(0), n(0), t(0), dydt(0), s0(0), s1(0), g(-9.8f) {}
 
   ParticleSystem(WorldSystem *world, size_t num_particles)
       : world(world), n(num_particles), t(0), g(-9.8f) {
@@ -55,40 +57,11 @@ class ParticleSystem {
     s1 = (float4 *)memalign(0x100, 2 * n * sizeof(float4));
   }
 
-  void eulerStep(float dt) {    
-    computeForces();
-    computeDerivative(dydt);  // dY/dt
-    scaleVector(dydt, dt);    // dY/dt * dt
-    getParticleState(s0);   // s0 <- p
-    getParticleState(s1);   // s1 <- p
-    addVectors(s1, dydt);   // s1 += dY/dt * dt;
-    checkCollisions(s0, s1);
-    setParticleState(s1);   // p <- s1
-    t += dt;  
-  }
-
-  void checkCollisions(float4 *s0, float4 *s1) {
-    Collision c;
-    for (size_t i = 0; i < n; ++i) {
-      // std::cout << "p0=" << s0[2*i].str() << " p1=" << s1[2 * i].str();
-      // std::cout << "v0=" << s0[2*i + 1].str() << " v1=" << s1[2 * i + 1].str()<< std::endl;
-      if (world->checkCollision(s0[2 * i], s1[2 * i], c)) {
-        if (!c.contact) {
-          float4 N = c.N;
-          s1[2 * i] = c.p;
-          float4 Vn = dot3d(s0[2 * i + 1], N) * N;
-          float4 Vt = s0[2 * i + 1] - Vn;
-          s1[2 * i + 1] = Vt - 0.3f * Vn;
-        }
-      }
-    }
-  }
-
   void testParticles() {
     for (size_t i = 0; i < n; ++i) {
-      float x = rand() / float(RAND_MAX) * 1 + 5;
-      float y = rand() / float(RAND_MAX) * 1 + 5;
-      float z = rand() / float(RAND_MAX) * 1 + 20;
+      float x = rand() / float(RAND_MAX) * 2 + 6;
+      float y = rand() / float(RAND_MAX) * 2 + 6;
+      float z = rand() / float(RAND_MAX) * 2 + 20;
       float vx = 3.8f * rand() / float(RAND_MAX) - 2;
       float vy = 3.8f * rand() / float(RAND_MAX) - 2;
       float vz = 0 * rand() / float(RAND_MAX);
@@ -101,6 +74,37 @@ class ParticleSystem {
       p[i].m = 1;
       p[i].x = float4(x, y, z);
       p[i].v = float4(vx, vy, vz);
+    }
+  }
+
+  void eulerStep(float dt) {
+    computeForces();
+    computeDerivative(dydt);  // dY/dt
+    scaleVector(dydt, dt);    // dY/dt * dt
+    getParticleState(s1);     // s1 <- p
+    addVectors(s1, dydt);     // s1 += dY/dt * dt;
+    checkCollisions(s1);
+    setParticleState(s1);  // p <- s1
+    t += dt;
+  }
+
+  void checkCollisions(float4 *s1) {
+    Collision c;
+    for (size_t i = 0; i < n; ++i) {
+      // std::cout << "p0=" << s0[2*i].str() << " p1=" << s1[2 * i].str();
+      // std::cout << "v0=" << s0[2*i + 1].str() << " v1=" << s1[2 * i +
+      // 1].str()<< std::endl;
+      if (world->checkCollision(p[i].x, s1[2 * i], c)) {
+        float4 N = c.N;
+        s1[2 * i] = c.p;
+        float4 Vn = dot3d(p[i].v, N) * N;
+        float4 Vt = p[i].v - Vn;
+        s1[2 * i + 1] = Vt - 0.4f * Vn;
+        float muk = 1.f;//c.obj->getFriction();
+        p[i].contact = -muk * dot3d(-p[i].f, N) * Vt;// - dot3d(p[i].f, N) * N * 0;
+      } else {
+        p[i].contact = 0;
+      }
     }
   }
 
@@ -131,6 +135,11 @@ class ParticleSystem {
     for (size_t i = 0; i < n; ++i) p[i].f += -0.1f * p[i].v;
   }
 
+  void applycontact() {
+    for (size_t i = 0; i < n; ++i) p[i].f += p[i].contact;
+  }
+
+
   void zeroForces() {
     for (size_t i = 0; i < n; ++i) p[i].f = 0;
   }
@@ -139,6 +148,7 @@ class ParticleSystem {
     zeroForces();
     applyGravity();
     applyDrag();
+    applycontact();
   }
 
   void computeDerivative(float4 *dst) {
