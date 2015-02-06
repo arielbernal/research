@@ -60,7 +60,6 @@ void ODERK4Solver(float t, float h, std::vector<float4> &y,
   madVector(yf, T1, 1.0f / 6.0f);
 }
 
-
 void ODERK2Solver(float t, float h, std::vector<float4> &y,
                   std::vector<float4> &yf, dydtFunc dydt, void *dydt_args) {
 
@@ -76,7 +75,6 @@ void ODERK2Solver(float t, float h, std::vector<float4> &y,
   dydt(t + h, T2, T1, dydt_args);
   multVector(T1, h);
   madVector(yf, T1, 1.0f / 2.0f);
-
 }
 
 #endif

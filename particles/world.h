@@ -27,7 +27,6 @@ struct Collision {
   }
 };
 
-
 class ConvexObject {
  public:
   typedef std::vector<float4>::iterator Iterator;
@@ -57,16 +56,12 @@ class ConvexObject {
           c.p = p0 + t * dp;
           c.i = i;
           c.t = t;
-          if (t == 0)
-            c.contact = true;
-          else
-            c.contact = false;
+          c.contact = (t == 0);
           tmax = t;
         }
       }
     }
-    if (tmax > 0) return true;
-    return false;
+    return (tmax >= 0);
   }
 
   void scale(const float k) {
@@ -233,15 +228,21 @@ class World {
     ob.push_back(p);
   }
 
-  bool checkCollision(const float4 &p0, const float4 &p1, Collision &c) {
-    std::vector<Collision> Collisions;
+  bool checkCollision(const float4 &p0, const float4 &p1, Collision &cmin) {
+    Collision c;
+    float tmin = 10;
     for (Iterator I = begin(), E = end(); I != E; ++I) {
-      Collision c;
       if ((*I)->getCollision(p0, p1, c)) {
-        Collisions.push_back(c);
+        if (!c.contact && tmin > 2) {
+          tmin = 2;
+          cmin = c;
+        } else {
+          tmin = c.t;
+          cmin = c;
+        }
       }
     }
-    return !Collisions.empty();
+    return (tmin <= 2);
   }
 
   void push_back(ConvexObject *obj) { ob.push_back(obj); }

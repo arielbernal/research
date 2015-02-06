@@ -44,7 +44,7 @@ void display() {
   set3DMode(width, height);
   glps.draw();
   if (runSim)
-    ps.step(0.03f);
+    ps.step(0.02f);
   glutSwapBuffers();
 }
 
@@ -129,7 +129,7 @@ void setWorld() {
   t->setColor(float4(0.6f, 0.2f, 0.3f, 1.0f));
   t->setFriction(0.8f);
   world.push_back(t);
-
+  ps.setWorld(&world);
   ps.createTest();
 }
 
