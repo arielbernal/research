@@ -4,14 +4,14 @@
 #include <svector.h>
 #include "glprimitives.h"
 #include "particles.h"
-#include "worldsystem.h"
+#include "world.h"
 
 class GLParticleSystem {
  public:
-  WorldSystem *world;
+  World *world;
   ParticleSystem *ps;
 
-  GLParticleSystem(WorldSystem *world, ParticleSystem *ps) : world(world), ps(ps) {
+  GLParticleSystem(World *world, ParticleSystem *ps) : world(world), ps(ps) {
     qCamera(0, 0, 0, 1);
     mouse_vx = 0;
     mouse_vy = 0;
@@ -44,7 +44,7 @@ class GLParticleSystem {
   }
 
   void drawWorld() {
-    for (WorldSystem::Iterator I = world->begin(), E = world->end(); I != E; ++I)
+    for (World::Iterator I = world->begin(), E = world->end(); I != E; ++I)
       GLDrawObject(*I);
   }
 
@@ -90,7 +90,7 @@ class GLParticleSystem {
     glColor3f(1, 1, 1);
     glPointSize(4);
     glBegin(GL_POINTS);
-    for (size_t i = 0; i < ps->getNumParticles(); ++i) {
+    for (size_t i = 0; i < ps->size(); ++i) {
       float4 p = ps->getParticlePosition(i);
       glVertex3f(p.x, p.y, p.z);
     }
