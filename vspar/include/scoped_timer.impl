@@ -1,0 +1,179 @@
+/****
+***** Copyright 2010-2011 Intel Corporation All Rights Reserved.
+*****
+***** The source code, information and material contained herein are owned by Intel Corporation or its suppliers  *****
+***** or licensors, and title to such Material remains with Intel Corporation or its suppliers or licensors.      *****
+***** The Material contains proprietary information of Intel or its suppliers and licensors. The Material is      *****
+***** protected by worldwide copyright laws and treaty provisions. No part of the Material may be used, copied,   *****
+***** reproduced, modified, published, uploaded, posted, transmitted, distributed or disclosed in any way without *****
+***** Intel's prior express written permission.
+*****
+***** No license under any patent, copyright or other intellectual property rights in the material is granted to  *****
+***** or conferred upon you, either expressly, by implication, inducement, estoppel or otherwise. Any license     *****
+***** under such intellectual property rights must be express and approved by Intel in writing.
+****/
+
+#pragma once
+
+#include <sys/time.h>
+
+namespace io {
+
+template <typename source_t, typename stamp_t, typename value_t>
+struct scoped_timer_impl<source_t, stamp_t, value_t>::wrap_type {
+  virtual wrap_type& operator=(const value_type&) = 0;
+  virtual ~wrap_type() {};
+};
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+template <typename T>
+struct scoped_timer_impl<source_t, stamp_t, value_t>::wrap:
+  public scoped_timer_impl<source_t, stamp_t, value_t>::wrap_type
+{
+  explicit wrap(T& value): m_value(&value) {}
+
+  wrap& operator=(const value_type& value) {
+    // measured value is assigned to user's value; to avoid warnings use:
+    // typedef scoped_timer_impl<[...], YOUR_TYPE_HERE> scoped_timer;
+    *m_value = value;
+    return *this;
+  }
+
+  T* m_value;
+};
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+template <typename time_value_t>
+scoped_timer_impl<source_t, stamp_t, value_t>::scoped_timer_impl(time_value_t& time_value, unit_type time_unit)
+  : m_unit(time_unit)
+  , m_stamp(0)
+  , m_value(0)
+{
+  m_stamp = source_type::get_time_stamp();
+  m_value.reset(new wrap<time_value_t>(time_value));
+}
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+template <typename time_value_t>
+scoped_timer_impl<source_t, stamp_t, value_t>::scoped_timer_impl(time_value_t& time_value, bool timer_precondition, unit_type time_unit)
+  : m_unit(time_unit)
+  , m_stamp(0)
+  , m_value(0)
+{
+  if (!timer_precondition) {
+    return;
+  }
+
+  // take the time after finishing previous work
+  m_stamp = source_type::get_time_stamp();
+
+  m_value.reset(new wrap<time_value_t>(time_value));
+}
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+scoped_timer_impl<source_t, stamp_t, value_t>::~scoped_timer_impl()
+{
+  if (!m_value.get()) {
+    return;
+  }
+
+  // take the time after finishing work associated to this timer
+  const stamp_type end1 = source_type::get_time_stamp();
+  // take the time again to get overhead of the timer source
+  const stamp_type end2 = source_type::get_time_stamp();
+  // check the time intervals
+  if (!source_type::check_interval(end1, end2) || 
+    !source_type::check_interval(m_stamp, end1)) {
+    *m_value = static_cast<value_type>(0);
+    return;
+  }
+  
+
+  using std::max;
+  const typename source_type::value_type time1 = source_type::get_time_value_us(m_stamp, end1);
+  const typename source_type::value_type time2 = source_type::get_time_value_us(end1, end2);
+  const typename source_type::value_type tdiff = max(time1, time2) - time2;
+
+    // subtract the overhead of the timer source
+  value_type time_value = static_cast<value_type>(tdiff);
+  const value_type kilo = static_cast<value_type>(1000);
+
+  switch (m_unit) {
+    case unit_us:
+      break;
+    case unit_ms:
+      time_value /= kilo;
+      break;
+    case unit_s:
+      time_value /= kilo * kilo;
+      break;
+  }
+
+  *m_value = time_value;
+}
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+bool
+scoped_timer_impl<source_t, stamp_t, value_t>::precondition() const
+{
+  return 0 != m_value.get();
+}
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+typename scoped_timer_impl<source_t, stamp_t, value_t>::unit_type
+scoped_timer_impl<source_t, stamp_t, value_t>::unit() const
+{
+  return m_unit;
+}
+
+
+template <typename source_t, typename stamp_t, typename value_t>
+typename scoped_timer_impl<source_t, stamp_t, value_t>::stamp_type
+scoped_timer_impl<source_t, stamp_t, value_t>::stamp() const
+{
+  return m_stamp;
+}
+
+
+/*static*/ inline system_time_source::stamp_type
+system_time_source::get_time_stamp()
+{
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  return static_cast<stamp_type>(1000000 * tv.tv_sec + tv.tv_usec);
+}
+
+
+/*static*/ 
+inline bool system_time_source::check_interval(stamp_type begin, stamp_type end)
+{
+  return (begin <= end);
+}
+
+
+namespace detail {
+
+inline system_time_source::value_type
+get_time_value_us_factor()
+{
+  typedef system_time_source::value_type value_type;
+  return static_cast<value_type>(1);
+}
+
+} // namespace detail
+
+
+/*static*/ inline system_time_source::value_type
+system_time_source::get_time_value_us(stamp_type begin, stamp_type end)
+{
+  const system_time_source::value_type factor = detail::get_time_value_us_factor();
+  return static_cast<value_type>(end - begin) * factor;
+}
+
+} // namespace io
