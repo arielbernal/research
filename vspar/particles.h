@@ -19,7 +19,10 @@ struct Particle {
 
 class ParticleSystem {
  public:
-  ParticleSystem() : world(0), p(0), y(0), yf(0), t(0) {}
+  ParticleSystem() : world(0), p(0), y(0), yf(0), t(0) {
+    ode.setDyDt([this](float t, float4v &y0, float4v &y1) { this->dydt(t, y0, y1); });
+    ode.setDyDtScalar([this](float t, float4v &y0, float4v &y1, size_t id) { this->dydtScalar(t, y0, y1, id); });
+  }
 
   void setWorld(World *w) { world = w; }
 
@@ -46,7 +49,7 @@ class ParticleSystem {
     float y = 0;
     float z = 0;
     float vx = 0;
-    float vy = 0;
+    float vy = 5;
     float vz = 10;
     p[0].m = 1;
     p[0].x = float4(x, y, z);
@@ -67,14 +70,14 @@ class ParticleSystem {
     }
   }
 
-  void getState(std::vector<float4> &y) {
+  void getState(float4v &y) {
     for (size_t i = 0; i < p.size(); ++i) {
       y[2 * i] = p[i].x;
       y[2 * i + 1] = p[i].v;
     }
   }
 
-  void setState(std::vector<float4> &y) {
+  void setState(float4v &y) {
     for (size_t i = 0; i < p.size(); ++i) {
       p[i].x = y[2 * i];
       p[i].v = y[2 * i + 1];
@@ -87,67 +90,88 @@ class ParticleSystem {
                 << std::endl;
   }
 
-  void dydt(float t, std::vector<float4> &y, std::vector<float4> &res) {
+  void dydt(float t, float4v &y, float4v &res) {
     for (size_t i = 0; i < p.size(); ++i) {
       res[2 * i] = y[2 * i + 1];
       res[2 * i + 1] = p[i].f;
     }
   }
 
-  void dydtCollisions(float t, std::vector<float4> &y,
-                      std::vector<float4> &res) {
-    for (size_t i = 0; i < idc.size(); ++i) {
-      size_t id = idc[i];
-      res[2 * i] = y[2 * i + 1];
-      res[2 * i + 1] = p[id].f;
-    }
+  void dydtScalar(float t, float4v &y, float4v &res, size_t id) {
+    res[0] = y[1];
+    res[1] = p[id].f;
   }
-
-  void resolveCollisions(std::vector<float4> &yc, std::vector<float4> &yf,
+  
+  void resolveCollisions(float4v &yc, float4v &yf,
                          float dt) {
-    std::vector<float4> ycf(yc.size());
-    ODERK2Solver(t, dt, yc, ycf, &dydtStaticCollisions, this);
-    for (size_t i = 0; i < idc.size(); ++i) {
-      size_t id = idc[i];
-      yf[2 * id] = ycf[2 * i];
-      yf[2 * id + 1] = ycf[2 * i + 1];
-    }
+    //float4v ycf(yc.size());
+    //ODERK2Solver(t, dt, yc, ycf, &dydtStaticCollisions, this);
+    //for (size_t i = 0; i < idc.size(); ++i) {
+    //  size_t id = idc[i];
+    //  yf[2 * id] = ycf[2 * i];
+    //  yf[2 * id + 1] = ycf[2 * i + 1];
+    //}
   }
 
-  void checkCollisions(std::vector<float4> &y0, std::vector<float4> &y1,
+  void checkCollisions(float4v &y0, float4v &y1,
                        float dt) {
     Collision c;
-    float muk = 0.2f;
-    std::vector<float4> yc;
-    idc.clear();
+    float muk = 0.01f;
+    float4v yc(2);
+    float4v ycr(2);
     for (size_t i = 0; i < p.size(); ++i) {
       if (world->checkCollision(y0[2 * i], y1[2 * i], c)) {
         if (c.contact) {
-          float4 v0 = y0[2 * i + 1];
+          std::cout << "------------- Contact ------------- \n";
+          float4 v0 = y1[2 * i + 1];
           float4 vn = dot3d(v0, c.N) * c.N;
           float4 vt = v0 - vn;
-
           float fn_norm = dot3d(p[i].f, c.N);
           float4 fn = -fn_norm * c.N;
-          float4 fk = -muk * fn_norm * vt / vt.norm();
+          float vt_norm = vt.norm();
+          float4 fk;
+          if (vt_norm > 0.001f)
+            fk = muk * fn_norm * vt / vt.norm();
+          std::cout << "p.f = " << p[i].f.str() << " fk = " << fk.str() << std::endl;
           p[i].fc = fn + fk;
+          ycr[0] = c.p;
+          ycr[1] = vt;
+
         } else {
           float4 v = y0[2 * i + 1] * (1 - c.t) + y1[2 * i + 1] * c.t;
-          float4 vn = -dot3d(v, c.N) * c.N;
-          float4 vf = v - vn;
-          yc.push_back(c.p);
-          yc.push_back(v);
-          idc.push_back(i);
-          std::cout << "c.p = " << c.p.str() << " v = " <<  vf.str() << std::endl;
-          resolveCollisions(yc, y1, dt);
-          std::cout << "resolved y1 = " << y1[2 * i].str()
-                    << " v = " << y1[2 * i + 1].str() << "\n";
-          // exit(1);
+          float4 vn = dot3d(v, c.N) * c.N;
+          float4 vf = v - (1 + 0.3f) * vn;
+          yc[0] = c.p;
+          yc[1] = vf;
+          p[i].fc = 0;
+          //std::cout << "v = " << v.str() << " vf = " << vf.str() << std::endl;
+          ode.RK2Solve(t, dt * c.t, yc, ycr, i);
+          if (world->checkCollision(yc[0], ycr[0], c)) {
+            //std::cout << "collide again!!! is just a contact\n";
+            //std::cout << "c.p = " << c.p.str() << " c.t = " << c.t << std::endl;
+            float4 v0 = ycr[1];
+            float4 vn = dot3d(v0, c.N) * c.N;
+            float4 vt = v0 - vn;
+            float fn_norm = dot3d(p[i].f, c.N);
+            float4 fn = -fn_norm * c.N;
+            float vt_norm = vt.norm();
+            float4 fk;
+            if (vt_norm > 0.001f)
+              fk = -muk * fn_norm * vt / vt.norm();
+            p[i].fc = fn + fk;
+            ycr[1] = vt;
+            ycr[0] = c.p;
+            //std::cout << "--->>>>>>>>> new p = " << ycr[0].str() << "  new v = " << ycr[1].str() << std::endl;
+          }
+          //std::cout << "Collision resolved\n";
         }
+        y1[2 * i] = ycr[0];
+        y1[2 * i + 1] = ycr[1];
+       
       }
-    }
-    if (!idc.empty()) {
-//      resolveCollisions(yc, yf, dt);
+      else {
+        p[i].fc = 0;
+      }
     }
   }
 
@@ -155,7 +179,7 @@ class ParticleSystem {
     printState();
     calcForces();
     getState(y);
-    ODERK2Solver(t, dt, y, yf, &dydtStatic, this);
+    ode.RK2Solve(t, dt, y, yf);
     checkCollisions(y, yf, dt);
     setState(yf);
     t += dt;
@@ -165,26 +189,15 @@ class ParticleSystem {
 
   float4 getParticlePosition(size_t i) { return p[i].x; }
 
- protected:
-  static void dydtStatic(float t, std::vector<float4> &y,
-                         std::vector<float4> &res, void *dydt_args) {
-    ((ParticleSystem *)dydt_args)->dydt(t, y, res);
-  }
-
-  static void dydtStaticCollisions(float t, std::vector<float4> &y,
-                                   std::vector<float4> &res, void *dydt_args) {
-    ((ParticleSystem *)dydt_args)->dydtCollisions(t, y, res);
-  }
-
  private:
   World *world;
   std::vector<Particle> p;
-  std::vector<float4> y;
-  std::vector<float4> yf;
-  std::vector<size_t> idc;  // collision ids
+  float4v y;
+  float4v yf;
   float t;
   float g;   // gravity
   float kd;  // drag constant
+  ODESolver ode;
 };
 
 #endif

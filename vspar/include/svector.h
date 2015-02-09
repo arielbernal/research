@@ -104,8 +104,14 @@ class float4 {
   }
 
   inline float4 &operator+=(const float4 &v) {
+#if WIN32
+    __m128 vxmm = v.xmm;
+    xmm = _mm_add_ps(xmm, vxmm);
+    return *this;
+#else
     xmm = _mm_add_ps(xmm, v.xmm);
     return *this;
+#endif
   }
 
   float4 &operator-=(const float4 &v) {
@@ -354,6 +360,8 @@ inline float4 quaternion_mult(const float4 &v, const float4 &w) {
   return x;
 }
 
+
+typedef std::vector<float4> float4v;
 }  // namespace svector
 
 #endif  // SVECTOR_H
