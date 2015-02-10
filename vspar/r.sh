@@ -1,2 +1,2 @@
 make -j8
-./bin/particles
+./bin/vspart

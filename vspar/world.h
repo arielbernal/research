@@ -32,36 +32,27 @@ class ConvexObject {
   typedef std::vector<float4>::iterator Iterator;
   ConvexObject() : triangleCounter(0), friction(0) {}
 
-  bool getCollision(const float4 &p0, const float4 &p1, Collision &c) {
+  bool getCollision(const float4 &x, const float4 &vel, Collision &c) {
     c.clear();
     c.obj = this;
-    for (size_t i = 0; i < f.size(); ++i)
-      if (dot3d(p1 - v[t[f[i]]], N[i]) > 0) return false;
-    float4 dp = p1 - p0;
-    float tmax = -1;
+    float epsilon = 0.01f;
+    float dMin = 1E20;
+    size_t iMin = 0;
     for (size_t i = 0; i < f.size(); ++i) {
-      float dpN = dot3d(dp, N[i]);
-      if (dpN <= 0) {
-        float vp0N = dot3d(v[t[f[i]]] - p0, N[i]);
-        if (vp0N > 0)
-          continue;  // early exit t > 0, p0 is on the left of the plane!
-        float t;
-        if (dpN == 0)
-          t = 0;
-        else
-          t = vp0N / dpN;
-
-        if (t > tmax) {
-          c.N = N[i];
-          c.p = p0 + t * dp;
-          c.i = i;
-          c.t = t;
-          c.contact = (t == 0);
-          tmax = t;
-        }
+      float d = dot3d(x - v[t[f[i]]], N[i]);
+      if (d > epsilon) return false;
+      if (fabs(d) < dMin) {
+        dMin = fabs(d);
+        iMin = i;
       }
     }
-    return (tmax >= 0);
+    float dpV = dot3d(vel, N[iMin]);
+    if (dpV > 0) return false;
+    c.i = iMin;
+    c.N = N[iMin];
+    c.contact = (dMin < epsilon && fabs(dpV) < 1*epsilon);
+//    std::cout << " dMIn = " << dMin << "  dpV = " << dpV << " v = " << vel.str() << std::endl;
+    return true;
   }
 
   void scale(const float k) {
@@ -226,21 +217,11 @@ class World {
     ob.push_back(p);
   }
 
-  bool checkCollision(const float4 &p0, const float4 &p1, Collision &cmin) {
-    Collision c;
-    float tmin = 10;
+  bool checkCollision(const float4 &x, const float4 &vel, Collision &cmin) {
     for (Iterator I = begin(), E = end(); I != E; ++I) {
-      if ((*I)->getCollision(p0, p1, c)) {
-        if (!c.contact && tmin > 2) {
-          tmin = 2;
-          cmin = c;
-        } else {
-          tmin = c.t;
-          cmin = c;
-        }
-      }
+      if ((*I)->getCollision(x, vel, cmin)) return true;
     }
-    return (tmin <= 2);
+    return false;
   }
 
   void push_back(ConvexObject *obj) { ob.push_back(obj); }

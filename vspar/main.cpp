@@ -63,7 +63,7 @@ void display() {
   set3DMode(width, height);
   glps.draw();
   if (runSim)
-    ps.step(0.02f);
+    ps.step(0.01f);
   glutSwapBuffers();
 }
 

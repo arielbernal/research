@@ -239,6 +239,13 @@ class float4 {
     output << "[" << x << ", " << y << ", " << z << ", " << w << "]";
     return output.str();
   }
+
+    // string
+  const std::string str() const {
+    std::ostringstream output;
+    output << "[" << x << ", " << y << ", " << z << ", " << w << "]";
+    return output.str();
+  }
 };
 
 const __m128 float4::mm_one = _mm_set1_ps(1.0f);

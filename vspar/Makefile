@@ -1,6 +1,6 @@
 SOURCES := main.cpp
 
-PROGRAM := particles 
+PROGRAM := vspart 
 CXX := clang++ 
 LDFLAGS := -L/usr/lib/gcc/x86_64-linux-gnu/4.8 -L/usr/lib/nvidia-331-updates 
 LDFLAGS +=  -lGL -lGLU -lglut -lGLEW -O3 -lserial -lpthread
