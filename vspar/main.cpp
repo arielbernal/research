@@ -2,29 +2,11 @@
 #include <glheaders.h>
 #include <cmath>
 
+#include "simulation.h"
+#include <stdio.h>  
 #include "particles.h"
 #include "world.h"
 #include "glparticles.h"
-
-
-
-//void line(float P1[], float P2[], float L[]){
-//  L[0] = (P1[1] - P2[1]) / (P1[0] - P2[0]);
-//  L[1] = P2[1] - L[0] * P2[0];
-//}
-//
-//int main() {
-//  float P1[2] = { 3, 1 };
-//  float P2[2] = { 5, 17 };
-//  float L[2] = { 0, 0 };
-//  line(P1, P2, L);
-//  printf("%f x + %f\n",L[0],L[1]);
-//}
-//
-//
-//
-
-
 
 namespace {
 int m_window_width = 800;
@@ -32,8 +14,8 @@ int m_window_height = 800;
 std::string m_window_title = "SpiderQuad";
 ParticleSystem ps;
 World world;
+Simulation s(&ps);
 GLParticleSystem glps(&world, &ps);
-bool runSim = false;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -62,8 +44,6 @@ void display() {
   int height = viewport[3];
   set3DMode(width, height);
   glps.draw();
-  if (runSim)
-    ps.step(0.01f);
   glutSwapBuffers();
 }
 
@@ -104,15 +84,19 @@ void special_keys(int key, int x, int y) {
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
     case 'r':
-      runSim = !runSim;
+      s.start();
       break;
     case 's':
-      ps.step(0.01f);
+      s.step();
       break;
     case 'h':
       glutPostRedisplay();
       break;
     case 27:
+      s.terminate();
+      while(!s.isTerminated()) {
+        usleep(1000);
+      }
       glutLeaveMainLoop();
       break;
     default:
@@ -151,6 +135,7 @@ void setWorld() {
 
   ps.setWorld(&world);
   ps.createTest();
+  s.setStepMode(true);
 }
 
 void init_glut_window(int argc, char *argv[]) {
@@ -173,6 +158,7 @@ void init_glut_window(int argc, char *argv[]) {
   setWorld();
   glutMainLoop();
 }
+
 int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;

@@ -39,7 +39,8 @@ class ConvexObject {
     float dMin = 1E20;
     size_t iMin = 0;
     for (size_t i = 0; i < f.size(); ++i) {
-      float d = dot3d(x - v[t[f[i]]], N[i]);
+      float4 xi = v[t[f[i]]];
+      float d = dot3d(x - xi, N[i]);
       if (d > epsilon) return false;
       if (fabs(d) < dMin) {
         dMin = fabs(d);
@@ -50,7 +51,7 @@ class ConvexObject {
     if (dpV > 0) return false;
     c.i = iMin;
     c.N = N[iMin];
-    c.contact = (dMin < epsilon && fabs(dpV) < 1*epsilon);
+    c.contact = (dMin < epsilon && fabs(dpV) < 10*epsilon);
 //    std::cout << " dMIn = " << dMin << "  dpV = " << dpV << " v = " << vel.str() << std::endl;
     return true;
   }

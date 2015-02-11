@@ -87,6 +87,7 @@ class GLParticleSystem {
   }
 
   void drawParticles() {
+    if (ps->isDataBlocked()) return;
     glColor3f(1, 1, 1);
     glPointSize(4);
     glBegin(GL_POINTS);

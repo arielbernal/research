@@ -23,7 +23,7 @@ struct Particle {
 
 class ParticleSystem {
  public:
-  ParticleSystem() : world(0), p(0), y(0), yf(0), t(0) {
+  ParticleSystem() : world(0), p(0), y(0), yf(0), t(0), blockData(false) {
     ode.setDyDt([this](float t, float4v &y0,
                        float4v &y1) { this->dydt(t, y0, y1); });
     ode.setDyDtScalar([this](float t, float4v &y0, float4v &y1,
@@ -39,7 +39,7 @@ class ParticleSystem {
     t = 0;
     kd = 0.3f;
     g = -9.8f;
-    g = -40.0f;
+    g = -10.0f;
   }
 
   void create(size_t n) {
@@ -53,10 +53,10 @@ class ParticleSystem {
     create(1);
     float x = 0;
     float y = 0;
-    float z = 0;
+    float z = 1;
     float vx = 0;
     float vy = 0;
-    float vz = 20;
+    float vz = 0;
     p[0].m = 1;
     p[0].x = float4(x, y, z);
     p[0].v = float4(vx, vy, vz);
@@ -149,13 +149,19 @@ class ParticleSystem {
     }
   }
 
+  bool isDataBlocked() { return blockData; }
+
   void step(float dt) {
     printState();
+    blockData = true;
     calcForces();
     getState(y);
+    blockData = false;
     ode.RK2Solve(t, dt, y, yf);
     checkCollisions(y, yf, dt);
+    blockData = true;
     setState(yf);
+    blockData = false;
     t += dt;
   }
 
@@ -172,6 +178,7 @@ class ParticleSystem {
   float g;   // gravity
   float kd;  // drag constant
   ODESolver ode;
+  bool blockData;
 };
 
 #endif
