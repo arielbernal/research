@@ -38,6 +38,7 @@ class ParticleSystem {
     yf.clear();
     t = 0;
     kd = 0.3f;
+    muk = 0.6f;
     g = -9.8f;
     g = -10.0f;
   }
@@ -50,16 +51,29 @@ class ParticleSystem {
   }
 
   void createTest() {
-    create(1);
-    float x = 0;
-    float y = 0;
-    float z = 1;
-    float vx = 0;
-    float vy = 0;
-    float vz = 0;
-    p[0].m = 1;
-    p[0].x = float4(x, y, z);
-    p[0].v = float4(vx, vy, vz);
+    // create(1);
+    // float x = 0;
+    // float y = 0;
+    // float z = 1;
+    // float vx = 0;
+    // float vy = 2;
+    // float vz = 20;
+    // p[0].m = 1;
+    // p[0].x = float4(x, y, z);
+    // p[0].v = float4(vx, vy, vz);
+    size_t N = 1;
+    create(N);
+    for (size_t i = 0; i < N; ++i) {
+      float x = rand() / float(RAND_MAX) * 2 + 6;
+      float y = rand() / float(RAND_MAX) * 2 + 6;
+      float z = rand() / float(RAND_MAX) * 2 + 20;
+      float vx = 3.8f * rand() / float(RAND_MAX) - 2;
+      float vy = 3.8f * rand() / float(RAND_MAX) - 2;
+      float vz = 0 * rand() / float(RAND_MAX);
+      p[i].m = 1;
+      p[i].x = float4(x, y, z);
+      p[i].v = float4(vx, vy, vz);
+    }
   }
 
   void zeroForces() {
@@ -70,15 +84,18 @@ class ParticleSystem {
     zeroForces();
     for (size_t i = 0; i < p.size(); ++i) {
       p[i].fg = float4(0, 0, g) * p[i].m;  // gravity
-      //   p[i].f += -kd * p[i].v;              // drag
+      p[i].fd += -kd * p[i].v;             // drag
       if (p[i].contact) {
         float fn_norm = dot3d(p[i].fg, p[i].Nc);
         float4 fn = -fn_norm * p[i].Nc;
-        p[i].fc = fn;
+        float4 fr = fn_norm * p[i].v * muk;
+        p[i].fc = fn + fr;
+        //  std::cout << "Contact!!----------------> a = " << p[i].a.str() <<
+        // std::endl;
       }
       p[i].a += p[i].fg + p[i].fc;
+      +p[i].fd;
       p[i].a /= p[i].m;  // just get the acceleration
-      std::cout << "----------------> a = " << p[i].a.str() << std::endl;
     }
   }
 
@@ -99,7 +116,7 @@ class ParticleSystem {
   void printState() {
     for (size_t i = 0; i < p.size(); ++i)
       std::cout << "t = " << t << " \t" << p[i].x.str() << " - " << p[i].v.str()
-                << std::endl;
+                << (p[i].contact ? " ------- Contact " : "") << std::endl;
   }
 
   void dydt(float t, float4v &y, float4v &res) {
@@ -114,16 +131,6 @@ class ParticleSystem {
     res[1] = p[id].a;
   }
 
-  void resolveCollisions(float4v &yc, float4v &yf, float dt) {
-    // float4v ycf(yc.size());
-    // ODERK2Solver(t, dt, yc, ycf, &dydtStaticCollisions, this);
-    // for (size_t i = 0; i < idc.size(); ++i) {
-    //  size_t id = idc[i];
-    //  yf[2 * id] = ycf[2 * i];
-    //  yf[2 * id + 1] = ycf[2 * i + 1];
-    //}
-  }
-
   void checkCollisions(float4v &y0, float4v &y1, float dt) {
     Collision c;
     float muk = 0.01f;
@@ -132,11 +139,6 @@ class ParticleSystem {
       p[i].fc = 0;
       p[i].contact = false;
       if (world->checkCollision(y1[2 * i], y1[2 * i + 1], c)) {
-        std::cout << "Collision\n";
-        std::cout << "x = " << y1[2 * i].str() << " v = " << y1[2 * i + 1].str()
-                  << std::endl;
-        std::cout << "c.N = " << c.N.str() << " c.i = " << c.i
-                  << " v  = " << c.t << std::endl;
         float4 v = y1[2 * i + 1];
         float4 vn = dot3d(v, c.N) * c.N;
         float4 vt = v - vn;
@@ -152,17 +154,23 @@ class ParticleSystem {
   bool isDataBlocked() { return blockData; }
 
   void step(float dt) {
-    printState();
-    blockData = true;
-    calcForces();
-    getState(y);
-    blockData = false;
-    ode.RK2Solve(t, dt, y, yf);
-    checkCollisions(y, yf, dt);
-    blockData = true;
-    setState(yf);
-    blockData = false;
-    t += dt;
+    float tp = 0;
+    float dtp = dt / 10.0f;
+    while (tp <= dt) {
+      printState();
+      blockData = true;
+      calcForces();
+      getState(y);
+      //      blockData = false;
+      ode.RK2Solve(t, dtp, y, yf);
+      checkCollisions(y, yf, dtp);
+      //      blockData = true;
+      setState(yf);
+      blockData = false;
+      tp += dtp;
+      t += dtp;
+    }
+    // std::cout << "t = " << t << std::endl;
   }
 
   size_t size() { return p.size(); }
@@ -175,10 +183,13 @@ class ParticleSystem {
   float4v y;
   float4v yf;
   float t;
-  float g;   // gravity
-  float kd;  // drag constant
+  float g;    // gravity
+  float kd;   // drag constant
+  float muk;  // kinetic friction coeficient
   ODESolver ode;
   bool blockData;
 };
+
+
 
 #endif

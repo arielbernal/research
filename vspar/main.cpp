@@ -135,7 +135,7 @@ void setWorld() {
 
   ps.setWorld(&world);
   ps.createTest();
-  s.setStepMode(true);
+  s.setStepMode(false);
 }
 
 void init_glut_window(int argc, char *argv[]) {

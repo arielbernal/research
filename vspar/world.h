@@ -35,13 +35,14 @@ class ConvexObject {
   bool getCollision(const float4 &x, const float4 &vel, Collision &c) {
     c.clear();
     c.obj = this;
-    float epsilon = 0.01f;
+    float epsilonX = 0.01f;
+    float epsilonV = 0.01f;
     float dMin = 1E20;
     size_t iMin = 0;
     for (size_t i = 0; i < f.size(); ++i) {
       float4 xi = v[t[f[i]]];
       float d = dot3d(x - xi, N[i]);
-      if (d > epsilon) return false;
+      if (d > epsilonX) return false;
       if (fabs(d) < dMin) {
         dMin = fabs(d);
         iMin = i;
@@ -51,7 +52,7 @@ class ConvexObject {
     if (dpV > 0) return false;
     c.i = iMin;
     c.N = N[iMin];
-    c.contact = (dMin < epsilon && fabs(dpV) < 10*epsilon);
+    c.contact = (dMin < epsilonX && fabs(dpV) < epsilonV);
 //    std::cout << " dMIn = " << dMin << "  dpV = " << dpV << " v = " << vel.str() << std::endl;
     return true;
   }
