@@ -37,8 +37,8 @@ class ParticleSystem {
     y.clear();
     yf.clear();
     t = 0;
-    kd = 0.3f;
-    muk = 0.6f;
+    kd = 0.01f;
+    muk = 0.02f;
     g = -9.8f;
     g = -10.0f;
   }
@@ -61,7 +61,7 @@ class ParticleSystem {
     // p[0].m = 1;
     // p[0].x = float4(x, y, z);
     // p[0].v = float4(vx, vy, vz);
-    size_t N = 1;
+    size_t N = 10000;
     create(N);
     for (size_t i = 0; i < N; ++i) {
       float x = rand() / float(RAND_MAX) * 2 + 6;
@@ -156,9 +156,10 @@ class ParticleSystem {
   void step(float dt) {
     float tp = 0;
     float dtp = dt / 10.0f;
+    blockData = false;
     while (tp <= dt) {
-      printState();
-      blockData = true;
+      //printState();
+      //blockData = true;
       calcForces();
       getState(y);
       //      blockData = false;
@@ -166,11 +167,11 @@ class ParticleSystem {
       checkCollisions(y, yf, dtp);
       //      blockData = true;
       setState(yf);
-      blockData = false;
+      //blockData = false;
       tp += dtp;
       t += dtp;
     }
-    // std::cout << "t = " << t << std::endl;
+     std::cout << "t = " << t << std::endl;
   }
 
   size_t size() { return p.size(); }

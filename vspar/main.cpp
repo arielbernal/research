@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "simulation.h"
-#include <stdio.h>  
+#include <stdio.h>
 #include "particles.h"
 #include "world.h"
 #include "glparticles.h"
@@ -112,26 +112,26 @@ void setWorld() {
   g->setFriction(2.8f);
   world.push_back(g);
 
-  //CubeObject *c = new CubeObject();
-  //c->setColor(float4(0.3f, 0.2f, 0.7f, 1.0f));
-  //c->scale(5);
-  //c->translate(0, 0, 1);
-  //c->setFriction(0.8f);
-  //world.push_back(c);
+  CubeObject *c = new CubeObject();
+  c->setColor(float4(0.3f, 0.2f, 0.7f, 1.0f));
+  c->scale(5);
+  c->translate(0, 0, 1);
+  c->setFriction(0.8f);
+  world.push_back(c);
 
-  //TriangularPrismObject *p = new TriangularPrismObject();
-  //p->scale(5);
-  //p->translate(8, 0, 0);
-  //p->setColor(float4(0.3f, 0.6f, 0.6f, 1.0f));
-  //p->setFriction(0.8f);
-  //world.push_back(p);
+  TriangularPrismObject *p = new TriangularPrismObject();
+  p->scale(5);
+  p->translate(8, 0, 0);
+  p->setColor(float4(0.3f, 0.6f, 0.6f, 1.0f));
+  p->setFriction(0.8f);
+  world.push_back(p);
 
-  //TetrahedronObject *t = new TetrahedronObject();
-  //t->scale(8);
-  //t->translate(8, 8, 0);
-  //t->setColor(float4(0.6f, 0.2f, 0.3f, 1.0f));
-  //t->setFriction(0.8f);
-  //world.push_back(t);
+  TetrahedronObject *t = new TetrahedronObject();
+  t->scale(8);
+  t->translate(8, 8, 0);
+  t->setColor(float4(0.6f, 0.2f, 0.3f, 1.0f));
+  t->setFriction(0.8f);
+  world.push_back(t);
 
   ps.setWorld(&world);
   ps.createTest();

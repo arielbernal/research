@@ -241,6 +241,7 @@ class ODESolver1 {
     VectorFloat yscal(nvar);
     VectorFloat dydx(nvar);
     float x = x1;
+    #define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
     float h = SIGN(h1, x2 - x1);
     nok = 0;
     nbad = 0;
@@ -248,24 +249,24 @@ class ODESolver1 {
 
     // Take at most MAXSTP steps.
     for (size_t nstp = 0; nstp < MAXSTP; ++nstp) {
-      deriv(x, y, dydx);
+      deriv(x, yend, dydx);
 
       // Scaling used to monitor accuracy. This general-purpose choice can be
       // modified if need be.
       for (size_t i = 0; i < nvar; ++i)
-        yscal[i] = fabs(y[i]) + fabs(dydx[i] * h) + TINY;
+        yscal[i] = fabs(yend[i]) + fabs(dydx[i] * h) + TINY;
 
       if ((x + h - x2) * (x + h - x1) > 0.0)
         h = x2 - x;  // If stepsize can overshoot, decrease.
 
-      rkqs(y, dydx, nvar, &x, h, eps, yscal, &hdid, &hnext, derivs);
+      rkqs(yend, dydx, nvar, x, h, eps, yscal, hdid, hnext);
 
       if (hdid == h)
         ++nok;
       else
         ++nbad;
       if ((x - x2) * (x2 - x1) >= 0.0) {  // Are we done?
-        for (size_t i = 0; i < nvar; ++i) yend[i] = y[i];
+        for (size_t i = 0; i < nvar; ++i) yend[i] = yend[i];
         return;  // Normal exit.
       }
       if (fabs(hnext) <= hmin) std::cout << "Step size too small in odeint";

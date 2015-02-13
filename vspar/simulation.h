@@ -88,7 +88,7 @@ class Simulation {
     return 0;
   }
 
-  void nextStep(size_t i) { ps->step(0.01f); usleep(10000);}
+  void nextStep(size_t i) { ps->step(0.01f); }
 
  private:
   pthread_t mainThread;
