@@ -52,6 +52,7 @@ class ConvexObject {
     if (dpV > 0) return false;
     c.i = iMin;
     c.N = N[iMin];
+    c.d = dMin;
     c.contact = (dMin < epsilonX && fabs(dpV) < epsilonV);
 //    std::cout << " dMIn = " << dMin << "  dpV = " << dpV << " v = " << vel.str() << std::endl;
     return true;
@@ -220,10 +221,19 @@ class World {
   }
 
   bool checkCollision(const float4 &x, const float4 &vel, Collision &cmin) {
+    Collision c;
+    float dmax = 0;
+    bool ret = false;
     for (Iterator I = begin(), E = end(); I != E; ++I) {
-      if ((*I)->getCollision(x, vel, cmin)) return true;
+      if ((*I)->getCollision(x, vel, c)) {
+        ret = true;
+        if (c.d > dmax) {
+          cmin = c;
+          dmax = c.d;
+        }
+      } 
     }
-    return false;
+    return ret;
   }
 
   void push_back(ConvexObject *obj) { ob.push_back(obj); }

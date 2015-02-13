@@ -37,10 +37,11 @@ class ParticleSystem {
     y.clear();
     yf.clear();
     t = 0;
-    kd = 0.01f;
-    muk = 0.02f;
+    kd = 0.02f;
+    kr = 0.6f;
+    muk = 0.05f;
     g = -9.8f;
-    g = -10.0f;
+   // g = -10.0f;
   }
 
   void create(size_t n) {
@@ -133,8 +134,7 @@ class ParticleSystem {
 
   void checkCollisions(float4v &y0, float4v &y1, float dt) {
     Collision c;
-    float muk = 0.01f;
-    float kr = 0.3f;
+    
     for (size_t i = 0; i < p.size(); ++i) {
       p[i].fc = 0;
       p[i].contact = false;
@@ -186,6 +186,7 @@ class ParticleSystem {
   float t;
   float g;    // gravity
   float kd;   // drag constant
+  float kr;
   float muk;  // kinetic friction coeficient
   ODESolver ode;
   bool blockData;

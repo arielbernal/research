@@ -115,20 +115,20 @@ void setWorld() {
   CubeObject *c = new CubeObject();
   c->setColor(float4(0.3f, 0.2f, 0.7f, 1.0f));
   c->scale(5);
-  c->translate(0, 0, 1);
+  c->translate(0, 0, -0.1f);
   c->setFriction(0.8f);
   world.push_back(c);
 
   TriangularPrismObject *p = new TriangularPrismObject();
   p->scale(5);
-  p->translate(8, 0, 0);
+  p->translate(8, 0, -0.1f);
   p->setColor(float4(0.3f, 0.6f, 0.6f, 1.0f));
   p->setFriction(0.8f);
   world.push_back(p);
 
   TetrahedronObject *t = new TetrahedronObject();
   t->scale(8);
-  t->translate(8, 8, 0);
+  t->translate(8, 8, -0.1f);
   t->setColor(float4(0.6f, 0.2f, 0.3f, 1.0f));
   t->setFriction(0.8f);
   world.push_back(t);
