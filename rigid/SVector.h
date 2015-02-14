@@ -17,45 +17,123 @@ class SVector {
     T data[4];
   };
   // constructors
-  inline SVector() : data{0} {}
+  SVector() : data{0} {}
 
-  inline SVector(const SVector &t) : data{t.x, t.y, t.z, t.w} {};
+  SVector(const SVector &t) : data{t.x, t.y, t.z, t.w} {};
 
-  inline SVector(T x, T y, T z, T w = T(0)) : data{x, y, z, w} {};
+  SVector(T x, T y, T z, T w = T(0)) : data{x, y, z, w} {};
 
-  inline SVector(T v) : data{v, v, v, v} {};
+  SVector(T v) : data{v, v, v, v} {};
 
-  inline SVector(T *v) : data{v[0], v[1], v[2], v[3]} {}
+  SVector(T *v) : data{v[0], v[1], v[2], v[3]} {}
 
   // assigments
-  inline void operator()(const SVector &t) { set(t.x, t.y, t.z, t.w); }
+  void operator()(const SVector &t) { set(t.x, t.y, t.z, t.w); }
 
-  inline void operator()(T x, T y, T z, T w = T(0)) { set(x, y, z, w); }
+  void operator()(T x, T y, T z, T w = T(0)) { set(x, y, z, w); }
 
-  inline void zero() { memset(data, 0, 4 * sizeof(T)); }
+  void operator()(T v) { set(v, v, v, v); }
 
-  // random access
-  inline T &operator[](size_t i) { return data[i]; }
+  void clear() { memset(data, 0, 4 * sizeof(T)); }
+
+  T &operator[](size_t i) { return data[i]; }
 
   // unary operators
-  inline SVector operator+() { return *this; }
-  inline SVector operator-() {
+  const SVector &operator+() { return *this; }
+  const SVector operator-() {
     SVector t(-x, -y, -z, -w);
     return t;
   }
-  inline SVector operator++() {
-    ++data[0];
-    ++data[1];
-    ++data[2];
-    ++data[3];
+  const SVector &operator++() {
+    ++x;
+    ++y;
+    ++z;
+    ++w;
     return *this;
   }
-  inline SVector operator--() {
-    --data[0];
-    --data[1];
-    --data[2];
-    --data[3];
+  const SVector &operator--() {
+    --x;
+    --y;
+    --z;
+    --w;
     return *this;
+  }
+
+  const SVector operator++(int d) {
+    SVector v(*this);
+    ++(*this);
+    return v;
+  }
+
+  const SVector operator--(int d) {
+    SVector v(*this);
+    --(*this);
+    return v;
+  }
+
+  // T* mutators
+  void operator=(const T *v) { memcpy(data, v, sizeof(T) * 4); }
+
+  // scalar mutators
+  void operator=(T v) { set(v, v, v, v); }
+
+  void operator+=(float v) {
+    x += v;
+    y += v;
+    z += v;
+    w += v;
+  }
+
+  void operator-=(float v) {
+    x -= v;
+    y -= v;
+    z -= v;
+    w -= v;
+  }
+
+  void operator*=(float v) {
+    x *= v;
+    y *= v;
+    z *= v;
+    w *= v;
+  }
+
+  void operator/=(float v) {
+    x /= v;
+    y /= v;
+    z /= v;
+    w /= v;
+  }
+
+  // vector mutators
+  void operator=(const SVector &v) { memcpy(data, v.data, sizeof(T) * 4); }
+
+  void operator+=(const SVector &v) {
+    x += v.x;
+    y += v.y;
+    z += v.z;
+    w += v.w;
+  }
+
+  void operator-=(const SVector &v) {
+    x -= v.x;
+    y -= v.y;
+    z -= v.z;
+    w -= v.w;
+  }
+
+  void operator*=(const SVector &v) {
+    x *= v.x;
+    y *= v.y;
+    z *= v.z;
+    w *= v.w;
+  }
+
+  void operator/=(const SVector &v) {
+    x /= v.x;
+    y /= v.y;
+    z /= v.z;
+    w /= v.w;
   }
 
   void print() {
@@ -63,13 +141,57 @@ class SVector {
   }
 
  private:
-  void set(T x, T y, T z, T w = 0) {
-    data[0] = x;
-    data[1] = y;
-    data[2] = z;
-    data[3] = w;
+  void set(T vx, T vy, T vz, T vw = 0) {
+    x = vx;
+    y = vy;
+    z = vz;
+    w = vw;
   }
 };
+
+// binary operators
+// ================= (+) ====================
+template <typename T, typename K>
+SVector<T> operator+(K k, const SVector<T> &v) {
+  SVector<T> w(k);
+  w += v;
+  return w;
+}
+
+template <typename T, typename K>
+SVector<T> operator+(const SVector<T> &v, K k) {
+  SVector<T> w(k);
+  w += v;
+  return w;
+}
+
+// inline SVector<float> operator+(const SVector<float> &v, const SVector<float> &w) {
+//   float4 u;
+//   u.xmm = _mm_add_ps(v.xmm, w.xmm);
+//   return u;
+//}
+
+//================= (-) ====================
+template <typename T, typename K>
+SVector<T> operator-(K k, const SVector<T> &v) {
+  SVector<T> w(k);
+  w -= v;
+  return w;
+}
+
+template <typename T, typename K>
+SVector<T> operator-(const SVector<T> &v, K k) {
+  SVector<T> w(v);
+  w -= k;
+  return w;
+}
+
+template <typename T>
+SVector<T> operator-(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> t(v);
+  t -= w;
+  return t;
+}
 
 typedef SVector<float> SVectorf;
 
