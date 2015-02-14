@@ -136,6 +136,23 @@ class SVector {
     w /= v.w;
   }
 
+  // math
+  T norm() { return sqrt(x * x + y * y + z * z + w * w); }
+
+  T norm2() { return x * x + y * y + z * z + w * w; }
+
+  void normalize() {
+    T n = norm();
+    if (fabs(n) > 0.00001) *this /= n;
+  }
+
+  // string
+  const std::string str() {
+    std::ostringstream output;
+    output << "[" << x << ", " << y << ", " << z << ", " << w << "]";
+    return output.str();
+  }
+
   void print() {
     std::cout << "[" << x << ", " << y << ", " << z << ", " << w << "]\n";
   }
@@ -165,11 +182,12 @@ SVector<T> operator+(const SVector<T> &v, K k) {
   return w;
 }
 
-// inline SVector<float> operator+(const SVector<float> &v, const SVector<float> &w) {
-//   float4 u;
-//   u.xmm = _mm_add_ps(v.xmm, w.xmm);
-//   return u;
-//}
+template <typename T>
+SVector<T> operator+(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> t(v);
+  t += w;
+  return t;
+}
 
 //================= (-) ====================
 template <typename T, typename K>
@@ -191,6 +209,84 @@ SVector<T> operator-(const SVector<T> &v, const SVector<T> &w) {
   SVector<T> t(v);
   t -= w;
   return t;
+}
+
+//================= (*) ====================
+template <typename T, typename K>
+SVector<T> operator*(K k, const SVector<T> &v) {
+  SVector<T> w(k);
+  w *= v;
+  return w;
+}
+
+template <typename T, typename K>
+SVector<T> operator*(const SVector<T> &v, K k) {
+  SVector<T> w(v);
+  w *= k;
+  return w;
+}
+
+template <typename T>
+SVector<T> operator*(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> t(v);
+  t *= w;
+  return t;
+}
+
+//================= (/) ====================
+template <typename T, typename K>
+SVector<T> operator/(K k, const SVector<T> &v) {
+  SVector<T> w(k);
+  w /= v;
+  return w;
+}
+
+template <typename T, typename K>
+SVector<T> operator/(const SVector<T> &v, K k) {
+  SVector<T> w(v);
+  w /= k;
+  return w;
+}
+
+template <typename T>
+SVector<T> operator/(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> t(v);
+  t /= w;
+  return t;
+}
+
+template <typename T>
+T dot3d(const SVector<T> &v, const SVector<T> &w) {
+  return v.x * w.x + v.y * w.y + v.z * w.z;
+}
+
+template <typename T>
+T dot(const SVector<T> &v, const SVector<T> &w) {
+  return v.x * w.x + v.y * w.y + v.z * w.z + v.w * w.w;
+}
+
+template <typename T>
+SVector<T> cross3d(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> x(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z,
+               v.x * w.y - v.y * w.x);
+  return x;
+}
+
+template <typename T>
+SVector<T> normal3d(const SVector<T> &v, const SVector<T> &w) {
+  SVector<T> x = cross3d(v, w);
+  x.normalize();
+  return x;
+}
+
+template <typename T>
+SVector<T> sqrt(const SVector<T> &v) { 
+  SVector<T> w;
+  w.x = std::sqrt(v.x);
+  w.y = std::sqrt(v.y);
+  w.z = std::sqrt(v.z);
+  w.w = std::sqrt(v.w);
+  return w;
 }
 
 typedef SVector<float> SVectorf;

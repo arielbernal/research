@@ -138,7 +138,7 @@ TEST_F(SVectorfTest, ScalarMutators) {
   b = 3;
   compare(b, 3, 3, 3, 3);
   b(1, 2, 3, 4);
-  // SVector &operator+=(float v) 
+  // SVector &operator+=(float v)
   b += 5;
   compare(b, 6, 7, 8, 9);
   b -= 5;
@@ -166,29 +166,103 @@ TEST_F(SVectorfTest, VectorMutators) {
   compare(b, 2, 3, 4, 5);
 }
 
-
 TEST_F(SVectorfTest, BinaryOperatorsPlus) {
   SVectorf a(2, 3, 4, 5);
   SVectorf b;
-  b = a + 2.0f;  
+  b = a + 2.0f;
   compare(b, 4, 5, 6, 7);
-  b = 2.0f + a;  
-  compare(b, 4, 5, 6, 7);  
+  b = 2.0f + a;
+  compare(b, 4, 5, 6, 7);
+  SVectorf c;
+  c = a + b;
+  compare(c, 6, 8, 10, 12);
 }
 
 TEST_F(SVectorfTest, BinaryOperatorsMinus) {
   SVectorf a(2, 3, 4, 5);
   SVectorf b;
-  b = a - 2.0f;  
+  b = a - 2.0f;
   compare(b, 0, 1, 2, 3);
-  b = 2.0f - a;  
-  compare(b, 0, -1, -2,  -3);  
+  b = 2.0f - a;
+  compare(b, 0, -1, -2, -3);
+  SVectorf c;
+  c = a - b;
+  compare(c, 2, 4, 6, 8);
 }
 
+TEST_F(SVectorfTest, BinaryOperatorsProduct) {
+  SVectorf a(2, 3, 4, 5);
+  SVectorf b;
+  b = a * 2.0f;
+  compare(b, 4, 6, 8, 10);
+  b = 2.0f * a;
+  compare(b, 4, 6, 8, 10);
+  SVectorf c;
+  c = a * b;
+  compare(c, 8, 18, 32, 50);
+}
 
+TEST_F(SVectorfTest, BinaryOperatorsDivision) {
+  SVectorf a(2, 3, 4, 5);
+  SVectorf b;
+  b = a / 2.0f;
+  compare(b, 1, 1.5, 2, 2.5);
+  b = 2.0f / a;
+  compare(b, 1, 2.0f / 3.0f, 2.0f / 4.0f, 2.0f / 5.0f);
+  b(1, 2, 3, 4);
+  SVectorf c;
+  c = a / b;
+  compare(c, 2.0f / 1.0f, 3.0f / 2.0f, 4.0f / 3.0f, 5.0f / 4.0f);
+}
 
+TEST_F(SVectorfTest, Norm) {
+  SVectorf a(3, 4, 0, 0);
+  float n = a.norm();
+  EXPECT_EQ(5, n);
+}
 
+TEST_F(SVectorfTest, Norm2) {
+  SVectorf a(3, 4, 0, 0);
+  float n = a.norm2();
+  EXPECT_EQ(25, n);
+}
 
+TEST_F(SVectorfTest, Normalize) {
+  SVectorf a(3, 4, 0, 0);
+  a.normalize();
+  compare(a, 3.0f / 5.0f, 4.0f / 5.0f, 0, 0);
+}
 
+TEST_F(SVectorfTest, DotProduct) {
+  SVectorf a(1, 2, 3, 4);
+  SVectorf b(2, 3, 4, 5);
+  EXPECT_EQ(20, dot3d(a, b));
+  EXPECT_EQ(40, dot(a, b));
+}
+
+TEST_F(SVectorfTest, CrossProduct3d) {
+  SVectorf a(1, 0, 0);
+  SVectorf b(0, 1, 0);
+  SVectorf c = cross3d(a, b);
+  compare(c, 0, 0, 1, 0);
+}
+
+TEST_F(SVectorfTest, Sqrt) {
+  SVectorf a(9, 4, 16);
+  SVectorf b = sqrt(a);
+  compare(b, 3, 2, 4, 0);
+}
+
+TEST_F(SVectorfTest, Normal3d) {
+  SVectorf a(2, 0, 0);
+  SVectorf b(0, 2, 0);
+  SVectorf c = normal3d(a, b);
+  compare(c, 0, 0, 1, 0);
+}
+
+TEST_F(SVectorfTest, String) {
+  SVectorf a(1, 2, 3, 4);
+  EXPECT_EQ("[1, 2, 3, 4]", a.str());
+}
 
 #endif  // SVECTORGTEST_H
