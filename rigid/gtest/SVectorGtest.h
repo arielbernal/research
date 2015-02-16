@@ -1,6 +1,6 @@
 #ifndef SVECTORGTEST_H
 #define SVECTORGTEST_H
-
+#include "../SVector.h"
 using namespace SVector;
 
 class SVectorfTest : public ::testing::Test {
