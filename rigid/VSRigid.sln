@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VSRigid", "VSRigid.vcxproj", "{0EFACA58-C815-4C81-BB35-EDE3922159A9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gtest", "gtest\Gtest.vcxproj", "{08B8DBBE-F2D2-4888-8642-88738C31AF2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EFACA58-C815-4C81-BB35-EDE3922159A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0EFACA58-C815-4C81-BB35-EDE3922159A9}.Debug|Win32.Build.0 = Debug|Win32
+		{0EFACA58-C815-4C81-BB35-EDE3922159A9}.Release|Win32.ActiveCfg = Release|Win32
+		{0EFACA58-C815-4C81-BB35-EDE3922159A9}.Release|Win32.Build.0 = Release|Win32
+		{08B8DBBE-F2D2-4888-8642-88738C31AF2E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{08B8DBBE-F2D2-4888-8642-88738C31AF2E}.Debug|Win32.Build.0 = Debug|Win32
+		{08B8DBBE-F2D2-4888-8642-88738C31AF2E}.Release|Win32.ActiveCfg = Release|Win32
+		{08B8DBBE-F2D2-4888-8642-88738C31AF2E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
