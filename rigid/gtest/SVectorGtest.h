@@ -1,19 +1,20 @@
 #ifndef SVECTORGTEST_H
 #define SVECTORGTEST_H
-#include "../SVector.h"
-using namespace SVector;
 
-class SVectorfTest : public ::testing::Test {
+#include "../svector.h"
+
+using namespace svector;
+
+class Test_float4 : public ::testing::Test {
  protected:
   virtual void SetUp() {}
-  void compare(const SVectorf &a, float x, float y = 0, float z = 0,
-               float w = 0) {
+  void compare(float x, float y, float z, float w, const float4 &a) {
     EXPECT_EQ(x, a.x);
     EXPECT_EQ(y, a.y);
     EXPECT_EQ(z, a.z);
     EXPECT_EQ(w, a.w);
   }
-  void compare(const SVectorf &A, const SVectorf &B) {
+  void compare(const float4 &A, const float4 &B) {
     EXPECT_EQ(A.x, B.x);
     EXPECT_EQ(A.y, B.y);
     EXPECT_EQ(A.z, B.z);
@@ -21,248 +22,209 @@ class SVectorfTest : public ::testing::Test {
   }
 };
 
-TEST_F(SVectorfTest, Constructors0) {
-  // SVector() : data{0}
-  SVectorf a;
-  compare(a, 0, 0, 0, 0);
+TEST_F(Test_float4, Constructors) {
+  float4 a;
+  compare(0, 0, 0, 0, a);
+  float4 b(1, 2, 3, 4);
+  compare(1, 2, 3, 4, b);
+  float4 c(b);
+  compare(1, 2, 3, 4, c);
+  float4 d(3);
+  compare(3, 3, 3, 3, d);
+  float f[4] = {2, 3, 4, 5};
+  float4 e(f);
+  compare(2, 3, 4, 5, e);
+  __m128 xmm = _mm_set_ps(2, 3, 4, 5);
+  float4 g(xmm);
+  compare(4, 3, 2, 5, g);
 }
 
-TEST_F(SVectorfTest, Constructors1) {
-  // SVector(T x, T y, T z, T w = T(0))
-  SVectorf b(2, 3, 4, 5);
-  compare(b, 2, 3, 4, 5);
-}
-
-TEST_F(SVectorfTest, Constructors1a) {
-  // SVector(T x, T y, T z, T w = T(0))
-  SVectorf b(2, 3, 4);
-  compare(b, 2, 3, 4, 0);
-}
-
-TEST_F(SVectorfTest, Constructors2) {
-  // SVector(const SVector &t)
-  SVectorf b(2, 3, 4, 5);
-  SVectorf c(b);
-  compare(b, c);
-}
-
-TEST_F(SVectorfTest, Constructors3) {
-  // SVector(T v)
-  SVectorf b(2);
-  compare(b, 2, 2, 2, 2);
-}
-
-TEST_F(SVectorfTest, Constructors4) {
-  // SVector(T *v)
-  float v[4] = {2, 3, 4, 5};
-  SVectorf b(v);
-  compare(b, 2, 3, 4, 5);
-}
-
-TEST_F(SVectorfTest, Assignments0) {
-  // void operator()(const SVector &t)
-  SVectorf a(1, 2, 3, 4);
-  SVectorf b;
+TEST_F(Test_float4, Assignment) {
+  float4 a;
+  a(1, 2, 3, 4);
+  compare(1, 2, 3, 4, a);
+  float4 b;
   b(a);
-  compare(b, 1, 2, 3, 4);
+  compare(1, 2, 3, 4, b);
+  float f[4] = {2, 3, 4, 5};
+  float4 e;
+  e(f);
+  compare(2, 3, 4, 5, e);
+  e.clear();
+  compare(0, 0, 0, 0, e);
+  float4 d(2, 3, 4, 5);
+  EXPECT_EQ(4, d[2]);
+  d[1] = 5;
+  compare(2, 5, 4, 5, d);
 }
 
-TEST_F(SVectorfTest, Assignments1) {
-  // void operator()(T x, T y, T z, T w = T(0))
-  SVectorf a(1, 2, 3, 4);
-  a(2, 3, 4);
-  compare(a, 2, 3, 4, 0);
-  a(4);
-  compare(a, 4, 4, 4, 4);
-}
-
-TEST_F(SVectorfTest, Assignments2) {
-  // void clear()
-  SVectorf a(1, 2, 3, 4);
-  a.clear();
-  compare(a, 0);
-}
-
-TEST_F(SVectorfTest, Assignments3) {
-  // T &operator[](size_t i)
-  SVectorf a(1, 2, 3, 4);
-  EXPECT_EQ(3, a[2]);
-  a[1] = 5;
-  compare(a, 1, 5, 3, 4);
-}
-
-TEST_F(SVectorfTest, UnaryOperators0) {
-  SVectorf a(1, 2, 3, 4);
-  SVectorf b;
-  // SVector operator+()
+TEST_F(Test_float4, UnaryOperators) {
+  float4 a(1, 2, 3, 4);
+  float4 b;
+  // float4 &operator+()
   b = +a;
-  compare(b, a);
-  // SVector operator-()
+  compare(a, b);
+  // float4 operator-()
   b = -a;
-  compare(b, -1, -2, -3, -4);
-}
-
-TEST_F(SVectorfTest, UnaryOperators1) {
-  SVectorf a(1, 2, 3, 4);
-  // SVector operator++()
-  ++a;
-  compare(a, 2, 3, 4, 5);
-  // SVector operator--()
-  --a;
-  compare(a, 1, 2, 3, 4);
-}
-
-TEST_F(SVectorfTest, UnaryOperators2) {
-  SVectorf a(1, 2, 3, 4);
-  SVectorf b;
-  // SVector operator++(int)
+  compare(-1, -2, -3, -4, b);
+  // float4 operator++()
+  b = ++a;
+  compare(2, 3, 4, 5, a);
+  compare(2, 3, 4, 5, b);
+  // float4 operator--();
+  b = --a;
+  compare(1, 2, 3, 4, a);
+  compare(1, 2, 3, 4, b);
+  // float4 operator++(int)
   b = a++;
-  compare(a, 2, 3, 4, 5);
-  compare(b, 1, 2, 3, 4);
-  // SVector operator--(int)
+  compare(2, 3, 4, 5, a);
+  compare(1, 2, 3, 4, b);
+  // float4 operator--(int);
   b = a--;
-  compare(a, 1, 2, 3, 4);
-  compare(b, 2, 3, 4, 5);
+  compare(1, 2, 3, 4, a);
+  compare(2, 3, 4, 5, b);
 }
 
-TEST_F(SVectorfTest, Mutators) {
+TEST_F(Test_float4, Mutators) {
   float v[4] = {1, 2, 3, 4};
-  SVectorf b;
+  float4 b;
   b = v;
-  compare(b, 1, 2, 3, 4);
+  compare(1, 2, 3, 4, b);
 }
 
-TEST_F(SVectorfTest, ScalarMutators) {
-  SVectorf b;
-  // void operator=(T v)
+TEST_F(Test_float4, ScalarMutators) {
+  float4 b;
   b = 3;
-  compare(b, 3, 3, 3, 3);
+  compare(3, 3, 3, 3, b);
   b(1, 2, 3, 4);
-  // SVector &operator+=(float v)
   b += 5;
-  compare(b, 6, 7, 8, 9);
+  compare(6, 7, 8, 9, b);
   b -= 5;
-  compare(b, 1, 2, 3, 4);
+  compare(1, 2, 3, 4, b);
   b *= 2;
-  compare(b, 2, 4, 6, 8);
+  compare(2, 4, 6, 8, b);
   b /= 2;
-  compare(b, 1, 2, 3, 4);
+  compare(1, 2, 3, 4, b);
 }
 
-TEST_F(SVectorfTest, VectorMutators) {
-  SVectorf b;
-  SVectorf a(2, 3, 4, 5);
-  SVectorf c(2, 2, 2, 2);
-  // void operator=(T v)
+TEST_F(Test_float4, VectorMutators) {
+  float4 b;
+  float4 a(2, 3, 4, 5);
+  float4 c(2, 2, 2, 2);
   b = a;
-  compare(b, 2, 3, 4, 5);
+  compare(2, 3, 4, 5, b);
   b += c;
-  compare(b, 4, 5, 6, 7);
+  compare(4, 5, 6, 7, b);
   b -= c;
-  compare(b, 2, 3, 4, 5);
+  compare(2, 3, 4, 5, b);
   b *= c;
-  compare(b, 4, 6, 8, 10);
+  compare(4, 6, 8, 10, b);
   b /= c;
-  compare(b, 2, 3, 4, 5);
+  compare(2, 3, 4, 5, b);
 }
 
-TEST_F(SVectorfTest, BinaryOperatorsPlus) {
-  SVectorf a(2, 3, 4, 5);
-  SVectorf b;
+TEST_F(Test_float4, BinaryOperatorsPlus) {
+  float4 a(2, 3, 4, 5);
+  float4 b;
   b = a + 2.0f;
-  compare(b, 4, 5, 6, 7);
+  compare(4, 5, 6, 7, b);
   b = 2.0f + a;
-  compare(b, 4, 5, 6, 7);
-  SVectorf c;
+  compare(4, 5, 6, 7, b);
+  float4 c;
   c = a + b;
-  compare(c, 6, 8, 10, 12);
+  compare(6, 8, 10, 12, c);
 }
 
-TEST_F(SVectorfTest, BinaryOperatorsMinus) {
-  SVectorf a(2, 3, 4, 5);
-  SVectorf b;
+TEST_F(Test_float4, BinaryOperatorsMinus) {
+  float4 a(2, 3, 4, 5);
+  float4 b;
   b = a - 2.0f;
-  compare(b, 0, 1, 2, 3);
+  compare(0, 1, 2, 3, b);
   b = 2.0f - a;
-  compare(b, 0, -1, -2, -3);
-  SVectorf c;
+  compare(0, -1, -2, -3, b);
+  float4 c;
   c = a - b;
-  compare(c, 2, 4, 6, 8);
+  compare(2, 4, 6, 8, c);
 }
 
-TEST_F(SVectorfTest, BinaryOperatorsProduct) {
-  SVectorf a(2, 3, 4, 5);
-  SVectorf b;
+TEST_F(Test_float4, BinaryOperatorsProduct) {
+  float4 a(2, 3, 4, 5);
+  float4 b;
   b = a * 2.0f;
-  compare(b, 4, 6, 8, 10);
+  compare(4, 6, 8, 10, b);
   b = 2.0f * a;
-  compare(b, 4, 6, 8, 10);
-  SVectorf c;
+  compare(4, 6, 8, 10, b);
+  float4 c;
   c = a * b;
-  compare(c, 8, 18, 32, 50);
+  compare(8, 18, 32, 50, c);
 }
 
-TEST_F(SVectorfTest, BinaryOperatorsDivision) {
-  SVectorf a(2, 3, 4, 5);
-  SVectorf b;
+TEST_F(Test_float4, BinaryOperatorsDivision) {
+  float4 a(2, 3, 4, 5);
+  float4 b;
   b = a / 2.0f;
-  compare(b, 1, 1.5, 2, 2.5);
+  compare(1, 1.5, 2, 2.5, b);
   b = 2.0f / a;
-  compare(b, 1, 2.0f / 3.0f, 2.0f / 4.0f, 2.0f / 5.0f);
+  compare(1, 2.0f / 3.0f, 2.0f / 4.0f, 2.0f / 5.0f, b);
   b(1, 2, 3, 4);
-  SVectorf c;
+  float4 c;
   c = a / b;
-  compare(c, 2.0f / 1.0f, 3.0f / 2.0f, 4.0f / 3.0f, 5.0f / 4.0f);
+  compare(2.0f / 1.0f, 3.0f / 2.0f, 4.0f / 3.0f, 5.0f / 4.0f, c);
 }
 
-TEST_F(SVectorfTest, Norm) {
-  SVectorf a(3, 4, 0, 0);
+TEST_F(Test_float4, Norm) {
+  float4 a(3, 4, 0, 0);
   float n = a.norm();
   EXPECT_EQ(5, n);
 }
 
-TEST_F(SVectorfTest, Norm2) {
-  SVectorf a(3, 4, 0, 0);
+TEST_F(Test_float4, Norm2) {
+  float4 a(3, 4, 0, 0);
   float n = a.norm2();
   EXPECT_EQ(25, n);
 }
 
-TEST_F(SVectorfTest, Normalize) {
-  SVectorf a(3, 4, 0, 0);
+TEST_F(Test_float4, Normalize) {
+  float4 a(3, 4, 0, 0);
   a.normalize();
-  compare(a, 3.0f / 5.0f, 4.0f / 5.0f, 0, 0);
+  compare(3.0f / 5.0f, 4.0f / 5.0f, 0, 0, a);
 }
 
-TEST_F(SVectorfTest, DotProduct) {
-  SVectorf a(1, 2, 3, 4);
-  SVectorf b(2, 3, 4, 5);
+TEST_F(Test_float4, StreamOperator) {
+  float4 a(3, 4, 5, 6);
+  EXPECT_EQ("[3, 4, 5, 6]", a.str());
+}
+
+TEST_F(Test_float4, DotProduct) {
+  float4 a(1, 2, 3, 4);
+  float4 b(2, 3, 4, 5);
   EXPECT_EQ(20, dot3d(a, b));
   EXPECT_EQ(40, dot(a, b));
 }
 
-TEST_F(SVectorfTest, CrossProduct3d) {
-  SVectorf a(1, 0, 0);
-  SVectorf b(0, 1, 0);
-  SVectorf c = cross3d(a, b);
-  compare(c, 0, 0, 1, 0);
+TEST_F(Test_float4, CrossProduct3d) {
+  float4 a(1, 0, 0);
+  float4 b(0, 1, 0);
+  float4 c = cross3d(a, b);
+  compare(0, 0, 1, 0, c);
+
+  a(1, 2, 3, 4);
+  b(5, 6, 7, 8);
+  c = cross3d(a, b);
+  compare(-4, 8, -4, 0, c);
 }
 
-TEST_F(SVectorfTest, Sqrt) {
-  SVectorf a(9, 4, 16);
-  SVectorf b = sqrt(a);
-  compare(b, 3, 2, 4, 0);
+TEST_F(Test_float4, Normal3d) {
+  float4 a(2, 0, 0);
+  float4 b(0, 2, 0);
+  float4 c = normal3d(a, b);
+  compare(0, 0, 1, 0, c);
 }
 
-TEST_F(SVectorfTest, Normal3d) {
-  SVectorf a(2, 0, 0);
-  SVectorf b(0, 2, 0);
-  SVectorf c = normal3d(a, b);
-  compare(c, 0, 0, 1, 0);
-}
-
-TEST_F(SVectorfTest, String) {
-  SVectorf a(1, 2, 3, 4);
-  EXPECT_EQ("[1, 2, 3, 4]", a.str());
+TEST_F(Test_float4, Sqrt) {
+  float4 a(9, 4, 16);
+  float4 b = sqrt(a);
+  compare(3, 2, 4, 0, b);
 }
 
 #endif  // SVECTORGTEST_H

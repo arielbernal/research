@@ -1,9 +1,12 @@
 #include <iostream>
-#include "GMath.h"
+#include <stdio.h>
 
+//#include "svector.h"
+
+//using namespace svector;
 
 int main() {
-  float a[3] = {1, 2, 3};
-  //float v = mean(a, 3);
-  std::cout << "Test\n";
+  float a;
+  //__m128 *p = &a.xmm;
+  printf("%x\n", &a);
 }
