@@ -152,12 +152,18 @@ class float4 {
     }
   }
 
+  // Quaternions
+  float4 qconjugate() {
+    WALIGN __m128 qs = _mm_set_ps(-z, -y, -x, w);
+    return float4(qs);
+  }
+
   // quaternions functions
-  float4 &quaternion_mult(const float4 &q) {
-    __m128 q0 = _mm_set_ps(q.y, -q.z, q.w, q.x);
-    __m128 q1 = _mm_set_ps(-q.x, q.w, q.z, q.y);
-    __m128 q2 = _mm_set_ps(q.w, q.x, -q.y, q.z);
-    __m128 q3 = _mm_set_ps(-q.z, -q.y, -q.x, q.w);
+  void qmult(const float4 &q) {
+    WALIGN __m128 q0 = _mm_set_ps(q.y, -q.z, q.w, q.x);
+    WALIGN __m128 q1 = _mm_set_ps(-q.x, q.w, q.z, q.y);
+    WALIGN __m128 q2 = _mm_set_ps(q.w, q.x, -q.y, q.z);
+    WALIGN __m128 q3 = _mm_set_ps(-q.z, -q.y, -q.x, q.w);
 
     float tx = _mm_cvtss_f32(_mm_dp_ps(q0, xmm, 0xf1));
     float ty = _mm_cvtss_f32(_mm_dp_ps(q1, xmm, 0xf1));
@@ -165,7 +171,6 @@ class float4 {
     float tw = _mm_cvtss_f32(_mm_dp_ps(q3, xmm, 0xf1));
 
     xmm = _mm_set_ps(tz, ty, tx, tw);
-    return *this;
   }
 
   // string
@@ -357,11 +362,13 @@ float4 sqrt(const float4 &v) {
   return float4(xmm);
 }
 
-// inline float4 quaternion_mult(const float4 &v, const float4 &w) {
-//  float4 x(v);
-//  x.quaternion_mult(w);
-//  return x;
-//}
+// Quaternions
+// Multiplication
+float4 qmult(const float4 &v, const float4 &w) {
+  float4 x(v);
+  x.qmult(w);
+  return x;
+}
 
 }  // namespace svector
 

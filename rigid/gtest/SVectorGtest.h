@@ -227,4 +227,20 @@ TEST_F(Test_float4, Sqrt) {
   compare(3, 2, 4, 0, b);
 }
 
+TEST_F(Test_float4, QuaternionConjugate) {
+  float4 a(9, 4, 16, 3);
+  float4 b = a.qconjugate();
+  compare(-9, -4, -16, 3, b);
+}
+
+TEST_F(Test_float4, QuaternionMultiplication) {
+  float4 a(9, 4, 16, 3);
+  float4 b = a.qconjugate();
+  a.qmult(b);
+  compare(0, 0, 0, 9 * 9 + 4 * 4 + 16 * 16 + 3 * 3, a);
+  a(9, 4, 16, 3);
+  float4 c = qmult(a, b);
+  compare(0, 0, 0, 9 * 9 + 4 * 4 + 16 * 16 + 3 * 3, c);
+}
+
 #endif  // SVECTORGTEST_H
