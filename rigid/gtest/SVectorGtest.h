@@ -5,6 +5,9 @@
 
 using namespace svector;
 
+#define PI 3.14159265358f
+#define EPSILON 10e-5f
+
 class Test_float4 : public ::testing::Test {
  protected:
   virtual void SetUp() {}
@@ -14,11 +17,25 @@ class Test_float4 : public ::testing::Test {
     EXPECT_EQ(z, a.z);
     EXPECT_EQ(w, a.w);
   }
+  void compare(float x, float y, float z, float w, const float4 &a,
+               const float epsilon) {
+    EXPECT_NEAR(x, a.x, epsilon);
+    EXPECT_NEAR(y, a.y, epsilon);
+    EXPECT_NEAR(z, a.z, epsilon);
+    EXPECT_NEAR(w, a.w, epsilon);
+  }
+
   void compare(const float4 &A, const float4 &B) {
     EXPECT_EQ(A.x, B.x);
     EXPECT_EQ(A.y, B.y);
     EXPECT_EQ(A.z, B.z);
     EXPECT_EQ(A.w, B.w);
+  }
+  void compare(const float4 &A, const float4 &B, const float epsilon) {
+    EXPECT_NEAR(A.x, B.x, epsilon);
+    EXPECT_NEAR(A.y, B.y, epsilon);
+    EXPECT_NEAR(A.z, B.z, epsilon);
+    EXPECT_NEAR(A.w, B.w, epsilon);
   }
 };
 
@@ -241,6 +258,57 @@ TEST_F(Test_float4, QuaternionMultiplication) {
   a(9, 4, 16, 3);
   float4 c = qmult(a, b);
   compare(0, 0, 0, 9 * 9 + 4 * 4 + 16 * 16 + 3 * 3, c);
+  float4 d(9, 4, 16, 3);
+  float4 e(0, 0, 0, 1);
+  d.qmult(e);
+  compare(9, 4, 16, 3, d);
+}
+
+TEST_F(Test_float4, QuaternionEuler) {
+  float4 a(9, 4, 16, 3);
+  a.euler(0, 0, 0);
+  compare(0, 0, 0, 1, a);
+  float4 b = euler(PI, 0, 0);
+  compare(1, 0, 0, 0, b, EPSILON);
+}
+
+TEST_F(Test_float4, QuaternionRotation) {
+  {
+    float4 q;
+    q.euler(PI / 2, 0, 0);
+    float4 qs = q.qconjugate();
+    float4 v(0, 1, 0, 0);
+    float4 c = qmult(q, qmult(v, qs));
+    compare(0, 0, 1, 0, c, EPSILON);
+  }
+  {
+    float4 q;
+    q.euler(PI / 2, PI / 2, PI / 2);
+    float4 qs = q.qconjugate();
+    float4 v(0, 1, 0, 0);
+    v.qmult(qs);
+    q.qmult(v);
+    compare(0, 1, 0, 0, q, EPSILON);
+  }
+  {
+    float4 q = euler(PI / 2, PI / 2, -PI / 2);
+    float4 qs = q.qconjugate();
+    float4 v(0, 1, 0, 0);
+    qs.qmultl(v);
+    qs.qmultl(q);
+    compare(0, -1, 0, 0, qs, EPSILON);
+  }
+}
+
+TEST_F(Test_float4, QuaternionAxis) {
+  float4 q = euler(PI / 2, PI / 2, 0);
+  float4 qs = q.qconjugate();
+  float4 v(0, 1, 0, 0);
+  float4 vr = qmult(q, qmult(v, qs));
+  std::cout << q << std::endl;
+  std::cout << "vr = " << vr<< std::endl;
+  float4 va = q.axis();
+  std::cout << va << " " << va.w / PI * 180 << std::endl;
 }
 
 #endif  // SVECTORGTEST_H
