@@ -159,18 +159,63 @@ class float4 {
   }
 
   // quaternions functions
+  // right multiplication p = p * q
   void qmult(const float4 &q) {
-    WALIGN __m128 q0 = _mm_set_ps(q.y, -q.z, q.w, q.x);
-    WALIGN __m128 q1 = _mm_set_ps(-q.x, q.w, q.z, q.y);
-    WALIGN __m128 q2 = _mm_set_ps(q.w, q.x, -q.y, q.z);
-    WALIGN __m128 q3 = _mm_set_ps(-q.z, -q.y, -q.x, q.w);
+    WALIGN __m128 qw = _mm_set_ps(-q.z, -q.y, -q.x, q.w);
+    WALIGN __m128 qx = _mm_set_ps(-q.y, q.z, q.w, q.x);
+    WALIGN __m128 qy = _mm_set_ps(q.x, q.w, -q.z, q.y);
+    WALIGN __m128 qz = _mm_set_ps(q.w, -q.x, q.y, q.z);
 
-    float tx = _mm_cvtss_f32(_mm_dp_ps(q0, xmm, 0xf1));
-    float ty = _mm_cvtss_f32(_mm_dp_ps(q1, xmm, 0xf1));
-    float tz = _mm_cvtss_f32(_mm_dp_ps(q2, xmm, 0xf1));
-    float tw = _mm_cvtss_f32(_mm_dp_ps(q3, xmm, 0xf1));
+    float tw = _mm_cvtss_f32(_mm_dp_ps(qw, xmm, 0xf1));
+    float tx = _mm_cvtss_f32(_mm_dp_ps(qx, xmm, 0xf1));
+    float ty = _mm_cvtss_f32(_mm_dp_ps(qy, xmm, 0xf1));
+    float tz = _mm_cvtss_f32(_mm_dp_ps(qz, xmm, 0xf1));
 
     xmm = _mm_set_ps(tz, ty, tx, tw);
+  }
+
+  // left multiplication p = q * p
+  void qmultl(const float4 &q) {
+    WALIGN __m128 pw = _mm_set_ps(-z, -y, -x, w);
+    WALIGN __m128 px = _mm_set_ps(-y, z, w, x);
+    WALIGN __m128 py = _mm_set_ps(x, w, -z, y);
+    WALIGN __m128 pz = _mm_set_ps(w, -x, y, z);
+
+    float tw = _mm_cvtss_f32(_mm_dp_ps(pw, q.xmm, 0xf1));
+    float tx = _mm_cvtss_f32(_mm_dp_ps(px, q.xmm, 0xf1));
+    float ty = _mm_cvtss_f32(_mm_dp_ps(py, q.xmm, 0xf1));
+    float tz = _mm_cvtss_f32(_mm_dp_ps(pz, q.xmm, 0xf1));
+
+    xmm = _mm_set_ps(tz, ty, tx, tw);
+  }
+
+  // euler to quat
+  void euler(float xe, float ye, float ze) {
+    float xe2 = xe / 2;  // roll
+    float ye2 = ye / 2;  // pitch
+    float ze2 = ze / 2;  // yaw
+    float cr = cos(xe2);
+    float cp = cos(ye2);
+    float cy = cos(ze2);
+    float sr = sin(xe2);
+    float sp = sin(ye2);
+    float sy = sin(ze2);
+    float cpcy = cp * cy;
+    float spsy = sp * sy;
+    float spcy = sp * cy;
+    float cpsy = cp * sy;
+    float tw = cr * cpcy + sr * spsy;
+    float tx = sr * cpcy - cr * spsy;
+    float ty = cr * spcy + sr * cpsy;
+    float tz = cr * cpsy - sr * spcy;
+    xmm = _mm_set_ps(tz, ty, tx, tw);
+  }
+
+  float4 axis() {
+    float4 qtemp(xmm);
+    qtemp.normalize();  // |qtemp|^2 = 1
+    qtemp.w = acos(qtemp.w) * 2;
+    return qtemp;
   }
 
   // string
@@ -188,30 +233,6 @@ std::ostream &operator<<(std::ostream &os, const float4 &v) {
   return os;
 }
 
-//
-//
-
-//
-//  inline void euler(float xe, float ye, float ze) {
-//    __m128 mmh = _mm_set_ps(ze, ye, xe, 0);
-//    mmh = _mm_div_ps(mmh, mm_two);
-//#if WIN32
-//    __declspec(align(16)) float h[4] = {0};
-//#else
-//    float h[4] = {0};
-//#endif
-//    _mm_store_ps(h, mmh);
-//
-//    float c[3] = {float(cos(h[1])), float(cos(h[2])), float(cos(h[3]))};
-//    float s[3] = {float(sin(h[1])), float(sin(h[2])), float(sin(h[3]))};
-//    float tw = c[0] * c[1] * c[2] + s[0] * s[2] * s[1];
-//    float tx = s[0] * c[1] * c[2] - c[0] * s[2] * s[1];
-//    float ty = c[0] * s[1] * c[2] + s[0] * c[2] * s[1];
-//    float tz = c[0] * c[1] * s[2] - s[0] * s[2] * c[1];
-//    xmm = _mm_set_ps(tz, ty, tx, tw);
-//    normalize();
-//  }
-//
 //  inline void rotationMatrix(float *Matrix) {
 //    float xx = x * x;
 //    float xy = x * y;
@@ -364,10 +385,49 @@ float4 sqrt(const float4 &v) {
 
 // Quaternions
 // Multiplication
-float4 qmult(const float4 &v, const float4 &w) {
-  float4 x(v);
-  x.qmult(w);
-  return x;
+float4 qmult(const float4 &p, const float4 &q) {
+  WALIGN __m128 qw = _mm_set_ps(-q.z, -q.y, -q.x, q.w);
+  WALIGN __m128 qx = _mm_set_ps(-q.y, q.z, q.w, q.x);
+  WALIGN __m128 qy = _mm_set_ps(q.x, q.w, -q.z, q.y);
+  WALIGN __m128 qz = _mm_set_ps(q.w, -q.x, q.y, q.z);
+
+  float tw = _mm_cvtss_f32(_mm_dp_ps(qw, p.xmm, 0xf1));
+  float tx = _mm_cvtss_f32(_mm_dp_ps(qx, p.xmm, 0xf1));
+  float ty = _mm_cvtss_f32(_mm_dp_ps(qy, p.xmm, 0xf1));
+  float tz = _mm_cvtss_f32(_mm_dp_ps(qz, p.xmm, 0xf1));
+
+  WALIGN __m128 xmm = _mm_set_ps(tz, ty, tx, tw);
+  return float4(xmm);
+}
+
+float4 euler(float xe, float ye, float ze) {
+  float xe2 = xe / 2;  // roll
+  float ye2 = ye / 2;  // pitch
+  float ze2 = ze / 2;  // yaw
+  float cr = cos(xe2);
+  float cp = cos(ye2);
+  float cy = cos(ze2);
+  float sr = sin(xe2);
+  float sp = sin(ye2);
+  float sy = sin(ze2);
+  float cpcy = cp * cy;
+  float spsy = sp * sy;
+  float spcy = sp * cy;
+  float cpsy = cp * sy;
+  float tw = cr * cpcy + sr * spsy;
+  float tx = sr * cpcy - cr * spsy;
+  float ty = cr * spcy + sr * cpsy;
+  float tz = cr * cpsy - sr * spcy;
+  float4 v(tx, ty, tz, tw);
+  v.normalize();
+  return v;
+}
+
+float4 axis(const float4 &q) {
+  float4 qtemp(q.xmm);
+  qtemp.normalize();  // |qtemp|^2 = 1
+  qtemp.w = acos(qtemp.w) * 2;
+  return qtemp;
 }
 
 }  // namespace svector
