@@ -142,6 +142,10 @@ class float4 {
   // math
   float norm() { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, 0xF1))); }
 
+  float norm3d() {
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm, xmm, 0xE1)));
+  }
+
   float norm2() { return _mm_cvtss_f32(_mm_dp_ps(xmm, xmm, 0xF1)); }
 
   void normalize() {
@@ -212,10 +216,60 @@ class float4 {
   }
 
   float4 axis() {
-    float4 qtemp(xmm);
-    qtemp.normalize();  // |qtemp|^2 = 1
-    qtemp.w = acos(qtemp.w) * 2;
-    return qtemp;
+    float4 q(xmm);
+    q.normalize();
+    float temp_angle = acos(q.w) * 2;
+    float vnorm = sqrt(1 - q.w * q.w);
+    WALIGN __m128 t;
+    if (vnorm < 0.001) {
+      t = _mm_set_ps(0, 0, 1, 0);
+    } else {
+      WALIGN __m128 n = _mm_set1_ps(vnorm);
+      t = _mm_div_ps(q.xmm, n);
+    }
+    float4 ret(t);
+    ret.w = temp_angle;
+    return ret;
+  }
+
+  void rotationMatrix(float *Matrix) {
+    float xx = x * x;
+    float xy = x * y;
+    float xz = x * z;
+    float xw = w * x;
+    float yy = y * y;
+    float yz = y * z;
+    float yw = w * y;
+    float zz = z * z;
+    float zw = w * z;
+
+    Matrix[0] = 1 - 2 * (yy + zz);
+    Matrix[1] = 2 * (xy - zw);
+    Matrix[2] = 2 * (xz + yw);
+
+    Matrix[4] = 2 * (xy + zw);
+    Matrix[5] = 1 - 2 * (xx + zz);
+    Matrix[6] = 2 * (yz - xw);
+
+    Matrix[8] = 2 * (xz - yw);
+    Matrix[9] = 2 * (yz + xw);
+    Matrix[10] = 1 - 2 * (xx + yy);
+
+    Matrix[3] = Matrix[7] = Matrix[11] = Matrix[12] = Matrix[13] = Matrix[14] =
+        0;
+    Matrix[15] = 1;
+  }
+
+  void mult(const float M[]) {
+    WALIGN __m128 r0 = _mm_set_ps(M[2], M[1], M[0], M[3]);
+    WALIGN __m128 r1 = _mm_set_ps(M[6], M[5], M[4], M[7]);
+    WALIGN __m128 r2 = _mm_set_ps(M[10], M[9], M[8], M[11]);
+    WALIGN __m128 r3 = _mm_set_ps(M[14], M[13], M[12], M[15]);
+    float x = _mm_cvtss_f32(_mm_dp_ps(r0, xmm, 0xF1));
+    float y = _mm_cvtss_f32(_mm_dp_ps(r1, xmm, 0xF1));
+    float z = _mm_cvtss_f32(_mm_dp_ps(r2, xmm, 0xF1));
+    float w = _mm_cvtss_f32(_mm_dp_ps(r3, xmm, 0xF1));
+    xmm = _mm_set_ps(z, y, x, w);
   }
 
   // string
@@ -233,52 +287,6 @@ std::ostream &operator<<(std::ostream &os, const float4 &v) {
   return os;
 }
 
-//  inline void rotationMatrix(float *Matrix) {
-//    float xx = x * x;
-//    float xy = x * y;
-//    float xz = x * z;
-//    float xw = w * x;
-//    float yy = y * y;
-//    float yz = y * z;
-//    float yw = w * y;
-//    float zz = z * z;
-//    float zw = w * z;
-//
-//    Matrix[0] = 1 - 2 * (yy + zz);
-//    Matrix[1] = 2 * (xy - zw);
-//    Matrix[2] = 2 * (xz + yw);
-//
-//    Matrix[4] = 2 * (xy + zw);
-//    Matrix[5] = 1 - 2 * (xx + zz);
-//    Matrix[6] = 2 * (yz - xw);
-//
-//    Matrix[8] = 2 * (xz - yw);
-//    Matrix[9] = 2 * (yz + xw);
-//    Matrix[10] = 1 - 2 * (xx + yy);
-//
-//    Matrix[3] = Matrix[7] = Matrix[11] = Matrix[12] = Matrix[13] = Matrix[14]
-// =
-//        0;
-//    Matrix[15] = 1;
-//  }
-//
-//  inline float4 axis() {
-//    float temp_angle = acos(w) * 2;
-//    float vnorm = norm(0xE1);
-//    __m128 t;
-//    if (fabs(vnorm) < 0.001) {
-//      t = _mm_set_ps(0, 0, 1, 0);
-//    } else {
-//      __m128 n = _mm_set1_ps(vnorm);
-//      t = _mm_div_ps(xmm, n);
-//    }
-//    float4 ret(t);
-//    ret.w = temp_angle;
-//    return ret;
-//  }
-//
-//};
-//
 const __m128 float4::mm_one = _mm_set1_ps(1.0f);
 const __m128 float4::mm_two = _mm_set1_ps(2.0f);
 
@@ -424,10 +432,14 @@ float4 euler(float xe, float ye, float ze) {
 }
 
 float4 axis(const float4 &q) {
-  float4 qtemp(q.xmm);
-  qtemp.normalize();  // |qtemp|^2 = 1
-  qtemp.w = acos(qtemp.w) * 2;
-  return qtemp;
+  float4 qtemp(q);
+  return qtemp.axis();
+}
+
+float4 mult(const float M[], const float4 &q) {
+  float4 r(q);
+  r.mult(M);
+  return float4(r);
 }
 
 }  // namespace svector

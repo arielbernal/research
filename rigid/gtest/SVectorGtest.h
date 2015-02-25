@@ -195,6 +195,12 @@ TEST_F(Test_float4, Norm) {
   EXPECT_EQ(5, n);
 }
 
+TEST_F(Test_float4, Norm3d) {
+  float4 a(3, 4, 0, 4);
+  float n = a.norm3d();
+  EXPECT_EQ(5, n);
+}
+
 TEST_F(Test_float4, Norm2) {
   float4 a(3, 4, 0, 0);
   float n = a.norm2();
@@ -300,15 +306,64 @@ TEST_F(Test_float4, QuaternionRotation) {
   }
 }
 
+float4 rotateVector(const float4 &v, const float4 &axis) {
+  float x = axis.x;
+  float y = axis.y;
+  float z = axis.z;
+
+  float x2 = x * x;
+  float y2 = y * y;
+  float z2 = z * z;
+
+  float xy = x * y;
+  float yz = y * z;
+  float xz = x * z;
+
+  float c = cos(axis.w);
+  float c1 = 1 - c;
+  float s = sin(axis.w);
+
+  float4 r0(x2 + c * (1 - x2), xy * c1 - z * s, xy * c1 + y * s, 0);
+  float4 r1(xy * c1 + z * s, y2 + c * (1 - y2), yz * c1 - x * s, 0);
+  float4 r2(xz * c1 - y * s, yz * c1 + x * s, z2 + c * (1 - z2), 0);
+  float4 r3(0, 0, 0, 1);
+  float4 res(dot(r0, v), dot(r1, v), dot(r2, v), dot(r3, v));
+  return res;
+}
+
 TEST_F(Test_float4, QuaternionAxis) {
-  float4 q = euler(PI / 2, PI / 2, 0);
-  float4 qs = q.qconjugate();
-  float4 v(0, 1, 0, 0);
-  float4 vr = qmult(q, qmult(v, qs));
-  std::cout << q << std::endl;
-  std::cout << "vr = " << vr<< std::endl;
-  float4 va = q.axis();
-  std::cout << va << " " << va.w / PI * 180 << std::endl;
+  {
+    float4 q = euler(PI / 2, PI / 2, PI / 2);
+    float4 va = q.axis();
+    float4 v(1, 0, 0, 0);
+    float4 r = rotateVector(v, va);
+    compare(0, 0, -1, 0, r, EPSILON);
+  }
+  {
+    float4 q = euler(PI / 4, 0, 0);
+    float4 va = q.axis();
+    float4 v(0, 2 / sqrt(2), 0, 0);
+    float4 r = rotateVector(v, va);
+    compare(0, 1, 1, 0, r, EPSILON);
+  }
+}
+
+TEST_F(Test_float4, MatrixMult) {
+  float4 q(1, 2, 3, 4);
+  float M[16] = {2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2};
+  float4 r = mult(M, q);
+  compare(2, 4, 6, 8, r);
+  r.mult(M);
+  compare(4, 8, 12, 16, r);
+}
+
+TEST_F(Test_float4, QuaternionRotationMatrix) {
+  float4 q = euler(PI / 2, PI / 2, PI / 2);
+  float R[16];
+  q.rotationMatrix(R);
+  float4 v(1, 0, 0, 0);
+  float4 r = mult(R, v);
+  compare(0, 0, -1, 0, r, EPSILON);
 }
 
 #endif  // SVECTORGTEST_H
