@@ -24,6 +24,7 @@ class float4 {
 
   static const __m128 mm_one;
   static const __m128 mm_two;
+  static const __m128 qI;
 
   // constructors
   float4() : xmm(_mm_setzero_ps()) {}
@@ -219,7 +220,7 @@ class float4 {
     float4 q(xmm);
     q.normalize();
     float temp_angle = acos(q.w) * 2;
-    float vnorm = sqrt(1 - q.w * q.w);
+    float vnorm = std::sqrt(1 - q.w * q.w);
     WALIGN __m128 t;
     if (vnorm < 0.001) {
       t = _mm_set_ps(0, 0, 1, 0);
@@ -289,6 +290,7 @@ std::ostream &operator<<(std::ostream &os, const float4 &v) {
 
 const __m128 float4::mm_one = _mm_set1_ps(1.0f);
 const __m128 float4::mm_two = _mm_set1_ps(2.0f);
+const __m128 float4::qI = _mm_set_ps(0, 0, 0, 1.0f);
 
 // binary operators
 //================= (+) ====================
@@ -440,6 +442,14 @@ float4 mult(const float M[], const float4 &q) {
   float4 r(q);
   r.mult(M);
   return float4(r);
+}
+
+float4 qrotate(const float4 &q, const float4 &v, bool norm = false) {
+  float4 qt(q);
+  if (norm) qt.normalize();
+  float4 qs = qt.qconjugate();
+  float4 rot = qmult(q, qmult(v, qs));
+  return rot;
 }
 
 }  // namespace svector

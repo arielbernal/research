@@ -366,4 +366,18 @@ TEST_F(Test_float4, QuaternionRotationMatrix) {
   compare(0, 0, -1, 0, r, EPSILON);
 }
 
+TEST_F(Test_float4, QuaternionRotationFunction) {
+  float4 q = euler(PI / 4, 0, 0);
+  float4 v(0, 2 / sqrt(2), 0, 0);
+  float4 r = qrotate(q, v);
+  compare(0, 1, 1, 0, r, EPSILON);
+}
+
+TEST_F(Test_float4, QuaternionIdentity) {
+  float4 q(float4::qI);
+  compare(0, 0, 0, 1, q);
+}
+
+
+
 #endif  // SVECTORGTEST_H

@@ -1,12 +1,9 @@
 #include <iostream>
-#include <stdio.h>
+#include "svector.h"
 
-//#include "svector.h"
-
-//using namespace svector;
+using namespace svector;
 
 int main() {
-  float a;
-  //__m128 *p = &a.xmm;
-  printf("%x\n", &a);
+  float4 a;
+  std::cout << a << std::endl;
 }
