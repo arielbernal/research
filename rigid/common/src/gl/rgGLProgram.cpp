@@ -1,5 +1,7 @@
 #include <fstream>
 #include <vector>
+#include <algorithm>
+#include <string>
 #include <gl/rgGLProgram.h>
 
 namespace rg {
@@ -13,7 +15,7 @@ std::string GLProgramManager::loadShader(const std::string &FileName) {
   std::ifstream ShaderStream(FileName.c_str(), std::ios::in);
   if (ShaderStream.is_open()) {
     std::string Line = "";
-    while (getline(ShaderStream, Line)) ShaderCode += "\n" + Line;
+    while (std::getline(ShaderStream, Line)) ShaderCode += "\n" + Line;
     ShaderStream.close();
   } else {
     std::cout << "Shader file not found\n";
@@ -47,7 +49,7 @@ GLuint GLProgramManager::createShader(GLenum ShaderType,
     glGetShaderiv(ShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     std::vector<char> ShaderErrorMessage(std::max(InfoLogLength, int(1)));
     glGetShaderInfoLog(ShaderID, InfoLogLength, NULL, &ShaderErrorMessage[0]);
-    std::cout << "Create shader : " << getShaderTypeString(ShaderType)
+    std::cout << "Create shader : " << getShaderTypeString(ShaderType).c_str()
               << " Error: " << (char *)&ShaderErrorMessage[0] << "\n";
     return GL_FALSE;
   }
