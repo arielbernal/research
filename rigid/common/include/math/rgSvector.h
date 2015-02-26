@@ -1,12 +1,13 @@
-#ifndef SVECTOR_H
-#define SVECTOR_H
+#ifndef RGSVECTOR_H
+#define RGSVECTOR_H
 
 #include <cmath>
 #include <xmmintrin.h>
 #include <smmintrin.h>
 #include <sstream>
 
-namespace svector {
+namespace rg {
+
 #if WIN32
 #define WALIGN __declspec(align(16))
 #else
@@ -452,6 +453,6 @@ float4 qrotate(const float4 &q, const float4 &v, bool norm = false) {
   return rot;
 }
 
-}  // namespace svector
+}  // namespace rg
 
-#endif  // SVECTOR_H
+#endif  // RGSVECTOR_H

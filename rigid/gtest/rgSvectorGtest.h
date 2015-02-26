@@ -1,9 +1,9 @@
-#ifndef SVECTORGTEST_H
-#define SVECTORGTEST_H
+#ifndef RGSVECTORGTEST_H
+#define RGSVECTORGTEST_H
 
-#include "../svector.h"
+#include <math/rgSvector.h>
 
-using namespace svector;
+using namespace rg;
 
 #define PI 3.14159265358f
 #define EPSILON 10e-5f
@@ -378,6 +378,4 @@ TEST_F(Test_float4, QuaternionIdentity) {
   compare(0, 0, 0, 1, q);
 }
 
-
-
-#endif  // SVECTORGTEST_H
+#endif  // RGSVECTORGTEST_H
