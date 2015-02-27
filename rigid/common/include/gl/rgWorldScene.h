@@ -19,7 +19,7 @@ class WorldScene {
     bo.createModel();
     b1.setShader("Basic3d");
     b1.createModel();
-    b1.translate(1, 0, -1);
+    //b1.translate(1, 0, 1);
 
     Cameras.push_back(Camera());
     CurrentCamera = Cameras[0];
@@ -28,10 +28,12 @@ class WorldScene {
 
     bo.updateVPMatrix(CurrentCamera.getVPMatrix());
     b1.updateVPMatrix(CurrentCamera.getVPMatrix());
+    angle = 0;
   }
 
   void updateCamera() {
-    CurrentCamera.setPosition(4, 3, 3);
+    angle += 0.01f;
+    CurrentCamera.setPosition(cos(angle) * 10, 0, sin(angle) * 10);
     bo.updateVPMatrix(CurrentCamera.getVPMatrix());
     b1.updateVPMatrix(CurrentCamera.getVPMatrix());
   }
@@ -42,6 +44,7 @@ class WorldScene {
   }
 
  private:
+   float angle;
   BasicObject bo, b1;
   Camera CurrentCamera;
   std::vector<Camera> Cameras;

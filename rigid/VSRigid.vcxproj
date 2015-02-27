@@ -77,8 +77,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="common\include\io\lodepng.cpp" />
     <ClCompile Include="common\src\gl\rgGLProgram.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common\include\gl\rgBasicObject.h" />
+    <ClInclude Include="common\include\gl\rgCamera.h" />
+    <ClInclude Include="common\include\gl\rgGLHeaders.h" />
+    <ClInclude Include="common\include\gl\rgGLProgram.h" />
+    <ClInclude Include="common\include\gl\rgLight.h" />
+    <ClInclude Include="common\include\gl\rgWorldScene.h" />
+    <ClInclude Include="common\include\io\lodepng.h" />
+    <ClInclude Include="common\include\io\rgArg.h" />
+    <ClInclude Include="common\include\io\rgDirectoryUtils.h" />
+    <ClInclude Include="common\include\io\rgExceptionHandler.h" />
+    <ClInclude Include="common\include\io\rgLog.h" />
+    <ClInclude Include="common\include\io\rgScopedTimer.h" />
+    <ClInclude Include="common\include\math\rgRng.h" />
+    <ClInclude Include="common\include\math\rgSvector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,7 +7,7 @@ namespace rg {
 
 class Camera {
  public:
-  Camera() : pos(10, 10, 10), origin(0, 0, 0), orientation(0, 1, 0) {
+  Camera() : pos(10, 10, 10), origin(0, 0, 0), orientation(0, 0, 1) {
     setPerspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     updateView();
   }
@@ -30,8 +30,8 @@ class Camera {
   }
   glm::vec3 getOrientation() { return orientation; }
 
-  void setPerspective(float fov, float aspect, float near, float far) {
-    ProjectionMatrix = glm::perspective(fov, aspect, near, far);
+  void setPerspective(float fov, float aspect, float vnear, float vfar) {
+    ProjectionMatrix = glm::perspective(fov, aspect, vnear, vfar);
     VPMatrix = ProjectionMatrix * ViewMatrix;
   }
 
@@ -48,6 +48,8 @@ class Camera {
  protected:
   void updateView() {
     ViewMatrix = glm::lookAt(pos, origin, orientation);
+//    ViewMatrix = glm::rotate(ViewMatrix, -90.0f, glm::vec3(1, 0, 0));
+//    ViewMatrix = glm::rotate(ViewMatrix, -90.0f, glm::vec3(0, 0, 1));
     VPMatrix = ProjectionMatrix * ViewMatrix;
   }
 

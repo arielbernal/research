@@ -3,14 +3,14 @@
 
 #include <gl/rgGLHeaders.h>
 #include <gl/rgCamera.h>
+#include <iostream>
 
 namespace rg {
-
 struct BasicVertex {
   BasicVertex(float x, float y, float z, float r, float g, float b, float a)
-      : pos(x, y, z), color(r, g, b, a) {}
-  glm::vec3 pos;
+    : pos(x, y, z), color(r, g, b, a) {}
   glm::vec4 color;
+  glm::vec3 pos;
 };
 
 class BasicObject {
@@ -29,12 +29,49 @@ class BasicObject {
 
   void createModel() {
     Vertices.clear();
-    Vertices.push_back(BasicVertex(-1, -1, 0, 1, 0, 0, 1));
-    Vertices.push_back(BasicVertex(1, -1, 0, 0, 1, 0, 1));
-    Vertices.push_back(BasicVertex(0, 1, 0, 0, 0, 1, 1));
+    float rl = 1;
+    float rh = 0.05;
+    float th = 0.1;
+    float tl = 0.1;
+
+    Vertices.push_back(BasicVertex(-rl, -rh, 0, 1, 0, 0, 1));
+    Vertices.push_back(BasicVertex(rl, -rh, 0, 1, 0, 0, 1));
+    Vertices.push_back(BasicVertex(rl, rh, 0, 1, 0, 0, 1));
+    Vertices.push_back(BasicVertex(-rl, rh, 0, 1, 0, 0, 1));
+
+    Vertices.push_back(BasicVertex(rl, -th, 0, 1, 0, 0, 1));
+    Vertices.push_back(BasicVertex(rl+tl, 0, 0, 1, 0, 0, 1));
+    Vertices.push_back(BasicVertex(rl, th, 0, 1, 0, 0, 1));
+
+    Vertices.push_back(BasicVertex(-rh, -rl, 0, 0, 1, 0, 1));
+    Vertices.push_back(BasicVertex(rh, -rl, 0, 0, 1, 0, 1));
+    Vertices.push_back(BasicVertex(rh, rl, 0, 0, 1, 0, 1));
+    Vertices.push_back(BasicVertex(-rh, rl, 0, 0, 1, 0, 1));
+
+    Vertices.push_back(BasicVertex(th, rl, 0, 0, 1, 0, 1));
+    Vertices.push_back(BasicVertex(0, rl + tl, 0, 0, 1, 0, 1));
+    Vertices.push_back(BasicVertex(-th, rl, 0, 0, 1, 0, 1));
+
     Indices.push_back(0);
     Indices.push_back(1);
     Indices.push_back(2);
+    Indices.push_back(2);
+    Indices.push_back(3);
+    Indices.push_back(0);
+    Indices.push_back(4);
+    Indices.push_back(5);
+    Indices.push_back(6);
+
+    Indices.push_back(7);
+    Indices.push_back(8);
+    Indices.push_back(9);
+    Indices.push_back(9);
+    Indices.push_back(10);
+    Indices.push_back(7);
+    Indices.push_back(11);
+    Indices.push_back(12);
+    Indices.push_back(13);
+
 
     PositionHandler = glGetAttribLocation(ProgramID, "position");
     ColorHandler = glGetAttribLocation(ProgramID, "color");
@@ -51,8 +88,6 @@ class BasicObject {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int),
                  &Indices[0], GL_STATIC_DRAW);
-    std::cout << "VAO=" << VAO << " VBO= "<< VBO << " IBO=" << IBO << std::endl;
-    std::cout << "P=" << PositionHandler << " C=" << ColorHandler << " VMP=" << MVPMatrixHandle << std::endl;
     
     glBindVertexArray(0);
   }
@@ -67,10 +102,10 @@ class BasicObject {
 
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(BasicVertex), (void*)0);
+                          sizeof(BasicVertex), (void*)16);
     glEnableVertexAttribArray(ColorHandler);
     glVertexAttribPointer(ColorHandler, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(BasicVertex), (void*)12);
+                          sizeof(BasicVertex), (void*)0);
 
     glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, (void*)0);
 

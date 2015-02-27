@@ -57,7 +57,7 @@ void normal_keys(unsigned char key, int x, int y) {
 void init_glut_window() {
   int a = 0;
   glutInit(&a, NULL);
-  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(2380, 100);
   glutInitWindowSize(m_window_width, m_window_height);
   glutCreateWindow(m_window_title.c_str());
