@@ -1,5 +1,5 @@
-#ifndef RGGLUTILS_H
-#define RGGLUTILS_H
+#ifndef RGGLPROGRAM_H
+#define RGGLPROGRAM_H
 
 #include <iostream>
 #include <map>
@@ -59,4 +59,4 @@ class GLProgramManager {
 
 }  // namespace rg
 
-#endif  // RGGLUTILS_H
+#endif  // RGGLPROGRAM_H
