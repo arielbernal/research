@@ -26,21 +26,21 @@ class WorldScene {
 
     Lights.push_back(Light());
 
-    bo.updateVPMatrix(CurrentCamera.getVPMatrix());
-    b1.updateVPMatrix(CurrentCamera.getVPMatrix());
+    bo.updateCamera(CurrentCamera);
+    b1.updateCamera(CurrentCamera);
     angle = 0;
   }
 
   void updateCamera() {
     angle += 0.01f;
-    CurrentCamera.setPosition(cos(angle) * 10, 0, sin(angle) * 10);
-    bo.updateVPMatrix(CurrentCamera.getVPMatrix());
-    b1.updateVPMatrix(CurrentCamera.getVPMatrix());
+    CurrentCamera.setPosition(cos(angle) * 10, sin(angle) * 10, 0);
+    bo.updateCamera(CurrentCamera);
+    b1.updateCamera(CurrentCamera);
   }
 
   void render() {
     bo.render();
-    b1.render();
+    //b1.render();
   }
 
  private:

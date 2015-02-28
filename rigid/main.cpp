@@ -20,9 +20,7 @@ void display() {
   glutSwapBuffers();
 }
 
-void reshape(int w, int h) {
-  display();
-}
+void reshape(int w, int h) { display(); }
 
 void mouse_wheel(int wheel, int direction, int x, int y) {}
 
@@ -75,6 +73,13 @@ void init_glut_window() {
   if (!GLEW_VERSION_2_1) std::cout << "Glew 2.1 not supported\n";
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  // Enable depth test
+  glEnable(GL_DEPTH_TEST);
+  // Accept fragment if it closer to the camera than the former one
+  glDepthFunc(GL_LESS);
+
+  // Cull triangles which normal is not towards the camera
+  glEnable(GL_CULL_FACE);
   w.create();
   glutMainLoop();
 }

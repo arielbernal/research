@@ -31,35 +31,25 @@ class Camera {
   glm::vec3 getOrientation() { return orientation; }
 
   void setPerspective(float fov, float aspect, float vnear, float vfar) {
-    ProjectionMatrix = glm::perspective(fov, aspect, vnear, vfar);
-    VPMatrix = ProjectionMatrix * ViewMatrix;
+    PMatrix = glm::perspective(fov, aspect, vnear, vfar);
   }
 
-  void setProjectionMatrix(const glm::mat4& Projection) {
-    ProjectionMatrix = Projection;
-  }
+  void setPMatrix(const glm::mat4& Projection) { PMatrix = Projection; }
 
-  void setViewMatrix(const glm::mat4& View) { ViewMatrix = View; }
+  void setVMatrix(const glm::mat4& View) { VMatrix = View; }
 
-  glm::mat4 getProjection() { return ProjectionMatrix; }
-  glm::mat4 getView() { return ViewMatrix; }
-  glm::mat4 getVPMatrix() { return VPMatrix; }
+  glm::mat4 getPMatrix() const { return PMatrix; }
+  glm::mat4 getVMatrix() const { return VMatrix; }
 
  protected:
-  void updateView() {
-    ViewMatrix = glm::lookAt(pos, origin, orientation);
-//    ViewMatrix = glm::rotate(ViewMatrix, -90.0f, glm::vec3(1, 0, 0));
-//    ViewMatrix = glm::rotate(ViewMatrix, -90.0f, glm::vec3(0, 0, 1));
-    VPMatrix = ProjectionMatrix * ViewMatrix;
-  }
+  void updateView() { VMatrix = glm::lookAt(pos, origin, orientation); }
 
  private:
   glm::vec3 pos;
   glm::vec3 origin;
   glm::vec3 orientation;
-  glm::mat4 ViewMatrix;
-  glm::mat4 ProjectionMatrix;
-  glm::mat4 VPMatrix;
+  glm::mat4 VMatrix;
+  glm::mat4 PMatrix;
 };
 
 }  // namespace rg
