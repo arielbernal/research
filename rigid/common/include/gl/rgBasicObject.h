@@ -72,7 +72,7 @@ class BasicObject {
       NN[i2]++;
     }
     for (size_t i = 0; i < Vertices.size(); ++i)
-      if (std::abs(NN[i]) > 0.0001f) {
+      if (std::abs(int(NN[i])) > 0.0001f) {
         Vertices[i].normal =
             glm::normalize(Vertices[i].normal / glm::vec3(NN[i]));
       }
