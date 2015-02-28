@@ -14,6 +14,17 @@
     <ClCompile Include="common\src\gl\rgGLProgram.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common\include\gl\rgBasicObject.h" />
+    <ClInclude Include="common\include\gl\rgCamera.h" />
+    <ClInclude Include="common\include\gl\rgGLHeaders.h" />
+    <ClInclude Include="common\include\gl\rgGLProgram.h" />
+    <ClInclude Include="common\include\gl\rgLight.h" />
+    <ClInclude Include="common\include\gl\rgTexObject.h" />
+    <ClInclude Include="common\include\gl\rgWorldScene.h" />
+    <ClInclude Include="common\include\math\rgRng.h" />
+    <ClInclude Include="common\include\math\rgSvector.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8F4948D3-2A60-42BA-BD7F-78BAE92D104A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
