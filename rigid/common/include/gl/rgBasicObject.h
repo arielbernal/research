@@ -25,7 +25,7 @@ struct BasicVertex {
 
 class BasicObject {
  public:
-  BasicObject() { MMatrix = glm::mat4(1.0f); }
+   BasicObject()  { MMatrix = glm::mat4(1.0f); }
 
   void setShader(const std::string& shaderProgramName) {
     ShaderProgramName = shaderProgramName;
@@ -81,6 +81,7 @@ class BasicObject {
   void buildCuboid(float dx, float dy, float dz,
                    std::vector<BasicVertex>& Vertices,
                    std::vector<unsigned int>& Indices, const glm::vec4& color) {
+    Vertices.clear();
     float dx2 = dx / 2;
     float dy2 = dy / 2;
     float dz2 = dz / 2;
@@ -102,11 +103,6 @@ class BasicObject {
   }
 
   void createModel() {
-    Vertices.clear();
-    float rl = 1;
-    float rh = 0.05;
-    float th = 0.1;
-    float tl = 0.1;
     buildCuboid(2, 2, 2, Vertices, Indices, glm::vec4(1, 0, 0, 0));
     ColorHandler = glGetAttribLocation(ProgramID, "vertexColor");
     PositionHandler =
@@ -139,13 +135,12 @@ class BasicObject {
     glUseProgram(ProgramID);
 
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+
     glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
     glUniformMatrix4fv(MVMatrixHandle, 1, GL_FALSE, &MVMatrix[0][0]);
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
-    glUniform3f(LightPositionHandler, 10, 10, 10);
+    glUniform3f(LightPositionHandler, 5, 5, 5);
 
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,

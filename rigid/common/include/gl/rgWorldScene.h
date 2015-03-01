@@ -19,7 +19,7 @@ class WorldScene {
     bo.createModel();
     b1.setShader("Basic3d");
     b1.createModel();
-    //b1.translate(1, 0, 1);
+    //b1.translate(1, 0, 2);
 
     Cameras.push_back(Camera());
     CurrentCamera = Cameras[0];
@@ -38,9 +38,13 @@ class WorldScene {
     b1.updateCamera(CurrentCamera);
   }
 
+  void pp() {
+    b1.translate(0.1, 0, 0.1);
+  }
+
   void render() {
     bo.render();
-    //b1.render();
+    b1.render();
   }
 
  private:

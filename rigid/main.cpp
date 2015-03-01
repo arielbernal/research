@@ -44,6 +44,9 @@ void normal_keys(unsigned char key, int x, int y) {
     case 'a':
       w.updateCamera();
       break;
+    case 'b':
+      w.pp();
+      break;
     case 27:
       glutLeaveMainLoop();
       break;
