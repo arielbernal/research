@@ -10,7 +10,7 @@ namespace rg {
 #ifndef _WIN32
 #define ATTRALIGN __attribute__((aligned(16)))
 #else
-#define ATTRALIGN
+#define ATTRALIGN __declspec(align(16))
 #endif
 
 struct BasicVertex {
@@ -108,10 +108,7 @@ class BasicObject {
     float th = 0.1;
     float tl = 0.1;
     buildCuboid(2, 2, 2, Vertices, Indices, glm::vec4(1, 0, 0, 0));
-
     ColorHandler = glGetAttribLocation(ProgramID, "vertexColor");
-    std::cout << NormalHandler << " " << ColorHandler << " Color\n";
-
     PositionHandler =
         glGetAttribLocation(ProgramID, "vertexPosition_modelspace");
     NormalHandler = glGetAttribLocation(ProgramID, "vertexNormal_modelspace");

@@ -20,7 +20,6 @@
     <ClInclude Include="common\include\gl\rgGLHeaders.h" />
     <ClInclude Include="common\include\gl\rgGLProgram.h" />
     <ClInclude Include="common\include\gl\rgLight.h" />
-    <ClInclude Include="common\include\gl\rgTexObject.h" />
     <ClInclude Include="common\include\gl\rgWorldScene.h" />
     <ClInclude Include="common\include\math\rgRng.h" />
     <ClInclude Include="common\include\math\rgSvector.h" />

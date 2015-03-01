@@ -47,8 +47,5 @@
     <ClInclude Include="common\include\math\rgRng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common\include\gl\rgTexObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
