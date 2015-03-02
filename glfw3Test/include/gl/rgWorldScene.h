@@ -2,8 +2,10 @@
 #define RGWORLDSCENE_H
 
 #include <gl/rgGLHeaders.h>
-//#include <gl/rgCamera.h>
-//#include <gl/rgLight.h>
+#include <gl/rgGLProgram.h>
+#include <gl/rgGLObject.h>
+#include <gl/rgCamera.h>
+#include <gl/rgLight.h>
 //#include <gl/rgBasicObject.h>
 
 namespace rg {
@@ -11,53 +13,48 @@ namespace rg {
 
 class WorldScene {
  public:
+  WorldScene() {
+    CurrentCamera = Cameras.begin();
+  }
+  
   void create() {
     GLProgramManager::addProgram("Basic3d", "./shaders/basic3d.vs",
                                  "./shaders/basic3d.fs");
 
-    //bo.setShader("Basic3d");
-    //bo.createModel();
-    //b1.setShader("Basic3d");
-    //b1.createModel();
-    ////b1.translate(1, 0, 2);
-
-    //Cameras.push_back(Camera());
-    //CurrentCamera = Cameras[0];
-
-    //Lights.push_back(Light());
-
-    //bo.updateCamera(CurrentCamera);
-    //b1.updateCamera(CurrentCamera);
-    //angle = 0;
   }
 
   void updateCamera() {
-    /*angle += 0.01f;
-    CurrentCamera.setPosition(cos(angle) * 10, sin(angle) * 10, 0);
-    bo.updateCamera(CurrentCamera);
-    b1.updateCamera(CurrentCamera);*/
-  }
 
-  void pp() {
-    //b1.translate(0.1, 0, 0.1);
   }
 
   void render() {
-    //bo.render();
-    //b1.render();
+
+  }
+
+  void addCamera(Camera* Cam) {
+    Cameras.push_back(Cam);
+    CurrentCamera = std::prev(Cameras.end());
+  }
+
+  void firstCamera() {
+    CurrentCamera = Cameras.begin();
+  }
+  
+  void nextCamera() {
+    CurrentCamera++;
+    if (CurrentCamera == Cameras.end()) 
+      CurrentCamera = Cameras.begin();
   }
 
  private:
-   float angle;
-  //BasicObject bo, b1;
-  //Camera CurrentCamera;
-  //std::vector<Camera> Cameras;
-  //std::vector<Light> Lights;
-  // cameras
-  // ligths
-  // particles
-  // static objects
-  // objects
+  typedef std::vector<Camera*>::iterator CameraIterator;
+  typedef std::vector<Light*>::iterator LightIterator;
+  typedef std::vector<GLObject*>::iterator GLObjectIterator;
+
+  std::vector<GLObject*> Objects;
+  std::vector<Camera*> Cameras;
+  std::vector<Light*> Lights;
+  CameraIterator CurrentCamera;
 };
 
 }  // namespace rg

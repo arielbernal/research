@@ -1,8 +1,11 @@
+#include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
-#include <iostream>
+#include <gl/rgWorldScene.h>
+#include "InitWorld.h"
 
+rg::WorldScene World;
 
 void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action, int mods) {
   if (TwEventMouseButtonGLFW(button, action)) return;
@@ -69,11 +72,15 @@ int main()
     exit(-1);
   }
   
+
+  InitWorld(World);
+
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
     float time = (float)glfwGetTime();
+    World.render();
     TwDraw();
     glfwSwapBuffers(window);
     glfwPollEvents();
