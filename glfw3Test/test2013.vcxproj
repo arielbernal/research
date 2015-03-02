@@ -85,7 +85,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\research\external\vs\glfw-3.1.bin.WIN32\include;C:\dev\research\external\vs\glew-1.12.0\include;C:\dev\research\external\vs\glm;C:\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\research\glfw3Test\include;C:\dev\research\external\vs\glfw-3.1.bin.WIN32\include;C:\dev\research\external\vs\glew-1.12.0\include;C:\dev\research\external\vs\glm;C:\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\research\external\vs\glfw-3.1.bin.WIN32\include;C:\dev\research\external\vs\glew-1.12.0\include;C:\dev\research\external\vs\glm;C:\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\research\glfw3Test\include;C:\dev\research\external\vs\glfw-3.1.bin.WIN32\include;C:\dev\research\external\vs\glew-1.12.0\include;C:\dev\research\external\vs\glm;C:\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,7 +151,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\io\lodepng.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\gl\rgGLProgram.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\gl\rgGLHeaders.h" />
+    <ClInclude Include="include\gl\rgGLProgram.h" />
+    <ClInclude Include="include\gl\rgWorldScene.h" />
+    <ClInclude Include="include\io\lodepng.h" />
+    <ClInclude Include="include\io\rgArg.h" />
+    <ClInclude Include="include\io\rgDirectoryUtils.h" />
+    <ClInclude Include="include\io\rgExceptionHandler.h" />
+    <ClInclude Include="include\io\rgLog.h" />
+    <ClInclude Include="include\io\rgScopedTimer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\io\rgScopedTimer.impl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

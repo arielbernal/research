@@ -1,28 +1,23 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <cmath>
 #include <AntTweakBar.h>
+#include <iostream>
+
 
 void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action, int mods) {
   if (TwEventMouseButtonGLFW(button, action)) return;
-  std::cout << "EventMouseButtonGLFW3\n";
 }
 void EventMousePosGLFW3(GLFWwindow* window, double xpos, double ypos) {
   if (TwMouseMotion(int(xpos), int(ypos))) return;
-  std::cout << "EventMousePosGLW3\n";
 }
 void EventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yoffset) {
-  if (TwEventMouseWheelGLFW(yoffset)) return;
-  std::cout << "EventMouseWheelGLFW3\n";
+  if (TwEventMouseWheelGLFW(int(yoffset))) return;
 }
 void EventKeyGLFW3(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (TwEventKeyGLFW(key, action)) return;
-  std::cout << "EvenKeyGLFW3\n";
 }
 void EventCharGLFW3(GLFWwindow* window, int codepoint) {
   if (TwEventCharGLFW(codepoint, GLFW_PRESS)) return;
-  std::cout << "EventCHarGLFW3\n";
 }
 void WindowSizeGLFW3(GLFWwindow* window, int width, int height) {
   TwWindowSize(width, height);
