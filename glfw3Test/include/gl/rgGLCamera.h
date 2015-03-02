@@ -1,18 +1,25 @@
-#ifndef RGCAMERA_H
-#define RGCAMERA_H
+#ifndef RGGLCAMERA_H
+#define RGGLCAMERA_H
 
 #include <gl/rgGLHeaders.h>
 
 namespace rg {
 
-class Camera {
+class GLCamera {
  public:
-  Camera() : pos(10, 10, 10), origin(0, 0, 0), orientation(0, 0, 1) {
+  GLCamera(const std::string& CameraName)
+      : Enabled(true),
+        CameraName(CameraName),
+        pos(10, 10, 10),
+        origin(0, 0, 0),
+        orientation(0, 0, 1) {
     setPerspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     updateView();
   }
 
-  Camera(const glm::vec3& p, const glm::vec3& o, const glm::vec3& orient) {
+  GLCamera(const std::string& CameraName, const glm::vec3& p,
+           const glm::vec3& o, const glm::vec3& orient)
+      : Enabled(true), CameraName(CameraName) {
     pos = p;
     origin = o;
     orientation = orient;
@@ -49,10 +56,17 @@ class Camera {
   glm::mat4 getPMatrix() const { return PMatrix; }
   glm::mat4 getVMatrix() const { return VMatrix; }
 
+  std::string getName() { return CameraName; }
+  void enable() { Enabled = true; }
+  void disable() { Enabled = false; }
+  bool isEnabled() { return Enabled; }
+
  protected:
   void updateView() { VMatrix = glm::lookAt(pos, origin, orientation); }
 
  private:
+  bool Enabled;
+  std::string CameraName;
   glm::vec3 pos;
   glm::vec3 origin;
   glm::vec3 orientation;
@@ -62,4 +76,4 @@ class Camera {
 
 }  // namespace rg
 
-#endif  // RGCAMERA_H
+#endif  // RGGLCAMERA_H

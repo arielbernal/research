@@ -1,13 +1,14 @@
-#ifndef RGLIGHT_H
-#define RGLIGHT_H
+#ifndef RGGLLIGHT_H
+#define RGGLLIGHT_H
 
 #include <gl/rgGLHeaders.h>
 
 namespace rg {
 
-class Light {
+class GLLight {
  public:
-  Light() : enable(true), pos(0, 0, 10) {}
+  GLLight(const std::string& LightName)
+      : LightName(LightName), enable(true), pos(0, 0, 10) {}
 
   void setPosition(float x, float y, float z) { pos = glm::vec3(x, y, z); }
   glm::vec3 getPosition() { return pos; }
@@ -19,12 +20,15 @@ class Light {
 
   bool isOn() { return enable; }
 
+  std::string getName() { return LightName; }
+
  protected:
  private:
+  std::string LightName;
   bool enable;
   glm::vec3 pos;
 };
 
 }  // namespace rg
 
-#endif  // RGLIGHT_H
+#endif  // RGGLLIGHT_H

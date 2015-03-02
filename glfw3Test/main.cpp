@@ -2,10 +2,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
-#include <gl/rgWorldScene.h>
+#include <gl/rgGLWorldScene.h>
 #include "InitWorld.h"
 
-rg::WorldScene World;
+rg::GLWorldScene World;
 
 void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action,
                            int mods) {
@@ -29,7 +29,7 @@ void WindowSizeGLFW3(GLFWwindow* window, int width, int height) {
 }
 
 void ErrorGLFW3(int r, const char* err) {
-  std::cout << "Error initializing GLFW3 " << r << " " << err << std::endl;
+  std::cout << "Error GLFW3 " << r << " " << err << std::endl;
 }
 
 int main() {
@@ -67,6 +67,10 @@ int main() {
   TwDefine(
       " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
       "and OpenGL.' ");  // Message added to the help bar.
+  TwAddSeparator(bar, NULL, "group='Parameters' ");
+  // TwAddVarRW(bar, "speed", TW_TYPE_DOUBLE, &speed,
+  //              " label='Rot speed' min=0 max=2 step=0.01 keyIncr=s keyDecr=S
+  // help='Rotation speed (turns/second)' ");
 
   // Set GLFW event callbacks
   glfwSetWindowSizeCallback(window, (GLFWwindowposfun)WindowSizeGLFW3);
@@ -83,13 +87,21 @@ int main() {
     exit(-1);
   }
 
-  InitWorld(World);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glEnable(GL_CULL_FACE);
 
+  // glfwSwapInterval(0);
+  InitWorld(World);
+  float t0 = (float)glfwGetTime();
   while (!glfwWindowShouldClose(window)) {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
     float time = (float)glfwGetTime();
+    //std::cout << "time = " << time - t0 << std::endl;
+    t0 = time;
     World.render();
     TwDraw();
     glfwSwapBuffers(window);

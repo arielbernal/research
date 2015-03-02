@@ -1,5 +1,4 @@
 SOURCES := main.cpp \
-./src/gl/rgGLProgram.cpp
 
 ANTTWEAKBAR=/home/ajbernal/dev/bat/research/external/vs/AntTweakBar/lib
 
