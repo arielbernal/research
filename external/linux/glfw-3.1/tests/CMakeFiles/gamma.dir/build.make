@@ -106,17 +106,24 @@ gamma_EXTERNAL_OBJECTS =
 tests/gamma: tests/CMakeFiles/gamma.dir/gamma.c.o
 tests/gamma: tests/CMakeFiles/gamma.dir/__/deps/getopt.c.o
 tests/gamma: tests/CMakeFiles/gamma.dir/build.make
-tests/gamma: src/libglfw3.a
+tests/gamma: src/libglfw.so.3.1
 tests/gamma: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libm.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/librt.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/librt.so
-tests/gamma: /usr/lib/x86_64-linux-gnu/libm.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/gamma: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/gamma: /usr/lib/x86_64-linux-gnu/libm.so
 tests/gamma: tests/CMakeFiles/gamma.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable gamma"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gamma.dir/link.txt --verbose=$(VERBOSE)

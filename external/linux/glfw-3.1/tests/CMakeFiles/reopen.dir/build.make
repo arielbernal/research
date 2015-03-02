@@ -81,17 +81,24 @@ reopen_EXTERNAL_OBJECTS =
 
 tests/reopen: tests/CMakeFiles/reopen.dir/reopen.c.o
 tests/reopen: tests/CMakeFiles/reopen.dir/build.make
-tests/reopen: src/libglfw3.a
+tests/reopen: src/libglfw.so.3.1
 tests/reopen: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libm.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/librt.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/librt.so
-tests/reopen: /usr/lib/x86_64-linux-gnu/libm.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/reopen: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/reopen: /usr/lib/x86_64-linux-gnu/libm.so
 tests/reopen: tests/CMakeFiles/reopen.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable reopen"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/reopen.dir/link.txt --verbose=$(VERBOSE)

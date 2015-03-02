@@ -106,17 +106,24 @@ clipboard_EXTERNAL_OBJECTS =
 tests/clipboard: tests/CMakeFiles/clipboard.dir/clipboard.c.o
 tests/clipboard: tests/CMakeFiles/clipboard.dir/__/deps/getopt.c.o
 tests/clipboard: tests/CMakeFiles/clipboard.dir/build.make
-tests/clipboard: src/libglfw3.a
+tests/clipboard: src/libglfw.so.3.1
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libm.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/librt.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/librt.so
-tests/clipboard: /usr/lib/x86_64-linux-gnu/libm.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/clipboard: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/clipboard: /usr/lib/x86_64-linux-gnu/libm.so
 tests/clipboard: tests/CMakeFiles/clipboard.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable clipboard"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/clipboard.dir/link.txt --verbose=$(VERBOSE)

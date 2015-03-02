@@ -106,17 +106,24 @@ fsaa_EXTERNAL_OBJECTS =
 tests/fsaa: tests/CMakeFiles/fsaa.dir/fsaa.c.o
 tests/fsaa: tests/CMakeFiles/fsaa.dir/__/deps/getopt.c.o
 tests/fsaa: tests/CMakeFiles/fsaa.dir/build.make
-tests/fsaa: src/libglfw3.a
+tests/fsaa: src/libglfw.so.3.1
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libm.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/librt.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/librt.so
-tests/fsaa: /usr/lib/x86_64-linux-gnu/libm.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/fsaa: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/fsaa: /usr/lib/x86_64-linux-gnu/libm.so
 tests/fsaa: tests/CMakeFiles/fsaa.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable fsaa"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fsaa.dir/link.txt --verbose=$(VERBOSE)

@@ -7,7 +7,8 @@
 
 rg::WorldScene World;
 
-void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action, int mods) {
+void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action,
+                           int mods) {
   if (TwEventMouseButtonGLFW(button, action)) return;
 }
 void EventMousePosGLFW3(GLFWwindow* window, double xpos, double ypos) {
@@ -16,7 +17,8 @@ void EventMousePosGLFW3(GLFWwindow* window, double xpos, double ypos) {
 void EventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yoffset) {
   if (TwEventMouseWheelGLFW(int(yoffset))) return;
 }
-void EventKeyGLFW3(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void EventKeyGLFW3(GLFWwindow* window, int key, int scancode, int action,
+                   int mods) {
   if (TwEventKeyGLFW(key, action)) return;
 }
 void EventCharGLFW3(GLFWwindow* window, int codepoint) {
@@ -26,9 +28,14 @@ void WindowSizeGLFW3(GLFWwindow* window, int width, int height) {
   TwWindowSize(width, height);
 }
 
+void ErrorGLFW3(int r, const char* err) {
+  std::cout << "Error initializing GLFW3 " << r << " " << err << std::endl;
+}
 
-int main()
-{
+int main() {
+  glfwSetErrorCallback((GLFWerrorfun)ErrorGLFW3);
+
+  std::cout << "Initializating glfw3..\n";
   if (!glfwInit()) {
     std::cerr << "Error initializing glfw...\n";
     exit(-1);
@@ -39,23 +46,27 @@ int main()
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-  GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr); // Windowed
+  GLFWwindow* window =
+      glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr);  // Windowed
   if (!window) {
     std::cerr << "Error creating window...\n";
     glfwTerminate();
     exit(-1);
   }
   glfwMakeContextCurrent(window);
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); // can be GLFW_CURSOR_HIDDEN
+  glfwSetInputMode(window, GLFW_CURSOR,
+                   GLFW_CURSOR_NORMAL);  // can be GLFW_CURSOR_HIDDEN
 
   // Initialize AntTweakBar
-  //TwInit(TW_OPENGL, NULL);
+  // TwInit(TW_OPENGL, NULL);
   TwInit(TW_OPENGL_CORE, NULL);
 
   // Create a tweak bar
-  TwBar *bar = TwNewBar("TweakBar");
+  TwBar* bar = TwNewBar("TweakBar");
   TwWindowSize(800, 600);
-  TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
+  TwDefine(
+      " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
+      "and OpenGL.' ");  // Message added to the help bar.
 
   // Set GLFW event callbacks
   glfwSetWindowSizeCallback(window, (GLFWwindowposfun)WindowSizeGLFW3);
@@ -71,7 +82,6 @@ int main()
     glfwTerminate();
     exit(-1);
   }
-  
 
   InitWorld(World);
 

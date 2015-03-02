@@ -81,17 +81,24 @@ gears_EXTERNAL_OBJECTS =
 
 examples/gears: examples/CMakeFiles/gears.dir/gears.c.o
 examples/gears: examples/CMakeFiles/gears.dir/build.make
-examples/gears: src/libglfw3.a
+examples/gears: src/libglfw.so.3.1
 examples/gears: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libm.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libX11.so
+examples/gears: /usr/lib/x86_64-linux-gnu/librt.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/gears: /usr/lib/x86_64-linux-gnu/librt.so
-examples/gears: /usr/lib/x86_64-linux-gnu/libm.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libXrandr.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libXinerama.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libXi.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/gears: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/gears: /usr/lib/x86_64-linux-gnu/libm.so
 examples/gears: examples/CMakeFiles/gears.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable gears"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gears.dir/link.txt --verbose=$(VERBOSE)

@@ -106,17 +106,24 @@ events_EXTERNAL_OBJECTS =
 tests/events: tests/CMakeFiles/events.dir/events.c.o
 tests/events: tests/CMakeFiles/events.dir/__/deps/getopt.c.o
 tests/events: tests/CMakeFiles/events.dir/build.make
-tests/events: src/libglfw3.a
+tests/events: src/libglfw.so.3.1
 tests/events: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/events: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/events: /usr/lib/x86_64-linux-gnu/libm.so
 tests/events: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/events: /usr/lib/x86_64-linux-gnu/librt.so
 tests/events: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/events: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/events: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/events: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/events: /usr/lib/x86_64-linux-gnu/librt.so
-tests/events: /usr/lib/x86_64-linux-gnu/libm.so
+tests/events: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/events: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/events: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/events: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/events: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/events: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/events: /usr/lib/x86_64-linux-gnu/libm.so
 tests/events: tests/CMakeFiles/events.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable events"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/events.dir/link.txt --verbose=$(VERBOSE)

@@ -106,25 +106,20 @@ empty_EXTERNAL_OBJECTS =
 tests/empty: tests/CMakeFiles/empty.dir/empty.c.o
 tests/empty: tests/CMakeFiles/empty.dir/__/deps/tinycthread.c.o
 tests/empty: tests/CMakeFiles/empty.dir/build.make
-tests/empty: src/libglfw3.a
+tests/empty: src/libglfw.so.3.1
 tests/empty: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/empty: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/empty: /usr/lib/x86_64-linux-gnu/libm.so
+tests/empty: /usr/lib/x86_64-linux-gnu/librt.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libX11.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
-tests/empty: /usr/lib/x86_64-linux-gnu/librt.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libm.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libGL.so
-tests/empty: /usr/lib/x86_64-linux-gnu/librt.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libXrandr.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libXinerama.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libXi.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/empty: /usr/lib/x86_64-linux-gnu/libm.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libXcursor.so
-tests/empty: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/empty: /usr/lib/x86_64-linux-gnu/librt.so
 tests/empty: tests/CMakeFiles/empty.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable empty"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/empty.dir/link.txt --verbose=$(VERBOSE)

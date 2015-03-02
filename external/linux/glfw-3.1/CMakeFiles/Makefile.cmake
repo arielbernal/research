@@ -25,7 +25,6 @@ SET(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-2.8/Modules/CMakePackageConfigHelpers.cmake"
   "/usr/share/cmake-2.8/Modules/CMakeParseArguments.cmake"
   "/usr/share/cmake-2.8/Modules/CMakeSystemSpecificInformation.cmake"
-  "/usr/share/cmake-2.8/Modules/CheckFunctionExists.c"
   "/usr/share/cmake-2.8/Modules/CheckFunctionExists.cmake"
   "/usr/share/cmake-2.8/Modules/CheckIncludeFiles.cmake"
   "/usr/share/cmake-2.8/Modules/CheckLibraryExists.cmake"

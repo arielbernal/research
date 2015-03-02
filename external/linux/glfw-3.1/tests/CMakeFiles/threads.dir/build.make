@@ -106,25 +106,20 @@ threads_EXTERNAL_OBJECTS =
 tests/threads: tests/CMakeFiles/threads.dir/threads.c.o
 tests/threads: tests/CMakeFiles/threads.dir/__/deps/tinycthread.c.o
 tests/threads: tests/CMakeFiles/threads.dir/build.make
-tests/threads: src/libglfw3.a
+tests/threads: src/libglfw.so.3.1
 tests/threads: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/threads: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/threads: /usr/lib/x86_64-linux-gnu/libm.so
+tests/threads: /usr/lib/x86_64-linux-gnu/librt.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libX11.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
-tests/threads: /usr/lib/x86_64-linux-gnu/librt.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libm.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libGL.so
-tests/threads: /usr/lib/x86_64-linux-gnu/librt.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libXrandr.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libXinerama.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libXi.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/threads: /usr/lib/x86_64-linux-gnu/libm.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libXcursor.so
-tests/threads: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/threads: /usr/lib/x86_64-linux-gnu/librt.so
 tests/threads: tests/CMakeFiles/threads.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable threads"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/threads.dir/link.txt --verbose=$(VERBOSE)

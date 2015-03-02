@@ -81,17 +81,24 @@ joysticks_EXTERNAL_OBJECTS =
 
 tests/joysticks: tests/CMakeFiles/joysticks.dir/joysticks.c.o
 tests/joysticks: tests/CMakeFiles/joysticks.dir/build.make
-tests/joysticks: src/libglfw3.a
+tests/joysticks: src/libglfw.so.3.1
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libm.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/librt.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/librt.so
-tests/joysticks: /usr/lib/x86_64-linux-gnu/libm.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/joysticks: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/joysticks: /usr/lib/x86_64-linux-gnu/libm.so
 tests/joysticks: tests/CMakeFiles/joysticks.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable joysticks"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/joysticks.dir/link.txt --verbose=$(VERBOSE)

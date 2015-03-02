@@ -81,17 +81,24 @@ splitview_EXTERNAL_OBJECTS =
 
 examples/splitview: examples/CMakeFiles/splitview.dir/splitview.c.o
 examples/splitview: examples/CMakeFiles/splitview.dir/build.make
-examples/splitview: src/libglfw3.a
+examples/splitview: src/libglfw.so.3.1
 examples/splitview: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libm.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libX11.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/librt.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/librt.so
-examples/splitview: /usr/lib/x86_64-linux-gnu/libm.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libXrandr.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libXinerama.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libXi.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/splitview: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/splitview: /usr/lib/x86_64-linux-gnu/libm.so
 examples/splitview: examples/CMakeFiles/splitview.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable splitview"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/splitview.dir/link.txt --verbose=$(VERBOSE)

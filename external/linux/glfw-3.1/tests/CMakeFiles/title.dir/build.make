@@ -81,17 +81,24 @@ title_EXTERNAL_OBJECTS =
 
 tests/title: tests/CMakeFiles/title.dir/title.c.o
 tests/title: tests/CMakeFiles/title.dir/build.make
-tests/title: src/libglfw3.a
+tests/title: src/libglfw.so.3.1
 tests/title: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/title: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/title: /usr/lib/x86_64-linux-gnu/libm.so
 tests/title: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/title: /usr/lib/x86_64-linux-gnu/librt.so
 tests/title: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/title: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/title: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/title: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/title: /usr/lib/x86_64-linux-gnu/librt.so
-tests/title: /usr/lib/x86_64-linux-gnu/libm.so
+tests/title: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/title: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/title: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/title: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/title: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/title: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/title: /usr/lib/x86_64-linux-gnu/libm.so
 tests/title: tests/CMakeFiles/title.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable title"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/title.dir/link.txt --verbose=$(VERBOSE)

@@ -81,17 +81,24 @@ defaults_EXTERNAL_OBJECTS =
 
 tests/defaults: tests/CMakeFiles/defaults.dir/defaults.c.o
 tests/defaults: tests/CMakeFiles/defaults.dir/build.make
-tests/defaults: src/libglfw3.a
+tests/defaults: src/libglfw.so.3.1
 tests/defaults: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libm.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/librt.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/librt.so
-tests/defaults: /usr/lib/x86_64-linux-gnu/libm.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/defaults: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/defaults: /usr/lib/x86_64-linux-gnu/libm.so
 tests/defaults: tests/CMakeFiles/defaults.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable defaults"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/defaults.dir/link.txt --verbose=$(VERBOSE)

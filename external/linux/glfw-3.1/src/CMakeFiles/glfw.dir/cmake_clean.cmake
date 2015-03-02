@@ -12,8 +12,10 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/glfw.dir/posix_time.c.o"
   "CMakeFiles/glfw.dir/posix_tls.c.o"
   "CMakeFiles/glfw.dir/glx_context.c.o"
-  "libglfw3.pdb"
-  "libglfw3.a"
+  "libglfw.pdb"
+  "libglfw.so"
+  "libglfw.so.3.1"
+  "libglfw.so.3"
 )
 
 # Per-language clean rules from dependency scanning.

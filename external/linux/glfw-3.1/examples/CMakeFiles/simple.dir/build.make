@@ -81,17 +81,24 @@ simple_EXTERNAL_OBJECTS =
 
 examples/simple: examples/CMakeFiles/simple.dir/simple.c.o
 examples/simple: examples/CMakeFiles/simple.dir/build.make
-examples/simple: src/libglfw3.a
+examples/simple: src/libglfw.so.3.1
 examples/simple: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libm.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libX11.so
+examples/simple: /usr/lib/x86_64-linux-gnu/librt.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/simple: /usr/lib/x86_64-linux-gnu/librt.so
-examples/simple: /usr/lib/x86_64-linux-gnu/libm.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libXrandr.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libXinerama.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libXi.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/simple: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/simple: /usr/lib/x86_64-linux-gnu/libm.so
 examples/simple: examples/CMakeFiles/simple.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable simple"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/simple.dir/link.txt --verbose=$(VERBOSE)

@@ -81,17 +81,24 @@ peter_EXTERNAL_OBJECTS =
 
 tests/peter: tests/CMakeFiles/peter.dir/peter.c.o
 tests/peter: tests/CMakeFiles/peter.dir/build.make
-tests/peter: src/libglfw3.a
+tests/peter: src/libglfw.so.3.1
 tests/peter: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libm.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/peter: /usr/lib/x86_64-linux-gnu/librt.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/peter: /usr/lib/x86_64-linux-gnu/librt.so
-tests/peter: /usr/lib/x86_64-linux-gnu/libm.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/peter: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/peter: /usr/lib/x86_64-linux-gnu/libm.so
 tests/peter: tests/CMakeFiles/peter.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable peter"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/peter.dir/link.txt --verbose=$(VERBOSE)

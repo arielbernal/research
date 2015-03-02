@@ -81,17 +81,24 @@ cursor_EXTERNAL_OBJECTS =
 
 tests/cursor: tests/CMakeFiles/cursor.dir/cursor.c.o
 tests/cursor: tests/CMakeFiles/cursor.dir/build.make
-tests/cursor: src/libglfw3.a
+tests/cursor: src/libglfw.so.3.1
 tests/cursor: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libm.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/librt.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/librt.so
-tests/cursor: /usr/lib/x86_64-linux-gnu/libm.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/cursor: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/cursor: /usr/lib/x86_64-linux-gnu/libm.so
 tests/cursor: tests/CMakeFiles/cursor.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable cursor"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cursor.dir/link.txt --verbose=$(VERBOSE)

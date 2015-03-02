@@ -81,17 +81,24 @@ wave_EXTERNAL_OBJECTS =
 
 examples/wave: examples/CMakeFiles/wave.dir/wave.c.o
 examples/wave: examples/CMakeFiles/wave.dir/build.make
-examples/wave: src/libglfw3.a
+examples/wave: src/libglfw.so.3.1
 examples/wave: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libm.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libX11.so
+examples/wave: /usr/lib/x86_64-linux-gnu/librt.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/wave: /usr/lib/x86_64-linux-gnu/librt.so
-examples/wave: /usr/lib/x86_64-linux-gnu/libm.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libXrandr.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libXinerama.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libXi.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/wave: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/wave: /usr/lib/x86_64-linux-gnu/libm.so
 examples/wave: examples/CMakeFiles/wave.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable wave"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wave.dir/link.txt --verbose=$(VERBOSE)

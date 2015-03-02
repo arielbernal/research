@@ -106,17 +106,24 @@ glfwinfo_EXTERNAL_OBJECTS =
 tests/glfwinfo: tests/CMakeFiles/glfwinfo.dir/glfwinfo.c.o
 tests/glfwinfo: tests/CMakeFiles/glfwinfo.dir/__/deps/getopt.c.o
 tests/glfwinfo: tests/CMakeFiles/glfwinfo.dir/build.make
-tests/glfwinfo: src/libglfw3.a
+tests/glfwinfo: src/libglfw.so.3.1
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libm.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/librt.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/librt.so
-tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libm.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/glfwinfo: /usr/lib/x86_64-linux-gnu/libm.so
 tests/glfwinfo: tests/CMakeFiles/glfwinfo.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable glfwinfo"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/glfwinfo.dir/link.txt --verbose=$(VERBOSE)

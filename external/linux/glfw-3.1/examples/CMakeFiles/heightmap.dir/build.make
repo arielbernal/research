@@ -106,17 +106,24 @@ heightmap_EXTERNAL_OBJECTS =
 examples/heightmap: examples/CMakeFiles/heightmap.dir/heightmap.c.o
 examples/heightmap: examples/CMakeFiles/heightmap.dir/__/deps/glad.c.o
 examples/heightmap: examples/CMakeFiles/heightmap.dir/build.make
-examples/heightmap: src/libglfw3.a
+examples/heightmap: src/libglfw.so.3.1
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libm.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libX11.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/librt.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/librt.so
-examples/heightmap: /usr/lib/x86_64-linux-gnu/libm.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libXrandr.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libXinerama.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libXi.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/heightmap: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/heightmap: /usr/lib/x86_64-linux-gnu/libm.so
 examples/heightmap: examples/CMakeFiles/heightmap.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable heightmap"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/heightmap.dir/link.txt --verbose=$(VERBOSE)

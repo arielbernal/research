@@ -81,17 +81,24 @@ cursoranim_EXTERNAL_OBJECTS =
 
 tests/cursoranim: tests/CMakeFiles/cursoranim.dir/cursoranim.c.o
 tests/cursoranim: tests/CMakeFiles/cursoranim.dir/build.make
-tests/cursoranim: src/libglfw3.a
+tests/cursoranim: src/libglfw.so.3.1
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libm.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/librt.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/librt.so
-tests/cursoranim: /usr/lib/x86_64-linux-gnu/libm.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/cursoranim: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/cursoranim: /usr/lib/x86_64-linux-gnu/libm.so
 tests/cursoranim: tests/CMakeFiles/cursoranim.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable cursoranim"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cursoranim.dir/link.txt --verbose=$(VERBOSE)

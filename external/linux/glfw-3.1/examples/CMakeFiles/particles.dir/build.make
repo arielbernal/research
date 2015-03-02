@@ -131,25 +131,20 @@ examples/particles: examples/CMakeFiles/particles.dir/particles.c.o
 examples/particles: examples/CMakeFiles/particles.dir/__/deps/tinycthread.c.o
 examples/particles: examples/CMakeFiles/particles.dir/__/deps/getopt.c.o
 examples/particles: examples/CMakeFiles/particles.dir/build.make
-examples/particles: src/libglfw3.a
+examples/particles: src/libglfw.so.3.1
 examples/particles: /usr/lib/x86_64-linux-gnu/libGLU.so
+examples/particles: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/particles: /usr/lib/x86_64-linux-gnu/libm.so
+examples/particles: /usr/lib/x86_64-linux-gnu/librt.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libX11.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libXrandr.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libXinerama.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libXi.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
-examples/particles: /usr/lib/x86_64-linux-gnu/librt.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libm.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libXcursor.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libGL.so
-examples/particles: /usr/lib/x86_64-linux-gnu/librt.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libXrandr.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libXinerama.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libXi.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 examples/particles: /usr/lib/x86_64-linux-gnu/libm.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libXcursor.so
-examples/particles: /usr/lib/x86_64-linux-gnu/libGL.so
+examples/particles: /usr/lib/x86_64-linux-gnu/librt.so
 examples/particles: examples/CMakeFiles/particles.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable particles"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/particles.dir/link.txt --verbose=$(VERBOSE)

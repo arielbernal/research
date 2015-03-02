@@ -106,17 +106,24 @@ iconify_EXTERNAL_OBJECTS =
 tests/iconify: tests/CMakeFiles/iconify.dir/iconify.c.o
 tests/iconify: tests/CMakeFiles/iconify.dir/__/deps/getopt.c.o
 tests/iconify: tests/CMakeFiles/iconify.dir/build.make
-tests/iconify: src/libglfw3.a
+tests/iconify: src/libglfw.so.3.1
 tests/iconify: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libm.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/librt.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/librt.so
-tests/iconify: /usr/lib/x86_64-linux-gnu/libm.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/iconify: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/iconify: /usr/lib/x86_64-linux-gnu/libm.so
 tests/iconify: tests/CMakeFiles/iconify.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable iconify"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/iconify.dir/link.txt --verbose=$(VERBOSE)

@@ -81,17 +81,24 @@ windows_EXTERNAL_OBJECTS =
 
 tests/windows: tests/CMakeFiles/windows.dir/windows.c.o
 tests/windows: tests/CMakeFiles/windows.dir/build.make
-tests/windows: src/libglfw3.a
+tests/windows: src/libglfw.so.3.1
 tests/windows: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libm.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/windows: /usr/lib/x86_64-linux-gnu/librt.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/windows: /usr/lib/x86_64-linux-gnu/librt.so
-tests/windows: /usr/lib/x86_64-linux-gnu/libm.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/windows: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/windows: /usr/lib/x86_64-linux-gnu/libm.so
 tests/windows: tests/CMakeFiles/windows.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable windows"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/windows.dir/link.txt --verbose=$(VERBOSE)

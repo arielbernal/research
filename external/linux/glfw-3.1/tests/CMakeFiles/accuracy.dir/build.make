@@ -81,17 +81,24 @@ accuracy_EXTERNAL_OBJECTS =
 
 tests/accuracy: tests/CMakeFiles/accuracy.dir/accuracy.c.o
 tests/accuracy: tests/CMakeFiles/accuracy.dir/build.make
-tests/accuracy: src/libglfw3.a
+tests/accuracy: src/libglfw.so.3.1
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libm.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/librt.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/librt.so
-tests/accuracy: /usr/lib/x86_64-linux-gnu/libm.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/accuracy: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/accuracy: /usr/lib/x86_64-linux-gnu/libm.so
 tests/accuracy: tests/CMakeFiles/accuracy.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable accuracy"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/accuracy.dir/link.txt --verbose=$(VERBOSE)

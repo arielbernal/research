@@ -81,17 +81,24 @@ sharing_EXTERNAL_OBJECTS =
 
 tests/sharing: tests/CMakeFiles/sharing.dir/sharing.c.o
 tests/sharing: tests/CMakeFiles/sharing.dir/build.make
-tests/sharing: src/libglfw3.a
+tests/sharing: src/libglfw.so.3.1
 tests/sharing: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libm.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/librt.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/librt.so
-tests/sharing: /usr/lib/x86_64-linux-gnu/libm.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/sharing: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/sharing: /usr/lib/x86_64-linux-gnu/libm.so
 tests/sharing: tests/CMakeFiles/sharing.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable sharing"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sharing.dir/link.txt --verbose=$(VERBOSE)

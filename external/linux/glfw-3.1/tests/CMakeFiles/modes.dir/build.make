@@ -106,17 +106,24 @@ modes_EXTERNAL_OBJECTS =
 tests/modes: tests/CMakeFiles/modes.dir/modes.c.o
 tests/modes: tests/CMakeFiles/modes.dir/__/deps/getopt.c.o
 tests/modes: tests/CMakeFiles/modes.dir/build.make
-tests/modes: src/libglfw3.a
+tests/modes: src/libglfw.so.3.1
 tests/modes: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libm.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/modes: /usr/lib/x86_64-linux-gnu/librt.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/modes: /usr/lib/x86_64-linux-gnu/librt.so
-tests/modes: /usr/lib/x86_64-linux-gnu/libm.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/modes: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/modes: /usr/lib/x86_64-linux-gnu/libm.so
 tests/modes: tests/CMakeFiles/modes.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable modes"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/modes.dir/link.txt --verbose=$(VERBOSE)

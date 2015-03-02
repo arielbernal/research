@@ -81,17 +81,24 @@ tearing_EXTERNAL_OBJECTS =
 
 tests/tearing: tests/CMakeFiles/tearing.dir/tearing.c.o
 tests/tearing: tests/CMakeFiles/tearing.dir/build.make
-tests/tearing: src/libglfw3.a
+tests/tearing: src/libglfw.so.3.1
 tests/tearing: /usr/lib/x86_64-linux-gnu/libGLU.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libm.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libX11.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/librt.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libXrandr.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libXinerama.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libXi.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/librt.so
-tests/tearing: /usr/lib/x86_64-linux-gnu/libm.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libXrandr.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libXinerama.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libXi.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libXxf86vm.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libXcursor.so
 tests/tearing: /usr/lib/x86_64-linux-gnu/libGL.so
+tests/tearing: /usr/lib/x86_64-linux-gnu/libm.so
 tests/tearing: tests/CMakeFiles/tearing.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable tearing"
 	cd /home/ajbernal/dev/bat/research/external/linux/glfw-3.1/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tearing.dir/link.txt --verbose=$(VERBOSE)
