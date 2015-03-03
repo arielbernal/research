@@ -22,12 +22,13 @@ class GLBasicObject : public GLObject {
   void render() {
     glUseProgram(ProgramID);
     glBindVertexArray(VAO);
-
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    
     glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
     glUniform3f(LightPositionHandler, 5, 5, 5);
-
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,
                           sizeof(BasicVertex), (void*)0);
@@ -104,7 +105,7 @@ class GLBasicObject : public GLObject {
   }
 
   void updateBindings() {
-    std::cout << "Bound VBO, IBO\n";
+    std::cout << "updateBindings VBO, IBO\n";
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(BasicVertex),
