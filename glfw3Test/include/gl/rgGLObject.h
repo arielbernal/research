@@ -45,17 +45,23 @@ class GLObject {
   void hideMesh() { ShowMesh = false; }
   bool isShowMesh() { return ShowMesh; }
 
-  void addTriangle(unsigned int i0, unsigned int i1, unsigned int i2,
+  void triangle(unsigned int i0, unsigned int i1, unsigned int i2,
                    std::vector<unsigned int>& Indices) {
     Indices.push_back(i0);
     Indices.push_back(i1);
     Indices.push_back(i2);
   }
 
-  void addQuad(unsigned int i0, unsigned int i1, unsigned int i2,
+  void quad(unsigned int i0, unsigned int i1, unsigned int i2,
                unsigned int i3, std::vector<unsigned int>& Indices) {
-    addTriangle(i0, i1, i2, Indices);
-    addTriangle(i2, i3, i0, Indices);
+    triangle(i0, i1, i2, Indices);
+    triangle(i2, i3, i0, Indices);
+  }
+
+  void triangleFan(unsigned int ic, const std::vector<unsigned int>& fan, std::vector<unsigned int>& Indices) {
+    size_t N = fan.size();
+    for (size_t i = 0; i < N; ++i)
+      triangle(fan[i], ic, fan[(i + 1) % N], Indices);
   }
 
   void translate(float dx, float dy, float dz) {
