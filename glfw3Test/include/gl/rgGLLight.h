@@ -14,10 +14,8 @@ class GLLight {
   glm::vec3 getPosition() { return pos; }
 
   void turnOff() { enable = false; }
-
   void turnOn() { enable = true; }
   void switchState() { enable = !enable; }
-
   bool isOn() { return enable; }
 
   std::string getName() { return LightName; }

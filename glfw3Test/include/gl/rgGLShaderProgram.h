@@ -26,6 +26,10 @@ class GLShaderProgram {
     addProgram(VertexFileName, FragmentFileName);
   }
 
+  ~GLShaderProgram() {
+    glDeleteProgram(ProgramID);
+  }
+
   bool addProgram(const std::string& VertexFileName,
                   const std::string& FragmentFileName) {
     std::string VertexShaderCode = loadShader(VertexFileName);
@@ -50,14 +54,6 @@ class GLShaderProgram {
   GLuint getProgramID() { return ProgramID; }
 
   std::string getName() { return ProgramName; }
-
-  void addAttribute(const std::string& AttrName) {
-    Attributes[AttrName] = glGetAttribLocation(ProgramID, AttrName.c_str());
-  }
-
-  void addUniform(const std::string& UniformName) {
-    Uniforms[UniformName] = glGetUniformLocation(ProgramID, UniformName.c_str());
-  }
 
  protected:
   std::string loadShader(const std::string& FileName) {
@@ -131,9 +127,6 @@ class GLShaderProgram {
   std::string ProgramName;
   std::string VertexFileName;
   std::string FragmentFileName;
-
-  std::map<std::string, GLuint> Attributes;
-  std::map<std::string, GLuint> Uniforms;
 };
 
 }  // namespace rg

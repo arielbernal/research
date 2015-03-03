@@ -3,23 +3,27 @@
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
 #include <gl/rgGLWorldScene.h>
-#include "InitWorld.h"
+#include "ActionWorld.h"
 
-rg::GLWorldScene World;
+ActionWorld World;
 
 void EventMouseButtonGLFW3(GLFWwindow* window, int button, int action,
                            int mods) {
   if (TwEventMouseButtonGLFW(button, action)) return;
+  if (World.EventMouseButton(button, action)) return;
 }
 void EventMousePosGLFW3(GLFWwindow* window, double xpos, double ypos) {
   if (TwMouseMotion(int(xpos), int(ypos))) return;
+  if (World.EventMousePos(xpos, ypos)) return;
 }
 void EventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yoffset) {
   if (TwEventMouseWheelGLFW(int(yoffset))) return;
+  if (World.EventMouseWheel(yoffset)) return;
 }
 void EventKeyGLFW3(GLFWwindow* window, int key, int scancode, int action,
                    int mods) {
   if (TwEventKeyGLFW(key, action)) return;
+  if (World.EventKey(key, action)) return;
 }
 void EventCharGLFW3(GLFWwindow* window, int codepoint) {
   if (TwEventCharGLFW(codepoint, GLFW_PRESS)) return;
@@ -93,7 +97,7 @@ int main() {
   glEnable(GL_CULL_FACE);
 
   // glfwSwapInterval(0);
-  InitWorld(World);
+  World.init();
   float t0 = (float)glfwGetTime();
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

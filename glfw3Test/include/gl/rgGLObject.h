@@ -32,7 +32,6 @@ class GLObject {
   ~GLObject() {
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
-    glDeleteProgram(ProgramID);
   }
 
   std::string getName() { return ObjectName; }
@@ -81,7 +80,6 @@ class GLObject {
   bool isShaderMeshAttached() { return ShaderMeshProgram != NULL; }
 
   void updateCamera(const GLCamera& Cam) {
-    std::cout << "CameraUpdate\n";
     VMatrix = Cam.getVMatrix();
     PMatrix = Cam.getPMatrix();
     updateMatrices();
@@ -92,13 +90,9 @@ class GLObject {
 
  protected:
   void generateArrayBuffers() {
-    std::cout << "Generated Vertex Array and Buffers\n";
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &IBO);
-    std::cout << "VAO=" << VAO << std::endl;
-    std::cout << "VBO=" << VBO << std::endl;
-    std::cout << "IBO=" << IBO << std::endl;
   }
 
   void updateMatrices() {

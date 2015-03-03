@@ -9,6 +9,7 @@ class GLCamera {
  public:
   GLCamera(const std::string& CameraName)
       : Enabled(true),
+        HasChanged(true),
         CameraName(CameraName),
         pos(10, 10, 10),
         origin(0, 0, 0),
@@ -47,25 +48,38 @@ class GLCamera {
 
   void setPerspective(float fov, float aspect, float vnear, float vfar) {
     PMatrix = glm::perspective(fov, aspect, vnear, vfar);
+    HasChanged = true;
   }
 
-  void setPMatrix(const glm::mat4& Projection) { PMatrix = Projection; }
-
-  void setVMatrix(const glm::mat4& View) { VMatrix = View; }
-
+  void setPMatrix(const glm::mat4& Projection) {
+    PMatrix = Projection;
+    HasChanged = true;
+  }
+  void setVMatrix(const glm::mat4& View) {
+    VMatrix = View;
+    HasChanged = true;
+  }
   glm::mat4 getPMatrix() const { return PMatrix; }
   glm::mat4 getVMatrix() const { return VMatrix; }
 
   std::string getName() { return CameraName; }
+
   void enable() { Enabled = true; }
   void disable() { Enabled = false; }
   bool isEnabled() { return Enabled; }
 
+  void changeCommited() { HasChanged = false; }
+  bool hasChanged() { return HasChanged; }
+
  protected:
-  void updateView() { VMatrix = glm::lookAt(pos, origin, orientation); }
+  void updateView() {
+    VMatrix = glm::lookAt(pos, origin, orientation);
+    HasChanged = true;
+  }
 
  private:
   bool Enabled;
+  bool HasChanged;
   std::string CameraName;
   glm::vec3 pos;
   glm::vec3 origin;

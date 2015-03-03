@@ -42,8 +42,8 @@ class GLBasicCuboid : public GLBasicObject {
     Vertices.push_back(BasicVertex(0, 0, -dz2, color));        // 8 bottom
     Vertices.push_back(BasicVertex(0, 0, dz2, color));         // 9 top
     Vertices.push_back(BasicVertex(dx2, 0, 0, color));         // 10 front
-    Vertices.push_back(BasicVertex(-dx2, 0, 0, color));         // 11 back
-    Vertices.push_back(BasicVertex(0, -dy2, 0, color));         // 12 left
+    Vertices.push_back(BasicVertex(-dx2, 0, 0, color));        // 11 back
+    Vertices.push_back(BasicVertex(0, -dy2, 0, color));        // 12 left
     Vertices.push_back(BasicVertex(0, dy2, 0, color));         // 13 right
     triangleFan(8, { 0, 1, 2, 3 }, Indices);                   // bottom
     triangleFan(9, { 4, 7, 6, 5 }, Indices);                   // top
