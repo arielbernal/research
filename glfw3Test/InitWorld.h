@@ -19,7 +19,7 @@ void InitWorld(rg::GLWorldScene &World) {
 
   GLShaderProgram* Shader = new GLShaderProgram("Basic3d", "./shaders/basic3d.vs", "./shaders/basic3d.fs");
 
-  GLBasicCuboid* cube = new GLBasicCuboid("Cube", 2, 2, 2, glm::vec4(1, 1, 1, 1));
+  GLBasicCuboid* cube = new GLBasicCuboid("Cube", 4, 4, 4, glm::vec4(1, 1, 1, 1));
   cube->attachShader(Shader);
   World.add(cube);
 
