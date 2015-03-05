@@ -14,7 +14,7 @@ class GLCamera {
         pos(10, 10, 10),
         origin(0, 0, 0),
         orientation(0, 0, 1) {
-    setPerspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    setPerspective(3.1415926f/4.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     updateView();
   }
 

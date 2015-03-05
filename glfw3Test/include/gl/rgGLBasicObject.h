@@ -5,6 +5,7 @@
 
 namespace rg {
 
+
 struct BasicVertex {
   BasicVertex(float x, float y, float z, float r, float g, float b, float a)
       : pos(x, y, z), normal(0, 0, 0), color(r, g, b, a) {}
@@ -30,7 +31,7 @@ class GLBasicObject : public GLObject {
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520, 500);
+    glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520, 500 * cos(beta)* sin(beta));
     beta+= 0.01f;
     //glUniform3f(LightPositionHandler, 0, 4, 2);
     glEnableVertexAttribArray(PositionHandler);
@@ -84,9 +85,11 @@ class GLBasicObject : public GLObject {
 
     LightPositionHandler =
         glGetUniformLocation(ProgramID, "LightPosition_worldspace");
+    LightsHandler = glGetUniformLocation(ProgramID, "Lights");
 
         std::cout << " " <<PositionHandler<<" " << NormalHandler <<" " << ColorHandler <<"\n";
         std::cout << " " <<MMatrixHandle<<" " << VMatrixHandle <<" " << MVPMatrixHandle <<" " << LightPositionHandler <<"\n";
+        std::cout << "Lights Handler = " << LightsHandler << std::endl;
   }
 
   void updateBindings() {

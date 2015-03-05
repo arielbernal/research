@@ -1,6 +1,8 @@
 #ifndef RGGLHEADERS_H
 #define RGGLHEADERS_H
 
+#define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

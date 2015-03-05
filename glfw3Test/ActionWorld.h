@@ -13,7 +13,7 @@ class ActionWorld : public GLWorldScene {
   void init() {    
     add(new GLCamera("FirstCamera"));
     GLCamera* Cam = new GLCamera("SecondCamera");
-    Cam->setPerspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    Cam->setPerspective(60.0f/180.0f*3.1415926f, 4.0f / 3.0f, 0.1f, 100.0f);
     Cam->setPosition(10,0, 10);
     add(Cam);
 

@@ -96,6 +96,7 @@ int main() {
   glDepthFunc(GL_LESS);
   glEnable(GL_CULL_FACE);
 
+
   // glfwSwapInterval(0);
   World.init();
   float t0 = (float)glfwGetTime();

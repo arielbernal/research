@@ -118,6 +118,7 @@ class GLObject {
   GLuint VMatrixHandle;
   GLuint MVPMatrixHandle;
   GLuint LightPositionHandler;
+  GLuint LightsHandler;
 
   glm::mat4 MMatrix;
   glm::mat4 VMatrix;
