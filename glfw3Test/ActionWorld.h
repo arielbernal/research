@@ -49,6 +49,11 @@ class ActionWorld : public GLWorldScene {
       cam->setPosition(10 * cos(alpha), 10 * sin(alpha), 5);
       alpha += 0.1f;
     } 
+    if (key == 'C' && (action == 0 || action == 2)) {
+        GLCamera* cam = getCurrentCamera();
+        cam->rotate(0.1f,0.1f);
+    }
+
     return false;
   }
 
@@ -60,6 +65,14 @@ class ActionWorld : public GLWorldScene {
   }
   bool EventMousePos(double xpos, double ypos) { 
     Mouse.position(xpos, ypos);
+    if (Mouse.isLeftButtonPressed()) {
+        float dx = Mouse.dx();
+        float dy = Mouse.dy();
+        if (fabs(dx) < 2) dx = 0;
+        if (fabs(dy) < 2) dy = 0;
+        GLCamera* cam = getCurrentCamera();
+        cam->rotate(dx/320.0f, dy/320.0f);
+    }
     // if camera changes then
     // update()
     return false; 

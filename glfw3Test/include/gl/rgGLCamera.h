@@ -2,6 +2,7 @@
 #define RGGLCAMERA_H
 
 #include <gl/rgGLHeaders.h>
+#include <glm/gtc/quaternion.hpp>
 
 namespace rg {
 
@@ -13,14 +14,15 @@ class GLCamera {
         CameraName(CameraName),
         pos(10, 10, 10),
         origin(0, 0, 0),
-        orientation(0, 0, 1) {
+        orientation(0, 0, 1),
+        rot(glm::mat4(1)) {
     setPerspective(3.1415926f/4.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     updateView();
   }
 
   GLCamera(const std::string& CameraName, const glm::vec3& p,
            const glm::vec3& o, const glm::vec3& orient)
-      : Enabled(true), CameraName(CameraName) {
+           : Enabled(true), CameraName(CameraName), rot(glm::mat4(1)) {
     pos = p;
     origin = o;
     orientation = orient;
@@ -45,6 +47,22 @@ class GLCamera {
     updateView();
   }
   glm::vec3 getOrientation() { return orientation; }
+
+
+
+  glm::quat eulerToQuat(const glm::vec3& euler) {
+
+  }
+  void rotate(float dx, float dy) {
+      glm::quat qx(1.0f, 0.0f, 0.0f, dx);
+      glm::quat qy(0.0f, 1.0f, 0.0f, dy);
+      glm::quat qz(0.0f, 0.0f, 1.0f, 0.0f);
+      glm::quat fromEuler = (qx * qy) * qz;
+      qRotation = qRotation * fromEuler;
+      rot = glm::mat4_cast(qRotation);
+      updateView();
+  }
+
 
   void setPerspective(float fov, float aspect, float vnear, float vfar) {
     PMatrix = glm::perspective(fov, aspect, vnear, vfar);
@@ -73,7 +91,7 @@ class GLCamera {
 
  protected:
   void updateView() {
-    VMatrix = glm::lookAt(pos, origin, orientation);
+    VMatrix = glm::lookAt(pos, origin, orientation) * rot;
     HasChanged = true;
   }
 
@@ -86,6 +104,9 @@ class GLCamera {
   glm::vec3 orientation;
   glm::mat4 VMatrix;
   glm::mat4 PMatrix;
+
+  glm::quat qRotation;
+  glm::mat4 rot;
 };
 
 }  // namespace rg

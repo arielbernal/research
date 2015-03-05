@@ -32,7 +32,7 @@ class GLBasicObject : public GLObject {
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
 
     glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520, 500 * cos(beta)* sin(beta));
-    beta+= 0.01f;
+    beta+= 0.001f;
     //glUniform3f(LightPositionHandler, 0, 4, 2);
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,
