@@ -17,8 +17,9 @@ struct BasicVertex {
 
 class GLBasicObject : public GLObject {
  public:
-  GLBasicObject(const std::string& ObjectName) : GLObject(ObjectName) {}
+  GLBasicObject(const std::string& ObjectName) : GLObject(ObjectName) { beta = 0;}
 
+  float beta;
   void render() {
     glUseProgram(ProgramID);
     glBindVertexArray(VAO);
@@ -26,9 +27,12 @@ class GLBasicObject : public GLObject {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
     glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
-    glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
-    glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
-    glUniform3f(LightPositionHandler, 2, 2, 2);
+    glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
+    glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
+
+    glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520, 500);
+    beta+= 0.01f;
+    //glUniform3f(LightPositionHandler, 0, 4, 2);
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,
                           sizeof(BasicVertex), (void*)0);
@@ -71,19 +75,18 @@ class GLBasicObject : public GLObject {
   void getHandlers() {
     PositionHandler =
         glGetAttribLocation(ProgramID, "vertexPosition_modelspace");
-
     NormalHandler = glGetAttribLocation(ProgramID, "vertexNormal_modelspace");
-
     ColorHandler = glGetAttribLocation(ProgramID, "vertexColor");
 
     MMatrixHandle = glGetUniformLocation(ProgramID, "M");
-
-    MVPMatrixHandle = glGetUniformLocation(ProgramID, "MVP");
-
     VMatrixHandle = glGetUniformLocation(ProgramID, "V");
+    MVPMatrixHandle = glGetUniformLocation(ProgramID, "MVP");
 
     LightPositionHandler =
         glGetUniformLocation(ProgramID, "LightPosition_worldspace");
+
+        std::cout << " " <<PositionHandler<<" " << NormalHandler <<" " << ColorHandler <<"\n";
+        std::cout << " " <<MMatrixHandle<<" " << VMatrixHandle <<" " << MVPMatrixHandle <<" " << LightPositionHandler <<"\n";
   }
 
   void updateBindings() {
