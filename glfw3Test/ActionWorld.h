@@ -10,11 +10,11 @@
 using namespace rg;
 class ActionWorld : public GLWorldScene {
  public:
-  void init() {    
+  void init() {
     add(new GLCamera("FirstCamera"));
     GLCamera* Cam = new GLCamera("SecondCamera");
-    Cam->setPerspective(60.0f/180.0f*3.1415926f, 4.0f / 3.0f, 0.1f, 100.0f);
-    Cam->setPosition(10,0, 10);
+    Cam->setPerspective(60.0f / 180.0f * 3.1415926f, 4.0f / 3.0f, 0.1f, 100.0f);
+    Cam->setPosition(10, 0, 10);
     add(Cam);
 
     GLLight* L1 = new GLLight("FirstLight");
@@ -33,7 +33,7 @@ class ActionWorld : public GLWorldScene {
         new GLBasicCuboid("Cube1", 2, 2, 2, glm::vec4(1, 1, 1, 1));
     cube1->attachShader(Shader);
     add(cube1);
-    
+
     GLBasicCuboid* fl =
         new GLBasicCuboid("Floor", 20, 20, 0.1, glm::vec4(1, 1, 1, 1));
     fl->attachShader(Shader);
@@ -48,10 +48,12 @@ class ActionWorld : public GLWorldScene {
       GLCamera* cam = getCurrentCamera();
       cam->setPosition(10 * cos(alpha), 10 * sin(alpha), 5);
       alpha += 0.1f;
-    } 
+    }
     if (key == 'C' && (action == 0 || action == 2)) {
-        GLCamera* cam = getCurrentCamera();
-        cam->rotate(0.1f,0.1f);
+      GLCamera* cam = getCurrentCamera();
+      float dx = -2;
+      float dy = 0;
+      cam->rotate(dx / 320.0f, dy / 320.0f);
     }
 
     return false;
@@ -63,27 +65,28 @@ class ActionWorld : public GLWorldScene {
     // update()
     return false;
   }
-  bool EventMousePos(double xpos, double ypos) { 
+
+  bool EventMousePos(double xpos, double ypos) {
     Mouse.position(xpos, ypos);
     if (Mouse.isLeftButtonPressed()) {
-        float dx = Mouse.dx();
-        float dy = Mouse.dy();
-        if (fabs(dx) < 2) dx = 0;
-        if (fabs(dy) < 2) dy = 0;
-        GLCamera* cam = getCurrentCamera();
-        cam->rotate(dx/320.0f, dy/320.0f);
+      float dx = Mouse.dx();
+      float dy = Mouse.dy();
+      if (fabs(dx) < 2) dx = 0;
+      if (fabs(dy) < 2) dy = 0;
+      GLCamera* cam = getCurrentCamera();
+      cam->rotate(dx / 320.0f, dy / 320.0f);
     }
-    // if camera changes then
-    // update()
-    return false; 
+    return false;
   }
+
   bool EventMouseWheel(double yoffset) {
-    //std::cout << yoffset << std::endl;
+    // std::cout << yoffset << std::endl;
     // if camera changes then
     // update()
-    return false; 
+    return false;
   }
-private:
+
+ private:
   GLMouseHandler Mouse;
 };
 
