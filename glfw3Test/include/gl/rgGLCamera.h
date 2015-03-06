@@ -5,6 +5,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <math/rgSvector.h>
 
+#include <glm/gtx/string_cast.hpp>
+
 namespace rg {
 
 class GLCamera {
@@ -116,6 +118,7 @@ class GLCamera {
     std::cout << text << " [" << q.x << ", " << q.y << ", " << q.z << ", "
               << q.w << "]\n";
   }
+
   void rotate(float dx, float dy) {
     float yaw = dy;
     float pitch = -dx;
@@ -152,8 +155,33 @@ class GLCamera {
   bool hasChanged() { return HasChanged; }
 
  protected:
+  void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up) {
+    glm::vec3 z = normalize(eye - center);
+    glm::vec3 x = normalize(cross(z, up));
+    glm::vec3 y = cross(x, z);
+    mCR = glm::mat4(1.0f);
+    mCR[0] = glm::vec4(x.x, y.x, z.x, 0);
+    mCR[1] = glm::vec4(x.y, y.y, z.y, 0);
+    mCR[2] = glm::vec4(x.z, y.z, z.z, 0);
+    mCR[3] = glm::vec4(0, 0, 0, 1);
+
+    mCT[0] = glm::vec4(1, 0, 0, 0);
+    mCT[1] = glm::vec4(0, 1, 0, 0);
+    mCT[2] = glm::vec4(0, 0, 1, 0);
+    mCT[3] = glm::vec4(-eye.x, -eye.y, -eye.z, 1);
+  }
   void updateView() {
-    VMatrix = glm::lookAt(pos, origin, orientation) * rot;
+    //VMatrix = glm::lookAt(pos, origin, orientation) * rot;
+      lookAt(pos, origin, orientation);
+      glm::mat4 p = glm::lookAt(pos, origin, orientation);
+  //    std::cout << "P=" << glm::to_string(p) << std::endl;
+      VMatrix = mCR * mCT  * rot;
+      VMatrix = p  * rot;
+  //  std::cout << "VM=" << glm::to_string(VMatrix) << std::endl;
+    glm::mat4 A(1);
+  //  std::cout << "testing A = " << glm::to_string(A) << std::endl;
+    A[0] = glm::vec4(1, 2, 3, 4);
+   // std::cout << "testing A = " << glm::to_string(A) << std::endl;
     HasChanged = true;
   }
 
@@ -169,6 +197,10 @@ class GLCamera {
 
   glm::quat qRotation;
   glm::mat4 rot;
+
+
+  glm::mat4 mCR;
+  glm::mat4 mCT;
 };
 
 }  // namespace rg

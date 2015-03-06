@@ -2,6 +2,7 @@
 #define RGGLHEADERS_H
 
 #define GLM_FORCE_RADIANS
+#define GLM_LEFT_HANDED
 
 #include <GL/glew.h>
 #include <GL/gl.h>
