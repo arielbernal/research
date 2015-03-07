@@ -44,21 +44,7 @@ class GLLight {
   float QuadraticAttenuation;
 };
 
-struct GLMaterial {
-  GLMaterial(const std::string& Name, const glm::vec3& Diffuse,
-             const glm::vec3& Ambient, const glm::vec3 Specular,
-             float Shineness)
-      : Name(Name),
-        Diffuse(Diffuse),
-        Ambient(Ambient),
-        Specular(Specular),
-        Shineness(Shineness) {}
-  std::string Name;
-  glm::vec3 Diffuse;
-  glm::vec3 Ambient;
-  glm::vec3 Specular;
-  float Shineness;
-};
+
 
 }  // namespace rg
 

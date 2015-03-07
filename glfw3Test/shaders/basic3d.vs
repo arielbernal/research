@@ -3,7 +3,6 @@
 // Input vertex data, different for all executions of this shader.
 in vec3 vertexPosition_modelspace;
 in vec3 vertexNormal_modelspace;
-in vec4 vertexColor;
 
 // Output data ; will be interpolated for each fragment.
 out vec3 Position_worldspace;

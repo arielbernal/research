@@ -5,6 +5,20 @@
 
 namespace rg {
 
+struct GLMaterial {
+  GLMaterial(const std::string& Name) : Name(Name) {}
+  std::string Name;
+  glm::vec3 ka;  // ambient
+  glm::vec3 kd;  // diffuse
+  glm::vec3 ks;  // specular
+  float tr;      // transparency
+};
+
+struct GLFaceGroup {
+  GLMaterial Material;
+  std::vector<uint16_t> Indices;
+};
+
 struct BasicVertex {
   BasicVertex(float x, float y, float z) : pos(x, y, z), normal(0, 0, 0) {}
   ATTRALIGN glm::vec3 pos;
@@ -30,8 +44,7 @@ class GLBasicObject : public GLObject {
 
     glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520,
                 500 * cos(beta) * sin(beta));
-    glUniform3f(ColorHandler, cos(beta) * 300, sin(beta) * 520,
-                500 * cos(beta) * sin(beta));
+
     beta += 0.001f;
     // glUniform3f(LightPositionHandler, 0, 4, 2);
     glEnableVertexAttribArray(PositionHandler);
@@ -41,7 +54,11 @@ class GLBasicObject : public GLObject {
     glVertexAttribPointer(NormalHandler, 3, GL_FLOAT, GL_FALSE,
                           sizeof(BasicVertex), (void*)0x10);
 
-    glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, (void*)0);
+    for (auto e : FaceGroup) {
+      glUniform3f(ColorHandler, e.Material.kd.x, e.Material.kd.y,
+                  e.Material.kd.z);
+      glDrawElements(GL_TRIANGLES, e.Indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+    }
 
     glDisableVertexAttribArray(PositionHandler);
     glDisableVertexAttribArray(NormalHandler);
@@ -98,8 +115,8 @@ class GLBasicObject : public GLObject {
 
   std::vector<BasicVertex> Vertices;
   std::vector<unsigned int> Indices;
-protected:
-  glm::vec3 Color;
+  std::vector<GLMaterial> Materials;
+  std::vector<GLFaceGroup> FaceGroup;
 };
 
 }  // namespace rg
