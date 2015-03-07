@@ -11,10 +11,10 @@ using namespace rg;
 class ActionWorld : public GLWorldScene {
  public:
   void init() {
-    add(new GLCamera("FirstCamera"));
+    // add(new GLCamera("FirstCamera"));
     GLCamera* Cam = new GLCamera("SecondCamera");
-    Cam->setPerspective(60.0f / 180.0f * 3.1415926f, 4.0f / 3.0f, 0.1f, 100.0f);
-    Cam->setPosition(10, 0, 10);
+    Cam->setPerspective(50.0f / 180.0f * M_PI, 4.0f / 3.0f, 0.1f, 200.0f);
+    Cam->setPosition(20, 0, 0);
     add(Cam);
 
     GLLight* L1 = new GLLight("FirstLight");
@@ -26,18 +26,25 @@ class ActionWorld : public GLWorldScene {
     GLBasicCuboid* cube =
         new GLBasicCuboid("Cube", 2, 2, 2, glm::vec4(1, 1, 1, 1));
     cube->attachShader(Shader);
-    cube->translate(0, -2, 2);
+    cube->translate(0, -2, 3);
     add(cube);
 
     GLBasicCuboid* cube1 =
-        new GLBasicCuboid("Cube1", 2, 2, 2, glm::vec4(1, 1, 1, 1));
+        new GLBasicCuboid("Cube1", 2, 2, 2, glm::vec4(1, 0.5, 1, 1));
     cube1->attachShader(Shader);
+    cube1->translate(0, 0, 1);
     add(cube1);
+
+    GLBasicCuboid* cube2 =
+        new GLBasicCuboid("Cube2", 0.5f, 0.5f, 0.5f, glm::vec4(1, 0.3, 0.4, 1));
+    cube2->attachShader(Shader);
+    cube2->translate(1 + 0.25, 0, 0.25);
+    add(cube2);
 
     GLBasicCuboid* fl =
         new GLBasicCuboid("Floor", 20, 20, 0.1, glm::vec4(1, 1, 1, 1));
     fl->attachShader(Shader);
-    fl->translate(0, 0, -1);
+    fl->translate(0, 0, -0.05);
     add(fl);
   }
 
@@ -80,9 +87,13 @@ class ActionWorld : public GLWorldScene {
   }
 
   bool EventMouseWheel(double yoffset) {
-    // std::cout << yoffset << std::endl;
-    // if camera changes then
-    // update()
+    GLCamera* cam = getCurrentCamera();
+    glm::vec3 pos = cam->getPosition();
+    float mouse_vx = pos.x;
+    mouse_vx += yoffset > 0 ? 0.9 : -0.9;
+    if (mouse_vx > 100) mouse_vx = 100;
+    if (mouse_vx < 2) mouse_vx = 2;
+    cam->setPosition(mouse_vx, pos.y, pos.z);
     return false;
   }
 

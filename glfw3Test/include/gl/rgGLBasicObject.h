@@ -5,20 +5,17 @@
 
 namespace rg {
 
-
 struct BasicVertex {
-  BasicVertex(float x, float y, float z, float r, float g, float b, float a)
-      : pos(x, y, z), normal(0, 0, 0), color(r, g, b, a) {}
-  BasicVertex(float x, float y, float z, const glm::vec4& color)
-      : pos(x, y, z), normal(0, 0, 0), color(color) {}
+  BasicVertex(float x, float y, float z) : pos(x, y, z), normal(0, 0, 0) {}
   ATTRALIGN glm::vec3 pos;
   ATTRALIGN glm::vec3 normal;
-  ATTRALIGN glm::vec4 color;
 };
 
 class GLBasicObject : public GLObject {
  public:
-  GLBasicObject(const std::string& ObjectName) : GLObject(ObjectName) { beta = 0;}
+  GLBasicObject(const std::string& ObjectName) : GLObject(ObjectName) {
+    beta = 0;
+  }
 
   float beta;
   void render() {
@@ -31,18 +28,18 @@ class GLBasicObject : public GLObject {
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520, 500 * cos(beta)* sin(beta));
-    beta+= 0.001f;
-    //glUniform3f(LightPositionHandler, 0, 4, 2);
+    glUniform3f(LightPositionHandler, cos(beta) * 300, sin(beta) * 520,
+                500 * cos(beta) * sin(beta));
+    glUniform3f(ColorHandler, cos(beta) * 300, sin(beta) * 520,
+                500 * cos(beta) * sin(beta));
+    beta += 0.001f;
+    // glUniform3f(LightPositionHandler, 0, 4, 2);
     glEnableVertexAttribArray(PositionHandler);
     glVertexAttribPointer(PositionHandler, 3, GL_FLOAT, GL_FALSE,
                           sizeof(BasicVertex), (void*)0);
     glEnableVertexAttribArray(NormalHandler);
     glVertexAttribPointer(NormalHandler, 3, GL_FLOAT, GL_FALSE,
                           sizeof(BasicVertex), (void*)0x10);
-    glEnableVertexAttribArray(ColorHandler);
-    glVertexAttribPointer(ColorHandler, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(BasicVertex), (void*)0x20);
 
     glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, (void*)0);
 
@@ -77,19 +74,15 @@ class GLBasicObject : public GLObject {
     PositionHandler =
         glGetAttribLocation(ProgramID, "vertexPosition_modelspace");
     NormalHandler = glGetAttribLocation(ProgramID, "vertexNormal_modelspace");
-    ColorHandler = glGetAttribLocation(ProgramID, "vertexColor");
 
     MMatrixHandle = glGetUniformLocation(ProgramID, "M");
     VMatrixHandle = glGetUniformLocation(ProgramID, "V");
     MVPMatrixHandle = glGetUniformLocation(ProgramID, "MVP");
+    ColorHandler = glGetUniformLocation(ProgramID, "Color");
 
     LightPositionHandler =
         glGetUniformLocation(ProgramID, "LightPosition_worldspace");
     LightsHandler = glGetUniformLocation(ProgramID, "Lights");
-
-        std::cout << " " <<PositionHandler<<" " << NormalHandler <<" " << ColorHandler <<"\n";
-        std::cout << " " <<MMatrixHandle<<" " << VMatrixHandle <<" " << MVPMatrixHandle <<" " << LightPositionHandler <<"\n";
-        std::cout << "Lights Handler = " << LightsHandler << std::endl;
   }
 
   void updateBindings() {
@@ -105,6 +98,8 @@ class GLBasicObject : public GLObject {
 
   std::vector<BasicVertex> Vertices;
   std::vector<unsigned int> Indices;
+protected:
+  glm::vec3 Color;
 };
 
 }  // namespace rg

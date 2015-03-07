@@ -40,6 +40,7 @@ class GLWorldScene {
   void nextCamera() {
     CurrentCamera++;
     if (CurrentCamera == Cameras.end()) CurrentCamera = Cameras.begin();
+    std::cout << CurrentCamera->second->getName() << std::endl;
     update(true);
   }
 

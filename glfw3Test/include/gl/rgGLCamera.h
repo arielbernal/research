@@ -3,9 +3,6 @@
 
 #include <gl/rgGLHeaders.h>
 #include <glm/gtc/quaternion.hpp>
-#include <math/rgSvector.h>
-
-#include <glm/gtx/string_cast.hpp>
 
 namespace rg {
 
@@ -15,12 +12,18 @@ class GLCamera {
       : Enabled(true),
         HasChanged(true),
         CameraName(CameraName),
-        pos(10, 10, 10),
+        pos(20, 0, 0),
         origin(0, 0, 0),
-        orientation(0, 1, 0),
+        orientation(0, 0, 1),
         rot(glm::mat4(1)),
         qRotation(glm::quat(1, 0, 0, 0)) {
-    setPerspective(3.1415926f / 4.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    setPerspective(M_PI / 4.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), -float(M_PI) / 2.0f,
+                               glm::vec3(1.0f, 0, 0));
+    glm::mat4 Rz =
+        glm::rotate(glm::mat4(1.0f), float(M_PI) / 2.0f, glm::vec3(0.0f, 0, 1));
+    RotXYZ = Rx * Rz;
+
     updateView();
   }
 
@@ -120,8 +123,8 @@ class GLCamera {
   }
 
   void rotate(float dx, float dy) {
-    float yaw = dy;
-    float pitch = -dx;
+    float yaw = -dx;
+    float pitch = -dy;
     float roll = 0;
     glm::quat fromEuler = eulerToQuat(glm::vec3(0, pitch, yaw));
     qRotation = qRotation * fromEuler;
@@ -155,33 +158,24 @@ class GLCamera {
   bool hasChanged() { return HasChanged; }
 
  protected:
-  void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up) {
-    glm::vec3 z = normalize(eye - center);
-    glm::vec3 x = normalize(cross(z, up));
-    glm::vec3 y = cross(x, z);
-    mCR = glm::mat4(1.0f);
-    mCR[0] = glm::vec4(x.x, y.x, z.x, 0);
-    mCR[1] = glm::vec4(x.y, y.y, z.y, 0);
-    mCR[2] = glm::vec4(x.z, y.z, z.z, 0);
-    mCR[3] = glm::vec4(0, 0, 0, 1);
+  glm::mat4 lookAtXYZ(const glm::vec3& eye, const glm::vec3& center,
+                      const glm::vec3& up) {
+    const glm::vec3 x(glm::normalize(center - eye));
+    const glm::vec3 y(glm::normalize(glm::cross(up, x)));
+    const glm::vec3 z(glm::cross(x, y));
 
-    mCT[0] = glm::vec4(1, 0, 0, 0);
-    mCT[1] = glm::vec4(0, 1, 0, 0);
-    mCT[2] = glm::vec4(0, 0, 1, 0);
-    mCT[3] = glm::vec4(-eye.x, -eye.y, -eye.z, 1);
+    glm::mat4 Result(1);
+    Result[0] = glm::vec4(x.x, y.x, z.x, 0);
+    Result[1] = glm::vec4(x.y, y.y, z.y, 0);
+    Result[2] = glm::vec4(x.z, y.z, z.z, 0);
+    Result[3] =
+        glm::vec4(-glm::dot(eye, x), -glm::dot(eye, y), -glm::dot(eye, z), 1);
+    return Result;
   }
+
   void updateView() {
-    //VMatrix = glm::lookAt(pos, origin, orientation) * rot;
-      lookAt(pos, origin, orientation);
-      glm::mat4 p = glm::lookAt(pos, origin, orientation);
-  //    std::cout << "P=" << glm::to_string(p) << std::endl;
-      VMatrix = mCR * mCT  * rot;
-      VMatrix = p  * rot;
-  //  std::cout << "VM=" << glm::to_string(VMatrix) << std::endl;
-    glm::mat4 A(1);
-  //  std::cout << "testing A = " << glm::to_string(A) << std::endl;
-    A[0] = glm::vec4(1, 2, 3, 4);
-   // std::cout << "testing A = " << glm::to_string(A) << std::endl;
+    glm::mat4 L = lookAtXYZ(pos, origin, orientation);
+    VMatrix = RotXYZ * L * rot;
     HasChanged = true;
   }
 
@@ -198,9 +192,7 @@ class GLCamera {
   glm::quat qRotation;
   glm::mat4 rot;
 
-
-  glm::mat4 mCR;
-  glm::mat4 mCT;
+  glm::mat4 RotXYZ;  // so we put the z where it belongs
 };
 
 }  // namespace rg
