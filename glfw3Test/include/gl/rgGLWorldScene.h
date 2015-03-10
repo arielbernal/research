@@ -22,7 +22,7 @@ class GLWorldScene {
   }
 
   void render() {
-    update();
+    update(true);
     for (auto e : Objects) e.second->render();
   }
 

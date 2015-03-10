@@ -24,25 +24,25 @@ class ActionWorld : public GLWorldScene {
         "Light1", "./shaders/light1.vs", "./shaders/light1.fs");
 
     GLBasicCuboid* cube =
-        new GLBasicCuboid("Cube", 2, 2, 2, glm::vec3(0.2, 0.4, 1));
+        new GLBasicCuboid("Cube", 2, 2, 2);
     cube->attachShader(Shader);
     cube->translate(0, -2, 3);
     add(cube);
 
     GLBasicCuboid* cube1 =
-        new GLBasicCuboid("Cube1", 2, 2, 2, glm::vec3(1, 0.5, 1));
+        new GLBasicCuboid("Cube1", 2, 2, 2);
     cube1->attachShader(Shader);
     cube1->translate(0, 0, 1);
     add(cube1);
 
     GLBasicCuboid* cube2 =
-        new GLBasicCuboid("Cube2", 0.5f, 0.5f, 0.5f, glm::vec3(1, 0.3, 0.4));
+        new GLBasicCuboid("Cube2", 0.5f, 0.5f, 0.5f);
     cube2->attachShader(Shader);
     cube2->translate(1 + 0.25, 0, 0.25);
     add(cube2);
 
     GLBasicCuboid* fl =
-        new GLBasicCuboid("Floor", 20, 20, 0.1, glm::vec3(0.2, 1, 0.5));
+        new GLBasicCuboid("Floor", 20, 20, 0.1);
     fl->attachShader(Shader);
     fl->translate(0, 0, -0.05);
     add(fl);
