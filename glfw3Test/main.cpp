@@ -60,6 +60,7 @@ int main() {
   glfwMakeContextCurrent(window);
   glfwSetInputMode(window, GLFW_CURSOR,
                    GLFW_CURSOR_NORMAL);  // can be GLFW_CURSOR_HIDDEN
+  glfwSetWindowPos(window, 2800, 100);
 
   // Initialize AntTweakBar
   // TwInit(TW_OPENGL, NULL);

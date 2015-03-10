@@ -4,6 +4,7 @@
 #include <gl/rgGLHeaders.h>
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLShaderProgram.h>
+#include <gl/rgGLMaterial.h>
 
 #include <iostream>
 #include <vector>
@@ -15,29 +16,6 @@ namespace rg {
 #else
 #define ATTRALIGN __declspec(align(16))
 #endif
-
-struct GLMaterial {
-  std::string Name;
-  glm::vec3 Ka;        // Ambient color
-  glm::vec3 Kd;        // Diffuse color
-  glm::vec3 Ks;        // Specular color
-  float Ns;            // Specular exponent
-  glm::vec3 Tf;        // Transmision filter
-  int illum;           // Illumination model
-  float d;             // Dissolve factor
-  float Ni;            // Index of refraction
-  std::string map_Ka;  // Ambient texture
-  std::string map_Kd;  // Diffuse texture
-  std::string map_Ks;  // Specular texture
-
-  GLMaterial() : Name("Default"), Kd(1, 1, 1) {};
-  GLMaterial(const std::string& Name) : Name(Name), Kd(1, 1, 1) {}
-  const bool hasTextureFiles() const {
-    return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
-  }
-};
-
-GLMaterial GLDefaultMaterial();
 
 struct GLVertex {
   GLVertex(float x, float y, float z)
@@ -165,16 +143,23 @@ class GLObject {
   void updateCamera(const GLCamera& Cam) {
     VMatrix = Cam.getVMatrix();
     PMatrix = Cam.getPMatrix();
+    EyePos = Cam.getPosition();
     updateMatrices();
   }
 
   void getHandlers() {
     VertexHandler = glGetAttribLocation(ProgramID, "Vertex");
     NormalHandler = glGetAttribLocation(ProgramID, "Normal");
+    UvHandler = glGetAttribLocation(ProgramID, "Uv");
 
     MMatrixHandle = glGetUniformLocation(ProgramID, "M");
+    VMatrixHandle = glGetUniformLocation(ProgramID, "V");
     MVPMatrixHandle = glGetUniformLocation(ProgramID, "MVP");
-    ColorHandler = glGetUniformLocation(ProgramID, "Color");
+    EyePosHandler = glGetUniformLocation(ProgramID, "EyePos");
+
+    Material_Kd_Handler = glGetUniformLocation(ProgramID, "Material.Kd");
+    Material_Ka_Handler = glGetUniformLocation(ProgramID, "Material.Ka");
+    Material_Ks_Handler = glGetUniformLocation(ProgramID, "Material.Ks");
 
     LightPositionHandler =
         glGetUniformLocation(ProgramID, "LightPosition_worldspace");
@@ -187,12 +172,13 @@ class GLObject {
 
     glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
+    glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 10, sin(beta) * 10, 10);
-                //10.0 * cos(beta) * sin(beta));
+    glUniform3f(LightPositionHandler, cos(beta) * 5, sin(beta) * 5, 5);
+    // 10.0 * cos(beta) * sin(beta));
 
     beta += 0.01f;
-    // glUniform3f(LightPositionHandler, 0, 4, 2);
+    glUniform3fv(EyePosHandler, 1, glm::value_ptr(EyePos));
 
     for (auto e : Groups) {
       glBindBuffer(GL_ARRAY_BUFFER, e->VBO);
@@ -205,18 +191,19 @@ class GLObject {
       glVertexAttribPointer(NormalHandler, 3, GL_FLOAT, GL_FALSE,
                             sizeof(GLVertex), (void*)0x10);
 
-      if (int16_t(UvHandler - 1) > 0) {
+      if (UvHandler >= 0) {
         glEnableVertexAttribArray(UvHandler);
         glVertexAttribPointer(UvHandler, 3, GL_FLOAT, GL_FALSE,
                               sizeof(GLVertex), (void*)0x20);
       }
 
-      glUniform3f(ColorHandler, e->Material.Kd.x, e->Material.Kd.y,
-                  e->Material.Kd.z);
+      glUniform3fv(Material_Kd_Handler, 1, glm::value_ptr(e->Material.Kd));
+      glUniform3fv(Material_Ka_Handler, 1, glm::value_ptr(e->Material.Ka));
+      glUniform3fv(Material_Ks_Handler, 1, glm::value_ptr(e->Material.Ks));
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, e->IBO);
       glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_SHORT,
-        (void*)0);
+                     (void*)0);
 
       glDisableVertexAttribArray(VertexHandler);
       glDisableVertexAttribArray(NormalHandler);
@@ -240,19 +227,26 @@ class GLObject {
   GLuint ProgramMeshID;
   GLuint VAO;
 
-  GLuint VertexHandler;
-  GLuint NormalHandler;
-  GLuint UvHandler;
+  GLint VertexHandler;
+  GLint NormalHandler;
+  GLint UvHandler;
 
-  GLuint MMatrixHandle;
-  GLuint MVPMatrixHandle;
-  GLuint LightPositionHandler;
-  GLuint ColorHandler;
+  GLint MMatrixHandle;
+  GLint VMatrixHandle;
+  GLint MVPMatrixHandle;
+  GLint LightPositionHandler;
+  GLint EyePosHandler;
+
+  GLint Material_Kd_Handler;
+  GLint Material_Ka_Handler;
+  GLint Material_Ks_Handler;
 
   glm::mat4 MMatrix;
   glm::mat4 VMatrix;
   glm::mat4 PMatrix;
   glm::mat4 MVPMatrix;
+
+  glm::vec3 EyePos;
 
   std::vector<GroupFaces*> Groups;
 };

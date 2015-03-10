@@ -41,7 +41,7 @@ class GLCamera {
     pos = glm::vec3(x, y, z);
     updateView();
   }
-  glm::vec3 getPosition() { return pos; }
+  glm::vec3 getPosition() const { return pos; }
 
   void setOrigin(float x, float y, float z) {
     origin = glm::vec3(x, y, z);

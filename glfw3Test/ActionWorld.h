@@ -3,7 +3,7 @@
 
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLLight.h>
-#include <gl/rgGLBasicCuboid.h>
+#include <gl/rgGLCuboid.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLWorldScene.h>
 
@@ -23,26 +23,24 @@ class ActionWorld : public GLWorldScene {
     GLShaderProgram* Shader = new GLShaderProgram(
         "Light1", "./shaders/light1.vs", "./shaders/light1.fs");
 
-    GLBasicCuboid* cube =
-        new GLBasicCuboid("Cube", 2, 2, 2);
+    GLCuboid* cube = new GLCuboid("Cube", 2, 2, 2, GLCuboid::GLCUBOID_REFINED,
+                                  GLMaterial::Red());
     cube->attachShader(Shader);
     cube->translate(0, -2, 3);
     add(cube);
 
-    GLBasicCuboid* cube1 =
-        new GLBasicCuboid("Cube1", 2, 2, 2);
+    GLCuboid* cube1 =
+        new GLCuboid("Cube1", 2, 2, 2, GLCuboid::GLCUBOID_MULTICOLOR);
     cube1->attachShader(Shader);
     cube1->translate(0, 0, 1);
     add(cube1);
 
-    GLBasicCuboid* cube2 =
-        new GLBasicCuboid("Cube2", 0.5f, 0.5f, 0.5f);
+    GLCuboid* cube2 = new GLCuboid("Cube2", 0.5f, 0.5f, 0.5f);
     cube2->attachShader(Shader);
     cube2->translate(1 + 0.25, 0, 0.25);
     add(cube2);
 
-    GLBasicCuboid* fl =
-        new GLBasicCuboid("Floor", 20, 20, 0.1);
+    GLCuboid* fl = new GLCuboid("Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_REFINED, GLMaterial::Green());
     fl->attachShader(Shader);
     fl->translate(0, 0, -0.05);
     add(fl);
