@@ -30,11 +30,14 @@ struct GLMaterial {
   std::string map_Kd;  // Diffuse texture
   std::string map_Ks;  // Specular texture
 
-  GLMaterial(const std::string& Name) : Name(Name) {}
+  GLMaterial() : Name("Default"), Kd(1, 1, 1) {};
+  GLMaterial(const std::string& Name) : Name(Name), Kd(1, 1, 1) {}
   const bool hasTextureFiles() const {
     return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
   }
 };
+
+GLMaterial GLDefaultMaterial();
 
 struct GLVertex {
   GLVertex(float x, float y, float z)

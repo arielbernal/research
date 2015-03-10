@@ -97,7 +97,7 @@ int main() {
   glEnable(GL_CULL_FACE);
 
 
-  // glfwSwapInterval(0);
+ // glfwSwapInterval(300);
   World.init();
   float t0 = (float)glfwGetTime();
   while (!glfwWindowShouldClose(window)) {
