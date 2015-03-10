@@ -9,8 +9,7 @@
 #include <GL/glu.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <glm/ext.hpp>
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358f

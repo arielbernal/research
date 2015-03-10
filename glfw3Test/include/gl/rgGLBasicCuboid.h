@@ -24,13 +24,18 @@ class GLBasicCuboid : public GLObject {
     float dy2 = dy / 2;
     float dz2 = dz / 2;
     GLMaterial MatRed("Red");
-    MatRed.Kd = glm::vec3(1, 0.3, 0.5);
+    MatRed.Kd = glm::vec3(1, 0.3, 0.2);
     GLMaterial MatGreen("Green");
-    MatGreen.Kd = glm::vec3(0.3, 1, 0.5);
+    MatGreen.Kd = glm::vec3(0.3, 1, 0.2);
     GLMaterial MatBlue("Blue");
-    MatBlue.Kd = glm::vec3(0.5, 0.3, 1);
+    MatBlue.Kd = glm::vec3(0.2, 0.3, 1);
     GLMaterial MatYellow("Yellow");
     MatYellow.Kd = glm::vec3(1, 1, 0.3);
+    GLMaterial MatMagenta("Magenta");
+    MatMagenta.Kd = glm::vec3(1, 0.2, 1);
+    GLMaterial MatCyan("Cyan");
+    MatCyan.Kd = glm::vec3(0.2, 1, 1);
+
 
     GroupFaces* F = new GroupFaces(MatRed);  // bottom
     F->addVertex(glm::vec3(-dx2, -dy2, -dz2));
@@ -64,6 +69,25 @@ class GLBasicCuboid : public GLObject {
     F->addVertex(glm::vec3(-dx2, dy2, -dz2));
     F->addVertex(glm::vec3(-dx2, dy2, dz2));
     F->addVertex(glm::vec3(-dx2, -dy2, dz2));
+    F->addQuad(0, 3, 2, 1);
+    F->updateNormals();
+    Groups.push_back(F);
+
+
+    F = new GroupFaces(MatMagenta);  // left
+    F->addVertex(glm::vec3(-dx2, -dy2, -dz2));
+    F->addVertex(glm::vec3(dx2, -dy2, -dz2));
+    F->addVertex(glm::vec3(dx2, -dy2, dz2));
+    F->addVertex(glm::vec3(-dx2, -dy2, dz2));
+    F->addQuad(0, 1, 2, 3);
+    F->updateNormals();
+    Groups.push_back(F);
+
+    F = new GroupFaces(MatCyan);  // right
+    F->addVertex(glm::vec3(-dx2, dy2, -dz2));
+    F->addVertex(glm::vec3(dx2, dy2, -dz2));
+    F->addVertex(glm::vec3(dx2, dy2, dz2));
+    F->addVertex(glm::vec3(-dx2, dy2, dz2));
     F->addQuad(0, 3, 2, 1);
     F->updateNormals();
     Groups.push_back(F);

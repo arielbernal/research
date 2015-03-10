@@ -185,7 +185,7 @@ class GLObject {
     glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 10, sin(beta) * 10, 5);
+    glUniform3f(LightPositionHandler, cos(beta) * 10, sin(beta) * 10, 10);
                 //10.0 * cos(beta) * sin(beta));
 
     beta += 0.01f;
@@ -213,7 +213,7 @@ class GLObject {
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, e->IBO);
       glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_SHORT,
-                     (void*)0);
+        (void*)0);
 
       glDisableVertexAttribArray(VertexHandler);
       glDisableVertexAttribArray(NormalHandler);
