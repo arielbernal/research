@@ -174,7 +174,7 @@ class GLObject {
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 5, sin(beta) * 5, 5);
+    glUniform3f(LightPositionHandler, cos(beta) * 30, sin(beta) * 30, 4);
     // 10.0 * cos(beta) * sin(beta));
 
     beta += 0.01f;

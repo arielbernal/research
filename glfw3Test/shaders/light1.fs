@@ -17,25 +17,26 @@ struct GLMaterial {
 uniform vec3 LightPosition_worldspace;
 uniform GLMaterial Material;
 uniform vec3 EyePos;
+uniform mat4 V;
 
 void main() {
   vec3 Ld = vec3(0.5, 0.5, 0.5);
   vec3 La = vec3(0.1, 0.1, 0.1);
-  vec3 Ls = vec3(0.2, 0.2, 0.2);
+  vec3 Ls = 4*vec3(0.2, 0.2, 0.2);
 
   vec3 ColorA = La + Material.Ka;  // Ambient Color
   vec3 ColorD = vec3(0);           // Diffuse Color
   vec3 ColorS = vec3(0);           // Specular Color
 
-  vec3 L = normalize(LightPosition_worldspace - vertexPosition_world);
+  vec3 L = normalize((V * vec4(LightPosition_worldspace,1)).xyz - vertexPosition_world);
   vec3 NN = normalize(N);
-
+  vec3 EyePos1 = vec3(0);
   float fd = dot(NN, L);
   if (fd > 0) {
     ColorD = fd * Ld * Material.Kd;
-    vec3 VertexToEye = normalize(EyePos - vertexPosition_world);
-    vec3 LightReflect = normalize(reflect(L, NN));
-    float Ps = 32;
+    vec3 VertexToEye = normalize(EyePos1 - vertexPosition_world);
+    vec3 LightReflect = normalize(reflect(-L, NN));
+    float Ps = 25;
     float fs = dot(VertexToEye, LightReflect);
     if (fs > 0) {
       fs = pow(fs, Ps);

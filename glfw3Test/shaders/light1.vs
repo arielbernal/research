@@ -17,7 +17,7 @@ uniform vec3 LightPosition_worldspace;
 void main() {
   // Need to use the transpose(inverse(M)) in case of scaling
   // otherwise transp(transp(M)) = M!!
-  N = (M * vec4(Normal, 0.0)).xyz;
-  vertexPosition_world = (M * vec4(Vertex, 1)).xyz;
+  N = (V * M * vec4(Normal, 0.0)).xyz;
+  vertexPosition_world = (V * M * vec4(Vertex, 1)).xyz;
   gl_Position = MVP * vec4(Vertex, 1);
 }
