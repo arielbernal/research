@@ -17,16 +17,19 @@ class ActionWorld : public GLWorldScene {
     Cam->setPosition(20, 0, 0);
     add(Cam);
 
-    GLLight* L1 = GLLight::Point("FirstLight");
+    GLLight* L1 = GLLight::Point("FirstLight", -5, 1, 1);
     add(L1);
-    GLLight* L2 = GLLight::Point("SecondLight", 4, -2, 2);
+    GLLight* L2 = GLLight::Point("SecondLight", 5, -1, 10);
     add(L2);
 
     GLShaderProgram* Shader = new GLShaderProgram(
-        "Light1", "./shaders/light1.vs", "./shaders/light1.fs") s;
+        "Light1", "./shaders/light1.vs", "./shaders/light1.fs");
 
-    GLCuboid* cube = new GLCuboid("Cube", 2, 2, 2, GLCuboid::GLCUBOID_REFINED,
-                                  GLMaterial::Red());
+
+    GLMaterial M1 = GLMaterial::Red();
+    M1.Ks = glm::vec3(4);
+    M1.Ns = 64;
+    GLCuboid* cube = new GLCuboid("Cube", 2, 2, 2, GLCuboid::GLCUBOID_REFINED, M1);
     cube->attachShader(Shader);
     cube->translate(0, -2, 3);
     add(cube);
@@ -39,11 +42,20 @@ class ActionWorld : public GLWorldScene {
 
     GLCuboid* cube2 = new GLCuboid("Cube2", 0.5f, 0.5f, 0.5f);
     cube2->attachShader(Shader);
-    cube2->translate(1 + 0.25, 0, 0.25);
+    cube2->translate(5, -1, 1);
     add(cube2);
 
+    GLMaterial M = GLMaterial::Blue();
+    M.Ks = glm::vec3(4);
+    GLCuboid* cube3 = new GLCuboid("Cube3", 2, 2, 2, GLCuboid::GLCUBOID_STANDARD, M);
+    cube3->attachShader(Shader);
+    cube3->translate(-2, 2, 1);
+    add(cube3);
+
+    GLMaterial M3 = GLMaterial::Green();
+    M3.Ks = glm::vec3(2);
     GLCuboid* fl = new GLCuboid(
-        "Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_REFINED, GLMaterial::Green());
+      "Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_STANDARD, M3);
     fl->attachShader(Shader);
     fl->translate(0, 0, -0.05);
     add(fl);
