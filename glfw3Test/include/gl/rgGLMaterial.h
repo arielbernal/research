@@ -29,6 +29,7 @@ struct GLMaterial {
     Mat.Kd = glm::vec3(1, 1, 1);
     Mat.Ka = glm::vec3(0.1f);
     Mat.Ks = glm::vec3(1);
+    Mat.Ns = 20;
     return Mat;
   }
 
@@ -36,7 +37,8 @@ struct GLMaterial {
     GLMaterial Mat("Red");
     Mat.Kd = glm::vec3(1, 0, 0);
     Mat.Ka = glm::vec3(0.1f, 0, 0);
-    Mat.Ks = glm::vec3(1);
+    Mat.Ks = glm::vec3(4);
+    Mat.Ns = 20;
     return Mat;
   }
 
@@ -45,6 +47,7 @@ struct GLMaterial {
     Mat.Kd = glm::vec3(0, 1, 0);
     Mat.Ka = glm::vec3(0, 0.1f, 0);
     Mat.Ks = glm::vec3(1);
+    Mat.Ns = 20;
     return Mat;
   }
 
@@ -53,6 +56,7 @@ struct GLMaterial {
     Mat.Kd = glm::vec3(0, 0, 1);
     Mat.Ka = glm::vec3(0, 0, 0.1f);
     Mat.Ks = glm::vec3(1);
+    Mat.Ns = 20;
     return Mat;
   }
 };

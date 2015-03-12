@@ -174,8 +174,9 @@ class GLCamera {
   }
 
   void updateView() {
-     // glm::vec4 v = (glm::transpose(RotXYZ)* glm::transpose(rot) * glm::vec4(pos, 1));
-    //pos = glm::vec3(v.x, v.y, v.z);
+    // glm::vec4 v = (glm::transpose(RotXYZ)* glm::transpose(rot) *
+    // glm::vec4(pos, 1));
+    // pos = glm::vec3(v.x, v.y, v.z);
     glm::mat4 L = lookAtXYZ(pos, origin, orientation);
     VMatrix = RotXYZ * L * rot;
     HasChanged = true;

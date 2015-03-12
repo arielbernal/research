@@ -17,11 +17,13 @@ class ActionWorld : public GLWorldScene {
     Cam->setPosition(20, 0, 0);
     add(Cam);
 
-    GLLight* L1 = new GLLight("FirstLight");
+    GLLight* L1 = GLLight::Point("FirstLight");
     add(L1);
+    GLLight* L2 = GLLight::Point("SecondLight", 4, -2, 2);
+    add(L2);
 
     GLShaderProgram* Shader = new GLShaderProgram(
-        "Light1", "./shaders/light1.vs", "./shaders/light1.fs");
+        "Light1", "./shaders/light1.vs", "./shaders/light1.fs") s;
 
     GLCuboid* cube = new GLCuboid("Cube", 2, 2, 2, GLCuboid::GLCUBOID_REFINED,
                                   GLMaterial::Red());
@@ -40,7 +42,8 @@ class ActionWorld : public GLWorldScene {
     cube2->translate(1 + 0.25, 0, 0.25);
     add(cube2);
 
-    GLCuboid* fl = new GLCuboid("Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_REFINED, GLMaterial::Green());
+    GLCuboid* fl = new GLCuboid(
+        "Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_REFINED, GLMaterial::Green());
     fl->attachShader(Shader);
     fl->translate(0, 0, -0.05);
     add(fl);

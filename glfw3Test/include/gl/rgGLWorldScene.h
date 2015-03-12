@@ -16,7 +16,10 @@ class GLWorldScene {
 
   void update(bool force = false) {
     if (CurrentCamera->second->hasChanged() || force) {
-      for (auto e : Objects) e.second->updateCamera(*CurrentCamera->second);
+      for (auto e : Objects) {
+        e.second->updateCamera(*CurrentCamera->second);
+        e.second->setLights(&Lights);
+      }
       CurrentCamera->second->changeCommited();
     }
   }
@@ -67,7 +70,7 @@ class GLWorldScene {
   GLCamera* getCurrentCamera() { return CurrentCamera->second; }
 
   // Light functions
-  void add(GLLight* Light) { Lights[Light->getName()] = Light; }
+  void add(GLLight* Light) { Lights[Light->Name] = Light; }
 
   void removeLight(const std::string& LightName) {
     auto it = Lights.find(LightName);
@@ -76,12 +79,12 @@ class GLWorldScene {
 
   void disableLight(const std::string& LightName) {
     auto it = Lights.find(LightName);
-    if (it != Lights.end()) (it->second)->turnOff();
+    if (it != Lights.end()) (it->second)->Enabled = false;
   }
 
   void enableLight(const std::string& LightName) {
     auto it = Lights.find(LightName);
-    if (it != Lights.end()) (it->second)->turnOn();
+    if (it != Lights.end()) (it->second)->Enabled = true;
   }
 
   GLLight* getLight(const std::string& LightName) {

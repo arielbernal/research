@@ -5,6 +5,7 @@
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLMaterial.h>
+#include <gl/rgGLLight.h>
 
 #include <iostream>
 #include <vector>
@@ -103,7 +104,8 @@ class GLObject {
         ShowMesh(false),
         ShaderProgram(NULL),
         ShaderMeshProgram(NULL),
-        MMatrix(glm::mat4(1.0f)) {
+        MMatrix(glm::mat4(1.0f)),
+        Lights(0) {
     glGenVertexArrays(1, &VAO);
     beta = 0;
   }
@@ -147,6 +149,8 @@ class GLObject {
     updateMatrices();
   }
 
+  void setLights(std::map<std::string, GLLight*>* VLights) { Lights = VLights; }
+
   void getHandlers() {
     VertexHandler = glGetAttribLocation(ProgramID, "Vertex");
     NormalHandler = glGetAttribLocation(ProgramID, "Normal");
@@ -160,9 +164,18 @@ class GLObject {
     Material_Kd_Handler = glGetUniformLocation(ProgramID, "Material.Kd");
     Material_Ka_Handler = glGetUniformLocation(ProgramID, "Material.Ka");
     Material_Ks_Handler = glGetUniformLocation(ProgramID, "Material.Ks");
+    Material_Ns_Handler = glGetUniformLocation(ProgramID, "Material.Ns");
 
-    LightPositionHandler =
-        glGetUniformLocation(ProgramID, "LightPosition_worldspace");
+    Light_type_Handler = glGetUniformLocation(ProgramID, "Light.type");
+    Light_La_Handler = glGetUniformLocation(ProgramID, "Light.La");
+    Light_Ld_Handler = glGetUniformLocation(ProgramID, "Light.Ld");
+    Light_Ls_Handler = glGetUniformLocation(ProgramID, "Light.Ls");
+    Light_Pos_Handler = glGetUniformLocation(ProgramID, "Light.Pos");
+    Light_Direction_Handler =
+        glGetUniformLocation(ProgramID, "Light.Direction");
+    Light_Ac_Handler = glGetUniformLocation(ProgramID, "Light.Ac");
+    Light_Ab_Handler = glGetUniformLocation(ProgramID, "Light.Ab");
+    Light_Aa_Handler = glGetUniformLocation(ProgramID, "Light.Aa");
   }
 
   float beta;
@@ -174,8 +187,23 @@ class GLObject {
     glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
     glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
 
-    glUniform3f(LightPositionHandler, cos(beta) * 30, sin(beta) * 30, 4);
-    // 10.0 * cos(beta) * sin(beta));
+    for (auto e : (*Lights)) {
+      glUniform1i(Light_type_Handler, e.second->type);
+      // std::cout << "e.second->type = " << e.second->type << std::endl;
+      glUniform3fv(Light_La_Handler, 1, glm::value_ptr(e.second->La));
+      glUniform3fv(Light_Ld_Handler, 1, glm::value_ptr(e.second->Ld));
+      glUniform3fv(Light_Ls_Handler, 1, glm::value_ptr(e.second->Ls));
+      glUniform3fv(Light_Pos_Handler, 1, glm::value_ptr(e.second->Pos));
+      glUniform3fv(Light_Direction_Handler, 1,
+                   glm::value_ptr(e.second->Direction));
+      glUniform1f(Light_Ac_Handler, e.second->Ac);
+      glUniform1f(Light_Ab_Handler, e.second->Ab);
+      glUniform1f(Light_Aa_Handler, e.second->Aa);
+      // std::cout << "Light = " << e.second->Name << " type = " <<
+      // e.second->type << std::endl;
+      // std::cout << "La = " << e.second->La.x << " ld = " << e.second->Ld.x <<
+      // " ls = " << e.second->Ls.x << std::endl;
+    }
 
     beta += 0.01f;
     glUniform3fv(EyePosHandler, 1, glm::value_ptr(EyePos));
@@ -200,6 +228,7 @@ class GLObject {
       glUniform3fv(Material_Kd_Handler, 1, glm::value_ptr(e->Material.Kd));
       glUniform3fv(Material_Ka_Handler, 1, glm::value_ptr(e->Material.Ka));
       glUniform3fv(Material_Ks_Handler, 1, glm::value_ptr(e->Material.Ks));
+      glUniform1f(Material_Ns_Handler, e->Material.Ns);
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, e->IBO);
       glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_SHORT,
@@ -240,6 +269,17 @@ class GLObject {
   GLint Material_Kd_Handler;
   GLint Material_Ka_Handler;
   GLint Material_Ks_Handler;
+  GLint Material_Ns_Handler;
+
+  GLint Light_type_Handler;
+  GLint Light_La_Handler;
+  GLint Light_Ld_Handler;
+  GLint Light_Ls_Handler;
+  GLint Light_Pos_Handler;
+  GLint Light_Direction_Handler;
+  GLint Light_Ac_Handler;
+  GLint Light_Ab_Handler;
+  GLint Light_Aa_Handler;
 
   glm::mat4 MMatrix;
   glm::mat4 VMatrix;
@@ -249,6 +289,7 @@ class GLObject {
   glm::vec3 EyePos;
 
   std::vector<GroupFaces*> Groups;
+  std::map<std::string, GLLight*>* Lights;
 };
 
 }  // namespace rg
