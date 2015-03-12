@@ -169,7 +169,6 @@ class GLObject {
     Material_Ns_Handler = glGetUniformLocation(ProgramID, "Material.Ns");
 
     NLightsHandler = glGetUniformLocation(ProgramID, "NLights");
-    std::cout << NLightsHandler << std::endl;
     for (size_t i = 0; i < MAX_LIGHTS; ++i) {
       std::ostringstream osLight;
       osLight << "Lights[" << i << "].";
@@ -196,10 +195,8 @@ class GLObject {
 
     size_t i = 0;
     glUniform1i(NLightsHandler, Lights->size());
-    //std::cout <<"NH = " << NLightsHandler << " " <<  Lights->size() << std::endl;
     for (auto e : (*Lights)) {
       glUniform1i(Light_type_Handler[i], e.second->type);
-      // std::cout << "e.second->type = " << e.second->type << std::endl;
       glUniform3fv(Light_La_Handler[i], 1, glm::value_ptr(e.second->La));
       glUniform3fv(Light_Ld_Handler[i], 1, glm::value_ptr(e.second->Ld));
       glUniform3fv(Light_Ls_Handler[i], 1, glm::value_ptr(e.second->Ls));
@@ -210,12 +207,7 @@ class GLObject {
       glUniform1f(Light_Ab_Handler[i], e.second->Ab);
       glUniform1f(Light_Aa_Handler[i], e.second->Aa);
       i++;
-      // std::cout << "Light = " << e.second->Name << " type = " <<
-      // e.second->type << std::endl;
-      // std::cout << "La = " << e.second->La.x << " ld = " << e.second->Ld.x <<
-      // " ls = " << e.second->Ls.x << std::endl;
     }
-
     glUniform3fv(EyePosHandler, 1, glm::value_ptr(EyePos));
 
     for (auto e : Groups) {

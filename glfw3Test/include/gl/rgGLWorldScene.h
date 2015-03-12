@@ -18,7 +18,7 @@ class GLWorldScene {
     if (CurrentCamera->second->hasChanged() || force) {
       for (auto e : Objects) {
         e.second->updateCamera(*CurrentCamera->second);
-        e.second->setLights(&Lights);
+        
       }
       CurrentCamera->second->changeCommited();
     }
@@ -94,7 +94,10 @@ class GLWorldScene {
   }
 
   // Object functions
-  void add(GLObject* Object) { Objects[Object->getName()] = Object; }
+  void add(GLObject* Object) { 
+      Object->setLights(&Lights);
+      Objects[Object->getName()] = Object; 
+  }
 
   void removeObject(const std::string& ObjectName) {
     auto it = Objects.find(ObjectName);
