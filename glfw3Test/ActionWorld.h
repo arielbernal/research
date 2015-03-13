@@ -4,6 +4,7 @@
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLLight.h>
 #include <gl/rgGLCuboid.h>
+#include <gl/rgGLPlane.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLWorldScene.h>
 #include <gl/rgGLMouseHandler.h>
@@ -51,9 +52,9 @@ class ActionWorld : public GLWorldScene {
 
     GLMaterial M3 = GLMaterial::Green();
     M3.Ks = glm::vec3(2);
-    GLCuboid* fl =
-        new GLCuboid("Floor", 20, 20, 0.1, GLCuboid::GLCUBOID_STANDARD, M3);
-    fl->translate(0, 0, -0.05);
+    GLPlane* fl =
+        new GLPlane("Floor", 20, 20, 10, 10, M3);
+    fl->translate(0, 0, 0);
     add(fl);
   }
 
