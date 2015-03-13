@@ -11,8 +11,6 @@
 #include <iostream>
 #include <vector>
 
-#define MAX_LIGHTS 10
-
 namespace rg {
 
 #ifndef _WIN32
@@ -105,10 +103,7 @@ class GLObject {
       : ObjectName(ObjectName),
         Enabled(true),
         ShowMesh(false),
-        ShaderProgram(NULL),
-        ShaderMeshProgram(NULL),
-        MMatrix(glm::mat4(1.0f)),
-        Lights(0) {
+        MMatrix(glm::mat4(1.0f)) {
     glGenVertexArrays(1, &VAO);
   }
 
@@ -129,170 +124,62 @@ class GLObject {
 
   void translate(float dx, float dy, float dz) {
     MMatrix = glm::translate(MMatrix, glm::vec3(dx, dy, dz));
-    updateMatrices();
   }
 
-  void attachShader(GLShaderProgram* Shader) {
-    ShaderProgram = Shader;
-    ProgramID = Shader->getProgramID();
-    getHandlers();
+  GLuint getVAO() { return VAO; }
+
+  void updateBindings() {
     for (auto e : Groups) e->updateBindings(VAO);
   }
 
-  void attachMeshSahder(GLShaderProgram* Shader) { ShaderMeshProgram = Shader; }
-
-  bool isShaderAttached() { return ShaderProgram != NULL; }
-  bool isShaderMeshAttached() { return ShaderMeshProgram != NULL; }
-
-  void updateCamera(const GLCamera& Cam) {
-    VMatrix = Cam.getVMatrix();
-    PMatrix = Cam.getPMatrix();
-    EyePos = Cam.getPosition();
-    updateMatrices();
-  }
-
-  void setLights(std::map<std::string, GLLight*>* VLights) { Lights = VLights; }
-
-  void getHandlers() {
-    VertexHandler = glGetAttribLocation(ProgramID, "Vertex");
-    NormalHandler = glGetAttribLocation(ProgramID, "Normal");
-    UvHandler = glGetAttribLocation(ProgramID, "Uv");
-
-    MMatrixHandle = glGetUniformLocation(ProgramID, "M");
-    VMatrixHandle = glGetUniformLocation(ProgramID, "V");
-    MVPMatrixHandle = glGetUniformLocation(ProgramID, "MVP");
-    EyePosHandler = glGetUniformLocation(ProgramID, "EyePos");
-
-    Material_Kd_Handler = glGetUniformLocation(ProgramID, "Material.Kd");
-    Material_Ka_Handler = glGetUniformLocation(ProgramID, "Material.Ka");
-    Material_Ks_Handler = glGetUniformLocation(ProgramID, "Material.Ks");
-    Material_Ns_Handler = glGetUniformLocation(ProgramID, "Material.Ns");
-
-    NLightsHandler = glGetUniformLocation(ProgramID, "NLights");
-    for (size_t i = 0; i < MAX_LIGHTS; ++i) {
-      std::ostringstream osLight;
-      osLight << "Lights[" << i << "].";
-      Light_type_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "type").c_str());
-      Light_La_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "La").c_str());
-      Light_Ld_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Ld").c_str());
-      Light_Ls_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Ls").c_str());
-      Light_Pos_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Pos").c_str());
-      Light_Direction_Handler[i] =
-        glGetUniformLocation(ProgramID, (osLight.str() + "Direction").c_str());
-      Light_Ac_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Ac").c_str());
-      Light_Ab_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Ab").c_str());
-      Light_Aa_Handler[i] = glGetUniformLocation(ProgramID, (osLight.str() + "Aa").c_str());
-    }
-  }
-
-  void render() {
-    glUseProgram(ProgramID);
+  void render(const GLObjectHandlers& OH) {
     glBindVertexArray(VAO);
-
-    glUniformMatrix4fv(MVPMatrixHandle, 1, GL_FALSE, &MVPMatrix[0][0]);
-    glUniformMatrix4fv(MMatrixHandle, 1, GL_FALSE, &MMatrix[0][0]);
-    glUniformMatrix4fv(VMatrixHandle, 1, GL_FALSE, &VMatrix[0][0]);
-
-    size_t i = 0;
-    glUniform1i(NLightsHandler, Lights->size());
-    for (auto e : (*Lights)) {
-      glUniform1i(Light_type_Handler[i], e.second->type);
-      glUniform3fv(Light_La_Handler[i], 1, glm::value_ptr(e.second->La));
-      glUniform3fv(Light_Ld_Handler[i], 1, glm::value_ptr(e.second->Ld));
-      glUniform3fv(Light_Ls_Handler[i], 1, glm::value_ptr(e.second->Ls));
-      glUniform3fv(Light_Pos_Handler[i], 1, glm::value_ptr(e.second->Pos));
-      glUniform3fv(Light_Direction_Handler[i], 1,
-                   glm::value_ptr(e.second->Direction));
-      glUniform1f(Light_Ac_Handler[i], e.second->Ac);
-      glUniform1f(Light_Ab_Handler[i], e.second->Ab);
-      glUniform1f(Light_Aa_Handler[i], e.second->Aa);
-      i++;
-    }
-    glUniform3fv(EyePosHandler, 1, glm::value_ptr(EyePos));
+    glUniformMatrix4fv(OH.MMatrixHandler, 1, GL_FALSE, &MMatrix[0][0]);
 
     for (auto e : Groups) {
       glBindBuffer(GL_ARRAY_BUFFER, e->VBO);
 
-      glEnableVertexAttribArray(VertexHandler);
-      glVertexAttribPointer(VertexHandler, 3, GL_FLOAT, GL_FALSE,
+      glEnableVertexAttribArray(OH.VertexHandler);
+      glVertexAttribPointer(OH.VertexHandler, 3, GL_FLOAT, GL_FALSE,
                             sizeof(GLVertex), (void*)0);
 
-      glEnableVertexAttribArray(NormalHandler);
-      glVertexAttribPointer(NormalHandler, 3, GL_FLOAT, GL_FALSE,
+      glEnableVertexAttribArray(OH.NormalHandler);
+      glVertexAttribPointer(OH.NormalHandler, 3, GL_FLOAT, GL_FALSE,
                             sizeof(GLVertex), (void*)0x10);
 
-      if (UvHandler >= 0) {
-        glEnableVertexAttribArray(UvHandler);
-        glVertexAttribPointer(UvHandler, 3, GL_FLOAT, GL_FALSE,
+      if (OH.UvHandler >= 0) {
+        glEnableVertexAttribArray(OH.UvHandler);
+        glVertexAttribPointer(OH.UvHandler, 3, GL_FLOAT, GL_FALSE,
                               sizeof(GLVertex), (void*)0x20);
       }
 
-      glUniform3fv(Material_Kd_Handler, 1, glm::value_ptr(e->Material.Kd));
-      glUniform3fv(Material_Ka_Handler, 1, glm::value_ptr(e->Material.Ka));
-      glUniform3fv(Material_Ks_Handler, 1, glm::value_ptr(e->Material.Ks));
-      glUniform1f(Material_Ns_Handler, e->Material.Ns);
+      glUniform3fv(OH.Material_Kd_Handler, 1, glm::value_ptr(e->Material.Kd));
+      glUniform3fv(OH.Material_Ka_Handler, 1, glm::value_ptr(e->Material.Ka));
+      glUniform3fv(OH.Material_Ks_Handler, 1, glm::value_ptr(e->Material.Ks));
+      glUniform1f(OH.Material_Ns_Handler, e->Material.Ns);
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, e->IBO);
       glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_SHORT,
                      (void*)0);
 
-      glDisableVertexAttribArray(VertexHandler);
-      glDisableVertexAttribArray(NormalHandler);
-      glDisableVertexAttribArray(UvHandler);
+      glDisableVertexAttribArray(OH.VertexHandler);
+      glDisableVertexAttribArray(OH.NormalHandler);
+      glDisableVertexAttribArray(OH.UvHandler);
     }
 
     glBindVertexArray(0);
   }
 
  protected:
-  void updateMatrices() { MVPMatrix = PMatrix * VMatrix * MMatrix; }
-
   std::string ObjectName;
   bool Enabled;
   bool ShowMesh;
 
-  GLShaderProgram* ShaderProgram;
-  GLShaderProgram* ShaderMeshProgram;
-
-  GLuint ProgramID;
-  GLuint ProgramMeshID;
   GLuint VAO;
 
-  GLint VertexHandler;
-  GLint NormalHandler;
-  GLint UvHandler;
-
-  GLint MMatrixHandle;
-  GLint VMatrixHandle;
-  GLint MVPMatrixHandle;
-  GLint LightPositionHandler;
-  GLint EyePosHandler;
-
-  GLint Material_Kd_Handler;
-  GLint Material_Ka_Handler;
-  GLint Material_Ks_Handler;
-  GLint Material_Ns_Handler;
-
-  GLint NLightsHandler;
-  GLint Light_type_Handler[MAX_LIGHTS];
-  GLint Light_La_Handler[MAX_LIGHTS];
-  GLint Light_Ld_Handler[MAX_LIGHTS];
-  GLint Light_Ls_Handler[MAX_LIGHTS];
-  GLint Light_Pos_Handler[MAX_LIGHTS];
-  GLint Light_Direction_Handler[MAX_LIGHTS];
-  GLint Light_Ac_Handler[MAX_LIGHTS];
-  GLint Light_Ab_Handler[MAX_LIGHTS];
-  GLint Light_Aa_Handler[MAX_LIGHTS];
-
   glm::mat4 MMatrix;
-  glm::mat4 VMatrix;
-  glm::mat4 PMatrix;
-  glm::mat4 MVPMatrix;
-
-  glm::vec3 EyePos;
 
   std::vector<GroupFaces*> Groups;
-  std::map<std::string, GLLight*>* Lights;
 };
 
 }  // namespace rg

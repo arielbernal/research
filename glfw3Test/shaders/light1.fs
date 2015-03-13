@@ -1,6 +1,6 @@
 #version 130
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 6
 
 struct GLMaterial {
   vec3 Kd;
@@ -45,7 +45,6 @@ out vec4 color;
 uniform int NLights;
 uniform GLLight Lights[MAX_LIGHTS];
 uniform GLMaterial Material;
-uniform vec3 EyePos;
 uniform mat4 V;
 
 void main() {

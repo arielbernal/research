@@ -5,6 +5,7 @@
 #include <gl/rgGLObject.h>
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLLight.h>
+#include <gl/rgGLShaderProgram.h>
 #include <map>
 #include <vector>
 
@@ -14,19 +15,29 @@ class GLWorldScene {
  public:
   GLWorldScene() { CurrentCamera = Cameras.begin(); }
 
-  void update(bool force = false) {
-    if (CurrentCamera->second->hasChanged() || force) {
-      for (auto e : Objects) {
-        e.second->updateCamera(*CurrentCamera->second);
-        
-      }
-      CurrentCamera->second->changeCommited();
+  void updateLights(const GLLightsHandlers& LH) {
+    glUniform1i(LH.NLightsHandler, Lights.size());
+    size_t i = 0;
+    for (auto e : Lights) {
+      glUniform1i(LH.Light_type_Handler[i], e.second->type);
+      glUniform3fv(LH.Light_La_Handler[i], 1, glm::value_ptr(e.second->La));
+      glUniform3fv(LH.Light_Ld_Handler[i], 1, glm::value_ptr(e.second->Ld));
+      glUniform3fv(LH.Light_Ls_Handler[i], 1, glm::value_ptr(e.second->Ls));
+      glUniform3fv(LH.Light_Pos_Handler[i], 1, glm::value_ptr(e.second->Pos));
+      glUniform3fv(LH.Light_Direction_Handler[i], 1,
+                   glm::value_ptr(e.second->Direction));
+      glUniform1f(LH.Light_Ac_Handler[i], e.second->Ac);
+      glUniform1f(LH.Light_Ab_Handler[i], e.second->Ab);
+      glUniform1f(LH.Light_Aa_Handler[i], e.second->Aa);
+      i++;
     }
   }
 
   void render() {
-    update(true);
-    for (auto e : Objects) e.second->render();
+    glUseProgram(ObjectShader->getProgramID());
+    getCurrentCamera()->updateCamera(ObjectShader->getCameraHandlers());
+    updateLights(ObjectShader->getLightsHandlers());
+    for (auto e : Objects) e.second->render(ObjectShader->getObjectHandlers());
   }
 
   // Camera Functions
@@ -35,16 +46,12 @@ class GLWorldScene {
     CurrentCamera = std::prev(Cameras.end());
   }
 
-  void firstCamera() {
-    CurrentCamera = Cameras.begin();
-    update(true);
-  }
+  void firstCamera() { CurrentCamera = Cameras.begin(); }
 
   void nextCamera() {
     CurrentCamera++;
     if (CurrentCamera == Cameras.end()) CurrentCamera = Cameras.begin();
     std::cout << CurrentCamera->second->getName() << std::endl;
-    update(true);
   }
 
   void disableCamera(const std::string& CameraName) {
@@ -94,9 +101,9 @@ class GLWorldScene {
   }
 
   // Object functions
-  void add(GLObject* Object) { 
-      Object->setLights(&Lights);
-      Objects[Object->getName()] = Object; 
+  void add(GLObject* Object) {
+    Object->updateBindings();
+    Objects[Object->getName()] = Object; 
   }
 
   void removeObject(const std::string& ObjectName) {
@@ -120,54 +127,22 @@ class GLWorldScene {
     return NULL;
   }
 
+  void attchObjectShader(const std::string& VertexFileName,
+                         const std::string& FragmentFileName) {
+    ObjectShader =
+        new GLShaderLight("LightShader", VertexFileName, FragmentFileName);
+  }
+
  private:
   typedef std::map<std::string, GLCamera*>::iterator CameraIterator;
+
+  GLShaderLight* ObjectShader;
 
   std::map<std::string, GLCamera*> Cameras;
   std::map<std::string, GLLight*> Lights;
   std::map<std::string, GLObject*> Objects;
 
   CameraIterator CurrentCamera;
-};
-
-class GLMouseHandler {
-  enum { BUTTON_LEFT = 0, BUTTON_RIGHT = 1, BUTTON_MIDDLE = 2 };
-  enum { BUTTON_PRESSED = 1, BUTTON_RELESED = 0 };
-
- public:
-  void set(size_t btn, bool pressed) {
-    Button = btn;
-    Pressed = pressed;
-  }
-
-  void position(float x, float y) {
-    x0 = x1;
-    y0 = y1;
-    x1 = x;
-    y1 = y;
-  }
-  float getX() { return x1; }
-  float getY() { return y1; }
-  float getX0() { return x0; }
-  float getY0() { return y0; }
-  float dx() { return x1 - x0; }
-  float dy() { return y1 - y0; }
-
-  bool isMiddleButtonPressed() {
-    return (Button == BUTTON_MIDDLE && Pressed == BUTTON_PRESSED);
-  }
-  bool isLeftButtonPressed() {
-    return (Button == BUTTON_LEFT && Pressed == BUTTON_PRESSED);
-  }
-  bool isRightButtonPressed() {
-    return (Button == BUTTON_RIGHT && Pressed == BUTTON_PRESSED);
-  }
-
- private:
-  bool Pressed;
-  size_t Button;
-  float x0, y0;
-  float x1, y1;
 };
 
 }  // namespace rg

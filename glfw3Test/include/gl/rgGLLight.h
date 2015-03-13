@@ -2,6 +2,7 @@
 #define RGGLLIGHT_H
 
 #include <gl/rgGLHeaders.h>
+#include <gl/rgGLShaderProgram.h>
 
 namespace rg {
 

@@ -2,7 +2,9 @@
 #define RGGLCAMERA_H
 
 #include <gl/rgGLHeaders.h>
+#include <gl/rgGLShaderProgram.h>
 #include <glm/gtc/quaternion.hpp>
+
 
 namespace rg {
 
@@ -10,7 +12,6 @@ class GLCamera {
  public:
   GLCamera(const std::string& CameraName)
       : Enabled(true),
-        HasChanged(true),
         CameraName(CameraName),
         pos(20, 0, 0),
         origin(0, 0, 0),
@@ -134,16 +135,13 @@ class GLCamera {
 
   void setPerspective(float fov, float aspect, float vnear, float vfar) {
     PMatrix = glm::perspective(fov, aspect, vnear, vfar);
-    HasChanged = true;
   }
 
   void setPMatrix(const glm::mat4& Projection) {
     PMatrix = Projection;
-    HasChanged = true;
   }
   void setVMatrix(const glm::mat4& View) {
     VMatrix = View;
-    HasChanged = true;
   }
   glm::mat4 getPMatrix() const { return PMatrix; }
   glm::mat4 getVMatrix() const { return VMatrix; }
@@ -154,8 +152,10 @@ class GLCamera {
   void disable() { Enabled = false; }
   bool isEnabled() { return Enabled; }
 
-  void changeCommited() { HasChanged = false; }
-  bool hasChanged() { return HasChanged; }
+  void updateCamera(const GLCameraHandlers& CH) {
+    glUniformMatrix4fv(CH.PMatrixHandler, 1, GL_FALSE, &PMatrix[0][0]);
+    glUniformMatrix4fv(CH.VMatrixHandler, 1, GL_FALSE, &VMatrix[0][0]);
+  }
 
  protected:
   glm::mat4 lookAtXYZ(const glm::vec3& eye, const glm::vec3& center,
@@ -179,12 +179,10 @@ class GLCamera {
     // pos = glm::vec3(v.x, v.y, v.z);
     glm::mat4 L = lookAtXYZ(pos, origin, orientation);
     VMatrix = RotXYZ * L * rot;
-    HasChanged = true;
   }
 
  private:
   bool Enabled;
-  bool HasChanged;
   std::string CameraName;
   glm::vec3 pos;
   glm::vec3 origin;

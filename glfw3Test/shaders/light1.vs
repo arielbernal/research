@@ -9,14 +9,15 @@ out vec3 VertexView;
 out vec3 NormalView;
 
 // Values that stay constant for the whole mesh.
-uniform mat4 MVP;
+uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
 
 void main() {
   // Need to use the transpose(inverse(M)) in case of scaling
   // otherwise transp(transp(M)) = M!!
-  NormalView = (V * M * vec4(Normal, 0.0)).xyz;
-  VertexView = (V * M * vec4(Vertex, 1)).xyz;
-  gl_Position = MVP * vec4(Vertex, 1);
+  mat4 MV = V * M;
+  NormalView = (MV * vec4(Normal, 0.0)).xyz;
+  VertexView = (MV * vec4(Vertex, 1)).xyz;
+  gl_Position = P * MV * vec4(Vertex, 1);
 }
