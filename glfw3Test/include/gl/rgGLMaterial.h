@@ -25,6 +25,14 @@ struct GLMaterial {
     return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
   }
 
+  void setColor(const glm::vec3& ambient, const glm::vec3& diffuse,
+                const glm::vec3& specular, float spec_exp) {
+    Ka = ambient;
+    Kd = diffuse;
+    Ks = specular;
+    Ns = spec_exp;
+  }
+
   static GLMaterial Default() {
     GLMaterial Mat("Default");
     Mat.Kd = glm::vec3(1, 1, 1);

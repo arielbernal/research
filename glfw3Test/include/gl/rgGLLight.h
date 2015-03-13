@@ -38,6 +38,12 @@ struct GLLight {
   float Ab;  // Linear Attenuation
   float Aa;  // Quadratic Attenuation
 
+  void setColor(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular) {
+    La = ambient;
+    Ld = diffuse;
+    Ls = specular;
+  }
+
   static GLLight* Default(const std::string& Name = "Default") {
     GLLight* L = new GLLight(Name);
     L->type = DIRECTIONAL;

@@ -22,7 +22,7 @@ class ActionWorld : public GLWorldScene {
 
     GLLight* L1 = GLLight::Point("FirstLight", -5, 1, 1);
     add(L1);
-    GLLight* L2 = GLLight::Point("SecondLight", 5, -1, 10);
+    GLLight* L2 = GLLight::Point("SecondLight", 5, -1, 5);
     add(L2);
 
     GLMaterial M1 = GLMaterial::Red();
