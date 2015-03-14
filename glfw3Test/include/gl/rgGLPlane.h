@@ -38,6 +38,7 @@ class GLPlane : public GLObject {
 
  protected:
   void rebuild() {
+    Groups.clear();
     GroupFaces* F = new GroupFaces(Material);  // bottom
     float x0 = -Dx / 2;
     float y0 = -Dy / 2;
@@ -55,9 +56,7 @@ class GLPlane : public GLObject {
         size_t id01 = id00 + 1;
         size_t id10 = id00 + Nx + 1;
         size_t id11 = id10 + 1; 
-       // F->addQuad(id00, id10, id11, id01);
-        F->addTriangle(id00, id01, id10);
-        F->addTriangle(id10, id01, id11);
+        F->addQuad(id00, id01, id11, id10);
       }
     }
     F->updateNormals();

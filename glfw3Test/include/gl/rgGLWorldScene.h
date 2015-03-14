@@ -19,17 +19,19 @@ class GLWorldScene {
     glUniform1i(LH.NLightsHandler, Lights.size());
     size_t i = 0;
     for (auto e : Lights) {
-      glUniform1i(LH.Light_type_Handler[i], e.second->type);
-      glUniform3fv(LH.Light_La_Handler[i], 1, glm::value_ptr(e.second->La));
-      glUniform3fv(LH.Light_Ld_Handler[i], 1, glm::value_ptr(e.second->Ld));
-      glUniform3fv(LH.Light_Ls_Handler[i], 1, glm::value_ptr(e.second->Ls));
-      glUniform3fv(LH.Light_Pos_Handler[i], 1, glm::value_ptr(e.second->Pos));
-      glUniform3fv(LH.Light_Direction_Handler[i], 1,
-                   glm::value_ptr(e.second->Direction));
-      glUniform1f(LH.Light_Ac_Handler[i], e.second->Ac);
-      glUniform1f(LH.Light_Ab_Handler[i], e.second->Ab);
-      glUniform1f(LH.Light_Aa_Handler[i], e.second->Aa);
-      i++;
+      if (e.second->Enabled) {
+        glUniform1i(LH.Light_type_Handler[i], e.second->type);
+        glUniform3fv(LH.Light_La_Handler[i], 1, glm::value_ptr(e.second->La));
+        glUniform3fv(LH.Light_Ld_Handler[i], 1, glm::value_ptr(e.second->Ld));
+        glUniform3fv(LH.Light_Ls_Handler[i], 1, glm::value_ptr(e.second->Ls));
+        glUniform3fv(LH.Light_Pos_Handler[i], 1, glm::value_ptr(e.second->Pos));
+        glUniform3fv(LH.Light_Direction_Handler[i], 1,
+                     glm::value_ptr(e.second->Direction));
+        glUniform1f(LH.Light_Ac_Handler[i], e.second->Ac);
+        glUniform1f(LH.Light_Ab_Handler[i], e.second->Ab);
+        glUniform1f(LH.Light_Aa_Handler[i], e.second->Aa);
+        i++;
+      }
     }
   }
 
@@ -103,7 +105,7 @@ class GLWorldScene {
   // Object functions
   void add(GLObject* Object) {
     Object->updateBindings();
-    Objects[Object->getName()] = Object; 
+    Objects[Object->getName()] = Object;
   }
 
   void removeObject(const std::string& ObjectName) {

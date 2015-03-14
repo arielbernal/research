@@ -126,7 +126,6 @@ class GLCamera {
   void rotate(float dx, float dy) {
     float yaw = -dx;
     float pitch = -dy;
-    float roll = 0;
     glm::quat fromEuler = eulerToQuat(glm::vec3(0, pitch, yaw));
     qRotation = qRotation * fromEuler;
     rotationMatrix(qRotation, &rot[0][0]);
@@ -190,8 +189,8 @@ class GLCamera {
   glm::mat4 VMatrix;
   glm::mat4 PMatrix;
 
-  glm::quat qRotation;
   glm::mat4 rot;
+  glm::quat qRotation;
 
   glm::mat4 RotXYZ;  // so we put the z where it belongs
 };

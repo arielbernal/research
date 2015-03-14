@@ -20,7 +20,7 @@ struct GLMaterial {
   std::string map_Ks;  // Specular texture
 
   GLMaterial(const std::string& Name)
-      : Name(Name), Kd(0.5), Ka(0.1f), Ks(0.3f), Ns(20) {}
+      : Name(Name), Ka(0.1f), Kd(0.5), Ks(0.3f), Ns(20) {}
   const bool hasTextureFiles() const {
     return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
   }

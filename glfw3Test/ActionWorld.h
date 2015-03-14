@@ -5,15 +5,18 @@
 #include <gl/rgGLLight.h>
 #include <gl/rgGLCuboid.h>
 #include <gl/rgGLPlane.h>
+#include <gl/rgGLSphere.h>
+#include <gl/rgGLCylinder.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLWorldScene.h>
 #include <gl/rgGLMouseHandler.h>
+
 
 using namespace rg;
 class ActionWorld : public GLWorldScene {
  public:
   void init() {
-    attchObjectShader("./shaders/light1.vs","./shaders/light1.fs");
+    attchObjectShader("./shaders/light1.vs", "./shaders/light1.fs");
 
     add(new GLCamera("FirstCamera"));
     GLCamera* Cam = new GLCamera("SecondCamera");
@@ -50,10 +53,17 @@ class ActionWorld : public GLWorldScene {
     cube3->translate(-2, 2, 1);
     add(cube3);
 
+    GLSphere* sphere = new GLSphere("Sphere1", 1, 5);
+    sphere->translate(2, 2, 2);
+    add(sphere);
+
+    GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 1, 5);
+    cylinder->translate(-5, 5, 2);
+    add(cylinder);
+
     GLMaterial M3 = GLMaterial::Green();
     M3.Ks = glm::vec3(2);
-    GLPlane* fl =
-        new GLPlane("Floor", 20, 20, 10, 10, M3);
+    GLPlane* fl = new GLPlane("Floor", 20, 20, 10, 10, M3);
     fl->translate(0, 0, 0);
     add(fl);
   }

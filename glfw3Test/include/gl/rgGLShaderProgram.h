@@ -246,9 +246,9 @@ class GLShaderLight : public GLShaderProgram {
     CH.bindHandlers(ProgramID);
     LH.bindHandlers(ProgramID);
 
-    OH.printHandlers();
-    CH.printHandlers();
-    LH.printHandlers();
+//    OH.printHandlers();
+//    CH.printHandlers();
+//    LH.printHandlers();
   }
 
   GLObjectHandlers getObjectHandlers() { return OH; }

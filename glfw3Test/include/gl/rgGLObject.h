@@ -11,6 +11,9 @@
 #include <iostream>
 #include <vector>
 
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 namespace rg {
 
 #ifndef _WIN32
@@ -78,12 +81,20 @@ struct GroupFaces {
       glm::vec3 p1 = Vertices[i0].vertex;
       glm::vec3 p2 = Vertices[i1].vertex;
       glm::vec3 p3 = Vertices[i2].vertex;
-      Vertices[i0].normal += glm::normalize(glm::cross(p2 - p1, p3 - p1));
-      Vertices[i1].normal += glm::normalize(glm::cross(p3 - p2, p1 - p2));
-      Vertices[i2].normal += glm::normalize(glm::cross(p1 - p3, p2 - p3));
+      glm::vec3 c1 = glm::cross(p2 - p1, p3 - p1);
+      glm::vec3 c2 = glm::cross(p3 - p2, p1 - p2);
+      glm::vec3 c3 = glm::cross(p1 - p3, p2 - p3);
+      if (glm::length(c1) > 1e-3) c1 = glm::normalize(c1); else c1 = glm::vec3(0);
+      if (glm::length(c2) > 1e-3) c2 = glm::normalize(c2); else c2 = glm::vec3(0);
+      if (glm::length(c3) > 1e-3) c3 = glm::normalize(c3); else c3 = glm::vec3(0);
+      Vertices[i0].normal += c1;
+      Vertices[i1].normal += c2;
+      Vertices[i2].normal += c3;
     }
-    for (size_t i = 0; i < Vertices.size(); ++i)
-      Vertices[i].normal = glm::normalize(Vertices[i].normal);
+    for (size_t i = 0; i < Vertices.size(); ++i) {
+      if (glm::length(Vertices[i].normal) > 1e-3)
+        Vertices[i].normal = glm::normalize(Vertices[i].normal);
+    }
   }
   void updateBindings(const GLuint& VAO) {
     glBindVertexArray(VAO);
