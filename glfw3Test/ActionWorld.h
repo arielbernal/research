@@ -53,12 +53,12 @@ class ActionWorld : public GLWorldScene {
     cube3->translate(-2, 2, 1);
     add(cube3);
 
-    GLSphere* sphere = new GLSphere("Sphere1", 1, 5);
+    GLSphere* sphere = new GLSphere("Sphere1", 1, 50);
     sphere->translate(2, 2, 2);
     add(sphere);
 
-    GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 1, 5);
-    cylinder->translate(-5, 5, 2);
+    GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 2, 20);
+    cylinder->translate(-5, 5, 3);
     add(cylinder);
 
     GLMaterial M3 = GLMaterial::Green();
