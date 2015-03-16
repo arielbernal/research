@@ -113,14 +113,9 @@ class GLWorldScene {
     if (it != Objects.end()) Objects.erase(it);
   }
 
-  void disableObject(const std::string& ObjectName) {
+  void enableObject(const std::string& ObjectName, bool val = true) {
     auto it = Objects.find(ObjectName);
-    if (it != Objects.end()) (it->second)->disable();
-  }
-
-  void enableObject(const std::string& ObjectName) {
-    auto it = Objects.find(ObjectName);
-    if (it != Objects.end()) (it->second)->enable();
+    if (it != Objects.end()) (it->second)->enable(val);
   }
 
   GLObject* getObject(const std::string& ObjectName) {

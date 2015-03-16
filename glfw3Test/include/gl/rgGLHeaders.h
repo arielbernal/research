@@ -16,4 +16,12 @@
 #ifndef M_PI
 #define M_PI 3.14159265358f
 #endif
+
+#ifndef _WIN32
+#define ATTRALIGN __attribute__((aligned(16)))
+#else
+#define ATTRALIGN __declspec(align(16))
+#endif
+
+
 #endif  // RGGLHEADERS_H

@@ -19,8 +19,9 @@ struct GLMaterial {
   std::string map_Kd;  // Diffuse texture
   std::string map_Ks;  // Specular texture
 
-  GLMaterial(const std::string& Name)
-      : Name(Name), Ka(0.1f), Kd(0.5), Ks(0.3f), Ns(20) {}
+  GLMaterial(const std::string& Name = "")
+      : Name(Name), Ka(0), Kd(0), Ks(0), Ns(0) {}
+
   const bool hasTextureFiles() const {
     return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
   }

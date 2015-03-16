@@ -24,8 +24,8 @@ class GLCylinder : public GLObject {
         Radius(Radius),
         Height(Height),
         Div(Div),
-        Material(Material),
-        flat(flat) {
+        flat(flat),
+        Material(Material) {
     rebuild();
   }
 
@@ -66,7 +66,6 @@ class GLCylinder : public GLObject {
     // bottom
     {
       float z = -Height / 2;
-      std::cout << Div << " " << idx << std::endl;
       glm::vec3 normal = glm::vec3(0, 0, -1);
       std::vector<uint16_t> Indices(Div);
       F->addVertex(glm::vec3(0, 0, z), normal);

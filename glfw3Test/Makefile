@@ -1,4 +1,5 @@
 SOURCES := main.cpp \
+	./src/rgWaveFrontObj.cpp \
 
 ANTTWEAKBAR=/home/ajbernal/dev/bat/research/external/vs/AntTweakBar/lib
 

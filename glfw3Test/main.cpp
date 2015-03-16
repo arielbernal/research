@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
 #include <gl/rgGLWorldScene.h>
+#include <io/rgWavefrontObj.h>
+
 #include "ActionWorld.h"
 
 ActionWorld World;

@@ -10,6 +10,9 @@
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLWorldScene.h>
 #include <gl/rgGLMouseHandler.h>
+#include <gl/rgGLWavefrontObj.h>
+#include <io/rgWavefrontObj.h>
+
 
 
 using namespace rg;
@@ -29,22 +32,10 @@ class ActionWorld : public GLWorldScene {
     GLLight* L2 = GLLight::Point("SecondLight", 5, -1, 5);
     add(L2);
 
-    GLMaterial M1 = GLMaterial::Red();
-    M1.Ks = glm::vec3(4);
-    M1.Ns = 64;
-    GLCuboid* cube =
-        new GLCuboid("Cube", 2, 2, 2, GLCuboid::GLCUBOID_REFINED, M1);
-    cube->translate(0, -2, 3);
-    add(cube);
-
     GLCuboid* cube1 =
         new GLCuboid("Cube1", 2, 2, 2, GLCuboid::GLCUBOID_MULTICOLOR);
     cube1->translate(0, 0, 1);
     add(cube1);
-
-    GLCuboid* cube2 = new GLCuboid("Cube2", 0.5f, 0.5f, 0.5f);
-    cube2->translate(5, -1, 1);
-    add(cube2);
 
     GLMaterial M = GLMaterial::Blue();
     M.Ks = glm::vec3(4);
@@ -66,6 +57,16 @@ class ActionWorld : public GLWorldScene {
     GLPlane* fl = new GLPlane("Floor", 20, 20, 10, 10, M3);
     fl->translate(0, 0, 0);
     add(fl);
+
+
+    WavefrontObjFile WO;
+    WO.loadObjFile("objects/cube.wobj");
+    WO.dump();
+    
+    GLWavefrontObj* Wobj = new GLWavefrontObj("CubeLoaded", WO.getCurrentObject());
+    Wobj->translate(5, 5, 3);
+    add(Wobj);
+
   }
 
   float alpha;
