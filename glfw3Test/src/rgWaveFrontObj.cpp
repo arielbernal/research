@@ -117,15 +117,15 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
       if (tk == "o") {
         // add Object
         WavefrontObj* O = new WavefrontObj(tokens[1]);
-        Objects.push_back(O);
-        CurrentObject = Objects.back();
+        Objects[tokens[1]] = O;
+        CurrentObject = O;
         continue;
       }
       if (tk == "v") {
         if (!CurrentObject) {
-          WavefrontObj* O = new WavefrontObj("unknonw");
-          Objects.push_back(O);
-          CurrentObject = Objects.back();
+          WavefrontObj* O = new WavefrontObj("unknown");
+          Objects["unknown"] = O;
+          CurrentObject = O;
         }
         // add Vertex
         float x = toNumber<float>(tokens[1]);
@@ -135,11 +135,6 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
         continue;
       }
       if (tk == "vn") {
-        if (!CurrentObject) {
-          WavefrontObj* O = new WavefrontObj("unknonw");
-          Objects.push_back(O);
-          CurrentObject = Objects.back();
-        }
         // add Vertex
         float x = toNumber<float>(tokens[1]);
         float y = toNumber<float>(tokens[2]);
@@ -148,11 +143,6 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
         continue;
       }
       if (tk == "vt") {
-        if (!CurrentObject) {
-          WavefrontObj* O = new WavefrontObj("unknonw");
-          Objects.push_back(O);
-          CurrentObject = Objects.back();
-        }
         // add Vertex
         float x = toNumber<float>(tokens[1]);
         float y = toNumber<float>(tokens[2]);
@@ -162,21 +152,25 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
 
       if (tk == "f") {
         // add Face
-        WavefrontFace* F = new WavefrontFace(CurrentMaterial);
+        CurrentObject->addFace();
         int i = 1;
+
         while (i < (int)tokens.size()) {
-          F->Vertices.push_back(toNumber<int>(tokens[i++]) - 1);
+          int16_t v = toNumber<int>(tokens[i++]) - 1;
+          int16_t t = -1;
+          int16_t n = -1;
           if (CurrentObject->hasUVs())
-            F->UVs.push_back(toNumber<int>(tokens[i++]) - 1);
+            t = toNumber<int>(tokens[i++]) - 1;
           if (CurrentObject->hasNormals())
-            F->Normals.push_back(toNumber<int>(tokens[i++]) - 1);
+            n = toNumber<int>(tokens[i++]) - 1;
+          CurrentObject->addFacePoint(v, n, t);
         }
-        CurrentObject->addFace(F);
         continue;
       }
       if (tk == "usemtl") {
         // add material
         CurrentMaterial = &Materials[tokens[1]];
+        CurrentObject->addGroupFace(CurrentMaterial);
         continue;
       }
       if (tk == "s") {
@@ -214,23 +208,16 @@ void WavefrontObj::dump() {
   for (auto e : UVs) {
     std::cout << "    " << toString(e) << std::endl;
   }
-  std::cout << "  Faces: " << std::endl;
-  for (auto e : Faces) {
-    if (e->Material)
-      std::cout << "    M: " << e->Material->Name ;
-    std::cout << " v(";
-    for (auto s : e->Vertices)
-      std::cout << s << " ";
-    std::cout << ") ";
-    std::cout << " n(";
-    for (auto s : e->Normals)
-      std::cout << s << " ";
-    std::cout << ") ";
-    std::cout << " t(";
-    for (auto s : e->UVs)
-      std::cout << s << " ";
-    std::cout << ") ";
-    std::cout << "\n";
+  std::cout << "  GroupFaces: " << std::endl;
+  for (auto e : GroupFaces) {
+    if (e.Material) std::cout << "    M: " << e.Material->Name << "\n";
+    size_t i = 0;
+    for (auto e1 : e.Faces) {
+      std::cout << "      Face " << i++;
+      for (auto e2 : e1.V) 
+        std::cout << "  (" << e2.v << ", " << e2.n << ", " << e2. t << ") ";
+      std::cout << "\n";
+    }
   }
 }
 
@@ -239,7 +226,7 @@ void WavefrontObjFile::dump() {
   std::cout << "MtlFilename = " << MtlFilename << std::endl;
   std::cout << "Materials = " << Materials.size() << std::endl;
   for (auto e : Objects) {
-    e->dump();
+    e.second->dump();
   }
 
   for (auto e : Materials) {

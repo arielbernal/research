@@ -60,9 +60,9 @@ class ActionWorld : public GLWorldScene {
 
 
     WavefrontObjFile WO;
-    WO.loadObjFile("objects/cube.wobj");
+    WO.loadObjFile("objects/cube2.wobj");
     WO.dump();
-    
+
     GLWavefrontObj* Wobj = new GLWavefrontObj("CubeLoaded", WO.getCurrentObject());
     Wobj->translate(5, 5, 3);
     add(Wobj);

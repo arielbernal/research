@@ -8,13 +8,13 @@ namespace rg {
 
 struct GLVertex {
   GLVertex(float x, float y, float z)
-      : vertex(x, y, z), normal(0, 0, 0), uv(0, 0, 0) {}
+      : vertex(x, y, z), normal(0, 0, 0), uv(0, 0) {}
   GLVertex(const glm::vec3& vertex, const glm::vec3& normal = glm::vec3(0),
-           const glm::vec3& uv = glm::vec3(0))
+           const glm::vec2& uv = glm::vec2(0))
       : vertex(vertex), normal(normal), uv(uv) {}
   ATTRALIGN glm::vec3 vertex;
   ATTRALIGN glm::vec3 normal;
-  ATTRALIGN glm::vec3 uv;
+  ATTRALIGN glm::vec2 uv;
 };
 
 struct GroupFaces {
@@ -36,7 +36,7 @@ struct GroupFaces {
 
   void addVertex(const glm::vec3& vertex,
                  const glm::vec3& normal = glm::vec3(0),
-                 const glm::vec3& uv = glm::vec3(0)) {
+                 const glm::vec2& uv = glm::vec2(0)) {
     GLVertex v(vertex, normal, uv);
     Vertices.push_back(v);
   }

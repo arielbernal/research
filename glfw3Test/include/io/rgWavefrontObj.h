@@ -9,17 +9,49 @@
 
 namespace rg {
 
+struct WavefrontFaceVertex {
+  WavefrontFaceVertex(int16_t v, int16_t n, int16_t t) : v(v), n(n), t(t) {}
+  int16_t v;
+  int16_t n;
+  int16_t t;
+};
+
+inline bool operator<(const WavefrontFaceVertex& lhs, const WavefrontFaceVertex& rhs) {
+  if (lhs.v != rhs.v)
+    return lhs.v < rhs.v;
+  else if (lhs.n != rhs.n)
+    return lhs.n < rhs.n;
+  return lhs.t < rhs.t;
+}
+
 struct WavefrontFace {
-  WavefrontFace(GLMaterial* Material) : Material(Material) {}
+  std::vector<WavefrontFaceVertex> V;
+  void addPoint(int16_t v, int16_t n, int16_t t) {
+    V.push_back(WavefrontFaceVertex(v, n, t));
+  }
+};
+
+struct WavefrontGroupFace {
+  WavefrontGroupFace(GLMaterial* Material)
+      : Material(Material), CurrentFace(0) {}
   GLMaterial* Material;
-  std::vector<uint16_t> Vertices;
-  std::vector<uint16_t> Normals;
-  std::vector<uint16_t> UVs;
+  void addFace() {
+    WavefrontFace Face;
+    Faces.push_back(Face);
+    CurrentFace = &Faces.back();
+  }
+
+  void addPoint(int16_t v, int16_t n, int16_t t) {
+    if (!CurrentFace) addFace();
+    CurrentFace->addPoint(v, n, t);
+  }
+  std::vector<WavefrontFace> Faces;
+  WavefrontFace* CurrentFace;
 };
 
 class WavefrontObj {
  public:
-  WavefrontObj(const std::string& Name) : Name(Name) {}
+  WavefrontObj(const std::string& Name) : Name(Name), CurrentGroupFace(0) {}
   ~WavefrontObj() {}
 
   void addVertex(float x, float y, float z) {
@@ -33,7 +65,21 @@ class WavefrontObj {
   bool hasNormals() { return Normals.size() > 0; }
   bool hasUVs() { return UVs.size() > 0; }
 
-  void addFace(WavefrontFace* F) { Faces.push_back(F); }
+  void addGroupFace(GLMaterial* Material) {
+    GroupFaces.push_back(WavefrontGroupFace(Material));
+    CurrentGroupFace = &GroupFaces.back();
+  }
+
+  void addFace() {
+    if (!CurrentGroupFace) addGroupFace(0);
+    CurrentGroupFace->addFace();
+  }
+
+  void addFacePoint(int16_t v, int16_t n, int16_t t) {
+    CurrentGroupFace->addPoint(v, n, t);
+  }
+
+  std::vector<WavefrontGroupFace>* getGroupFaces() { return &GroupFaces; }
 
   std::string getName() { return Name; }
   void dump();
@@ -46,11 +92,13 @@ class WavefrontObj {
   std::vector<glm::vec3> Vertices;
   std::vector<glm::vec3> Normals;
   std::vector<glm::vec2> UVs;
-  std::vector<WavefrontFace*> Faces;
+  std::vector<WavefrontGroupFace> GroupFaces;
+  WavefrontGroupFace* CurrentGroupFace;
 };
 
 class WavefrontObjFile {
  public:
+  typedef typename std::map<std::string, WavefrontObj*> ObjectMap;
   typedef typename std::map<std::string, GLMaterial> MaterialMap;
   typedef typename MaterialMap::iterator MaterialIterator;
   typedef typename MaterialMap::const_iterator ConstMaterialIterator;
@@ -63,11 +111,13 @@ class WavefrontObjFile {
 
   WavefrontObj* getCurrentObject() { return CurrentObject; }
 
+  WavefrontObj* getObject(const std::string& Name) { return Objects[Name]; }
+
  private:
   std::string ObjFilename;
   std::string MtlFilename;
 
-  std::vector<WavefrontObj*> Objects;
+  ObjectMap Objects;
   MaterialMap Materials;
   WavefrontObj* CurrentObject;
   GLMaterial* CurrentMaterial;
