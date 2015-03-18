@@ -27,9 +27,9 @@ class ActionWorld : public GLWorldScene {
     Cam->setPosition(20, 0, 0);
     add(Cam);
 
-    GLLight* L1 = GLLight::Point("FirstLight", -5, 1, 1);
+    GLLight* L1 = GLLight::Point("FirstLight", -5, 5, 2);
     add(L1);
-    GLLight* L2 = GLLight::Point("SecondLight", 5, -1, 5);
+    GLLight* L2 = GLLight::Point("SecondLight", 5, -5, 5);
     add(L2);
 
     GLCuboid* cube1 =
@@ -60,11 +60,11 @@ class ActionWorld : public GLWorldScene {
 
 
     WavefrontObjFile WO;
-    WO.loadObjFile("objects/cube2.wobj");
+    WO.loadObjFile("objects\\cube.wobj");
     WO.dump();
 
     GLWavefrontObj* Wobj = new GLWavefrontObj("CubeLoaded", WO.getCurrentObject());
-    Wobj->translate(5, 5, 3);
+    Wobj->translate(0, 0, 3);
     add(Wobj);
 
   }

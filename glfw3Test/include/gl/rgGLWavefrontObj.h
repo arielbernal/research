@@ -36,23 +36,28 @@ class GLWavefrontObj : public GLObject {
             glm::vec3 Vertex(0.0f);
             glm::vec3 Normal(0.0f);
             glm::vec2 Texture(0.0f);
-            if (e2.v > 0) Vertex = (*V)[e2.v];
-            if (e2.n > 0) Normal = (*N)[e2.n];
-            if (e2.t > 0) Texture = (*T)[e2.t];
+            if (e2.v >= 0) Vertex = (*V)[e2.v];
+            if (e2.n >= 0) Normal = (*N)[e2.n];
+            if (e2.t >= 0) Texture = (*T)[e2.t];
             F->addVertex(Vertex, Normal, Texture);
             std::cout << "V=" << glm::to_string(Vertex)
                       << " N=" << glm::to_string(Normal)
                       << " T=" << glm::to_string(Texture) << std::endl;
           }
         }
+        uint16_t i0 = VMap[e1.V[0]];
+        uint16_t i1 = VMap[e1.V[1]];
+        uint16_t i2 = VMap[e1.V[2]];
+        if (e1.V.size() == 4) {
+            uint16_t i3 = VMap[e1.V[3]];
+            F->addQuad(i0, i1, i2, i3);
+        } 
         std::cout << "\n";
       }
-      for (auto e1 : VMap) {
-        std::cout << " ids " << e1.second << std::endl;
-      }
+      F->updateNormals();
       Groups.push_back(F);
     }
-    // Groups.clear();
+//     Groups.clear();
 
     // GLMaterial MatRed("Red");
     // F = new GroupFaces(MatCyan);  // right

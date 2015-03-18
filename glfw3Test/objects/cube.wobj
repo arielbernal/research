@@ -26,6 +26,6 @@ g left cube
 usemtl green
 f 5 6 2 1
 g bottom cube
-usemtl white
+usemtl blue
 f 2 6 7 3
 # 6 elements

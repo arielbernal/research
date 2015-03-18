@@ -57,17 +57,17 @@ inline void search_directory(const std::string& path,
   WIN32_FIND_DATA file_information;
   std::string pattern = path + PATHSEP +"\\*.*";
 
-  h_file = FindFirstFile(pattern.c_str(), &file_information);
+  h_file = FindFirstFile(LPCWSTR(pattern.c_str()), &file_information);
   if (h_file != INVALID_HANDLE_VALUE) {
     do {
       if (file_information.cFileName[0] != '.') {
-        file_name = path + "\\" + file_information.cFileName;
+        file_name = path + "\\" + std::string((char*)file_information.cFileName);
         if (file_information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
           if (recursive_search) {
             search_directory(file_name, extension, files, recursive_search);
           }
         } else {
-          file_extension = file_information.cFileName;
+          file_extension = std::string((char*)file_information.cFileName);
           file_extension = file_extension.substr(file_extension.rfind(".") + 1);
           if (file_extension == extension) {
             files.push_back(file_name);

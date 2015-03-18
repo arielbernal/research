@@ -97,6 +97,7 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
   }
 
   std::string path = extract_path(Filename);
+  std::cout << path << "PPPPPP \n";
   std::string line;
   CurrentMaterial = NULL;
   while (!ifs.eof()) {

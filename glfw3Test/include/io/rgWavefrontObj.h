@@ -98,11 +98,11 @@ class WavefrontObj {
 
 class WavefrontObjFile {
  public:
-  typedef typename std::map<std::string, WavefrontObj*> ObjectMap;
-  typedef typename std::map<std::string, GLMaterial> MaterialMap;
-  typedef typename MaterialMap::iterator MaterialIterator;
-  typedef typename MaterialMap::const_iterator ConstMaterialIterator;
-  typedef typename std::pair<std::string, GLMaterial> MaterialPair;
+  typedef std::map<std::string, WavefrontObj*> ObjectMap;
+  typedef std::map<std::string, GLMaterial> MaterialMap;
+  typedef MaterialMap::iterator MaterialIterator;
+  typedef MaterialMap::const_iterator ConstMaterialIterator;
+  typedef std::pair<std::string, GLMaterial> MaterialPair;
 
   WavefrontObjFile() : CurrentObject(0), CurrentMaterial(0) {}
   bool loadObjFile(const std::string& Filename);

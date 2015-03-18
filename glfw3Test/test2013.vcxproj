@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="include\io\lodepng.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\rgWaveFrontObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gl\rgGLHeaders.h" />
