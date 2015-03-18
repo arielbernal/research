@@ -13,8 +13,6 @@
 #include <gl/rgGLWavefrontObj.h>
 #include <io/rgWavefrontObj.h>
 
-
-
 using namespace rg;
 class ActionWorld : public GLWorldScene {
  public:
@@ -45,7 +43,7 @@ class ActionWorld : public GLWorldScene {
     add(cube3);
 
     GLSphere* sphere = new GLSphere("Sphere1", 1, 50);
-    sphere->translate(2, 2, 2);
+    sphere->translate(2, 2, 0);
     add(sphere);
 
     GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 2, 20);
@@ -58,15 +56,16 @@ class ActionWorld : public GLWorldScene {
     fl->translate(0, 0, 0);
     add(fl);
 
-
     WavefrontObjFile WO;
-    WO.loadObjFile("objects\\cube.wobj");
-    WO.dump();
-
-    GLWavefrontObj* Wobj = new GLWavefrontObj("CubeLoaded", WO.getCurrentObject());
-    Wobj->translate(0, 0, 3);
+    WO.loadObjFile("objects/ateneam.wobj");
+    // WO.dump();
+    GLWavefrontObj* Wobj =
+        new GLWavefrontObj("Wobj", WO.getCurrentObject());
+    Wobj->scaleVertices(0.0005f);
+    Wobj->rotate(M_PI / 2, 1, 0, 0);
+    //Wobj->rotate(M_PI / 2, 0, 0, 1);
+    Wobj->translate(2, 2, 2);
     add(Wobj);
-
   }
 
   float alpha;

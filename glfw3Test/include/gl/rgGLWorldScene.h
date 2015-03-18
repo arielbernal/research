@@ -13,7 +13,7 @@ namespace rg {
 
 class GLWorldScene {
  public:
-  GLWorldScene() { CurrentCamera = Cameras.begin(); }
+  GLWorldScene() : ObjectShader(0) { CurrentCamera = Cameras.begin(); }
 
   void updateLights(const GLLightsHandlers& LH) {
     glUniform1i(LH.NLightsHandler, Lights.size());
@@ -126,6 +126,9 @@ class GLWorldScene {
 
   void attchObjectShader(const std::string& VertexFileName,
                          const std::string& FragmentFileName) {
+    if (!ObjectShader) {
+      delete ObjectShader;
+    }
     ObjectShader =
         new GLShaderLight("LightShader", VertexFileName, FragmentFileName);
   }
@@ -134,6 +137,7 @@ class GLWorldScene {
   typedef std::map<std::string, GLCamera*>::iterator CameraIterator;
 
   GLShaderLight* ObjectShader;
+  std::map<std::string, GLMaterial*> Materials;
 
   std::map<std::string, GLCamera*> Cameras;
   std::map<std::string, GLLight*> Lights;

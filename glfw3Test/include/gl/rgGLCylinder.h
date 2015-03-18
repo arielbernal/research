@@ -47,12 +47,12 @@ class GLCylinder : public GLObject {
     Groups.clear();
     GroupFaces* F = new GroupFaces(Material);
     float dtheta = 2 * M_PI / Div;
-    uint16_t idx = 0;
+    uint32_t idx = 0;
     // top
     {
       float z = Height / 2;
       glm::vec3 normal = glm::vec3(0, 0, 1);
-      std::vector<uint16_t> Indices(Div);
+      std::vector<uint32_t> Indices(Div);
       F->addVertex(glm::vec3(0, 0, z), normal);
       for (size_t np = 0; np < Div; ++np) {
         float x = Radius * cos(np * dtheta);
@@ -67,7 +67,7 @@ class GLCylinder : public GLObject {
     {
       float z = -Height / 2;
       glm::vec3 normal = glm::vec3(0, 0, -1);
-      std::vector<uint16_t> Indices(Div);
+      std::vector<uint32_t> Indices(Div);
       F->addVertex(glm::vec3(0, 0, z), normal);
       for (size_t np = 0; np < Div; ++np) {
         float x = Radius * cos(np * dtheta);
@@ -112,10 +112,10 @@ class GLCylinder : public GLObject {
         }
       }
       for (size_t np = 0; np < Div; ++np) {
-        uint16_t i0 = np;
-        uint16_t i1 = (np + 1) % Div;
-        uint16_t i2 = (np + 1) % Div + Div;
-        uint16_t i3 = (np + Div);
+        uint32_t i0 = np;
+        uint32_t i1 = (np + 1) % Div;
+        uint32_t i2 = (np + 1) % Div + Div;
+        uint32_t i3 = (np + Div);
         F1->addQuad(i0, i1, i2, i3);
       }
       F1->updateNormals();

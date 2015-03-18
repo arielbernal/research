@@ -7,6 +7,7 @@ struct GLMaterial {
   vec3 Ka;
   vec3 Ks;
   float Ns;
+  sampler2D tex;
 };
 
 struct GLLight {

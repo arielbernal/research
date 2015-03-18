@@ -18,13 +18,13 @@ struct GLVertex {
 };
 
 struct GroupFaces {
-  GLMaterial Material;
+  GLMaterial* Material;
   std::vector<GLVertex> Vertices;
-  std::vector<uint16_t> Indices;
+  std::vector<uint32_t> Indices;
   GLuint VBO;
   GLuint IBO;
 
-  GroupFaces(const GLMaterial& Material) : Material(Material) {
+  GroupFaces(GLMaterial* Material) : Material(Material) {
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &IBO);
   }
@@ -41,20 +41,24 @@ struct GroupFaces {
     Vertices.push_back(v);
   }
 
-  void addTriangle(uint16_t i0, uint16_t i1, uint16_t i2) {
+  void addTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     Indices.push_back(i0);
     Indices.push_back(i1);
     Indices.push_back(i2);
   }
 
-  void addQuad(uint16_t i0, uint16_t i1, uint16_t i2, uint16_t i3) {
+  void addQuad(uint32_t i0, uint32_t i1, uint32_t i2, uint32_t i3) {
     addTriangle(i0, i1, i2);
     addTriangle(i2, i3, i0);
   }
 
-  void addTriangleFan(uint16_t ic, const std::vector<uint16_t>& fan) {
+  void addTriangleFan(uint32_t ic, const std::vector<uint32_t>& fan) {
     size_t N = fan.size();
     for (size_t i = 0; i < N; ++i) addTriangle(fan[i], ic, fan[(i + 1) % N]);
+  }
+
+  void scaleVertices(float k) {
+    for (auto& e : Vertices) e.vertex *= k;
   }
 
   void updateNormals() {
@@ -68,9 +72,18 @@ struct GroupFaces {
       glm::vec3 c1 = glm::cross(p2 - p1, p3 - p1);
       glm::vec3 c2 = glm::cross(p3 - p2, p1 - p2);
       glm::vec3 c3 = glm::cross(p1 - p3, p2 - p3);
-      if (glm::length(c1) > 1e-3) c1 = glm::normalize(c1); else c1 = glm::vec3(0);
-      if (glm::length(c2) > 1e-3) c2 = glm::normalize(c2); else c2 = glm::vec3(0);
-      if (glm::length(c3) > 1e-3) c3 = glm::normalize(c3); else c3 = glm::vec3(0);
+      if (glm::length(c1) > 1e-3)
+        c1 = glm::normalize(c1);
+      else
+        c1 = glm::vec3(0);
+      if (glm::length(c2) > 1e-3)
+        c2 = glm::normalize(c2);
+      else
+        c2 = glm::vec3(0);
+      if (glm::length(c3) > 1e-3)
+        c3 = glm::normalize(c3);
+      else
+        c3 = glm::vec3(0);
       Vertices[i0].normal += c1;
       Vertices[i1].normal += c2;
       Vertices[i2].normal += c3;
@@ -86,7 +99,7 @@ struct GroupFaces {
     glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(GLVertex),
                  &Vertices[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(uint16_t),
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(uint32_t),
                  &Indices[0], GL_STATIC_DRAW);
     glBindVertexArray(0);
   }

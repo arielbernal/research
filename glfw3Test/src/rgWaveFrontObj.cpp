@@ -97,7 +97,6 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
   }
 
   std::string path = extract_path(Filename);
-  std::cout << path << "PPPPPP \n";
   std::string line;
   CurrentMaterial = NULL;
   while (!ifs.eof()) {
@@ -155,7 +154,6 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
         // add Face
         CurrentObject->addFace();
         int i = 1;
-
         while (i < (int)tokens.size()) {
           int16_t v = toNumber<int>(tokens[i++]) - 1;
           int16_t t = -1;

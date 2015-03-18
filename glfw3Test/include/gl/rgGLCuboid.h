@@ -10,7 +10,7 @@ class GLCuboid : public GLObject {
   enum { GLCUBOID_STANDARD, GLCUBOID_REFINED, GLCUBOID_MULTICOLOR };
 
   GLCuboid(const std::string& ObjectName, size_t type = GLCUBOID_STANDARD,
-           const GLMaterial& Material = GLMaterial::Default())
+           GLMaterial* Material = GLMaterial::Default())
       : GLObject(ObjectName),
         Dx(1),
         Dy(1),
@@ -22,7 +22,7 @@ class GLCuboid : public GLObject {
 
   GLCuboid(const std::string& ObjectName, float dx, float dy, float dz,
            size_t type = GLCUBOID_STANDARD,
-           const GLMaterial& Material = GLMaterial::Default())
+           GLMaterial* Material = GLMaterial::Default())
       : GLObject(ObjectName),
         Dx(dx),
         Dy(dy),
@@ -40,8 +40,8 @@ class GLCuboid : public GLObject {
     rebuild();
   }
 
-  GLMaterial getMaterial() { return Material; }
-  void setMaterial(const GLMaterial Mat) {
+  GLMaterial* getMaterial() { return Material; }
+  void setMaterial(GLMaterial* Mat) {
     Material = Mat;
     rebuild();
   }
@@ -54,6 +54,7 @@ class GLCuboid : public GLObject {
 
  protected:
   void rebuild() {
+    Groups.clear();
     switch (type) {
       case GLCUBOID_MULTICOLOR:
         multicolor();
@@ -72,21 +73,20 @@ class GLCuboid : public GLObject {
 
   void multicolor() {
     type = GLCUBOID_MULTICOLOR;
-    Groups.clear();
     float dx2 = Dx / 2;
     float dy2 = Dy / 2;
     float dz2 = Dz / 2;
-    GLMaterial MatRed("Red");
+    GLMaterial* MatRed = new GLMaterial("Red");
     MatRed.Kd = glm::vec3(1, 0.3, 0.2);
-    GLMaterial MatGreen("Green");
+    GLMaterial* MatGreen = new GLMaterial("Green");
     MatGreen.Kd = glm::vec3(0.3, 1, 0.2);
-    GLMaterial MatBlue("Blue");
+    GLMaterial* MatBlue = new GLMaterial("Blue");
     MatBlue.Kd = glm::vec3(0.2, 0.3, 1);
-    GLMaterial MatYellow("Yellow");
+    GLMaterial* MatYellow = new GLMaterial("Yellow");
     MatYellow.Kd = glm::vec3(1, 1, 0.3);
-    GLMaterial MatMagenta("Magenta");
+    GLMaterial* MatMagenta = new GLMaterial("Magenta");
     MatMagenta.Kd = glm::vec3(1, 0.2, 1);
-    GLMaterial MatCyan("Cyan");
+    GLMaterial* MatCyan = new GLMaterial("Cyan");
     MatCyan.Kd = glm::vec3(0.2, 1, 1);
 
     GroupFaces* F = new GroupFaces(MatRed);  // bottom
@@ -146,7 +146,6 @@ class GLCuboid : public GLObject {
 
   void standard() {
     type = GLCUBOID_STANDARD;
-    Groups.clear();
     float dx2 = Dx / 2;
     float dy2 = Dy / 2;
     float dz2 = Dz / 2;
@@ -208,7 +207,6 @@ class GLCuboid : public GLObject {
 
   void refined() {
     type = GLCUBOID_REFINED;
-    Groups.clear();
     float dx2 = Dx / 2;
     float dy2 = Dy / 2;
     float dz2 = Dz / 2;
@@ -241,7 +239,7 @@ class GLCuboid : public GLObject {
  private:
   float Dx, Dy, Dz;
   size_t type;
-  GLMaterial Material;
+  GLMaterial* Material;
 };
 
 }  // namespace rg

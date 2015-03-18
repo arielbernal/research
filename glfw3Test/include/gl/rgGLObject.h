@@ -42,7 +42,16 @@ class GLObject {
   bool isShowMesh() { return ShowMesh; }
 
   void translate(float dx, float dy, float dz) {
-    MMatrix = glm::translate(MMatrix, glm::vec3(dx, dy, dz));
+    MMatrix = glm::translate(glm::mat4(1), glm::vec3(dx, dy, dz)) * MMatrix;
+  }
+
+  void rotate(float angle, float x, float y, float z) {
+    MMatrix = glm::rotate(glm::mat4(1), angle, glm::vec3(x, y, z)) * MMatrix;
+  }
+
+  void scaleVertices(float k) {
+    for (auto e : Groups)
+      e->scaleVertices(k);
   }
 
   GLuint getVAO() { return VAO; }
@@ -72,13 +81,13 @@ class GLObject {
                               sizeof(GLVertex), (void*)0x20);
       }
 
-      glUniform3fv(OH.Material_Kd_Handler, 1, glm::value_ptr(e->Material.Kd));
-      glUniform3fv(OH.Material_Ka_Handler, 1, glm::value_ptr(e->Material.Ka));
-      glUniform3fv(OH.Material_Ks_Handler, 1, glm::value_ptr(e->Material.Ks));
-      glUniform1f(OH.Material_Ns_Handler, e->Material.Ns);
+      glUniform3fv(OH.Material_Kd_Handler, 1, glm::value_ptr(e->Material->Kd));
+      glUniform3fv(OH.Material_Ka_Handler, 1, glm::value_ptr(e->Material->Ka));
+      glUniform3fv(OH.Material_Ks_Handler, 1, glm::value_ptr(e->Material->Ks));
+      glUniform1f(OH.Material_Ns_Handler, e->Material->Ns);
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, e->IBO);
-      glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_SHORT,
+      glDrawElements(GL_TRIANGLES, e->Indices.size(), GL_UNSIGNED_INT,
                      (void*)0);
 
       glDisableVertexAttribArray(OH.VertexHandler);

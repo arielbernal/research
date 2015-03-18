@@ -140,6 +140,7 @@ struct GLObjectHandlers {
   GLint Material_Ka_Handler;
   GLint Material_Ks_Handler;
   GLint Material_Ns_Handler;
+  GLint Material_tex_Handler;
 
   void bindHandlers(GLuint ProgramID) {
     VertexHandler = glGetAttribLocation(ProgramID, "Vertex");
@@ -150,7 +151,9 @@ struct GLObjectHandlers {
     Material_Ka_Handler = glGetUniformLocation(ProgramID, "Material.Ka");
     Material_Ks_Handler = glGetUniformLocation(ProgramID, "Material.Ks");
     Material_Ns_Handler = glGetUniformLocation(ProgramID, "Material.Ns");
+    Material_tex_Handler = glGetUniformLocation(ProgramID, "Material.tex");
   }
+
   void printHandlers() {
     std::cout << "Object Handlers\n";
     std::cout << "  VertexHandler=" << VertexHandler
@@ -160,8 +163,8 @@ struct GLObjectHandlers {
     std::cout << "  Kd=" << Material_Kd_Handler
               << ", Ka=" << Material_Ka_Handler
               << ", Ks=" << Material_Ka_Handler
-              << ", Ns=" << Material_Ns_Handler << "\n\n";
-
+              << ", Ns=" << Material_Ns_Handler
+              << ", tex=" << Material_tex_Handler << "\n\n";
   }
 };
 
@@ -246,9 +249,9 @@ class GLShaderLight : public GLShaderProgram {
     CH.bindHandlers(ProgramID);
     LH.bindHandlers(ProgramID);
 
-//    OH.printHandlers();
-//    CH.printHandlers();
-//    LH.printHandlers();
+    //    OH.printHandlers();
+    //    CH.printHandlers();
+    //    LH.printHandlers();
   }
 
   GLObjectHandlers getObjectHandlers() { return OH; }
