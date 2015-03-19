@@ -16,8 +16,6 @@
 
 namespace rg {
 
-
-
 class GLObject {
  public:
   GLObject(const std::string& ObjectName)
@@ -29,7 +27,7 @@ class GLObject {
   }
 
   ~GLObject() {
-    Groups.clear();
+    clearGroups();
     glDeleteVertexArrays(1, &VAO);
   }
 
@@ -50,8 +48,7 @@ class GLObject {
   }
 
   void scaleVertices(float k) {
-    for (auto e : Groups)
-      e->scaleVertices(k);
+    for (auto e : Groups) e->scaleVertices(k);
   }
 
   GLuint getVAO() { return VAO; }
@@ -110,6 +107,11 @@ class GLObject {
   glm::mat4 MMatrix;
 
   std::vector<GroupFaces*> Groups;
+
+  void clearGroups() {
+    for (auto e : Groups) delete e;
+      Groups.clear();
+  }
 };
 
 }  // namespace rg

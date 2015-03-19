@@ -1,6 +1,7 @@
 #ifndef RGGLMATERIAL_H
 #define RGGLMATERIAL_H
 
+#include <memory>
 #include <gl/rgGLHeaders.h>
 #include <io/lodepng.h>
 
@@ -24,8 +25,29 @@ struct GLMaterial {
   size_t TexKd_width;
   size_t TexKd_height;
 
+  enum { MAT_NONE, MAT_DEFAULT, MAT_RED, MAT_GREEN, MAT_BLUE };
+
   GLMaterial(const std::string& Name = "")
       : Name(Name), Ka(0), Kd(0), Ks(0), Ns(0) {}
+
+  GLMaterial(size_t Initializer = MAT_NONE) {
+    switch (Initializer) {
+      case MAT_NONE:
+        return;
+      case MAT_DEFAULT:
+        mat_default();
+        break;
+      case MAT_RED:
+        mat_red();
+        break;
+      case MAT_GREEN:
+        mat_green();
+        break;
+      case MAT_BLUE:
+        mat_blue();
+        break;
+    }
+  }
 
   const bool hasTextureFiles() const {
     return map_Ka.length() > 0 || map_Kd.length() > 0 || map_Ks.length() > 0;
@@ -33,6 +55,7 @@ struct GLMaterial {
 
   ~GLMaterial() {
     glDeleteTextures(1, &TexKd_ID);
+    std::cout << "Destruct " + Name + " \n";
   }
 
   void setColor(const glm::vec3& ambient, const glm::vec3& diffuse,
@@ -58,42 +81,48 @@ struct GLMaterial {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
-  static GLMaterial* Default() {
-    GLMaterial* Mat = new GLMaterial("Default");
-    Mat->Kd = glm::vec3(1, 1, 1);
-    Mat->Ka = glm::vec3(0.1f);
-    Mat->Ks = glm::vec3(0.2f);
-    Mat->Ns = 20;
-    return Mat;
+ private:
+  void mat_default() {
+    Name = "Default";
+    Kd = glm::vec3(1, 1, 1);
+    Ka = glm::vec3(0.1f);
+    Ks = glm::vec3(0.2f);
+    Ns = 20;
   }
 
-  static GLMaterial* Red() {
-    GLMaterial* Mat = new GLMaterial("Red");
-    Mat->Kd = glm::vec3(1, 0, 0);
-    Mat->Ka = glm::vec3(0.1f, 0, 0);
-    Mat->Ks = glm::vec3(0.2f);
-    Mat->Ns = 20;
-    return Mat;
+  void mat_red() {
+    Name = "Red";
+    Kd = glm::vec3(1, 0, 0);
+    Ka = glm::vec3(0.1f, 0, 0);
+    Ks = glm::vec3(0.2f);
+    Ns = 20;
   }
 
-  static GLMaterial* Green() {
-    GLMaterial* Mat = new GLMaterial("Green");
-    Mat->Kd = glm::vec3(0, 1, 0);
-    Mat->Ka = glm::vec3(0, 0.1f, 0);
-    Mat->Ks = glm::vec3(0.2f);
-    Mat->Ns = 20;
-    return Mat;
+  void mat_green() {
+    Name = "Green";
+    Kd = glm::vec3(0, 1, 0);
+    Ka = glm::vec3(0, 0.1f, 0);
+    Ks = glm::vec3(0.2f);
+    Ns = 20;
   }
 
-  static GLMaterial* Blue() {
-    GLMaterial* Mat = new GLMaterial("Blue");
-    Mat->Kd = glm::vec3(0, 0, 1);
-    Mat->Ka = glm::vec3(0, 0, 0.1f);
-    Mat->Ks = glm::vec3(0.2f);
-    Mat->Ns = 20;
-    return Mat;
+  void mat_blue() {
+    Name = "Blue";
+    Kd = glm::vec3(0, 0, 1);
+    Ka = glm::vec3(0, 0, 0.1f);
+    Ks = glm::vec3(0.2f);
+    Ns = 20;
   }
 };
+
+typedef std::shared_ptr<GLMaterial> GLMaterialPtr;
+GLMaterialPtr GLMaterialDefault =
+    std::make_shared<GLMaterial>(GLMaterial::MAT_DEFAULT);
+GLMaterialPtr GLMaterialRed = std::make_shared<GLMaterial>(GLMaterial::MAT_RED);
+GLMaterialPtr GLMaterialGreen =
+    std::make_shared<GLMaterial>(GLMaterial::MAT_GREEN);
+GLMaterialPtr GLMaterialBlue =
+    std::make_shared<GLMaterial>(GLMaterial::MAT_BLUE);
 
 }  // namespace rg
 

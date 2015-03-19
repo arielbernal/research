@@ -1,6 +1,9 @@
 #ifndef RGGLGROUPFACES_H
 #define RGGLGROUPFACES_H
 
+#include <memory>
+#include <vector>
+
 #include <gl/rgGLHeaders.h>
 #include <gl/rgGLMaterial.h>
 
@@ -18,13 +21,13 @@ struct GLVertex {
 };
 
 struct GroupFaces {
-  GLMaterial* Material;
+  GLMaterialPtr Material;
   std::vector<GLVertex> Vertices;
   std::vector<uint32_t> Indices;
   GLuint VBO;
   GLuint IBO;
 
-  GroupFaces(GLMaterial* Material) : Material(Material) {
+  GroupFaces(GLMaterialPtr& Material) : Material(Material) {
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &IBO);
   }
@@ -93,6 +96,7 @@ struct GroupFaces {
         Vertices[i].normal = glm::normalize(Vertices[i].normal);
     }
   }
+
   void updateBindings(const GLuint& VAO) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
