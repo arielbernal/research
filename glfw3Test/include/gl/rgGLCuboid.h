@@ -10,7 +10,7 @@ class GLCuboid : public GLObject {
   enum { GLCUBOID_STANDARD, GLCUBOID_MULTICOLOR };
 
   GLCuboid(const std::string& ObjectName, size_t type = GLCUBOID_STANDARD,
-           GLMaterial* Material = GLMaterial::Default())
+           GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName),
         Dx(1),
         Dy(1),
@@ -22,7 +22,7 @@ class GLCuboid : public GLObject {
 
   GLCuboid(const std::string& ObjectName, float dx, float dy, float dz,
            size_t type = GLCUBOID_STANDARD,
-           GLMaterial* Material = GLMaterial::Default())
+           GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName),
         Dx(dx),
         Dy(dy),
