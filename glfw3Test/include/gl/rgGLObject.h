@@ -16,20 +16,44 @@
 
 namespace rg {
 
+struct GLObjectCommon {
+  GLObjectCommon() { glGenVertexArrays(1, &VAO); }
+
+  ~GLObjectCommon() {
+    clearGroups();
+    glDeleteVertexArrays(1, &VAO);
+  }
+
+  void clearGroups() {
+    for (auto e : Groups) delete e;
+    Groups.clear();
+  }
+
+  void updateBindings() {
+    for (auto e : Groups) e->updateBindings(VAO);
+  }
+
+  GLuint VAO;
+  std::vector<GroupFaces*> Groups;
+};
+
 class GLObject {
  public:
   GLObject(const std::string& ObjectName)
       : ObjectName(ObjectName),
         Enabled(true),
         ShowMesh(false),
-        MMatrix(glm::mat4(1.0f)) {
-    glGenVertexArrays(1, &VAO);
+        MMatrix(glm::mat4(1.0f)),
+        CommonPtr(0) {
+    if (!CommonPtr) CommonPtr = std::make_shared<GLObjectCommon>();
   }
 
-  ~GLObject() {
-    clearGroups();
-    glDeleteVertexArrays(1, &VAO);
-  }
+  GLObject(const std::string& ObjectName, GLObject& obj)
+      : ObjectName(ObjectName),
+        Enabled(true),
+        ShowMesh(false),
+        MMatrix(glm::mat4(1.0f)),
+        CommonPtr(obj.getSharedData()) {}
 
   std::string getName() { return ObjectName; }
 
@@ -48,20 +72,18 @@ class GLObject {
   }
 
   void scaleVertices(float k) {
-    for (auto e : Groups) e->scaleVertices(k);
+    for (auto e : CommonPtr->Groups) e->scaleVertices(k);
   }
 
-  GLuint getVAO() { return VAO; }
+  GLuint getVAO() { return CommonPtr->VAO; }
 
-  void updateBindings() {
-    for (auto e : Groups) e->updateBindings(VAO);
-  }
+  void updateBindings() { CommonPtr->updateBindings(); }
 
   void render(const GLObjectHandlers& OH) {
-    glBindVertexArray(VAO);
+    glBindVertexArray(CommonPtr->VAO);
     glUniformMatrix4fv(OH.MMatrixHandler, 1, GL_FALSE, &MMatrix[0][0]);
 
-    for (auto e : Groups) {
+    for (auto e : CommonPtr->Groups) {
       glBindBuffer(GL_ARRAY_BUFFER, e->VBO);
 
       glEnableVertexAttribArray(OH.VertexHandler);
@@ -95,24 +117,20 @@ class GLObject {
     glBindVertexArray(0);
   }
 
+  std::shared_ptr<GLObjectCommon> getSharedData() { return CommonPtr; }
+
  protected:
   std::string ObjectName;
   bool Enabled;
   bool ShowMesh;
   bool CastShadows;
   bool ReceiveShadows;
-
-  GLuint VAO;
-
   glm::mat4 MMatrix;
 
-  std::vector<GroupFaces*> Groups;
-
-  void clearGroups() {
-    for (auto e : Groups) delete e;
-      Groups.clear();
-  }
+  std::shared_ptr<GLObjectCommon> CommonPtr;
 };
+
+typedef std::unique_ptr<GLObject> GLObjectPtr;
 
 }  // namespace rg
 

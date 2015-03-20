@@ -24,6 +24,7 @@ struct GroupFaces {
   GLMaterialPtr Material;
   std::vector<GLVertex> Vertices;
   std::vector<uint32_t> Indices;
+  
   GLuint VBO;
   GLuint IBO;
 

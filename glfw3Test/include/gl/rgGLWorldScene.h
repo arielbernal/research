@@ -15,6 +15,8 @@ class GLWorldScene {
  public:
   GLWorldScene() : ObjectShader(0) { CurrentCamera = Cameras.begin(); }
 
+  ~GLWorldScene() {}
+
   void updateLights(const GLLightsHandlers& LH) {
     glUniform1i(LH.NLightsHandler, Lights.size());
     size_t i = 0;

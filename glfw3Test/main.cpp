@@ -17,7 +17,8 @@ void EventMousePosGLFW3(GLFWwindow* window, double xpos, double ypos) {
   if (TwMouseMotion(int(xpos), int(ypos))) return;
   if (World.EventMousePos(xpos, ypos)) return;
 }
-void EventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yoffset) {
+void EventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yoffset)
+{
   if (TwEventMouseWheelGLFW(int(yoffset))) return;
   if (World.EventMouseWheel(yoffset)) return;
 }
@@ -70,7 +71,8 @@ int main() {
   // Create a tweak bar
   TwBar* bar = TwNewBar("TweakBar");
   TwWindowSize(800, 600);
-  TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW"
+  TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar
+with GLFW"
            "and OpenGL.' ");  // Message added to the help bar.
   TwAddSeparator(bar, NULL, "group='Parameters' ");
   // TwAddVarRW(bar, "speed", TW_TYPE_DOUBLE, &speed,
@@ -80,7 +82,8 @@ int main() {
 
       // Set GLFW event callbacks
       glfwSetWindowSizeCallback(window, (GLFWwindowposfun)WindowSizeGLFW3);
-  glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)EventMouseButtonGLFW3);
+  glfwSetMouseButtonCallback(window,
+(GLFWmousebuttonfun)EventMouseButtonGLFW3);
   glfwSetCursorPosCallback(window, (GLFWcursorposfun)EventMousePosGLFW3);
   glfwSetScrollCallback(window, (GLFWscrollfun)EventMouseWheelGLFW3);
   glfwSetKeyCallback(window, (GLFWkeyfun)EventKeyGLFW3);

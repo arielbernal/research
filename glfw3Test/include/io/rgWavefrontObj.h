@@ -98,9 +98,11 @@ class WavefrontObj {
   WavefrontGroupFace* CurrentGroupFace;
 };
 
+typedef std::shared_ptr<WavefrontObj> WavefrontObjPtr;
+
 class WavefrontObjFile {
  public:
-  typedef std::map<std::string, WavefrontObj*> ObjectMap;
+  typedef std::map<std::string, WavefrontObjPtr> ObjectMap;
   typedef std::map<std::string, GLMaterialPtr> MaterialMap;
   typedef MaterialMap::iterator MaterialIterator;
   typedef MaterialMap::const_iterator ConstMaterialIterator;
@@ -111,9 +113,9 @@ class WavefrontObjFile {
   bool loadMtlFile(const std::string& Filename);
   void dump();
 
-  WavefrontObj* getCurrentObject() { return CurrentObject; }
+  WavefrontObjPtr getCurrentObject() { return CurrentObject; }
 
-  WavefrontObj* getObject(const std::string& Name) { return Objects[Name]; }
+  WavefrontObjPtr getObject(const std::string& Name) { return Objects[Name]; }
 
  private:
   std::string ObjFilename;
@@ -121,7 +123,7 @@ class WavefrontObjFile {
 
   ObjectMap Objects;
   MaterialMap Materials;
-  WavefrontObj* CurrentObject;
+  WavefrontObjPtr CurrentObject;
   GLMaterialPtr CurrentMaterial;
 };
 }

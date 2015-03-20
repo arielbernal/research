@@ -8,13 +8,13 @@ namespace rg {
 
 class GLWavefrontObj : public GLObject {
  public:
-  GLWavefrontObj(const std::string& ObjectName, WavefrontObj* WF)
+  GLWavefrontObj(const std::string& ObjectName, WavefrontObjPtr& WF)
       : GLObject(ObjectName) {
     rebuild(WF);
   }
 
  protected:
-  void rebuild(WavefrontObj* WF) {
+  void rebuild(WavefrontObjPtr& WF) {
     clearGroups();
     for (auto e : *WF->getGroupFaces()) {
 

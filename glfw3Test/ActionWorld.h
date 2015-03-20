@@ -1,17 +1,18 @@
 #ifndef ACTIONWORLD_H
 #define ACTIONWORLD_H
 
-#include <gl/rgGLCamera.h>
-#include <gl/rgGLLight.h>
-#include <gl/rgGLCuboid.h>
-#include <gl/rgGLPlane.h>
-#include <gl/rgGLSphere.h>
-#include <gl/rgGLCylinder.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLWorldScene.h>
 #include <gl/rgGLMouseHandler.h>
-#include <gl/rgGLWavefrontObj.h>
-#include <io/rgWavefrontObj.h>
+#include <gl/rgGLCamera.h>
+#include <gl/rgGLLight.h>
+#include <gl/rgGLCuboid.h>
+// #include <gl/rgGLPlane.h>
+// #include <gl/rgGLSphere.h>
+// #include <gl/rgGLCylinder.h>
+
+// #include <gl/rgGLWavefrontObj.h>
+// #include <io/rgWavefrontObj.h>
 
 using namespace rg;
 class ActionWorld : public GLWorldScene {
@@ -30,42 +31,42 @@ class ActionWorld : public GLWorldScene {
     GLLight* L2 = GLLight::Point("SecondLight", 5, -5, 5);
     add(L2);
 
-    GLCuboid* cube1 =
-        new GLCuboid("Cube1", 2, 2, 2, GLCuboid::GLCUBOID_MULTICOLOR);
+    GLObjectPtr cube1 = std::make_unique<GLCuboid>(
+        "Cube1", 2, 2, 2, GLCuboid::GLCUBOID_MULTICOLOR);
     cube1->translate(0, 0, 1);
     add(cube1);
 
-    GLMaterialPtr M = GLMaterialBlue;
-    M->Ks = glm::vec3(4);
-    GLCuboid* cube3 =
-        new GLCuboid("Cube3", 2, 2, 2, GLCuboid::GLCUBOID_STANDARD, M);
-    cube3->translate(-2, 2, 1);
-    add(cube3);
+    // GLMaterialPtr M = GLMaterialBlue;
+    // M->Ks = glm::vec3(4);
+    // GLCuboid* cube3 =
+    //     new GLCuboid("Cube3", 2, 2, 2, GLCuboid::GLCUBOID_STANDARD, M);
+    // cube3->translate(-2, 2, 1);
+    // add(cube3);
 
-    GLSphere* sphere = new GLSphere("Sphere1", 1, 50);
-    sphere->translate(2, 2, 0);
-    add(sphere);
+    // GLSphere* sphere = new GLSphere("Sphere1", 1, 50);
+    // sphere->translate(2, 2, 0);
+    // add(sphere);
 
-    GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 2, 20);
-    cylinder->translate(-5, 5, 3);
-    add(cylinder);
+    // GLCylinder* cylinder = new GLCylinder("Cylinder", 1, 2, 20);
+    // cylinder->translate(-5, 5, 3);
+    // add(cylinder);
 
-    GLMaterialPtr M3 = GLMaterialGreen;
-    M3->Ks = glm::vec3(2);
-    GLPlane* fl = new GLPlane("Floor", 20, 20, 10, 10, M3);
-    fl->translate(0, 0, 0);
-    add(fl);
+    // GLMaterialPtr M3 = GLMaterialGreen;
+    // M3->Ks = glm::vec3(2);
+    // GLPlane* fl = new GLPlane("Floor", 20, 20, 10, 10, M3);
+    // fl->translate(0, 0, 0);
+    // add(fl);
 
-    WavefrontObjFile WO;
-    WO.loadObjFile("objects/ateneam.wobj");
-    // WO.dump();
-    GLWavefrontObj* Wobj =
-        new GLWavefrontObj("Wobj", WO.getCurrentObject());
-    Wobj->scaleVertices(0.0005f);
-    Wobj->rotate(M_PI / 2, 1, 0, 0);
-    //Wobj->rotate(M_PI / 2, 0, 0, 1);
-    Wobj->translate(2, 2, 2);
-    add(Wobj);
+    // WavefrontObjFile WO;
+    // WO.loadObjFile("objects/ateneam.wobj");
+    // // WO.dump();
+    // GLWavefrontObj* Wobj =
+    //     new GLWavefrontObj("Wobj", WO.getCurrentObject());
+    // Wobj->scaleVertices(0.0005f);
+    // Wobj->rotate(M_PI / 2, 1, 0, 0);
+    // //Wobj->rotate(M_PI / 2, 0, 0, 1);
+    // Wobj->translate(2, 2, 2);
+    // add(Wobj);
   }
 
   float alpha;
