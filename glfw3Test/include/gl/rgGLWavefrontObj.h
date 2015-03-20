@@ -15,12 +15,12 @@ class GLWavefrontObj : public GLObject {
 
  protected:
   void rebuild(WavefrontObj* WF) {
-    Groups.clear();
+    clearGroups();
     for (auto e : *WF->getGroupFaces()) {
 
-      GLMaterial* Material = e.Material;
-      if (!Material) Material = new GLMaterial(GLMaterial::Default());
-      GroupFaces* F = new GroupFaces(*Material);
+      GLMaterialPtr Material = e.Material;
+      if (!Material) Material = GLMaterialDefault;
+      GroupFaces* F = new GroupFaces(Material);
 
       std::vector<glm::vec3>* V = WF->getVertices();
       std::vector<glm::vec3>* N = WF->getNormals();

@@ -8,7 +8,7 @@ namespace rg {
 class GLCylinder : public GLObject {
  public:
   GLCylinder(const std::string& ObjectName,
-             const GLMaterial& Material = GLMaterial::Default())
+             GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName),
         Radius(1),
         Height(2),
@@ -19,7 +19,7 @@ class GLCylinder : public GLObject {
 
   GLCylinder(const std::string& ObjectName, float Radius, float Height,
              size_t Div, bool flat = false,
-             const GLMaterial& Material = GLMaterial::Default())
+             GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName),
         Radius(Radius),
         Height(Height),
@@ -29,22 +29,22 @@ class GLCylinder : public GLObject {
     rebuild();
   }
 
-  void setSize(float radius, float height, float divisions) {
+  void setSize(float radius, float height, size_t divisions) {
     Radius = radius;
     Height = height;
     Div = divisions;
     rebuild();
   }
 
-  GLMaterial getMaterial() { return Material; }
-  void setMaterial(const GLMaterial Mat) {
+  GLMaterialPtr getMaterial() { return Material; }
+  void setMaterial(GLMaterialPtr Mat) {
     Material = Mat;
     rebuild();
   }
 
  protected:
   void rebuild() {
-    Groups.clear();
+    clearGroups();
     GroupFaces* F = new GroupFaces(Material);
     float dtheta = 2 * M_PI / Div;
     uint32_t idx = 0;
@@ -127,7 +127,7 @@ class GLCylinder : public GLObject {
   float Radius, Height;
   size_t Div;
   bool flat;
-  GLMaterial Material;
+  GLMaterialPtr Material;
 };
 
 }  // namespace rg

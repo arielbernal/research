@@ -50,10 +50,10 @@ bool WavefrontObjFile::loadMtlFile(const std::string& Filename) {
       if (Tk == "#") continue;
       if (Tk == "newmtl") {
         // add Material
-        GLMaterial M(Tokens[1]);
+        GLMaterialPtr M = std::make_shared<GLMaterial>(Tokens[1]);
         std::pair<MaterialIterator, bool> ret =
             Materials.insert(MaterialPair(Tokens[1], M));
-        CurrentMaterial = &(ret.first->second);
+        CurrentMaterial = ret.first->second;
         continue;
       }
       if (Tk == "Ka") {
@@ -168,7 +168,7 @@ bool WavefrontObjFile::loadObjFile(const std::string& Filename) {
       }
       if (tk == "usemtl") {
         // add material
-        CurrentMaterial = &Materials[tokens[1]];
+        CurrentMaterial = Materials[tokens[1]];
         CurrentObject->addGroupFace(CurrentMaterial);
         continue;
       }
@@ -229,18 +229,18 @@ void WavefrontObjFile::dump() {
   }
 
   for (auto e : Materials) {
-    const GLMaterial& M = e.second;
-    std::cout << "Material : " << M.Name << std::endl;
-    std::cout << "  Ambient  : " << toString(M.Ka) << std::endl;
-    std::cout << "  Diffuse  : " << toString(M.Kd) << std::endl;
-    std::cout << "  Specular : " << toString(M.Ks) << std::endl;
-    std::cout << "  Specular Exp : " << M.Ns << std::endl;
-    if (M.map_Ka.size() > 0)
-      std::cout << "  Texture Ambient  : " << M.map_Ka << std::endl;
-    if (M.map_Kd.size() > 0)
-      std::cout << "  Texture Diffuse  : " << M.map_Kd << std::endl;
-    if (M.map_Ks.size() > 0)
-      std::cout << "  Texture Specular : " << M.map_Ks << std::endl;
+    GLMaterialPtr M = e.second;
+    std::cout << "Material : " << M->Name << std::endl;
+    std::cout << "  Ambient  : " << toString(M->Ka) << std::endl;
+    std::cout << "  Diffuse  : " << toString(M->Kd) << std::endl;
+    std::cout << "  Specular : " << toString(M->Ks) << std::endl;
+    std::cout << "  Specular Exp : " << M->Ns << std::endl;
+    if (M->map_Ka.size() > 0)
+      std::cout << "  Texture Ambient  : " << M->map_Ka << std::endl;
+    if (M->map_Kd.size() > 0)
+      std::cout << "  Texture Diffuse  : " << M->map_Kd << std::endl;
+    if (M->map_Ks.size() > 0)
+      std::cout << "  Texture Specular : " << M->map_Ks << std::endl;
   }
 }
 

@@ -74,7 +74,7 @@ inline void search_directory(const std::string& path,
           }
         }
       }
-    } while (FindNextFile(h_file, &file_information) == true);
+    } while (FindNextFile(h_file, &file_information));
     FindClose(h_file);
   }
 #else

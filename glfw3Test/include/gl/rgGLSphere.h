@@ -8,32 +8,32 @@ namespace rg {
 class GLSphere : public GLObject {
  public:
   GLSphere(const std::string& ObjectName,
-           const GLMaterial& Material = GLMaterial::Default())
+           GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName), R(1), Div(10), Material(Material) {
     rebuild();
   }
 
-  GLSphere(const std::string& ObjectName, float R, float Div,
-           const GLMaterial& Material = GLMaterial::Default())
+  GLSphere(const std::string& ObjectName, float R, size_t Div,
+           GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName), R(R), Div(Div), Material(Material) {
     rebuild();
   }
 
-  void setSize(float Radius, float Divisions) {
+  void setSize(float Radius, size_t Divisions) {
     R = Radius;
     Div = Divisions;
     rebuild();
   }
 
-  GLMaterial getMaterial() { return Material; }
-  void setMaterial(const GLMaterial Mat) {
+  GLMaterialPtr getMaterial() { return Material; }
+  void setMaterial(GLMaterialPtr Mat) {
     Material = Mat;
     rebuild();
   }
 
  protected:
   void rebuild() {
-    Groups.clear();
+    clearGroups();
     GroupFaces* F = new GroupFaces(Material);  // bottom
     size_t Nm = Div;
     size_t Np = Div;
@@ -67,9 +67,11 @@ class GLSphere : public GLObject {
     }
     Groups.push_back(F);
   }
+
  private:
-  float R, Div;
-  GLMaterial Material;
+  float R;
+  size_t Div;
+  GLMaterialPtr Material;
 };
 
 }  // namespace rg

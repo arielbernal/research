@@ -16,7 +16,8 @@ struct WavefrontFaceVertex {
   int16_t t;
 };
 
-inline bool operator<(const WavefrontFaceVertex& lhs, const WavefrontFaceVertex& rhs) {
+inline bool operator<(const WavefrontFaceVertex& lhs,
+                      const WavefrontFaceVertex& rhs) {
   if (lhs.v != rhs.v)
     return lhs.v < rhs.v;
   else if (lhs.n != rhs.n)
@@ -32,9 +33,10 @@ struct WavefrontFace {
 };
 
 struct WavefrontGroupFace {
-  WavefrontGroupFace(GLMaterial* Material)
+  WavefrontGroupFace(GLMaterialPtr& Material)
       : Material(Material), CurrentFace(0) {}
-  GLMaterial* Material;
+
+  GLMaterialPtr Material;
   void addFace() {
     WavefrontFace Face;
     Faces.push_back(Face);
@@ -65,13 +67,13 @@ class WavefrontObj {
   bool hasNormals() { return Normals.size() > 0; }
   bool hasUVs() { return UVs.size() > 0; }
 
-  void addGroupFace(GLMaterial* Material) {
+  void addGroupFace(GLMaterialPtr& Material) {
     GroupFaces.push_back(WavefrontGroupFace(Material));
     CurrentGroupFace = &GroupFaces.back();
   }
 
   void addFace() {
-    if (!CurrentGroupFace) addGroupFace(0);
+    if (!CurrentGroupFace) addGroupFace(GLMaterialDefault);
     CurrentGroupFace->addFace();
   }
 
@@ -99,10 +101,10 @@ class WavefrontObj {
 class WavefrontObjFile {
  public:
   typedef std::map<std::string, WavefrontObj*> ObjectMap;
-  typedef std::map<std::string, GLMaterial> MaterialMap;
+  typedef std::map<std::string, GLMaterialPtr> MaterialMap;
   typedef MaterialMap::iterator MaterialIterator;
   typedef MaterialMap::const_iterator ConstMaterialIterator;
-  typedef std::pair<std::string, GLMaterial> MaterialPair;
+  typedef std::pair<std::string, GLMaterialPtr> MaterialPair;
 
   WavefrontObjFile() : CurrentObject(0), CurrentMaterial(0) {}
   bool loadObjFile(const std::string& Filename);
@@ -120,7 +122,7 @@ class WavefrontObjFile {
   ObjectMap Objects;
   MaterialMap Materials;
   WavefrontObj* CurrentObject;
-  GLMaterial* CurrentMaterial;
+  GLMaterialPtr CurrentMaterial;
 };
 }
 #endif  // RGWAVEFRONTOBJ_H

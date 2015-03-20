@@ -35,8 +35,8 @@ class ActionWorld : public GLWorldScene {
     cube1->translate(0, 0, 1);
     add(cube1);
 
-    GLMaterial M = GLMaterial::Blue();
-    M.Ks = glm::vec3(4);
+    GLMaterialPtr M = GLMaterialBlue;
+    M->Ks = glm::vec3(4);
     GLCuboid* cube3 =
         new GLCuboid("Cube3", 2, 2, 2, GLCuboid::GLCUBOID_STANDARD, M);
     cube3->translate(-2, 2, 1);
@@ -50,8 +50,8 @@ class ActionWorld : public GLWorldScene {
     cylinder->translate(-5, 5, 3);
     add(cylinder);
 
-    GLMaterial M3 = GLMaterial::Green();
-    M3.Ks = glm::vec3(2);
+    GLMaterialPtr M3 = GLMaterialGreen;
+    M3->Ks = glm::vec3(2);
     GLPlane* fl = new GLPlane("Floor", 20, 20, 10, 10, M3);
     fl->translate(0, 0, 0);
     add(fl);

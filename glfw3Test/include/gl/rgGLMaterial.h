@@ -27,7 +27,7 @@ struct GLMaterial {
 
   enum { MAT_NONE, MAT_DEFAULT, MAT_RED, MAT_GREEN, MAT_BLUE };
 
-  GLMaterial(const std::string& Name = "")
+  GLMaterial(const std::string& Name)
       : Name(Name), Ka(0), Kd(0), Ks(0), Ns(0) {}
 
   GLMaterial(size_t Initializer = MAT_NONE) {

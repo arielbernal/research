@@ -8,13 +8,13 @@ namespace rg {
 class GLPlane : public GLObject {
  public:
   GLPlane(const std::string& ObjectName,
-          const GLMaterial& Material = GLMaterial::Default())
+          GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName), Dx(1), Dy(1), Nx(1), Ny(1), Material(Material) {
     rebuild();
   }
 
   GLPlane(const std::string& ObjectName, float dx, float dy, size_t nx,
-          size_t ny, const GLMaterial& Material = GLMaterial::Default())
+          size_t ny, GLMaterialPtr Material = GLMaterialDefault)
       : GLObject(ObjectName),
         Dx(dx),
         Dy(dy),
@@ -30,15 +30,15 @@ class GLPlane : public GLObject {
     rebuild();
   }
 
-  GLMaterial getMaterial() { return Material; }
-  void setMaterial(const GLMaterial Mat) {
+  GLMaterialPtr getMaterial() { return Material; }
+  void setMaterial(GLMaterialPtr Mat) {
     Material = Mat;
     rebuild();
   }
 
  protected:
   void rebuild() {
-    Groups.clear();
+    clearGroups();
     GroupFaces* F = new GroupFaces(Material);  // bottom
     float x0 = -Dx / 2;
     float y0 = -Dy / 2;
@@ -52,10 +52,10 @@ class GLPlane : public GLObject {
 
     for (size_t ny = 0; ny < Ny; ++ny) {
       for (size_t nx = 0; nx < Nx; ++nx) {
-        size_t id00 = ny * (Nx+1) + nx;
+        size_t id00 = ny * (Nx + 1) + nx;
         size_t id01 = id00 + 1;
         size_t id10 = id00 + Nx + 1;
-        size_t id11 = id10 + 1; 
+        size_t id11 = id10 + 1;
         F->addQuad(id00, id01, id11, id10);
       }
     }
@@ -66,7 +66,7 @@ class GLPlane : public GLObject {
  private:
   float Dx, Dy;
   size_t Nx, Ny;
-  GLMaterial Material;
+  GLMaterialPtr Material;
 };
 
 }  // namespace rg
