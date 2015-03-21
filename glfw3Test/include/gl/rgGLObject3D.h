@@ -16,10 +16,10 @@
 
 namespace rg {
 
-struct GLObjectCommon {
-  GLObjectCommon() { glGenVertexArrays(1, &VAO); }
+struct GLObject3DCommon {
+  GLObject3DCommon() { glGenVertexArrays(1, &VAO); }
 
-  ~GLObjectCommon() {
+  ~GLObject3DCommon() {
     clearGroups();
     glDeleteVertexArrays(1, &VAO);
   }
@@ -37,18 +37,18 @@ struct GLObjectCommon {
   std::vector<GroupFaces*> Groups;
 };
 
-class GLObject {
+class GLObject3D {
  public:
-  GLObject(const std::string& ObjectName)
+  GLObject3D(const std::string& ObjectName)
       : ObjectName(ObjectName),
         Enabled(true),
         ShowMesh(false),
         MMatrix(glm::mat4(1.0f)),
         CommonPtr(0) {
-    if (!CommonPtr) CommonPtr = std::make_shared<GLObjectCommon>();
+    if (!CommonPtr) CommonPtr = std::make_shared<GLObject3DCommon>();
   }
 
-  GLObject(const std::string& ObjectName, GLObject& obj)
+  GLObject3D(const std::string& ObjectName, GLObject3D& obj)
       : ObjectName(ObjectName),
         Enabled(true),
         ShowMesh(false),
@@ -72,18 +72,18 @@ class GLObject {
   }
 
   void scaleVertices(float k) {
-    for (auto e : CommonPtr->Groups) e->scaleVertices(k);
+    for (auto e : Common3DPtr->Groups) e->scaleVertices(k);
   }
 
-  GLuint getVAO() { return CommonPtr->VAO; }
+  GLuint getVAO() { return Common3DPtr->VAO; }
 
-  void updateBindings() { CommonPtr->updateBindings(); }
+  void updateBindings() { Common3DPtr->updateBindings(); }
 
   void render(const GLObjectHandlers& OH) {
-    glBindVertexArray(CommonPtr->VAO);
+    glBindVertexArray(Common3DPtr->VAO);
     glUniformMatrix4fv(OH.MMatrixHandler, 1, GL_FALSE, &MMatrix[0][0]);
 
-    for (auto e : CommonPtr->Groups) {
+    for (auto e : Common3DPtr->Groups) {
       glBindBuffer(GL_ARRAY_BUFFER, e->VBO);
 
       glEnableVertexAttribArray(OH.VertexHandler);
@@ -117,7 +117,7 @@ class GLObject {
     glBindVertexArray(0);
   }
 
-  std::shared_ptr<GLObjectCommon> getSharedData() { return CommonPtr; }
+  std::shared_ptr<GLObject3DCommon> getSharedData() { return Common3DPtr; }
 
  protected:
   std::string ObjectName;
@@ -127,10 +127,10 @@ class GLObject {
   bool ReceiveShadows;
   glm::mat4 MMatrix;
 
-  std::shared_ptr<GLObjectCommon> CommonPtr;
+  std::shared_ptr<GLObject3DCommon> Common3DPtr;
 };
 
-typedef std::unique_ptr<GLObject> GLObjectPtr;
+typedef std::shared_ptr<GLObject3D> GLObject3DPtr;
 
 }  // namespace rg
 

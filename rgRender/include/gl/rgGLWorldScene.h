@@ -11,10 +11,6 @@
 
 namespace rg {
 
-class GLSceneObject {
-
-};
-
 class GLWorldScene {
  public:
   GLWorldScene() : ObjectShader(0) { CurrentCamera = Cameras.begin(); }
