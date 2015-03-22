@@ -2,17 +2,17 @@
 #define RGGLCAMERA_H
 
 #include <gl/rgGLHeaders.h>
+#include <gl/rgGLObject.h>
 #include <gl/rgGLShaderProgram.h>
 #include <glm/gtc/quaternion.hpp>
 
-
 namespace rg {
 
-class GLCamera {
+class GLCamera : public GLObject {
  public:
-  GLCamera(const std::string& CameraName)
-      : Enabled(true),
-        CameraName(CameraName),
+  GLCamera(const std::string& Name, GLObject* Parent = nullptr)
+      : GLObject(Name, CAMERA, Parent),
+        Enabled(true),
         pos(20, 0, 0),
         origin(0, 0, 0),
         orientation(0, 0, 1),
@@ -25,16 +25,6 @@ class GLCamera {
         glm::rotate(glm::mat4(1.0f), float(M_PI) / 2.0f, glm::vec3(0.0f, 0, 1));
     RotXYZ = Rx * Rz;
 
-    updateView();
-  }
-
-  GLCamera(const std::string& CameraName, const glm::vec3& p,
-           const glm::vec3& o, const glm::vec3& orient)
-      : Enabled(true), CameraName(CameraName), rot(glm::mat4(1)) {
-    pos = p;
-    origin = o;
-    orientation = orient;
-    setPerspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     updateView();
   }
 
@@ -136,16 +126,10 @@ class GLCamera {
     PMatrix = glm::perspective(fov, aspect, vnear, vfar);
   }
 
-  void setPMatrix(const glm::mat4& Projection) {
-    PMatrix = Projection;
-  }
-  void setVMatrix(const glm::mat4& View) {
-    VMatrix = View;
-  }
+  void setPMatrix(const glm::mat4& Projection) { PMatrix = Projection; }
+  void setVMatrix(const glm::mat4& View) { VMatrix = View; }
   glm::mat4 getPMatrix() const { return PMatrix; }
   glm::mat4 getVMatrix() const { return VMatrix; }
-
-  std::string getName() { return CameraName; }
 
   void enable() { Enabled = true; }
   void disable() { Enabled = false; }
@@ -182,7 +166,6 @@ class GLCamera {
 
  private:
   bool Enabled;
-  std::string CameraName;
   glm::vec3 pos;
   glm::vec3 origin;
   glm::vec3 orientation;
