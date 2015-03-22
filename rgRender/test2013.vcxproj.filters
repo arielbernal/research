@@ -21,9 +21,6 @@
     <ClCompile Include="include\io\lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rgWaveFrontObj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gl\rgGLHeaders.h">
