@@ -1,23 +1,21 @@
-#ifndef RGGLOBJECT_H
-#define RGGLOBJECT_H
+#ifndef RGGLOBJECT3D_H
+#define RGGLOBJECT3D_H
 
 #include <sstream>
 #include <iostream>
 #include <vector>
-#include <glm/ext.hpp>
-#include <glm/gtx/string_cast.hpp>
-
 #include <gl/rgGLHeaders.h>
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLShaderProgram.h>
 #include <gl/rgGLMaterial.h>
 #include <gl/rgGLGroupFaces.h>
-#include <gl/rgGLLight.h>
 
 namespace rg {
 
 struct GLObject3DCommon {
-  GLObject3DCommon() { glGenVertexArrays(1, &VAO); }
+  GLObject3DCommon() { 
+    glGenVertexArrays(1, &VAO); 
+  }
 
   ~GLObject3DCommon() {
     clearGroups();
@@ -37,25 +35,43 @@ struct GLObject3DCommon {
   std::vector<GroupFaces*> Groups;
 };
 
-class GLObject3D {
+class GLObject3D : public GLObject {
  public:
-  GLObject3D(const std::string& ObjectName)
-      : ObjectName(ObjectName),
+  enum { CUBOID, SPHERE, CYLINDER };
+
+  GLObject3D(const std::string& Name, size_t Object3DType,
+             GLObject* Parent = nullptr)
+      : GLObject(Name, OBJECT3D, Parent),
+        Object3DType(Object3DType),
         Enabled(true),
         ShowMesh(false),
         MMatrix(glm::mat4(1.0f)),
-        CommonPtr(0) {
-    if (!CommonPtr) CommonPtr = std::make_shared<GLObject3DCommon>();
+        Common3DPtr(0) {
+    Common3DPtr = std::make_shared<GLObject3DCommon>();
   }
 
-  GLObject3D(const std::string& ObjectName, GLObject3D& obj)
-      : ObjectName(ObjectName),
+  GLObject3D(GLObject3D& obj, const std::string& Name)
+      : GLObject(Name, OBJECT3D, obj.getParent()),
+        Object3DType(Object3DType),
         Enabled(true),
         ShowMesh(false),
         MMatrix(glm::mat4(1.0f)),
-        CommonPtr(obj.getSharedData()) {}
+        Common3DPtr(obj.getSharedData()) {}
 
-  std::string getName() { return ObjectName; }
+  size_t getType() { return Object3DType; }
+  std::string getTypeString() {
+    switch (Object3DType) {
+      case CUBOID:
+        return "Object3D::Cuboid";
+      case SPHERE:
+        return "Object3D::Sphere";
+      case CYLINDER:
+        return "Object3D::Cylinder";
+      default:
+        return "Object3D::Unknown";
+    }
+    return "Object3D::Unknown";
+  }
 
   void enable(bool val) { Enabled = val; }
   bool isEnabled() { return Enabled; }
@@ -120,7 +136,7 @@ class GLObject3D {
   std::shared_ptr<GLObject3DCommon> getSharedData() { return Common3DPtr; }
 
  protected:
-  std::string ObjectName;
+  size_t Object3DType;
   bool Enabled;
   bool ShowMesh;
   bool CastShadows;
@@ -134,4 +150,4 @@ typedef std::shared_ptr<GLObject3D> GLObject3DPtr;
 
 }  // namespace rg
 
-#endif  // RGGLOBJECT_H
+#endif  // RGGLOBJECT3D_H

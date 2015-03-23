@@ -116,14 +116,6 @@ struct GLMaterial {
 };
 
 typedef std::shared_ptr<GLMaterial> GLMaterialPtr;
-static GLMaterialPtr GLMaterialDefault =
-    std::make_shared<GLMaterial>(GLMaterial::MAT_DEFAULT);
-static GLMaterialPtr GLMaterialRed =
-    std::make_shared<GLMaterial>(GLMaterial::MAT_RED);
-static GLMaterialPtr GLMaterialGreen =
-    std::make_shared<GLMaterial>(GLMaterial::MAT_GREEN);
-static GLMaterialPtr GLMaterialBlue =
-    std::make_shared<GLMaterial>(GLMaterial::MAT_BLUE);
 
 }  // namespace rg
 
