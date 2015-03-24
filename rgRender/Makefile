@@ -9,7 +9,7 @@ LDFLAGS := -L/usr/lib/gcc/x86_64-linux-gnu/4.8 -L/usr/lib/nvidia-331-updates
 LDFLAGS += -L../external/linux/glfw-3.1/src -L$(ANTTWEAKBAR)
 LDFLAGS += -lGLEW -O3 -lserial -lpthread -lAntTweakBar 
 LDFLAGS += -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lXi
-CXXFLAGS := -I include
+CXXFLAGS := -I include -I include/io
 CXXFLAGS += -I/usr/include -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8
 CXXFLAGS += -I../external/linux/glfw-3.1/include -I../external/vs/AntTweakBar/include
 CXXFLAGS += -std=c++11 -Wall -O3 -mfpmath=sse -msse4.1

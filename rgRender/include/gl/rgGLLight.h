@@ -47,6 +47,23 @@ struct GLLight : public GLObject {
     Ld = diffuse;
     Ls = specular;
   }
+
+  std::string getTypeString() {
+    switch (LightType) {
+      case DIRECTIONAL:
+        return "Light::Directional";
+      case POINT:
+        return "Light::Point";
+      case SPOT:
+        return "Light::Spot";
+      case AREA:
+        return "Light::Area";
+      default:
+        return "Light::Unknown";
+    }
+    return "Light::Unknown";
+  }
+
 };
 
 }  // namespace rg

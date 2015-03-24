@@ -7,8 +7,8 @@ namespace rg {
 
 class GLCuboid : public GLObject3D {
  public:
-  GLCuboid(const std::string& ObjectName, GLObject* Parent = nullptr,
-           GLMaterialPtr Material = GLMaterialDefault)
+  GLCuboid(const std::string& Name, GLObject* Parent = nullptr,
+           GLMaterialPtr Material = nullptr)
       : GLObject3D(Name, CUBOID, Parent),
         Dx(1),
         Dy(1),
@@ -17,8 +17,8 @@ class GLCuboid : public GLObject3D {
     rebuild();
   }
 
-  GLCuboid(const std::string& ObjectName, GLObject* Parent = nullptr, float dx,
-           float dy, float dz, GLMaterialPtr Material = GLMaterialDefault)
+  GLCuboid(const std::string& Name, float dx, float dy, float dz,
+           GLObject* Parent = nullptr, GLMaterialPtr Material = nullptr)
       : GLObject3D(Name, CUBOID, Parent),
         Dx(dx),
         Dy(dy),
@@ -55,7 +55,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(-dx2, dy2, -dz2));
     F->addQuad(0, 3, 2, 1);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
 
     F = new GroupFaces(Material);  // top
     F->addVertex(glm::vec3(-dx2, -dy2, dz2));
@@ -64,7 +64,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(-dx2, dy2, dz2));
     F->addQuad(0, 1, 2, 3);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
 
     F = new GroupFaces(Material);  // front
     F->addVertex(glm::vec3(dx2, -dy2, -dz2));
@@ -73,7 +73,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(dx2, -dy2, dz2));
     F->addQuad(0, 1, 2, 3);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
 
     F = new GroupFaces(Material);  // back
     F->addVertex(glm::vec3(-dx2, -dy2, -dz2));
@@ -82,7 +82,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(-dx2, -dy2, dz2));
     F->addQuad(0, 3, 2, 1);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
 
     F = new GroupFaces(Material);  // left
     F->addVertex(glm::vec3(-dx2, -dy2, -dz2));
@@ -91,7 +91,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(-dx2, -dy2, dz2));
     F->addQuad(0, 1, 2, 3);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
 
     F = new GroupFaces(Material);  // right
     F->addVertex(glm::vec3(-dx2, dy2, -dz2));
@@ -100,7 +100,7 @@ class GLCuboid : public GLObject3D {
     F->addVertex(glm::vec3(-dx2, dy2, dz2));
     F->addQuad(0, 3, 2, 1);
     F->updateNormals();
-    Groups.push_back(F);
+    pushBackGroupFaces(F);
   }
 
  private:

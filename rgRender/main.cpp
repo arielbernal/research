@@ -1,14 +1,18 @@
+#include <iostream>
+#include <string>
+
 #include <gl/rgGLObject.h>
 #include <gl/rgGLCamera.h>
 #include <gl/rgGLLight.h>
 #include <gl/rgGLObject3D.h>
+#include <gl/rgGLCuboid.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
+#include <io/jsoncons/json.hpp>
 
 namespace rg {
-
 
 class GLSphere : public GLObject3D {
  public:
@@ -19,38 +23,70 @@ class GLSphere : public GLObject3D {
 
 class GLScene {
  public:
-  GLScene() { Root = new GLObject("Root", GLObject::ROOT); }
+  GLScene() {
+    Root = new GLObject("Root", GLObject::ROOT);
+    Objects["Root"] = Root;
+  }
 
   ~GLScene() { deleteObjects(); }
 
-  void init() {
-    auto MainCamera = new GLCamera("MainCamera", Root);
-    add(MainCamera);
-    auto L1 = new GLLight("Light_01", GLLight::DIRECTIONAL, Root);
-    add(L1);
-    
-    auto O1 = new GLCuboid("Cube_01", Root);
-    add(O1);
-   
-    auto O2 = new GLCuboid("Cube_02", Root);
-    add(O2);
-    O2->setParent(O1);
-    auto O3 = new GLCuboid("Cube_03", Root);
-    add(O3);
-    auto O4 = new GLSphere("Sphere_01", O1);
+  void loadFromJsonFile(const std::string& JsonFileName) {
+    jsoncons::json objects = jsoncons::json::parse_file("scene1.json");
+    for (size_t i = 0; i < objects.size(); ++i) {
+      std::string ObjType = objects[i].get("Object").as<std::string>();
+      std::string Name = objects[i].get("Name").as<std::string>();
+      std::string ParentName = objects[i].get("Parent").as<std::string>();
+      if (ObjType == "CAMERA") {
+        auto Camera = new GLCamera(Name);
+        add(Camera, ParentName);
+        continue;
+      }
+      if (ObjType == "LIGHT") {
+        std::string Type = objects[i].get("Type").as<std::string>();
+        size_t LightType = GLLight::DIRECTIONAL;
+        if (Type == "DIRECTIONAL") LightType = GLLight::DIRECTIONAL;
+        if (Type == "POINT") LightType = GLLight::POINT;
+        if (Type == "SPOT") LightType = GLLight::SPOT;
+        auto Light = new GLLight(Name, LightType);
+        add(Light, ParentName);
+      }
+      if (ObjType == "OBJECT3D") {
+        std::string Type = objects[i].get("Type").as<std::string>();
+        if (Type == "CUBOID") {
+          auto Cuboid = new GLCuboid(Name);
+          add(Cuboid, ParentName);
+        }
+        if (Type == "SPHERE") {
+          auto Sphere = new GLSphere(Name);
+          add(Sphere, ParentName);
+        }
+      }
+    }
   }
 
-  void add(GLObject3D* O) {
+  void add(GLObject3D* O, const std::string& ParentName = "") {
+    std::string Name = ParentName;
+    if (Name.empty()) Name = "Root";
+    GLObject* Parent = Objects[Name];
+    O->setParent(Parent);
     Objects3D[O->getName()] = O;
     Objects[O->getName()] = O;
   }
 
-  void add(GLLight* O) {
+  void add(GLLight* O, const std::string& ParentName = "") {
+    std::string Name = ParentName;
+    if (Name.empty()) Name = "Root";
+    GLObject* Parent = Objects[Name];
+    O->setParent(Parent);
     Lights[O->getName()] = O;
     Objects[O->getName()] = O;
   }
 
-  void add(GLCamera* O) {
+  void add(GLCamera* O, const std::string& ParentName = "") {
+    std::string Name = ParentName;
+    if (Name.empty()) Name = "Root";
+    GLObject* Parent = Objects[Name];
+    O->setParent(Parent);
     Cameras[O->getName()] = O;
     Objects[O->getName()] = O;
   }
@@ -65,11 +101,15 @@ class GLScene {
     }
   }
 
-  void dumpTree(GLObject* Node, std::string& tab) {
+  void dumpTree(GLObject* Node, const std::string& tab) {
     if (Node != nullptr) {
-      std::cout << tab << Node->getName() << std::endl;
+      std::cout << tab << Node->getName();
+      if (Node->getType() == GLObject::OBJECT3D) std::cout << " -> " << ((GLObject3D*) Node)->getTypeString();
+      if (Node->getType() == GLObject::LIGHT) std::cout << " -> " << ((GLLight*) Node)->getTypeString();
+      if (Node->getType() == GLObject::CAMERA) std::cout << " -> Camera";
+      std::cout << std::endl;
       for (auto e : Node->getChildren()) {
-        dumpTree(e.second, tab + " ");
+        dumpTree(e.second, tab + "   ");
       }
     }
   }
@@ -118,6 +158,7 @@ void ErrorGLFW3(int r, const char* err) {
 }
 
 int main() {
+
   glfwSetErrorCallback((GLFWerrorfun)ErrorGLFW3);
 
   std::cout << "Initializating glfw3..\n";
@@ -143,7 +184,6 @@ int main() {
                    GLFW_CURSOR_NORMAL);  // can be GLFW_CURSOR_HIDDEN
   glfwSetWindowPos(window, 2300, 100);
 
-
   // Initialize AntTweakBar
   // TwInit(TW_OPENGL, NULL);
   TwInit(TW_OPENGL_CORE, NULL);
@@ -151,7 +191,9 @@ int main() {
   // Create a tweak bar
   TwBar* bar = TwNewBar("TweakBar");
   TwWindowSize(800, 600);
-  TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' ");  // Message added to the help bar.
+  TwDefine(
+      " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
+      "and OpenGL.' ");  // Message added to the help bar.
   TwAddSeparator(bar, NULL, "group='Parameters' ");
   // TwAddVarRW(bar, "speed", TW_TYPE_DOUBLE, &speed,
   //              " label='Rot speed' min=0 max=2 step=0.01 keyIncr=s
@@ -172,11 +214,10 @@ int main() {
     glfwTerminate();
     exit(-1);
   }
-  
-  rg::GLScene S;
-  S.init();
-  S.dumpTree();
 
+  rg::GLScene S;
+  S.loadFromJsonFile("");
+  S.dumpTree();
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glEnable(GL_DEPTH_TEST);

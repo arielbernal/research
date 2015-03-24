@@ -52,7 +52,7 @@ class GLObject3D : public GLObject {
 
   GLObject3D(GLObject3D& obj, const std::string& Name)
       : GLObject(Name, OBJECT3D, obj.getParent()),
-        Object3DType(Object3DType),
+        Object3DType(obj.getType()),
         Enabled(true),
         ShowMesh(false),
         MMatrix(glm::mat4(1.0f)),
@@ -144,6 +144,15 @@ class GLObject3D : public GLObject {
   glm::mat4 MMatrix;
 
   std::shared_ptr<GLObject3DCommon> Common3DPtr;
+
+  void clearGroups() {
+    Common3DPtr->clearGroups();
+  }
+
+  void pushBackGroupFaces(GroupFaces* F) {
+    Common3DPtr->Groups.push_back(F);
+  }
+
 };
 
 typedef std::shared_ptr<GLObject3D> GLObject3DPtr;
