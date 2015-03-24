@@ -85,7 +85,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;\dev\research\external\vs\glfw-3.1.bin.WIN32\include;\dev\research\external\vs\glew-1.12.0\include;\dev\research\external\vs\glm;\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include\io;.\include;\dev\research\external\vs\glfw-3.1.bin.WIN32\include;\dev\research\external\vs\glew-1.12.0\include;\dev\research\external\vs\glm;\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;\dev\research\external\vs\glfw-3.1.bin.WIN32\include;\dev\research\external\vs\glew-1.12.0\include;\dev\research\external\vs\glm;\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include\io;.\include;\dev\research\external\vs\glfw-3.1.bin.WIN32\include;\dev\research\external\vs\glew-1.12.0\include;\dev\research\external\vs\glm;\dev\research\external\vs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +156,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gl\rgGLHeaders.h" />
+    <ClInclude Include="include\io\jsoncons\json.hpp" />
+    <ClInclude Include="include\io\jsoncons\json1.hpp" />
+    <ClInclude Include="include\io\jsoncons\json2.hpp" />
+    <ClInclude Include="include\io\jsoncons\jsoncons.hpp" />
+    <ClInclude Include="include\io\jsoncons\jsoncons_config.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_deserializer.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_exception.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_filter.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_input_handler.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_output_handler.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_reader.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_serializer.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_structures.hpp" />
+    <ClInclude Include="include\io\jsoncons\json_type_traits.hpp" />
+    <ClInclude Include="include\io\jsoncons\output_format.hpp" />
+    <ClInclude Include="include\io\jsoncons\parse_error_handler.hpp" />
     <ClInclude Include="include\io\lodepng.h" />
     <ClInclude Include="include\io\rgArg.h" />
     <ClInclude Include="include\io\rgDirectoryUtils.h" />

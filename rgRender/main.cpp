@@ -141,6 +141,8 @@ void ErrorGLFW3(int r, const char* err) {
   std::cout << "Error GLFW3 " << r << " " << err << std::endl;
 }
 
+
+
 int main() {
 
   glfwSetErrorCallback((GLFWerrorfun)ErrorGLFW3);
@@ -166,19 +168,19 @@ int main() {
   glfwMakeContextCurrent(window);
   glfwSetInputMode(window, GLFW_CURSOR,
                    GLFW_CURSOR_NORMAL);  // can be GLFW_CURSOR_HIDDEN
-  glfwSetWindowPos(window, 2300, 100);
+  glfwSetWindowPos(window, 2000, 100);
 
   // Initialize AntTweakBar
   // TwInit(TW_OPENGL, NULL);
   TwInit(TW_OPENGL_CORE, NULL);
 
   // Create a tweak bar
-  TwBar* bar = TwNewBar("TweakBar");
+  TwBar* bar = TwNewBar("Scene");
   TwWindowSize(800, 600);
-  TwDefine(
-      " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
-      "and OpenGL.' ");  // Message added to the help bar.
-  TwAddSeparator(bar, NULL, "group='Parameters' ");
+  //TwDefine(
+  //    " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
+  //    "and OpenGL.' ");  // Message added to the help bar.
+  TwAddSeparator(bar, NULL, "group='Parameters'");
   // TwAddVarRW(bar, "speed", TW_TYPE_DOUBLE, &speed,
   //              " label='Rot speed' min=0 max=2 step=0.01 keyIncr=s
   // keyDecr = S
