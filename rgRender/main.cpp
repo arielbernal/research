@@ -63,32 +63,16 @@ class GLScene {
       }
     }
   }
-
-  void add(GLObject3D* O, const std::string& ParentName = "") {
+  
+  void add(GLObject* O, const std::string& ParentName = "") {
     std::string Name = ParentName;
     if (Name.empty()) Name = "Root";
     GLObject* Parent = Objects[Name];
     O->setParent(Parent);
-    Objects3D[O->getName()] = O;
     Objects[O->getName()] = O;
-  }
-
-  void add(GLLight* O, const std::string& ParentName = "") {
-    std::string Name = ParentName;
-    if (Name.empty()) Name = "Root";
-    GLObject* Parent = Objects[Name];
-    O->setParent(Parent);
-    Lights[O->getName()] = O;
-    Objects[O->getName()] = O;
-  }
-
-  void add(GLCamera* O, const std::string& ParentName = "") {
-    std::string Name = ParentName;
-    if (Name.empty()) Name = "Root";
-    GLObject* Parent = Objects[Name];
-    O->setParent(Parent);
-    Cameras[O->getName()] = O;
-    Objects[O->getName()] = O;
+    if (O->getType() == GLObject::OBJECT3D) Objects3D[O->getName()] = (GLObject3D*) O;
+    if (O->getType() == GLObject::LIGHT) Lights[O->getName()] = (GLLight*) O;
+    if (O->getType() == GLObject::CAMERA) Cameras[O->getName()] = (GLCamera*) O;
   }
 
   void deleteObjects() {
