@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include <gl/rgGLScene.h>
+//#include <gl/rgGLScene.h>
 
 namespace Ui {
 class MainWindow;
@@ -19,7 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    rg::GLScene Scene;
+   // rg::GLScene Scene;
 };
 
 #endif // MAINWINDOW_H

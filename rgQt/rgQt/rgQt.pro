@@ -4,8 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui
-QT += opengl
+QT += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    glwidget.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    glwidget.h
 
 #INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include
 #INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include/io

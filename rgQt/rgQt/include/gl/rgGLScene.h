@@ -27,7 +27,7 @@ class GLScene {
   ~GLScene() { deleteObjects(); }
 
   void loadFromJsonFile(const std::string& JsonFileName) {
-    jsoncons::json objects = jsoncons::json::parse_file("scene1.json");
+    jsoncons::json objects = jsoncons::json::parse_file(JsonFileName);
     for (size_t i = 0; i < objects.size(); ++i) {
       std::string ObjType = objects[i].get("Object").as<std::string>();
       std::string Name = objects[i].get("Name").as<std::string>();

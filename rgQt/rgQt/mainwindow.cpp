@@ -7,7 +7,7 @@
 
 
 #define GLEW_STATIC
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include <QGuiApplication>
 #include <QOpenGLContext>
 #include <QWindow>
@@ -27,15 +27,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //    context->setFormat( requestedFormat );
 //    context->create();
 
-    GLenum err = glewInit();
-    if (err != GLEW_NO_ERROR) {
-      printf("GLew Error = %s\n",glewGetErrorString(err));
-      exit(-1);
-    }
+//    GLenum err = glewInit();
+//    if (err != GLEW_NO_ERROR) {
+//      printf("GLew Error = %s\n",glewGetErrorString(err));
+//      exit(-1);
+//    }
 
 
-    Scene.loadFromJsonFile("");
-    Scene.dumpTree();
+//    Scene.loadFromJsonFile("");
+//    Scene.dumpTree();
 }
 
 

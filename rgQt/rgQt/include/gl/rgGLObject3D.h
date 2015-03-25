@@ -13,7 +13,7 @@
 namespace rg {
 
 struct GLObject3DCommon {
-  GLObject3DCommon() { 
+  GLObject3DCommon() {
     glGenVertexArrays(1, &VAO); 
   }
 
