@@ -20,12 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    QSurfaceFormat requestedFormat;
-    requestedFormat.setVersion( 3, 3 );
+//    QSurfaceFormat requestedFormat;
+//    requestedFormat.setVersion( 3, 3 );
 
-    QOpenGLContext * context = new QOpenGLContext(ui->openGLWidget);
-    context->setFormat( requestedFormat );
-    context->create();
+//    QOpenGLContext * context = new QOpenGLContext(ui->openGLWidget);
+//    context->setFormat( requestedFormat );
+//    context->create();
 
     GLenum err = glewInit();
     if (err != GLEW_NO_ERROR) {
