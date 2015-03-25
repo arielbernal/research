@@ -2,15 +2,18 @@
 #define GLWIDGET_H
 #include <QGLWidget>
 
-class GLWidget : public QGLWidget
-{
-    Q_OBJECT
+class GLWidget : public QGLWidget {
+  Q_OBJECT
 public:
-    explicit GLWidget(QWidget* parent = 0);
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
+  explicit GLWidget(QWidget *parent = 0);
+  void initializeGL();
+  void paintGL();
+  void resizeGL(int w, int h);
+  bool isInitialized() { return Initialized; }
+  void gotInitialized(){}
 
+private:
+  bool Initialized;
 };
 
 #endif // GLWIDGET_H

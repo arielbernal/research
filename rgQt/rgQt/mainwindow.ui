@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>rgQt</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="maximumSize">
@@ -25,46 +25,9 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="GLWidget" name="widget" native="true"/>
+     <widget class="GLWidget" name="glScene" native="true"/>
     </item>
    </layout>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
-   <property name="styleSheet">
-    <string notr="true">QDockWidget::title {
-    text-align: left; 
-    padding-left: 5px;
-	 border: 1px solid #bbb;
-    background: lightgray;
-    height: 10px;
-    border-radius: 4px;
-}</string>
-   </property>
-   <property name="windowTitle">
-    <string>Hierarchy</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <property name="styleSheet">
-     <string notr="true">border: 1px solid #bbb;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-stop: 0.39999 #717171, stop: 0.4 #626262,
-stop: 0.9 #4c4c4c, stop: 1 #333333);
-border-radius: 4px;</string>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
