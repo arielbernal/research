@@ -1,19 +1,19 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
-#include <QGLWidget>
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <QOpenGLWidget>
 
-class GLWidget : public QGLWidget {
+class GLWidget : public QOpenGLWidget {
   Q_OBJECT
 public:
-  explicit GLWidget(QWidget *parent = 0);
-  void initializeGL();
+  explicit GLWidget(QWidget* parent = 0);
+  virtual void initializeGL() override;
   void paintGL();
   void resizeGL(int w, int h);
-  bool isInitialized() { return Initialized; }
-  void gotInitialized(){}
+signals:
+  void initialized();
 
-private:
-  bool Initialized;
 };
 
 #endif // GLWIDGET_H

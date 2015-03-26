@@ -55,5 +55,17 @@
     "Object" : "CAMERA",
     "Name":"SecondaryCamera",
     "Parent":"Cube_04"
-  }  
+  } 
+  {
+    "Object" : "OBJECT3D",
+    "Name"   : "Cube_05",
+    "Type"   : "CUBOID",
+    "Parent" : "Cube_02"
+  },
+  {
+    "Object" : "OBJECT3D",
+    "Name"   : "Cube_06",
+    "Type"   : "CUBOID",
+    "Parent" : "Cube_02"
+  }
 ]

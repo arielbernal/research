@@ -99,6 +99,8 @@ class GLScene {
     dumpTree(Root, tab);
   }
 
+  GLObject* getRootNode() { return Root; }
+
  private:
   GLObject* Root;
   std::map<std::string, GLCamera*> Cameras;

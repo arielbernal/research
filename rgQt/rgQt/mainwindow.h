@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <gl/rgGLScene.h>
+#include <gl/rgGLObject.h>
+#include "ui_mainwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,7 +18,9 @@ public:
 
   ~MainWindow();
 
-  void slotFromSomeone() {}
+  void buildTree(QTreeWidget *tree, QTreeWidgetItem *item, rg::GLObject *Node);
+public slots:
+  void GLWidgetInitialized();
 
 private:
   Ui::MainWindow *ui;

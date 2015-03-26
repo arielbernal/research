@@ -63,16 +63,17 @@ class GLScene {
       }
     }
   }
-  
+
   void add(GLObject* O, const std::string& ParentName = "") {
     std::string Name = ParentName;
     if (Name.empty()) Name = "Root";
     GLObject* Parent = Objects[Name];
     O->setParent(Parent);
     Objects[O->getName()] = O;
-    if (O->getType() == GLObject::OBJECT3D) Objects3D[O->getName()] = (GLObject3D*) O;
-    if (O->getType() == GLObject::LIGHT) Lights[O->getName()] = (GLLight*) O;
-    if (O->getType() == GLObject::CAMERA) Cameras[O->getName()] = (GLCamera*) O;
+    if (O->getType() == GLObject::OBJECT3D)
+      Objects3D[O->getName()] = (GLObject3D*)O;
+    if (O->getType() == GLObject::LIGHT) Lights[O->getName()] = (GLLight*)O;
+    if (O->getType() == GLObject::CAMERA) Cameras[O->getName()] = (GLCamera*)O;
   }
 
   void deleteObjects() {
@@ -88,8 +89,10 @@ class GLScene {
   void dumpTree(GLObject* Node, const std::string& tab) {
     if (Node != nullptr) {
       std::cout << tab << Node->getName();
-      if (Node->getType() == GLObject::OBJECT3D) std::cout << " -> " << ((GLObject3D*) Node)->getTypeString();
-      if (Node->getType() == GLObject::LIGHT) std::cout << " -> " << ((GLLight*) Node)->getTypeString();
+      if (Node->getType() == GLObject::OBJECT3D)
+        std::cout << " -> " << ((GLObject3D*)Node)->getTypeString();
+      if (Node->getType() == GLObject::LIGHT)
+        std::cout << " -> " << ((GLLight*)Node)->getTypeString();
       if (Node->getType() == GLObject::CAMERA) std::cout << " -> Camera";
       std::cout << std::endl;
       for (auto e : Node->getChildren()) {
@@ -141,8 +144,6 @@ void ErrorGLFW3(int r, const char* err) {
   std::cout << "Error GLFW3 " << r << " " << err << std::endl;
 }
 
-
-
 int main() {
 
   glfwSetErrorCallback((GLFWerrorfun)ErrorGLFW3);
@@ -177,8 +178,9 @@ int main() {
   // Create a tweak bar
   TwBar* bar = TwNewBar("Scene");
   TwWindowSize(800, 600);
-  //TwDefine(
-  //    " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW "
+  // TwDefine(
+  //    " GLOBAL help='This example shows how to integrate AntTweakBar with GLFW
+  // "
   //    "and OpenGL.' ");  // Message added to the help bar.
   TwAddSeparator(bar, NULL, "group='Parameters'");
   // TwAddVarRW(bar, "speed", TW_TYPE_DOUBLE, &speed,

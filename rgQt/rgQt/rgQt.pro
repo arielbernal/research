@@ -19,16 +19,16 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     glwidget.h
 
-#INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include
-#INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include/io
+INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include
+INCLUDEPATH += /home/ajbernal/dev/bat/research/rgQt/rgQt/include/io
 INCLUDEPATH += C:\dev\research\external\vs\glew-1.12.0\include
 INCLUDEPATH += C:\dev\research\external\vs\glm
 INCLUDEPATH += C:\dev\research\rgQt\rgQt\include
 INCLUDEPATH += C:\dev\research\rgQt\rgQt\include\io
 
 
-#LIBS += -lGLEW -O3 -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64
-LIBS += -lglew32 -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64
+LIBS += -lGLEW -lGL -O3
+#LIBS += -lglew32 -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64
 
 QMAKE_CXXFLAGS += -std=c++11
 
