@@ -27,9 +27,8 @@ INCLUDEPATH += C:\dev\research\rgQt\rgQt\include
 INCLUDEPATH += C:\dev\research\rgQt\rgQt\include\io
 
 
-LIBS += -lGLEW -lGL -O3
-#LIBS += -lglew32 -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64
-
-QMAKE_CXXFLAGS += -std=c++11
+#LIBS += -lGLEW -lGL -O3
+LIBS += -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64 -lglew32s
+#QMAKE_CXXFLAGS += -std=c++11
 
 FORMS    += mainwindow.ui

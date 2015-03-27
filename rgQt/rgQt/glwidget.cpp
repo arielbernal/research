@@ -1,9 +1,7 @@
-#define GLEW_STATIC
-#include <GL/glew.h>
 #include "glwidget.h"
 #include <iostream>
 
-GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
+GLWidget::GLWidget(QWidget* parent){}
 
 void GLWidget::initializeGL() {
   const GLenum glewState = glewInit();

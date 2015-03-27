@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#define GLEW_STATIC
 
 #include <QMainWindow>
 #include <gl/rgGLScene.h>
@@ -18,7 +19,7 @@ public:
 
   ~MainWindow();
 
-  void buildTree(QTreeWidget *tree, QTreeWidgetItem *item, rg::GLObject *Node);
+ void buildTree(QTreeWidget *tree, QTreeWidgetItem *item, rg::GLObject *Node);
 public slots:
   void GLWidgetInitialized();
 

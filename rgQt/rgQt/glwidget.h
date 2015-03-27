@@ -8,7 +8,7 @@ class GLWidget : public QOpenGLWidget {
   Q_OBJECT
 public:
   explicit GLWidget(QWidget* parent = 0);
-  virtual void initializeGL() override;
+  void initializeGL();
   void paintGL();
   void resizeGL(int w, int h);
 signals:
