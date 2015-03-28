@@ -13,6 +13,12 @@ MainWindow::MainWindow(rg::GLScene& S, QWidget* parent)
 
   connect(ui->glScene, SIGNAL(initialized()), this,
           SLOT(GLWidgetInitialized()));
+
+  ui->treeWidget->setAcceptDrops(true);
+  ui->treeWidget->setDragEnabled(true);
+  ui->treeWidget->setDropIndicatorShown(true);
+  ui->treeWidget->viewport()->setAcceptDrops(true);
+  ui->treeWidget->setDragDropMode(QAbstractItemView::InternalMove);
 }
 
 void MainWindow::buildTree(QTreeWidget* tree, QTreeWidgetItem* item,
@@ -22,11 +28,11 @@ void MainWindow::buildTree(QTreeWidget* tree, QTreeWidgetItem* item,
     if (item == 0) {
       it = new QTreeWidgetItem(
           tree, QStringList(QObject::tr(e.second->getName().c_str())));
-      it->setFlags(it->flags() | Qt::ItemIsEditable);
+      it->setFlags(it->flags() | Qt::ItemIsEditable  | Qt::ItemIsDragEnabled);
     } else {
       it = new QTreeWidgetItem(
           QStringList(QObject::tr(e.second->getName().c_str())));
-      it->setFlags(it->flags() | Qt::ItemIsEditable);
+      it->setFlags(it->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled);
       item->addChild(it);
     }
     buildTree(tree, it, e.second);
@@ -40,6 +46,8 @@ void MainWindow::GLWidgetInitialized() {
   ui->treeWidget->clear();
   ui->treeWidget->setColumnCount(1);
   ui->treeWidget->header()->hide();
+  QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();
+  root->setFlags(root->flags() | Qt::ItemIsDropEnabled);
   buildTree(ui->treeWidget, nullptr, Scene.getRootNode());
 }
 

@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDockWidget>
-#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QTreeWidget>
@@ -28,11 +27,11 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QGridLayout *gridLayout;
+    QVBoxLayout *verticalLayout;
     GLWidget *glScene;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
-    QVBoxLayout *verticalLayout;
+    QVBoxLayout *verticalLayout_2;
     QTreeWidget *treeWidget;
 
     void setupUi(QMainWindow *MainWindow)
@@ -47,20 +46,20 @@ public:
         centralWidget->setMaximumSize(QSize(973, 757));
         centralWidget->setAutoFillBackground(false);
         centralWidget->setStyleSheet(QStringLiteral(""));
-        gridLayout = new QGridLayout(centralWidget);
-        gridLayout->setSpacing(6);
-        gridLayout->setContentsMargins(11, 11, 11, 11);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        verticalLayout = new QVBoxLayout(centralWidget);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         glScene = new GLWidget(centralWidget);
         glScene->setObjectName(QStringLiteral("glScene"));
         glScene->setAutoFillBackground(false);
 
-        gridLayout->addWidget(glScene, 0, 0, 1, 1);
+        verticalLayout->addWidget(glScene);
 
         MainWindow->setCentralWidget(centralWidget);
         dockWidget = new QDockWidget(MainWindow);
         dockWidget->setObjectName(QStringLiteral("dockWidget"));
-        dockWidget->setMinimumSize(QSize(150, 118));
+        dockWidget->setMinimumSize(QSize(274, 232));
         QFont font;
         font.setFamily(QStringLiteral("Roboto Lt"));
         font.setBold(true);
@@ -94,20 +93,33 @@ public:
 "border-bottom-left-radius: 8px;\n"
 "}\n"
 ""));
-        verticalLayout = new QVBoxLayout(dockWidgetContents);
-        verticalLayout->setSpacing(6);
-        verticalLayout->setContentsMargins(11, 11, 11, 11);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout_2 = new QVBoxLayout(dockWidgetContents);
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         treeWidget = new QTreeWidget(dockWidgetContents);
         new QTreeWidgetItem(treeWidget);
         treeWidget->setObjectName(QStringLiteral("treeWidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(treeWidget->sizePolicy().hasHeightForWidth());
+        treeWidget->setSizePolicy(sizePolicy);
+        treeWidget->setMinimumSize(QSize(0, 0));
+        treeWidget->setMaximumSize(QSize(16777215, 16777215));
         treeWidget->setStyleSheet(QLatin1String("border: 0;\n"
 "color:#AAAA77\n"
 "\n"
 "\n"
 ""));
+        treeWidget->setDragEnabled(true);
+        treeWidget->setDragDropOverwriteMode(false);
+        treeWidget->setDragDropMode(QAbstractItemView::InternalMove);
+        treeWidget->setDefaultDropAction(Qt::MoveAction);
+        treeWidget->setHeaderHidden(true);
+        treeWidget->header()->setVisible(false);
 
-        verticalLayout->addWidget(treeWidget);
+        verticalLayout_2->addWidget(treeWidget);
 
         dockWidget->setWidget(dockWidgetContents);
         MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget);
