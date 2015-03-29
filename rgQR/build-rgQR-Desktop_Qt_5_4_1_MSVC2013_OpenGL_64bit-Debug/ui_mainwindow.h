@@ -231,7 +231,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "rgQRender", 0));
         actionOpen->setText(QApplication::translate("MainWindow", "Open", 0));
         actionOpen->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", 0));
         actionClose->setText(QApplication::translate("MainWindow", "Close", 0));
