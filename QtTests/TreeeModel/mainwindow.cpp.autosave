@@ -11,9 +11,11 @@ struct rgOBject {
 
 class rgQObject : public QStandardItem  {
 public:
-    rgQObject(rgOBject* Object) :QStandardItem(Object->name.c_str()) {
+    rgQObject(rgOBject* Object) : QStandardItem(Object->name.c_str()), Object(Object) {
 
     }
+private:
+    rgOBject* Object;
 };
 
 MainWindow::MainWindow(QWidget* parent)
