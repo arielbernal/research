@@ -119,6 +119,7 @@ public:
 
         treeView = new QTreeView(centralWidget);
         treeView->setObjectName(QStringLiteral("treeView"));
+        treeView->header()->setVisible(false);
 
         gridLayout->addWidget(treeView, 0, 0, 1, 1);
 
