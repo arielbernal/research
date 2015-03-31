@@ -19,6 +19,9 @@ class MainWindow : public QMainWindow {
   QStandardItemModel* model;
   QDataWidgetMapper* mapper;
 
+  QStandardItemModel* modelObjects;
+  QDataWidgetMapper* mapperObjects;
+
 private slots:
   void on_treeView_clicked(const QModelIndex &index);
 

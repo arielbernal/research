@@ -3,18 +3,6 @@
 
 
 
-struct rgOBject {
-    std::string name;
-    int value1;
-    float value2;
-};
-
-class rgQObject : public QStandardItem  {
-public:
-    rgQObject(rgOBject* Object) :QStandardItem(Object->name.c_str()) {
-
-    }
-};
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -22,10 +10,20 @@ MainWindow::MainWindow(QWidget* parent)
 
   model = new QStandardItemModel(this);
   QStandardItem* rootNode = model->invisibleRootItem();
-  QStandardItem* cameraItem = new QStandardItem("Main Camera");
+  QList<QStandardItem*> cameraItem;
+  cameraItem.append(new QStandardItem("Main Camera"));
+  cameraItem.append(new QStandardItem("10"));
+  cameraItem.append(new QStandardItem("20"));
+  cameraItem.append(new QStandardItem("30"));
+
   QStandardItem* light01Item = new QStandardItem("Light01");
   QStandardItem* cube01Item = new QStandardItem("Cube01");
-  QStandardItem* cube02Item = new QStandardItem("Cube02");
+  QList<QStandardItem*> cube02Item;
+  cube02Item.append(new QStandardItem("Cube02"));
+  cube02Item.append(new QStandardItem("200"));
+  cube02Item.append(new QStandardItem("350"));
+  cube02Item.append(new QStandardItem("380"));
+
   rootNode->appendRow(cameraItem);
   rootNode->appendRow(light01Item);
   rootNode->appendRow(cube01Item);
@@ -37,7 +35,10 @@ MainWindow::MainWindow(QWidget* parent)
 
   mapper = new QDataWidgetMapper();
   mapper->setModel(model);
-  mapper->addMapping(ui->lineEdit, 0);
+  mapper->addMapping(ui->editName, 0);
+  mapper->addMapping(ui->editPosX, 1);
+  mapper->addMapping(ui->editPosY, 2);
+  mapper->addMapping(ui->editPosZ, 3);
 }
 
 MainWindow::~MainWindow() {
