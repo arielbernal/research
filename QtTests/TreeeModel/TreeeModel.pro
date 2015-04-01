@@ -10,11 +10,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = TreeeModel
 TEMPLATE = app
-
+CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    gl/rgglobject.h \
+    gl/rgglcamera.h \
+    gl/rgglheaders.h \
+    gl/rggllight.h
+
+INCLUDEPATH += C:\dev\research\external\vs\glm
 
 FORMS    += mainwindow.ui

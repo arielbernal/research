@@ -2,10 +2,13 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 
+
+
 class MyObject {
 public:
-  MyObject(const std::string& Name, int posx, int posy, int posz)
-      : Name(Name), posx(posx), posy(posy), posz(posz) {}
+  enum { LIGHT, CAMERA, OBJECT3D };
+  MyObject(const std::string& Name)
+      : Name(Name), posx(0), posy(0), posz(0) {}
 
   std::string getName() { return Name; }
   void setName(const std::string& name) { Name = name; }
@@ -17,12 +20,15 @@ public:
   int getPosz() { return posz; }
   void setPosz(int z) { posz = z; }
 
+
 private:
   std::string Name;
   int posx;
   int posy;
   int posz;
 };
+
+
 
 class QtMyObject : public QStandardItem {
 public:
@@ -57,12 +63,43 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+
+  QString val;
+     QFile file;
+     file.setFileName("../test.json");
+     file.open(QIODevice::ReadOnly | QIODevice::Text);
+     val = file.readAll();
+     file.close();
+     qWarning() << val;
+     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+     QJsonObject sett2 = d.object();
+     QJsonValue value = sett2.value(QString("appName"));
+     qWarning() << value;
+     QJsonObject item = value.toObject();
+     qWarning() << item["description"];
+     qWarning() << item["message"];
+     QJsonArray subobj = item["imp"].toArray();
+     for(auto e : subobj) {
+         qWarning() << e;
+         std::cout << "Here" << std::endl;
+     }
+
+
+
+//     qWarning() << tr("QJsonObject of description: ") << item;
+
+//     /* incase of string value get value and convert into string*/
+//     qWarning() << tr("QJsonObject[appName] of description: ") << item["description"];
+//     QJsonValue subobj = item["description"];
+//     qWarning() << subobj.toString();
+
+
   model = new QStandardItemModel(this);
 
-  MyObject* CameraObject = new MyObject("Main Camera", 100, 101, 102);
-  MyObject* LightObject = new MyObject("Light01", 200, 201, 202);
-  MyObject* Cube01Object = new MyObject("Cube01", 300, 301, 302);
-  MyObject* Cube02Object = new MyObject("Cube02", 400, 401, 402);
+  MyObject* CameraObject = new MyObject("Main Camera");
+  MyObject* LightObject = new MyObject("Light01");
+  MyObject* Cube01Object = new MyObject("Cube01");
+  MyObject* Cube02Object = new MyObject("Cube02");
 
   QtMyObject* rootNode = static_cast<QtMyObject*>(model->invisibleRootItem());
   QtMyObject* CameraQtObject = new QtMyObject(CameraObject);
