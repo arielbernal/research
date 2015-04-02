@@ -19,7 +19,9 @@ HEADERS  += mainwindow.h \
     gl/rgglobject.h \
     gl/rgglcamera.h \
     gl/rgglheaders.h \
-    gl/rggllight.h
+    gl/rggllight.h \
+    gl/rgglobject3d.h \
+    gl/rgglcuboid.h
 
 INCLUDEPATH += C:\dev\research\external\vs\glm
 

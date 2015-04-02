@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   QString val;
      QFile file;
-     file.setFileName("../test.json");
+     file.setFileName("../scene1.json");
      file.open(QIODevice::ReadOnly | QIODevice::Text);
      val = file.readAll();
      file.close();

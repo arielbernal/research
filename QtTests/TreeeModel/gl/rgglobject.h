@@ -20,7 +20,8 @@ public:
         Parent(Parent),
         pos(0, 0, 0),
         rot(0, 0, 0),
-        scale(0, 0, 0) {
+        scale(0, 0, 0),
+        Enabled(true) {
     if (Parent)
       Parent->addChild(this);
   }
@@ -77,16 +78,17 @@ protected:
   void removeChild(GLObject* O) { Children.erase(O->getId()); }
   void removeChild(size_t Id) { Children.erase(Id); }
 
+  glm::vec3 pos;
+  glm::vec3 rot;
+  glm::vec3 scale;
+  bool Enabled;
+
 private:
   size_t Id;
   std::string Name;
   size_t Type;
   GLObject* Parent;
   ChildrenMap Children;
-
-  glm::vec3 pos;
-  glm::vec3 rot;
-  glm::vec3 scale;
 };
 
 } // namespace rg
