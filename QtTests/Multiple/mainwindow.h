@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <toolbox.h>
 
 namespace Ui {
 class MainWindow;
@@ -16,12 +17,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_5_clicked();
 
 private:
     Ui::MainWindow *ui;
+
 };
 
 #endif // MAINWINDOW_H
