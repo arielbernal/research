@@ -16,12 +16,9 @@ MainWindow::MainWindow(QWidget *parent)
   toolBox->addItem(new ToolItem("Title 1", new QLabel("Some text here")));
   toolBox->addItem(new ToolItem("Title 2", list));
   toolBox->addItem(new ToolItem("Title 3", new QLabel("Lorem Ipsum..")));
-  toolBox->hideItem(1);
-
+  //toolBox->hideItem(1);
 
   ToolItem* item = toolBox->itemAt(2);
-  item->setTitle("Test23");
-
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(toolBox);
