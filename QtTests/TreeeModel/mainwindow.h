@@ -28,8 +28,5 @@ private:
 };
 
 
-private slots:
-  void on_treeView_clicked(const QModelIndex &index);
-
 
 #endif  // MAINWINDOW_H

@@ -2,31 +2,23 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTreeWidget>
-#include <gl/rgGLScene.h>
-#include <gl/rgGLObject.h>
+#include <objectinspector.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
-  Q_OBJECT
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
 
- public:
-  explicit MainWindow(rg::GLScene& S, QWidget* parent = 0);
-  ~MainWindow();
-  void buildTree(QTreeWidget* tree, QTreeWidgetItem* item, rg::GLObject* Node);
- public slots:
-  void GLWidgetInitialized();
- private slots:
-  void on_actionExit_triggered();
-
-  void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
 private:
-  Ui::MainWindow* ui;
-  rg::GLScene& Scene;
+    Ui::MainWindow *ui;
+    ObjectInspector *objectInspector;
 };
 
-#endif  // MAINWINDOW_H
+#endif // MAINWINDOW_H
