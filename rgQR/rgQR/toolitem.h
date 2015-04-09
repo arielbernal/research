@@ -9,7 +9,7 @@
 class ToolItem : public QWidget {
 public:
   ToolItem(const QString &title, QWidget *item, QWidget *parent = 0)
-      : item(item), QWidget(parent) {
+      : QWidget(parent), item(item) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     LabelTitle = new QLabel(title);
@@ -21,14 +21,17 @@ public:
     layout->addWidget(item);
     setLayout(layout);
     item->setVisible(false);
+    LabelTitle->installEventFilter(this);
   }
-
   QLabel *getTitle() { return LabelTitle; }
 
 protected:
-  void mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton)
+  bool eventFilter(QObject *obj, QEvent *event) {
+    if (obj == LabelTitle && event->type() == QEvent::MouseButtonPress) {
       item->setVisible(!item->isVisible());
+      return true;
+    }
+    return false;
   }
 
 private:

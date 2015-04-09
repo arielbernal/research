@@ -5,6 +5,7 @@
 #include <QDockWidget>
 #include <QLineEdit>
 #include <toolbox.h>
+#include <vallineedit.h>
 
 class ObjectInspector : public QDockWidget {
   Q_OBJECT
@@ -13,13 +14,16 @@ public:
                            Qt::WindowFlags flags = 0);
   ~ObjectInspector();
 
+  void SetObjectValues();
+
   ToolBox *Properties;
+
+  // ObjectName
   QLineEdit *ObjectName;
-  QLineEdit *PosX;
-  QLineEdit *PosY;
-  QLineEdit *PosZ;
-  QLineEdit *RotX, *RotY, *RotZ;
-  QLineEdit *ScaX, *ScaY, *ScaZ;
+  // Transform
+  ValLineEdit *PosX, *PosY, *PosZ;
+  ValLineEdit *RotX, *RotY, *RotZ;
+  ValLineEdit *ScaX, *ScaY, *ScaZ;
 };
 
 #endif // OBJECTINSPECTOR_H

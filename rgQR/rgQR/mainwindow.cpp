@@ -7,9 +7,9 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    objectInspector(new ObjectInspector("build Information", this))
+    ui(new Ui::MainWindow)
 {
+    objectInspector = new ObjectInspector("Hierarchy", this);
     ui->setupUi(this);
     addDockWidget(Qt::LeftDockWidgetArea, objectInspector);
 }

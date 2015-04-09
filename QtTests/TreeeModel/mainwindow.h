@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow {
   QStandardItemModel* modelObjects;
   QDataWidgetMapper* mapperObjects;
   void on_editPosX_editingFinished();
+  void on_treeView_clicked(const QModelIndex& index);
 
 private:
   Ui::MainWindow* ui;
