@@ -4,16 +4,16 @@
 #include <QDoubleValidator>
 #include <QLineEdit>
 
-class ValLineEdit : public QLineEdit {
-public:
-  ValLineEdit(int width, QWidget *parent = 0) : QLineEdit(parent) {
+class EditDouble : public QLineEdit {
+ public:
+  EditDouble(int width, int decimals = 4, QWidget* parent = 0)
+      : QLineEdit(parent) {
     setFixedWidth(width);
     setAlignment(Qt::AlignRight);
-    QDoubleValidator *DV = new QDoubleValidator();
-    DV->setDecimals(4);
+    QDoubleValidator* DV = new QDoubleValidator();
+    DV->setDecimals(decimals);
     setValidator(DV);
   }
 };
 
-#endif // VALLINEEDIT_H
-
+#endif  // VALLINEEDIT_H

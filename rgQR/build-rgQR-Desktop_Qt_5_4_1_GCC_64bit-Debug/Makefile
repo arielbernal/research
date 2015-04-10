@@ -181,7 +181,8 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		../rgQR/gl/rgglheaders.h \
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject.h \
-		../rgQR/gl/rgglobject3d.h ../rgQR/main.cpp \
+		../rgQR/gl/rgglobject3d.h \
+		../rgQR/scene.h ../rgQR/main.cpp \
 		../rgQR/mainwindow.cpp \
 		../rgQR/objectinspector.cpp
 QMAKE_TARGET  = rgQR
@@ -467,7 +468,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgQR/mainwindow.h ../rgQR/toolbox.h ../rgQR/toolitem.h ../rgQR/objectinspector.h ../rgQR/vallineedit.h ../rgQR/gl/rgglcamera.h ../rgQR/gl/rgglcuboid.h ../rgQR/gl/rgglheaders.h ../rgQR/gl/rggllight.h ../rgQR/gl/rgglobject.h ../rgQR/gl/rgglobject3d.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgQR/mainwindow.h ../rgQR/toolbox.h ../rgQR/toolitem.h ../rgQR/objectinspector.h ../rgQR/vallineedit.h ../rgQR/gl/rgglcamera.h ../rgQR/gl/rgglcuboid.h ../rgQR/gl/rgglheaders.h ../rgQR/gl/rggllight.h ../rgQR/gl/rgglobject.h ../rgQR/gl/rgglobject3d.h ../rgQR/scene.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/main.cpp ../rgQR/mainwindow.cpp ../rgQR/objectinspector.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/mainwindow.ui $(DISTDIR)/
 
@@ -625,6 +626,12 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		../rgQR/scene.h \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/gl/rggllight.h \
+		../rgQR/gl/rgglobject3d.h \
 		../rgQR/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/mainwindow.h -o moc_mainwindow.cpp
 
@@ -753,6 +760,12 @@ moc_objectinspector.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtW
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		../rgQR/scene.h \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/gl/rggllight.h \
+		../rgQR/gl/rgglobject3d.h \
 		../rgQR/objectinspector.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/objectinspector.h -o moc_objectinspector.cpp
 
@@ -905,15 +918,19 @@ main.o: ../rgQR/main.cpp ../rgQR/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		../rgQR/scene.h \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/gl/rggllight.h \
+		../rgQR/gl/rgglobject3d.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qeventloop.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdesktopwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qguiapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h \
-		../rgQR/gl/rgglobject.h \
-		../rgQR/gl/rgglheaders.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../rgQR/main.cpp
 
 mainwindow.o: ../rgQR/mainwindow.cpp ../rgQR/mainwindow.h \
@@ -1047,6 +1064,12 @@ mainwindow.o: ../rgQR/mainwindow.cpp ../rgQR/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		../rgQR/scene.h \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/gl/rggllight.h \
+		../rgQR/gl/rgglobject3d.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
@@ -1208,7 +1231,13 @@ objectinspector.o: ../rgQR/objectinspector.cpp ../rgQR/objectinspector.h \
 		../rgQR/vallineedit.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		../rgQR/scene.h \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/gl/rggllight.h \
+		../rgQR/gl/rgglobject3d.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o objectinspector.o ../rgQR/objectinspector.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

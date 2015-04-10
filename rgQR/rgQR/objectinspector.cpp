@@ -1,31 +1,33 @@
 #include "objectinspector.h"
 #include <QDoubleValidator>
+#include <QMessageBox>
 
-ObjectInspector::ObjectInspector(const QString &title, QWidget *parent,
+ObjectInspector::ObjectInspector(const QString& title,
+                                 QWidget* parent,
                                  Qt::WindowFlags flags)
     : QDockWidget(title, parent, flags) {
 
-  QVBoxLayout *layout = new QVBoxLayout();
+  QVBoxLayout* VLayout = new QVBoxLayout();
 
   Properties = new ToolBox();
   ObjectName = new QLineEdit();
-  PosX = new ValLineEdit(70);
-  PosY = new ValLineEdit(70);
-  PosZ = new ValLineEdit(70);
-  RotX = new ValLineEdit(70);
-  RotY = new ValLineEdit(70);
-  RotZ = new ValLineEdit(70);
-  ScaX = new ValLineEdit(70);
-  ScaY = new ValLineEdit(70);
-  ScaZ = new ValLineEdit(70);
+  PosX = new EditDouble(70);
+  PosY = new EditDouble(70);
+  PosZ = new EditDouble(70);
+  RotX = new EditDouble(70);
+  RotY = new EditDouble(70);
+  RotZ = new EditDouble(70);
+  ScaX = new EditDouble(70);
+  ScaY = new EditDouble(70);
+  ScaZ = new EditDouble(70);
 
   {
-    QVBoxLayout *vbox = new QVBoxLayout();
+    QVBoxLayout* vbox = new QVBoxLayout();
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Position"));
-      hbox->addSpacerItem(new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed));
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
       hbox->addWidget(new QLabel("X"));
       hbox->addWidget(PosX);
       hbox->addWidget(new QLabel(" Y"));
@@ -35,10 +37,10 @@ ObjectInspector::ObjectInspector(const QString &title, QWidget *parent,
       vbox->addItem(hbox);
     }
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Rotation"));
-      QSpacerItem *item = new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed);
+      QSpacerItem* item = new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
       hbox->addSpacerItem(item);
       hbox->addWidget(new QLabel("X"));
       hbox->addWidget(RotX);
@@ -49,10 +51,10 @@ ObjectInspector::ObjectInspector(const QString &title, QWidget *parent,
       vbox->addItem(hbox);
     }
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Scaling"));
-      QSpacerItem *item = new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed);
+      QSpacerItem* item = new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
       hbox->addSpacerItem(item);
       hbox->addWidget(new QLabel("X"));
       hbox->addWidget(ScaX);
@@ -62,23 +64,109 @@ ObjectInspector::ObjectInspector(const QString &title, QWidget *parent,
       hbox->addWidget(ScaZ);
       vbox->addItem(hbox);
     }
-    QWidget *QW = new QWidget();
+    QWidget* QW = new QWidget();
     QW->setLayout(vbox);
     Properties->addItem(new ToolItem("Transform", QW));
   }
 
+  Tree = new QTreeWidget();
+  VLayout->addWidget(Tree);
+
   {
-    QHBoxLayout *hbox = new QHBoxLayout();
+    QHBoxLayout* hbox = new QHBoxLayout();
     hbox->addWidget(new QLabel("Name:"));
     hbox->addWidget(ObjectName);
-    layout->addLayout(hbox);
+    VLayout->addLayout(hbox);
   }
-  layout->addWidget(Properties);
-  QWidget *QW = new QWidget();
-  QW->setLayout(layout);
+
+  VLayout->addWidget(Properties);
+  QWidget* QW = new QWidget();
+  QW->setLayout(VLayout);
   setWidget(QW);
+
+  QObject::connect(
+      ObjectName, SIGNAL(editingFinished()), this, SLOT(changeName()));
+  QObject::connect(PosX, SIGNAL(editingFinished()), this, SLOT(changePosX()));
+  QObject::connect(PosY, SIGNAL(editingFinished()), this, SLOT(changePosY()));
+  QObject::connect(PosZ, SIGNAL(editingFinished()), this, SLOT(changePosZ()));
+  QObject::connect(RotX, SIGNAL(editingFinished()), this, SLOT(changeRotX()));
+  QObject::connect(RotY, SIGNAL(editingFinished()), this, SLOT(changeRotY()));
+  QObject::connect(RotZ, SIGNAL(editingFinished()), this, SLOT(changeRotZ()));
+
+
+  QObject::connect(Tree,
+                   SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+                   this,
+                   SLOT(treeItemSelected(QTreeWidgetItem*, int)));
 }
 
 ObjectInspector::~ObjectInspector() {}
 
-void ObjectInspector::SetObjectValues() {}
+void ObjectInspector::setScene(rg::Scene* S) {
+  Scene = S;
+  CurrentObject = S->getFirstObject();
+  rg::GLObject* Root = S->getRoot();
+  for (auto& e : Root->getChildren()) {
+    QTreeWidgetItem* topLevel = new QTreeWidgetItem();
+    topLevel->setText(0, QString::fromStdString(e.second->getName()));
+    Tree->addTopLevelItem(topLevel);
+  }
+}
+
+void ObjectInspector::setCurrentObject(const std::string& Name) {
+  CurrentObject = Scene->getObject(Name);
+  if (!CurrentObject) {
+    return;
+    std::cout << "CurrentObject is Empty" << std::endl;
+  }
+  ObjectName->setText(QString::fromStdString(CurrentObject->getName()));
+  PosX->setText(QString::number(CurrentObject->pos.x));
+  PosY->setText(QString::number(CurrentObject->pos.y));
+  PosZ->setText(QString::number(CurrentObject->pos.z));
+  RotX->setText(QString::number(CurrentObject->rot.x));
+  RotY->setText(QString::number(CurrentObject->rot.y));
+  RotZ->setText(QString::number(CurrentObject->rot.z));
+}
+
+void ObjectInspector::treeItemSelected(QTreeWidgetItem* QItem, int column) {
+  setCurrentObject(QItem->text(column).toStdString());
+}
+
+void ObjectInspector::changeName() {
+  if (CurrentObject) {
+    QTreeWidgetItem* it = Tree->findItems(QString::fromStdString(CurrentObject->getName()),Qt::MatchExactly).at(0);
+    if(Scene->renameObject(CurrentObject->getName(),
+                        ObjectName->text().toStdString())) {
+        it->setText(0, ObjectName->text());
+    }
+    else {
+        QMessageBox::warning(this, "Object Rename Error", "The name already exists");
+    }
+  }
+}
+
+void ObjectInspector::changePosX() {
+  if (CurrentObject)
+    CurrentObject->pos.x = PosX->text().toFloat();
+}
+void ObjectInspector::changePosY() {
+  if (CurrentObject)
+    CurrentObject->pos.y = PosY->text().toFloat();
+}
+void ObjectInspector::changePosZ() {
+  if (CurrentObject)
+    CurrentObject->pos.z = PosZ->text().toFloat();
+}
+
+void ObjectInspector::changeRotX() {
+  if (CurrentObject)
+    CurrentObject->rot.x = RotX->text().toFloat();
+}
+void ObjectInspector::changeRotY() {
+  if (CurrentObject)
+    CurrentObject->rot.y = RotY->text().toFloat();
+}
+void ObjectInspector::changeRotZ() {
+  if (CurrentObject)
+    CurrentObject->rot.z = RotZ->text().toFloat();
+}

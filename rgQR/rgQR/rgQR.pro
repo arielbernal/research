@@ -26,7 +26,8 @@ HEADERS  += mainwindow.h \
     gl/rgglheaders.h \
     gl/rggllight.h \
     gl/rgglobject.h \
-    gl/rgglobject3d.h
+    gl/rgglobject3d.h \
+    scene.h
 
 INCLUDEPATH += C:\dev\research\external\vs\glm
 
