@@ -182,7 +182,8 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rgglobject3d.h \
-		../rgQR/scene.h ../rgQR/main.cpp \
+		../rgQR/scene.h \
+		../rgQR/treeiterator.h ../rgQR/main.cpp \
 		../rgQR/mainwindow.cpp \
 		../rgQR/objectinspector.cpp
 QMAKE_TARGET  = rgQR
@@ -468,7 +469,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgQR/mainwindow.h ../rgQR/toolbox.h ../rgQR/toolitem.h ../rgQR/objectinspector.h ../rgQR/vallineedit.h ../rgQR/gl/rgglcamera.h ../rgQR/gl/rgglcuboid.h ../rgQR/gl/rgglheaders.h ../rgQR/gl/rggllight.h ../rgQR/gl/rgglobject.h ../rgQR/gl/rgglobject3d.h ../rgQR/scene.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgQR/mainwindow.h ../rgQR/toolbox.h ../rgQR/toolitem.h ../rgQR/objectinspector.h ../rgQR/vallineedit.h ../rgQR/gl/rgglcamera.h ../rgQR/gl/rgglcuboid.h ../rgQR/gl/rgglheaders.h ../rgQR/gl/rggllight.h ../rgQR/gl/rgglobject.h ../rgQR/gl/rgglobject3d.h ../rgQR/scene.h ../rgQR/treeiterator.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/main.cpp ../rgQR/mainwindow.cpp ../rgQR/objectinspector.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/mainwindow.ui $(DISTDIR)/
 
@@ -632,6 +633,22 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject3d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTreeWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreeview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidgetitemiterator.h \
 		../rgQR/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/mainwindow.h -o moc_mainwindow.cpp
 
@@ -766,6 +783,24 @@ moc_objectinspector.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtW
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject3d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTreeWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreeview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidgetitemiterator.h \
 		../rgQR/objectinspector.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/objectinspector.h -o moc_objectinspector.cpp
 
@@ -924,6 +959,22 @@ main.o: ../rgQR/main.cpp ../rgQR/mainwindow.h \
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject3d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTreeWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreeview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidgetitemiterator.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1070,6 +1121,22 @@ mainwindow.o: ../rgQR/mainwindow.cpp ../rgQR/mainwindow.h \
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rggllight.h \
 		../rgQR/gl/rgglobject3d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTreeWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreeview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidgetitemiterator.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
@@ -1087,18 +1154,6 @@ mainwindow.o: ../rgQR/mainwindow.cpp ../rgQR/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QGridLayout \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMenuBar \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenubar.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenu.h \
@@ -1237,7 +1292,28 @@ objectinspector.o: ../rgQR/objectinspector.cpp ../rgQR/objectinspector.h \
 		../rgQR/gl/rgglheaders.h \
 		../rgQR/gl/rgglobject.h \
 		../rgQR/gl/rggllight.h \
-		../rgQR/gl/rgglobject3d.h
+		../rgQR/gl/rgglobject3d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTreeWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreeview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtreewidgetitemiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmessagebox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o objectinspector.o ../rgQR/objectinspector.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

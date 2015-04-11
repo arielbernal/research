@@ -18,6 +18,8 @@ class ObjectInspector : public QDockWidget {
   ~ObjectInspector();
 
   void setScene(rg::Scene* S);
+  void addTreeItems(rg::GLObject* ParentObject, QTreeWidget* Tree, QTreeWidgetItem* ParentItem, int level);
+
 
   void setCurrentObject(const std::string& Name);
 
@@ -46,6 +48,7 @@ class ObjectInspector : public QDockWidget {
 //  void changeScaY();
 //  void changeScaZ();
   void treeItemSelected(QTreeWidgetItem* QItem,int column);
+  void treeItemSelected();
 };
 
 #endif  // OBJECTINSPECTOR_H

@@ -8,13 +8,15 @@
 
 namespace rg {
 
+static size_t UniqueObjectId = 0;
+
 class GLObject {
 public:
   enum { ROOT, OBJECT3D, LIGHT, CAMERA };
   typedef std::map<size_t, GLObject*> ChildrenMap;
 
   GLObject(const std::string& Name, size_t Type, GLObject* Parent = nullptr)
-      : Id(size_t(this)),
+      : Id(UniqueObjectId++),
         Name(Name),
         Type(Type),
         Parent(Parent),

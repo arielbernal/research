@@ -93,24 +93,37 @@ ObjectInspector::ObjectInspector(const QString& title,
   QObject::connect(RotY, SIGNAL(editingFinished()), this, SLOT(changeRotY()));
   QObject::connect(RotZ, SIGNAL(editingFinished()), this, SLOT(changeRotZ()));
 
+  QObject::connect(
+      Tree, SIGNAL(itemSelectionChanged()), this, SLOT(treeItemSelected()));
 
-  QObject::connect(Tree,
-                   SIGNAL(itemClicked(QTreeWidgetItem*, int)),
-                   this,
-                   SLOT(treeItemSelected(QTreeWidgetItem*, int)));
+  Tree->headerItem()->setHidden(true);
 }
 
 ObjectInspector::~ObjectInspector() {}
+
+void ObjectInspector::addTreeItems(rg::GLObject* ParentObject,
+                                   QTreeWidget* Tree,
+                                   QTreeWidgetItem* ParentItem,
+                                   int level) {
+
+  for (auto& e : ParentObject->getChildren()) {
+    QTreeWidgetItem* child = new QTreeWidgetItem();
+    child->setText(0, QString::fromStdString(e.second->getName()));
+    if (level == 0)
+      Tree->addTopLevelItem(child);
+    else {
+      ParentItem->addChild(child);
+    }
+    addTreeItems(e.second, Tree, child, level + 1);
+  }
+}
 
 void ObjectInspector::setScene(rg::Scene* S) {
   Scene = S;
   CurrentObject = S->getFirstObject();
   rg::GLObject* Root = S->getRoot();
-  for (auto& e : Root->getChildren()) {
-    QTreeWidgetItem* topLevel = new QTreeWidgetItem();
-    topLevel->setText(0, QString::fromStdString(e.second->getName()));
-    Tree->addTopLevelItem(topLevel);
-  }
+  addTreeItems(Root, Tree, nullptr, 0);
+  Tree->expandAll();
 }
 
 void ObjectInspector::setCurrentObject(const std::string& Name) {
@@ -128,19 +141,32 @@ void ObjectInspector::setCurrentObject(const std::string& Name) {
   RotZ->setText(QString::number(CurrentObject->rot.z));
 }
 
+void ObjectInspector::treeItemSelected() {
+  QList<QTreeWidgetItem*> Items = Tree->selectedItems();
+  if (Items.size() > 0)
+    setCurrentObject(Items[0]->text(0).toStdString());
+  std::cout << "treeItemSelected" << std::endl;
+}
+
 void ObjectInspector::treeItemSelected(QTreeWidgetItem* QItem, int column) {
   setCurrentObject(QItem->text(column).toStdString());
+  std::cout << "treeItemSelected" << std::endl;
 }
 
 void ObjectInspector::changeName() {
-  if (CurrentObject) {
-    QTreeWidgetItem* it = Tree->findItems(QString::fromStdString(CurrentObject->getName()),Qt::MatchExactly).at(0);
-    if(Scene->renameObject(CurrentObject->getName(),
-                        ObjectName->text().toStdString())) {
-        it->setText(0, ObjectName->text());
-    }
-    else {
-        QMessageBox::warning(this, "Object Rename Error", "The name already exists");
+  std::cout << "changeName" << std::endl;
+  if (CurrentObject &&
+      CurrentObject->getName() != ObjectName->text().toStdString()) {
+    QList<QTreeWidgetItem*> Items = Tree->selectedItems();
+    if (Items.size() > 0 &&
+        Scene->renameObject(CurrentObject->getName(),
+                            ObjectName->text().toStdString())) {
+      Items[0]->setText(0, ObjectName->text());
+    } else {
+      ObjectName->blockSignals(true);
+      QMessageBox::warning(
+          this, "Object Rename Error", "The name already exists");
+      ObjectName->blockSignals(false);
     }
   }
 }
