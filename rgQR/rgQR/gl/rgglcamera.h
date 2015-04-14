@@ -13,6 +13,14 @@ public:
 
   glm::vec3 center;
   glm::vec3 up;
+  size_t projection;
+  float fov;
+  float near;
+  float far;
+  float view_x;
+  float view_y;
+  float view_w;
+  float view_h;
 };
 
 } // namespace rg

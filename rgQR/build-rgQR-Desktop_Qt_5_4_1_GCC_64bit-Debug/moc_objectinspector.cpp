@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_ObjectInspector_t {
-    QByteArrayData data[13];
-    char stringdata[141];
+    QByteArrayData data[16];
+    char stringdata[174];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,15 +38,19 @@ QT_MOC_LITERAL(5, 50, 10), // "changePosZ"
 QT_MOC_LITERAL(6, 61, 10), // "changeRotX"
 QT_MOC_LITERAL(7, 72, 10), // "changeRotY"
 QT_MOC_LITERAL(8, 83, 10), // "changeRotZ"
-QT_MOC_LITERAL(9, 94, 16), // "treeItemSelected"
-QT_MOC_LITERAL(10, 111, 16), // "QTreeWidgetItem*"
-QT_MOC_LITERAL(11, 128, 5), // "QItem"
-QT_MOC_LITERAL(12, 134, 6) // "column"
+QT_MOC_LITERAL(9, 94, 10), // "changeScaX"
+QT_MOC_LITERAL(10, 105, 10), // "changeScaY"
+QT_MOC_LITERAL(11, 116, 10), // "changeScaZ"
+QT_MOC_LITERAL(12, 127, 16), // "treeItemSelected"
+QT_MOC_LITERAL(13, 144, 16), // "QTreeWidgetItem*"
+QT_MOC_LITERAL(14, 161, 5), // "QItem"
+QT_MOC_LITERAL(15, 167, 6) // "column"
 
     },
     "ObjectInspector\0changeName\0\0changePosX\0"
     "changePosY\0changePosZ\0changeRotX\0"
-    "changeRotY\0changeRotZ\0treeItemSelected\0"
+    "changeRotY\0changeRotZ\0changeScaX\0"
+    "changeScaY\0changeScaZ\0treeItemSelected\0"
     "QTreeWidgetItem*\0QItem\0column"
 };
 #undef QT_MOC_LITERAL
@@ -57,7 +61,7 @@ static const uint qt_meta_data_ObjectInspector[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -65,15 +69,18 @@ static const uint qt_meta_data_ObjectInspector[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   59,    2, 0x0a /* Public */,
-       3,    0,   60,    2, 0x0a /* Public */,
-       4,    0,   61,    2, 0x0a /* Public */,
-       5,    0,   62,    2, 0x0a /* Public */,
-       6,    0,   63,    2, 0x0a /* Public */,
-       7,    0,   64,    2, 0x0a /* Public */,
-       8,    0,   65,    2, 0x0a /* Public */,
-       9,    2,   66,    2, 0x0a /* Public */,
-       9,    0,   71,    2, 0x0a /* Public */,
+       1,    0,   74,    2, 0x0a /* Public */,
+       3,    0,   75,    2, 0x0a /* Public */,
+       4,    0,   76,    2, 0x0a /* Public */,
+       5,    0,   77,    2, 0x0a /* Public */,
+       6,    0,   78,    2, 0x0a /* Public */,
+       7,    0,   79,    2, 0x0a /* Public */,
+       8,    0,   80,    2, 0x0a /* Public */,
+       9,    0,   81,    2, 0x0a /* Public */,
+      10,    0,   82,    2, 0x0a /* Public */,
+      11,    0,   83,    2, 0x0a /* Public */,
+      12,    2,   84,    2, 0x0a /* Public */,
+      12,    0,   89,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -83,7 +90,10 @@ static const uint qt_meta_data_ObjectInspector[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 10, QMetaType::Int,   11,   12,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 13, QMetaType::Int,   14,   15,
     QMetaType::Void,
 
        0        // eod
@@ -101,8 +111,11 @@ void ObjectInspector::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 4: _t->changeRotX(); break;
         case 5: _t->changeRotY(); break;
         case 6: _t->changeRotZ(); break;
-        case 7: _t->treeItemSelected((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 8: _t->treeItemSelected(); break;
+        case 7: _t->changeScaX(); break;
+        case 8: _t->changeScaY(); break;
+        case 9: _t->changeScaZ(); break;
+        case 10: _t->treeItemSelected((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 11: _t->treeItemSelected(); break;
         default: ;
         }
     }
@@ -133,13 +146,13 @@ int ObjectInspector::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 9;
+        _id -= 12;
     }
     return _id;
 }

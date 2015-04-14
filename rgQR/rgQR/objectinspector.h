@@ -36,6 +36,9 @@ class ObjectInspector : public QDockWidget {
   EditDouble* RotX, *RotY, *RotZ;
   EditDouble* ScaX, *ScaY, *ScaZ;
 
+
+
+
  public slots:
   void changeName();
   void changePosX();
@@ -44,9 +47,9 @@ class ObjectInspector : public QDockWidget {
   void changeRotX();
   void changeRotY();
   void changeRotZ();
-//  void changeScaX();
-//  void changeScaY();
-//  void changeScaZ();
+  void changeScaX();
+  void changeScaY();
+  void changeScaZ();
   void treeItemSelected(QTreeWidgetItem* QItem,int column);
   void treeItemSelected();
 };

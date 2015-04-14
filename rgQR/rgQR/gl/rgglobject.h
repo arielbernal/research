@@ -22,7 +22,7 @@ public:
         Parent(Parent),
         pos(0, 0, 0),
         rot(0, 0, 0),
-        scale(0, 0, 0),
+        sca(0, 0, 0),
         Enabled(true) {
     if (Parent)
       Parent->addChild(this);
@@ -64,7 +64,7 @@ public:
 
   glm::vec3 pos;
   glm::vec3 rot;
-  glm::vec3 scale;
+  glm::vec3 sca;
   bool Enabled;
 
 protected:

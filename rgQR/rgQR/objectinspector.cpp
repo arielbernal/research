@@ -69,6 +69,7 @@ ObjectInspector::ObjectInspector(const QString& title,
     Properties->addItem(new ToolItem("Transform", QW));
   }
 
+
   Tree = new QTreeWidget();
   VLayout->addWidget(Tree);
 
@@ -92,6 +93,9 @@ ObjectInspector::ObjectInspector(const QString& title,
   QObject::connect(RotX, SIGNAL(editingFinished()), this, SLOT(changeRotX()));
   QObject::connect(RotY, SIGNAL(editingFinished()), this, SLOT(changeRotY()));
   QObject::connect(RotZ, SIGNAL(editingFinished()), this, SLOT(changeRotZ()));
+  QObject::connect(ScaX, SIGNAL(editingFinished()), this, SLOT(changeScaX()));
+  QObject::connect(ScaY, SIGNAL(editingFinished()), this, SLOT(changeScaY()));
+  QObject::connect(ScaZ, SIGNAL(editingFinished()), this, SLOT(changeScaZ()));
 
   QObject::connect(
       Tree, SIGNAL(itemSelectionChanged()), this, SLOT(treeItemSelected()));
@@ -139,6 +143,9 @@ void ObjectInspector::setCurrentObject(const std::string& Name) {
   RotX->setText(QString::number(CurrentObject->rot.x));
   RotY->setText(QString::number(CurrentObject->rot.y));
   RotZ->setText(QString::number(CurrentObject->rot.z));
+  ScaX->setText(QString::number(CurrentObject->sca.x));
+  ScaY->setText(QString::number(CurrentObject->sca.y));
+  ScaZ->setText(QString::number(CurrentObject->sca.z));
 }
 
 void ObjectInspector::treeItemSelected() {
@@ -195,4 +202,17 @@ void ObjectInspector::changeRotY() {
 void ObjectInspector::changeRotZ() {
   if (CurrentObject)
     CurrentObject->rot.z = RotZ->text().toFloat();
+}
+
+void ObjectInspector::changeScaX() {
+  if (CurrentObject)
+    CurrentObject->sca.x = ScaX->text().toFloat();
+}
+void ObjectInspector::changeScaY() {
+  if (CurrentObject)
+    CurrentObject->sca.y = ScaY->text().toFloat();
+}
+void ObjectInspector::changeScaZ() {
+  if (CurrentObject)
+    CurrentObject->sca.z = ScaZ->text().toFloat();
 }
