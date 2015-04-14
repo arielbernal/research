@@ -1,6 +1,8 @@
 #include "objectinspector.h"
 #include <QDoubleValidator>
 #include <QMessageBox>
+#include <QScrollArea>
+#include <QComboBox>
 
 ObjectInspector::ObjectInspector(const QString& title,
                                  QWidget* parent,
@@ -9,7 +11,11 @@ ObjectInspector::ObjectInspector(const QString& title,
 
   QVBoxLayout* VLayout = new QVBoxLayout();
 
+  QScrollArea* QA = new QScrollArea();
   Properties = new ToolBox();
+  QA->setWidget(Properties);
+  QA->setWidgetResizable(true);
+
   ObjectName = new QLineEdit();
   PosX = new EditDouble(70);
   PosY = new EditDouble(70);
@@ -52,7 +58,7 @@ ObjectInspector::ObjectInspector(const QString& title,
     }
     {
       QHBoxLayout* hbox = new QHBoxLayout();
-      hbox->addWidget(new QLabel("Scaling"));
+      hbox->addWidget(new QLabel("Scale"));
       QSpacerItem* item = new QSpacerItem(
           20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
       hbox->addSpacerItem(item);
@@ -69,6 +75,74 @@ ObjectInspector::ObjectInspector(const QString& title,
     Properties->addItem(new ToolItem("Transform", QW));
   }
 
+  // CameraPanel
+  {
+    CameraPanel = new CameraEditPanel(70);
+    QVBoxLayout* vbox = new QVBoxLayout();
+    {
+      QHBoxLayout* hbox = new QHBoxLayout();
+      hbox->addWidget(new QLabel("Projection"));
+      QSpacerItem* item = new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+      hbox->addSpacerItem(item);
+      hbox->addWidget(new QComboBox());
+      vbox->addItem(hbox);
+    }
+    {
+      QHBoxLayout* hbox = new QHBoxLayout();
+      hbox->addWidget(new QLabel("Field of View"));
+      QSpacerItem* item = new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+      hbox->addSpacerItem(item);
+      hbox->addWidget(CameraPanel->fov);
+      vbox->addItem(hbox);
+    }
+    {
+      QHBoxLayout* hbox = new QHBoxLayout();
+      hbox->addWidget(new QLabel("Viewport"));
+      QSpacerItem* item = new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+      hbox->addSpacerItem(item);
+      QVBoxLayout* vbox1 = new QVBoxLayout();
+      {
+        QHBoxLayout* hbox = new QHBoxLayout();
+        hbox->addWidget(new QLabel("Rotation"));
+        QSpacerItem* item = new QSpacerItem(
+            20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        hbox->addSpacerItem(item);
+        hbox1->addWidget(new QLabel("X"));
+        hbox1->addWidget(CameraPanel->view_x);
+        hbox1->addWidget(new QLabel(" Y"));
+        hbox1->addWidget(CameraPanel->view_y);
+        vbox1->addItem(hbox);
+      }
+      {
+        QHBoxLayout* hbox1 = new QHBoxLayout();
+        hbox1->addWidget(new QLabel("W"));
+        hbox1->addWidget(CameraPanel->view_w);
+        hbox1->addWidget(new QLabel("H"));
+        hbox1->addWidget(CameraPanel->view_h);
+        vbox1->addItem(hbox1);
+      }
+      hbox->addItem(vbox1);
+      vbox->addItem(hbox);
+    }
+    QWidget* QW = new QWidget();
+    QW->setLayout(vbox);
+    Properties->addItem(new ToolItem("Camera", QW));
+    Properties->hideItem(1);
+  }
+
+  {
+    QWidget* QW = new QWidget();
+    Properties->addItem(new ToolItem("Light", QW));
+    Properties->hideItem(2);
+  }
+  {
+    QWidget* QW = new QWidget();
+    Properties->addItem(new ToolItem("Object3D", QW));
+    Properties->hideItem(3);
+  }
 
   Tree = new QTreeWidget();
   VLayout->addWidget(Tree);
@@ -80,7 +154,7 @@ ObjectInspector::ObjectInspector(const QString& title,
     VLayout->addLayout(hbox);
   }
 
-  VLayout->addWidget(Properties);
+  VLayout->addWidget(QA);
   QWidget* QW = new QWidget();
   QW->setLayout(VLayout);
   setWidget(QW);
@@ -136,6 +210,18 @@ void ObjectInspector::setCurrentObject(const std::string& Name) {
     return;
     std::cout << "CurrentObject is Empty" << std::endl;
   }
+  Properties->hideAll();
+  Properties->showItem(0);
+  if (CurrentObject->getType() == rg::GLObject::CAMERA) {
+    Properties->showItem(1);
+  }
+  if (CurrentObject->getType() == rg::GLObject::LIGHT) {
+    Properties->showItem(2);
+  }
+  if (CurrentObject->getType() == rg::GLObject::OBJECT3D) {
+    Properties->showItem(3);
+  }
+
   ObjectName->setText(QString::fromStdString(CurrentObject->getName()));
   PosX->setText(QString::number(CurrentObject->pos.x));
   PosY->setText(QString::number(CurrentObject->pos.y));

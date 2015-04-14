@@ -28,7 +28,7 @@ HEADERS  += mainwindow.h \
     gl/rgglobject.h \
     gl/rgglobject3d.h \
     scene.h \
-    treeiterator.h
+    cameraeditpanel.h
 
 INCLUDEPATH += C:\dev\research\external\vs\glm
 

@@ -9,10 +9,8 @@ namespace rg {
 struct GLCamera : public GLObject {
 public:
   GLCamera(const std::string& Name, GLObject* Parent = nullptr)
-      : GLObject(Name, CAMERA, Parent), center(0, 0, 0), up(0, 0, 1) {}
+      : GLObject(Name, CAMERA, Parent) {}
 
-  glm::vec3 center;
-  glm::vec3 up;
   size_t projection;
   float fov;
   float near;

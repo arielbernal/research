@@ -4,10 +4,13 @@
 #include <QWidget>
 #include <QDockWidget>
 #include <QLineEdit>
+#include <QTreeWidget>
 #include <toolbox.h>
 #include <vallineedit.h>
 #include <scene.h>
-#include <QTreeWidget>
+#include <cameraeditpanel.h>
+
+
 
 class ObjectInspector : public QDockWidget {
   Q_OBJECT
@@ -18,15 +21,17 @@ class ObjectInspector : public QDockWidget {
   ~ObjectInspector();
 
   void setScene(rg::Scene* S);
-  void addTreeItems(rg::GLObject* ParentObject, QTreeWidget* Tree, QTreeWidgetItem* ParentItem, int level);
-
+  void addTreeItems(rg::GLObject* ParentObject,
+                    QTreeWidget* Tree,
+                    QTreeWidgetItem* ParentItem,
+                    int level);
 
   void setCurrentObject(const std::string& Name);
 
   rg::Scene* Scene;
   rg::GLObject* CurrentObject;
 
-  QTreeWidget *Tree;
+  QTreeWidget* Tree;
   ToolBox* Properties;
 
   // ObjectName
@@ -36,8 +41,7 @@ class ObjectInspector : public QDockWidget {
   EditDouble* RotX, *RotY, *RotZ;
   EditDouble* ScaX, *ScaY, *ScaZ;
 
-
-
+  CameraEditPanel* CameraPanel;
 
  public slots:
   void changeName();
@@ -50,7 +54,7 @@ class ObjectInspector : public QDockWidget {
   void changeScaX();
   void changeScaY();
   void changeScaZ();
-  void treeItemSelected(QTreeWidgetItem* QItem,int column);
+  void treeItemSelected(QTreeWidgetItem* QItem, int column);
   void treeItemSelected();
 };
 

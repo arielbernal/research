@@ -1,8 +1,8 @@
 #ifndef VALLINEEDIT_H
 #define VALLINEEDIT_H
 
-#include <QDoubleValidator>
 #include <QLineEdit>
+#include <QDoubleValidator>
 
 class EditDouble : public QLineEdit {
  public:
@@ -13,6 +13,16 @@ class EditDouble : public QLineEdit {
     QDoubleValidator* DV = new QDoubleValidator();
     DV->setDecimals(decimals);
     setValidator(DV);
+  }
+};
+
+
+class EditInteger : public QLineEdit {
+ public:
+  EditInteger(int width, QWidget* parent = 0)
+      : QLineEdit(parent) {
+    setFixedWidth(width);
+    setAlignment(Qt::AlignRight);
   }
 };
 
