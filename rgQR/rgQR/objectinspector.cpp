@@ -78,58 +78,7 @@ ObjectInspector::ObjectInspector(const QString& title,
   // CameraPanel
   {
     CameraPanel = new CameraEditPanel(70);
-    QVBoxLayout* vbox = new QVBoxLayout();
-    {
-      QHBoxLayout* hbox = new QHBoxLayout();
-      hbox->addWidget(new QLabel("Projection"));
-      QSpacerItem* item = new QSpacerItem(
-          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
-      hbox->addWidget(new QComboBox());
-      vbox->addItem(hbox);
-    }
-    {
-      QHBoxLayout* hbox = new QHBoxLayout();
-      hbox->addWidget(new QLabel("Field of View"));
-      QSpacerItem* item = new QSpacerItem(
-          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
-      hbox->addWidget(CameraPanel->fov);
-      vbox->addItem(hbox);
-    }
-    {
-      QHBoxLayout* hbox = new QHBoxLayout();
-      hbox->addWidget(new QLabel("Viewport"));
-      QSpacerItem* item = new QSpacerItem(
-          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
-      QVBoxLayout* vbox1 = new QVBoxLayout();
-      {
-        QHBoxLayout* hbox = new QHBoxLayout();
-        hbox->addWidget(new QLabel("Rotation"));
-        QSpacerItem* item = new QSpacerItem(
-            20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-        hbox->addSpacerItem(item);
-        hbox1->addWidget(new QLabel("X"));
-        hbox1->addWidget(CameraPanel->view_x);
-        hbox1->addWidget(new QLabel(" Y"));
-        hbox1->addWidget(CameraPanel->view_y);
-        vbox1->addItem(hbox);
-      }
-      {
-        QHBoxLayout* hbox1 = new QHBoxLayout();
-        hbox1->addWidget(new QLabel("W"));
-        hbox1->addWidget(CameraPanel->view_w);
-        hbox1->addWidget(new QLabel("H"));
-        hbox1->addWidget(CameraPanel->view_h);
-        vbox1->addItem(hbox1);
-      }
-      hbox->addItem(vbox1);
-      vbox->addItem(hbox);
-    }
-    QWidget* QW = new QWidget();
-    QW->setLayout(vbox);
-    Properties->addItem(new ToolItem("Camera", QW));
+    Properties->addItem(new ToolItem("Camera", CameraPanel->Widget));
     Properties->hideItem(1);
   }
 
