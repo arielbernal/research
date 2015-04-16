@@ -25,6 +25,10 @@ struct CameraEditPanel {
   EditDouble* view_h;
 
   void create() {
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+
     QVBoxLayout* vbox = new QVBoxLayout();
     {
       QHBoxLayout* hbox = new QHBoxLayout();
@@ -37,6 +41,7 @@ struct CameraEditPanel {
       hbox->addWidget(QB);
       vbox->addItem(hbox);
     }
+    vbox->addWidget(line);
     {
       QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Field of View"));
@@ -45,32 +50,64 @@ struct CameraEditPanel {
       hbox->addWidget(fov);
       vbox->addItem(hbox);
     }
+    vbox->addWidget(line);
+    {
+      QHBoxLayout* hbox = new QHBoxLayout();
+      hbox->addWidget(new QLabel("Clipping Planes"));
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+      hbox->addSpacerItem(
+          new QSpacerItem(2, 1, QSizePolicy::Fixed, QSizePolicy::Fixed));
+      {
+        QVBoxLayout* vbox1 = new QVBoxLayout();
+        {
+          QHBoxLayout* hbox1 = new QHBoxLayout();
+          hbox1->addWidget(new QLabel("Near "));
+          hbox1->addWidget(near);
+          vbox1->addItem(hbox1);
+        }
+        vbox1->addSpacerItem(new QSpacerItem(
+            1, 5, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+        {
+          QHBoxLayout* hbox1 = new QHBoxLayout();
+          hbox1->addWidget(new QLabel("Far"));
+          hbox1->addWidget(far);
+          vbox1->addItem(hbox1);
+        }
+        hbox->addItem(vbox1);
+      }
+      vbox->addItem(hbox);
+    }
+    vbox->addWidget(line);
     {
       QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Viewport"));
       hbox->addSpacerItem(new QSpacerItem(
           20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-      QVBoxLayout* vbox1 = new QVBoxLayout();
+      hbox->addSpacerItem(
+          new QSpacerItem(2, 1, QSizePolicy::Fixed, QSizePolicy::Fixed));
       {
-        QHBoxLayout* hbox = new QHBoxLayout();
-        hbox->addWidget(new QLabel("Rotation"));
-        hbox->addSpacerItem(new QSpacerItem(
-            20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-        hbox->addWidget(new QLabel("X"));
-        hbox->addWidget(view_x);
-        hbox->addWidget(new QLabel(" Y"));
-        hbox->addWidget(view_y);
-        vbox1->addItem(hbox);
+        QVBoxLayout* vbox1 = new QVBoxLayout();
+        {
+          QHBoxLayout* hbox1 = new QHBoxLayout();
+          hbox1->addWidget(new QLabel("X "));
+          hbox1->addWidget(view_x);
+          hbox1->addWidget(new QLabel(" Y"));
+          hbox1->addWidget(view_y);
+          vbox1->addItem(hbox1);
+        }
+        vbox1->addSpacerItem(new QSpacerItem(
+            1, 5, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+        {
+          QHBoxLayout* hbox1 = new QHBoxLayout();
+          hbox1->addWidget(new QLabel("W"));
+          hbox1->addWidget(view_w);
+          hbox1->addWidget(new QLabel("H"));
+          hbox1->addWidget(view_h);
+          vbox1->addItem(hbox1);
+        }
+        hbox->addItem(vbox1);
       }
-      {
-        QHBoxLayout* hbox1 = new QHBoxLayout();
-        hbox1->addWidget(new QLabel("W"));
-        hbox1->addWidget(view_w);
-        hbox1->addWidget(new QLabel("H"));
-        hbox1->addWidget(view_h);
-        vbox1->addItem(hbox1);
-      }
-      hbox->addItem(vbox1);
       vbox->addItem(hbox);
     }
     Widget = new QWidget();

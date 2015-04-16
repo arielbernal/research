@@ -45,9 +45,8 @@ ObjectInspector::ObjectInspector(const QString& title,
     {
       QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Rotation"));
-      QSpacerItem* item = new QSpacerItem(
-          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
       hbox->addWidget(new QLabel("X"));
       hbox->addWidget(RotX);
       hbox->addWidget(new QLabel(" Y"));
@@ -59,9 +58,8 @@ ObjectInspector::ObjectInspector(const QString& title,
     {
       QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Scale"));
-      QSpacerItem* item = new QSpacerItem(
-          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
       hbox->addWidget(new QLabel("X"));
       hbox->addWidget(ScaX);
       hbox->addWidget(new QLabel(" Y"));
