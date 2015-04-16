@@ -77,7 +77,7 @@ ObjectInspector::ObjectInspector(const QString& title,
 
   // CameraPanel
   {
-    CameraPanel = new CameraEditPanel(70);
+    CameraPanel = new CameraEditPanel();
     Properties->addItem(new ToolItem("Camera", CameraPanel->Widget));
     Properties->hideItem(1);
   }

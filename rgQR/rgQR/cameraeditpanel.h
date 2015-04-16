@@ -5,58 +5,57 @@
 #include <QComboBox>
 
 struct CameraEditPanel {
-  CameraEditPanel(int width)
-      : fov(new EditDouble(width)), near(new EditDouble(width)),
-        far(new EditDouble(width)), view_x(new EditDouble(width)),
-        view_y(new EditDouble(width)), view_w(new EditDouble(width)),
-        view_h(new EditDouble(width)) {
+  CameraEditPanel()
+      : fov(new EditDouble(100)),
+        near(new EditDouble(100)),
+        far(new EditDouble(100)),
+        view_x(new EditDouble(100)),
+        view_y(new EditDouble(100)),
+        view_w(new EditDouble(100)),
+        view_h(new EditDouble(100)) {
     create();
   }
   size_t projection;
-  EditDouble *fov;
-  EditDouble *near;
-  EditDouble *far;
-  EditDouble *view_x;
-  EditDouble *view_y;
-  EditDouble *view_w;
-  EditDouble *view_h;
+  EditDouble* fov;
+  EditDouble* near;
+  EditDouble* far;
+  EditDouble* view_x;
+  EditDouble* view_y;
+  EditDouble* view_w;
+  EditDouble* view_h;
 
   void create() {
-    QVBoxLayout *vbox = new QVBoxLayout();
+    QVBoxLayout* vbox = new QVBoxLayout();
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Projection"));
-      QSpacerItem *item = new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
-      QComboBox *QB = new QComboBox();
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+      QComboBox* QB = new QComboBox();
       QB->addItem("Orthographic");
       QB->addItem("Perspective");
       hbox->addWidget(QB);
       vbox->addItem(hbox);
     }
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Field of View"));
-      QSpacerItem *item = new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
       hbox->addWidget(fov);
       vbox->addItem(hbox);
     }
     {
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout* hbox = new QHBoxLayout();
       hbox->addWidget(new QLabel("Viewport"));
-      QSpacerItem *item = new QSpacerItem(20, 1, QSizePolicy::MinimumExpanding,
-                                          QSizePolicy::Fixed);
-      hbox->addSpacerItem(item);
-      QVBoxLayout *vbox1 = new QVBoxLayout();
+      hbox->addSpacerItem(new QSpacerItem(
+          20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+      QVBoxLayout* vbox1 = new QVBoxLayout();
       {
-        QHBoxLayout *hbox = new QHBoxLayout();
+        QHBoxLayout* hbox = new QHBoxLayout();
         hbox->addWidget(new QLabel("Rotation"));
-        QSpacerItem *item = new QSpacerItem(
-            20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-        hbox->addSpacerItem(item);
+        hbox->addSpacerItem(new QSpacerItem(
+            20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
         hbox->addWidget(new QLabel("X"));
         hbox->addWidget(view_x);
         hbox->addWidget(new QLabel(" Y"));
@@ -64,7 +63,7 @@ struct CameraEditPanel {
         vbox1->addItem(hbox);
       }
       {
-        QHBoxLayout *hbox1 = new QHBoxLayout();
+        QHBoxLayout* hbox1 = new QHBoxLayout();
         hbox1->addWidget(new QLabel("W"));
         hbox1->addWidget(view_w);
         hbox1->addWidget(new QLabel("H"));
@@ -78,7 +77,7 @@ struct CameraEditPanel {
     Widget->setLayout(vbox);
   }
 
-  QWidget *Widget;
+  QWidget* Widget;
 };
 
-#endif // CAMERAEDITPANEL_H
+#endif  // CAMERAEDITPANEL_H
