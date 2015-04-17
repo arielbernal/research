@@ -50,13 +50,17 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../rgQR/main.cpp \
 		../rgQR/mainwindow.cpp \
-		../rgQR/objectinspector.cpp moc_mainwindow.cpp \
-		moc_objectinspector.cpp
+		../rgQR/objectinspector.cpp \
+		../rgQR/cameraeditpanel.cpp moc_mainwindow.cpp \
+		moc_objectinspector.cpp \
+		moc_cameraeditpanel.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		objectinspector.o \
+		cameraeditpanel.o \
 		moc_mainwindow.o \
-		moc_objectinspector.o
+		moc_objectinspector.o \
+		moc_cameraeditpanel.o
 DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spec_pre.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/common/shell-unix.conf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/common/unix.conf \
@@ -185,7 +189,8 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		../rgQR/scene.h \
 		../rgQR/cameraeditpanel.h ../rgQR/main.cpp \
 		../rgQR/mainwindow.cpp \
-		../rgQR/objectinspector.cpp
+		../rgQR/objectinspector.cpp \
+		../rgQR/cameraeditpanel.cpp
 QMAKE_TARGET  = rgQR
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = rgQR
@@ -470,7 +475,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/mainwindow.h ../rgQR/toolbox.h ../rgQR/toolitem.h ../rgQR/objectinspector.h ../rgQR/vallineedit.h ../rgQR/gl/rgglcamera.h ../rgQR/gl/rgglcuboid.h ../rgQR/gl/rgglheaders.h ../rgQR/gl/rggllight.h ../rgQR/gl/rgglobject.h ../rgQR/gl/rgglobject3d.h ../rgQR/scene.h ../rgQR/cameraeditpanel.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgQR/main.cpp ../rgQR/mainwindow.cpp ../rgQR/objectinspector.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgQR/main.cpp ../rgQR/mainwindow.cpp ../rgQR/objectinspector.cpp ../rgQR/cameraeditpanel.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgQR/mainwindow.ui $(DISTDIR)/
 
 
@@ -494,9 +499,9 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_objectinspector.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_objectinspector.cpp moc_cameraeditpanel.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_objectinspector.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_objectinspector.cpp moc_cameraeditpanel.cpp
 moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMainWindow \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
@@ -652,6 +657,7 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		../rgQR/cameraeditpanel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
 		../rgQR/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/mainwindow.h -o moc_mainwindow.cpp
 
@@ -807,8 +813,141 @@ moc_objectinspector.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtW
 		../rgQR/cameraeditpanel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
 		../rgQR/objectinspector.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/objectinspector.h -o moc_objectinspector.cpp
+
+moc_cameraeditpanel.cpp: ../rgQR/vallineedit.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QLineEdit \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlineedit.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qconfig.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfeatures.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypetraits.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsysinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlogging.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qflags.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv7.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv6.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv5.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_ia64.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_mips.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_x86.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_gcc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_unix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmutex.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnumeric.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnamespace.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstring.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qchar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrefcount.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qarraydata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qalgorithms.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmetatype.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qisenum.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmargins.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpaintdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrect.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsize.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpoint.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpalette.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcolor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qrgb.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatastream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiodevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpair.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregexp.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qbrush.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvector.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qmatrix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpolygon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qregion.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qline.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtransform.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpainterpath.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qimage.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixelformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qshareddata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qhash.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfont.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontmetrics.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qkeysequence.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvariant.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdebug.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtextstream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlocale.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qset.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontiguouscache.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurlquery.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfile.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpen.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h \
+		../rgQR/cameraeditpanel.h
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgQR/rgQR -I'/home/ajbernal/dev/bat/research/rgQR/rgQR/C:\dev\research\external\vs\glm' -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgQR/cameraeditpanel.h -o moc_cameraeditpanel.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -984,6 +1123,7 @@ main.o: ../rgQR/main.cpp ../rgQR/mainwindow.h \
 		../rgQR/cameraeditpanel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1149,7 +1289,28 @@ mainwindow.o: ../rgQR/mainwindow.cpp ../rgQR/mainwindow.h \
 		../rgQR/cameraeditpanel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
-		ui_mainwindow.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
+		ui_mainwindow.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qaction.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qactiongroup.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qeventloop.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qguiapplication.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QButtonGroup \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qbuttongroup.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMenuBar \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenubar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenu.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QStatusBar \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstatusbar.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../rgQR/mainwindow.cpp
 
 objectinspector.o: ../rgQR/objectinspector.cpp ../rgQR/objectinspector.h \
@@ -1305,6 +1466,7 @@ objectinspector.o: ../rgQR/objectinspector.cpp ../rgQR/objectinspector.h \
 		../rgQR/cameraeditpanel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmessagebox.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
@@ -1312,11 +1474,146 @@ objectinspector.o: ../rgQR/objectinspector.cpp ../rgQR/objectinspector.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qscrollarea.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o objectinspector.o ../rgQR/objectinspector.cpp
 
+cameraeditpanel.o: ../rgQR/cameraeditpanel.cpp ../rgQR/cameraeditpanel.h \
+		../rgQR/vallineedit.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QLineEdit \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlineedit.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qconfig.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfeatures.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypetraits.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsysinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlogging.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qflags.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv7.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv6.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv5.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_ia64.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_mips.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_x86.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_gcc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_unix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmutex.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnumeric.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnamespace.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstring.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qchar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrefcount.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qarraydata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qalgorithms.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmetatype.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qisenum.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmargins.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpaintdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrect.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsize.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpoint.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpalette.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcolor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qrgb.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatastream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiodevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpair.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregexp.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qbrush.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvector.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qmatrix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpolygon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qregion.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qline.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtransform.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpainterpath.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qimage.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixelformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qshareddata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qhash.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfont.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontmetrics.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qkeysequence.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvariant.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdebug.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtextstream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlocale.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qset.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontiguouscache.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurlquery.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfile.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpen.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QDoubleValidator \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QObject \
+		../rgQR/gl/rgglcamera.h \
+		../rgQR/gl/rgglheaders.h \
+		../rgQR/gl/rgglobject.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cameraeditpanel.o ../rgQR/cameraeditpanel.cpp
+
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
 moc_objectinspector.o: moc_objectinspector.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_objectinspector.o moc_objectinspector.cpp
+
+moc_cameraeditpanel.o: moc_cameraeditpanel.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_cameraeditpanel.o moc_cameraeditpanel.cpp
 
 ####### Install
 

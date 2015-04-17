@@ -14,7 +14,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    objectinspector.cpp
+    objectinspector.cpp \
+    cameraeditpanel.cpp
 
 HEADERS  += mainwindow.h \
     toolbox.h \

@@ -76,7 +76,7 @@ ObjectInspector::ObjectInspector(const QString& title,
   // CameraPanel
   {
     CameraPanel = new CameraEditPanel();
-    Properties->addItem(new ToolItem("Camera", CameraPanel->Widget));
+    Properties->addItem(new ToolItem("Camera", CameraPanel));
     Properties->hideItem(1);
   }
 
@@ -160,6 +160,7 @@ void ObjectInspector::setCurrentObject(const std::string& Name) {
   Properties->hideAll();
   Properties->showItem(0);
   if (CurrentObject->getType() == rg::GLObject::CAMERA) {
+    CameraPanel->setCurrentObject(CurrentObject);
     Properties->showItem(1);
   }
   if (CurrentObject->getType() == rg::GLObject::LIGHT) {

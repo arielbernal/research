@@ -7,9 +7,16 @@
 namespace rg {
 
 struct GLCamera : public GLObject {
-public:
+ public:
   GLCamera(const std::string& Name, GLObject* Parent = nullptr)
-      : GLObject(Name, CAMERA, Parent) {}
+      : GLObject(Name, CAMERA, Parent),
+        fov(0),
+        near(0),
+        far(0),
+        view_x(0),
+        view_y(0),
+        view_w(0),
+        view_h(0) {}
 
   size_t projection;
   float fov;
@@ -21,6 +28,6 @@ public:
   float view_h;
 };
 
-} // namespace rg
+}  // namespace rg
 
-#endif // RGGLCAMERA_H
+#endif  // RGGLCAMERA_H
