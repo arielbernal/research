@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget* parent)
   Scene = new rg::Scene();
   Scene->addCamera("Main Camera");
   Scene->addLight("Light01");
+  Scene->addLight("Light02");
   Scene->addCamera("Second Camera");
   Scene->addObject3D("Cube01", rg::GLObject3D::CUBOID);
   Scene->addObject3D("Cube02", rg::GLObject3D::CUBOID, "Cube01");

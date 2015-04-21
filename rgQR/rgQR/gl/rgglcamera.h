@@ -8,8 +8,10 @@ namespace rg {
 
 struct GLCamera : public GLObject {
  public:
+  enum { ORTHOGRAPHIC, PERSPECTIVE };
   GLCamera(const std::string& Name, GLObject* Parent = nullptr)
       : GLObject(Name, CAMERA, Parent),
+        projection(PERSPECTIVE),
         fov(0),
         near(0),
         far(0),

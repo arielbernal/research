@@ -2,6 +2,7 @@
 #include <QComboBox>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <qformline.h>
 #include <gl/rgglcamera.h>
 
 CameraEditPanel::CameraEditPanel()
@@ -13,23 +14,18 @@ CameraEditPanel::CameraEditPanel()
       view_w(new EditDouble(100)),
       view_h(new EditDouble(100)) {
 
-  QObject::connect(fov, SIGNAL(editingFinished()), this, SLOT(changeFov()));
-
   QVBoxLayout* vbox = new QVBoxLayout();
   {
     QHBoxLayout* hbox = new QHBoxLayout();
     hbox->addWidget(new QLabel("Projection"));
     hbox->addSpacerItem(new QSpacerItem(
         20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-    QComboBox* QB = new QComboBox();
-    QB->addItem("Orthographic");
-    QB->addItem("Perspective");
-    hbox->addWidget(QB);
+    projection = new QComboBox();
+    projection->addItem("Orthographic");
+    projection->addItem("Perspective");
+    hbox->addWidget(projection);
     vbox->addItem(hbox);
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-    vbox->addWidget(line);
+    vbox->addWidget(new QFormLine());
   }
   {
     QHBoxLayout* hbox = new QHBoxLayout();
@@ -38,10 +34,7 @@ CameraEditPanel::CameraEditPanel()
         20, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
     hbox->addWidget(fov);
     vbox->addItem(hbox);
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-    vbox->addWidget(line);
+    vbox->addWidget(new QFormLine());
   }
   {
     QHBoxLayout* hbox = new QHBoxLayout();
@@ -69,10 +62,7 @@ CameraEditPanel::CameraEditPanel()
       hbox->addItem(vbox1);
     }
     vbox->addItem(hbox);
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-    vbox->addWidget(line);
+    vbox->addWidget(new QFormLine());
   }
   {
     QHBoxLayout* hbox = new QHBoxLayout();
@@ -106,16 +96,72 @@ CameraEditPanel::CameraEditPanel()
     vbox->addItem(hbox);
   }
   setLayout(vbox);
+
+  QObject::connect(projection,
+                   SIGNAL(currentIndexChanged(int)),
+                   this,
+                   SLOT(changeProjection(int)));
+  QObject::connect(fov, SIGNAL(editingFinished()), this, SLOT(changeFov()));
+  QObject::connect(far, SIGNAL(editingFinished()), this, SLOT(changeFar()));
+  QObject::connect(near, SIGNAL(editingFinished()), this, SLOT(changeNear()));
+  QObject::connect(
+      view_x, SIGNAL(editingFinished()), this, SLOT(changeViewX()));
+  QObject::connect(
+      view_y, SIGNAL(editingFinished()), this, SLOT(changeViewY()));
+  QObject::connect(
+      view_w, SIGNAL(editingFinished()), this, SLOT(changeViewW()));
+  QObject::connect(
+      view_h, SIGNAL(editingFinished()), this, SLOT(changeViewH()));
 }
 
 void CameraEditPanel::setCurrentObject(rg::GLObject* O) {
-  std::cout << "Type = " << O->getName() << std::endl;
   CurrentObject = static_cast<rg::GLCamera*>(O);
+  projection->setCurrentIndex(CurrentObject->projection);
   fov->setText(QString::number(CurrentObject->fov));
+  near->setText(QString::number(CurrentObject->near));
+  far->setText(QString::number(CurrentObject->far));
+  view_x->setText(QString::number(CurrentObject->view_x));
+  view_y->setText(QString::number(CurrentObject->view_y));
+  view_w->setText(QString::number(CurrentObject->view_w));
+  view_h->setText(QString::number(CurrentObject->view_h));
+}
+
+void CameraEditPanel::changeProjection(int index) {
+  if (CurrentObject)
+    CurrentObject->projection = index;
 }
 
 void CameraEditPanel::changeFov() {
-  std::cout << fov->text().toStdString() << std::endl;
   if (CurrentObject)
     CurrentObject->fov = fov->text().toFloat();
+}
+
+void CameraEditPanel::changeNear() {
+  if (CurrentObject)
+    CurrentObject->near = near->text().toFloat();
+}
+
+void CameraEditPanel::changeFar() {
+  if (CurrentObject)
+    CurrentObject->far = far->text().toFloat();
+}
+
+void CameraEditPanel::changeViewX() {
+  if (CurrentObject)
+    CurrentObject->view_x = view_x->text().toFloat();
+}
+
+void CameraEditPanel::changeViewY() {
+  if (CurrentObject)
+    CurrentObject->view_y = view_y->text().toFloat();
+}
+
+void CameraEditPanel::changeViewW() {
+  if (CurrentObject)
+    CurrentObject->view_w = view_w->text().toFloat();
+}
+
+void CameraEditPanel::changeViewH() {
+  if (CurrentObject)
+    CurrentObject->view_h = view_h->text().toFloat();
 }

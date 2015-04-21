@@ -81,8 +81,8 @@ ObjectInspector::ObjectInspector(const QString& title,
   }
 
   {
-    QWidget* QW = new QWidget();
-    Properties->addItem(new ToolItem("Light", QW));
+    LightPanel = new LightEditPanel();
+    Properties->addItem(new ToolItem("Light", LightPanel));
     Properties->hideItem(2);
   }
   {
@@ -164,6 +164,7 @@ void ObjectInspector::setCurrentObject(const std::string& Name) {
     Properties->showItem(1);
   }
   if (CurrentObject->getType() == rg::GLObject::LIGHT) {
+    LightPanel->setCurrentObject(CurrentObject);
     Properties->showItem(2);
   }
   if (CurrentObject->getType() == rg::GLObject::OBJECT3D) {

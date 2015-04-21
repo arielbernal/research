@@ -9,6 +9,7 @@
 #include <vallineedit.h>
 #include <scene.h>
 #include <cameraeditpanel.h>
+#include <lighteditpanel.h>
 
 
 
@@ -42,6 +43,7 @@ class ObjectInspector : public QDockWidget {
   EditDouble* ScaX, *ScaY, *ScaZ;
 
   CameraEditPanel* CameraPanel;
+  LightEditPanel* LightPanel;
 
  public slots:
   void changeName();

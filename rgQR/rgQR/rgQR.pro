@@ -15,7 +15,9 @@ CONFIG += c++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     objectinspector.cpp \
-    cameraeditpanel.cpp
+    cameraeditpanel.cpp \
+    lighteditpanel.cpp \
+    qformline.cpp
 
 HEADERS  += mainwindow.h \
     toolbox.h \
@@ -29,7 +31,9 @@ HEADERS  += mainwindow.h \
     gl/rgglobject.h \
     gl/rgglobject3d.h \
     scene.h \
-    cameraeditpanel.h
+    cameraeditpanel.h \
+    lighteditpanel.h \
+    qformline.h
 
 INCLUDEPATH += C:\dev\research\external\vs\glm
 
