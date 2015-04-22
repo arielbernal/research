@@ -34,8 +34,6 @@ struct GLLight : public GLObject {
   float Ab; // Linear Attenuation
   float Aa; // Quadratic Attenuation
 
-  size_t getLightType() { return LightType; }
-
   std::string getLightTypeString() {
     switch (LightType) {
       case DIRECTIONAL:
