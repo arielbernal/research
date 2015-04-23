@@ -1,16 +1,26 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-04-22T16:13:58
+# Project created by QtCreator 2015-04-23T10:23:16
 #
 #-------------------------------------------------
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT       += widgets serialport
-} else {
-    include($$QTSERIALPORT_PROJECT_ROOT/src/serialport/qt4support/serialport.prf)
-}
 
-TARGET = enumerator
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport
+
+TARGET = rgSerial
 TEMPLATE = app
 
-SOURCES += \
-    main.cpp
+
+SOURCES += main.cpp\
+        mainwindow.cpp \
+    settingsdialog.cpp
+
+HEADERS  += mainwindow.h \
+    settingsdialog.h
+
+FORMS    += mainwindow.ui \
+    settingsdialog.ui
+
+RESOURCES += \
+    icons.qrc
