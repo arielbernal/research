@@ -12,14 +12,18 @@ class MainWindow;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
-public:
-  explicit MainWindow(QWidget *parent = 0);
+ public:
+  explicit MainWindow(QWidget* parent = 0);
   ~MainWindow();
+ public slots:
+  void GLWidgetInitialized();
+private slots:
+  void GLDrawScene();
 
-private:
-  Ui::MainWindow *ui;
-  ObjectInspector *objectInspector;
-  rg::Scene *Scene;
+ private:
+  Ui::MainWindow* ui;
+  ObjectInspector* objectInspector;
+  rg::Scene* Scene;
 };
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

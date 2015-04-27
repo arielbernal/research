@@ -16,8 +16,10 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
+#include "glwidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -25,6 +27,8 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
+    GLWidget *glScene;
+    QPushButton *pushButton;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
 
@@ -32,13 +36,19 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(842, 584);
+        MainWindow->resize(1041, 807);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        glScene = new GLWidget(centralWidget);
+        glScene->setObjectName(QStringLiteral("glScene"));
+        glScene->setGeometry(QRect(130, 90, 511, 551));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(0, 310, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 842, 25));
+        menuBar->setGeometry(QRect(0, 0, 1041, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -52,6 +62,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
     } // retranslateUi
 
 };

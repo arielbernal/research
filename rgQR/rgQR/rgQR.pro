@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     objectinspector.cpp \
     cameraeditpanel.cpp \
     lighteditpanel.cpp \
-    qformline.cpp
+    qformline.cpp \
+    glwidget.cpp
 
 HEADERS  += mainwindow.h \
     toolbox.h \
@@ -33,8 +34,17 @@ HEADERS  += mainwindow.h \
     scene.h \
     cameraeditpanel.h \
     lighteditpanel.h \
-    qformline.h
+    qformline.h \
+    glwidget.h
 
-INCLUDEPATH += C:\dev\research\external\vs\glm
+
+win32 {
+  INCLUDEPATH += C:\dev\research\external\vs\glew-1.12.0\include
+  INCLUDEPATH += C:\dev\research\external\vs\glm
+  LIBS += -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64 -lglew32s
+} else {
+  LIBS += -lGLEW -lGL
+}
+
 
 FORMS    += mainwindow.ui
