@@ -4,7 +4,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
 
   ui->setupUi(this);
@@ -19,17 +19,16 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionConfiguration, SIGNAL(triggered()), settings, SLOT(show()));
   connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort()));
-  connect(
-      ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
+  connect(ui->actionDisconnect, SIGNAL(triggered()), this,
+          SLOT(closeSerialPort()));
   connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-  connect(serial,
-          SIGNAL(error(QSerialPort::SerialPortError)),
-          this,
+  connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
           SLOT(handleError(QSerialPort::SerialPortError)));
   connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 
   connect(ui->pushButton, SIGNAL(pressed()), this, SLOT(writeSomedata()));
+  connect(ui->pushButton_2, SIGNAL(pressed()), this, SLOT(pushButton2()));
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -60,7 +59,7 @@ void MainWindow::openSerialPort() {
   }
 }
 
-void MainWindow::writeData(const QByteArray& data) { serial->write(data); }
+void MainWindow::writeData(const QByteArray &data) { serial->write(data); }
 
 void MainWindow::readData() {
   QByteArray data = serial->readAll();
@@ -84,3 +83,5 @@ void MainWindow::closeSerialPort() {
 }
 
 void MainWindow::writeSomedata() { serial->write("1"); }
+
+void MainWindow::pushButton2() { serial->write("2"); }

@@ -42,7 +42,7 @@ class SettingsDialog : public QDialog {
   void apply();
   void checkCustomBaudRatePolicy(int idx);
   void checkCustomDevicePathPolicy(int idx);
-
+  void showEvent(QShowEvent *e);
  private:
   void fillPortsParameters();
   void fillPortsInfo();
