@@ -38,12 +38,24 @@ class Robot {
 
   UltraSonicSensor* getSensor() { return &Sensor; }
 
+  void set2DMode() {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 150, 0, 150);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+  }
+
   void render() {
+    set2DMode();
     glPushMatrix();
-    glTranslatef(0, -0.5, 0);
+    glTranslatef(75, Radius, 0);
     glColor3f(0.5, 0.5, 0.5);
     glp::circle(Radius);
-    glp::draw_axes(.5, .5);
+    glp::draw_axes(Radius, Radius);
+    glColor3f(0.5, 0.2, 0.1);
+    glTranslatef(0, SensorY, 0);
+    glp::circle(Radius / 5);
     glPopMatrix();
   }
 

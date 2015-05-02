@@ -17,17 +17,10 @@ void GLWidget::initializeGL() {
   emit initialized();
 }
 
-void set2DMode(size_t Width, size_t Height) {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluOrtho2D(0, Width, 0, Height);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-}
+
 
 void GLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  set2DMode(Width, Height);
   if (robot) {
     robot->render();
   }

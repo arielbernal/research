@@ -35,7 +35,7 @@ win32 {
   INCLUDEPATH += C:\dev\research\external\vs\glm
   LIBS += -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64 -lglew32s
 } else {
-  LIBS += -lGLEW -lGL
+  LIBS += -lGLEW -lGL -lGLU
 }
 
 
