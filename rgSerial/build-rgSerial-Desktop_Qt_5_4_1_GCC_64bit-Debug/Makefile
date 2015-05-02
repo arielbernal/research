@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I../rgSerial -I. -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore -I. -I. -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/linux-g++
+CXXFLAGS      = -pipe -g -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+INCPATH       = -I../rgSerial -I. -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtOpenGL -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore -I. -I. -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = rgSerial1.0.0
 DISTDIR = /home/ajbernal/dev/bat/research/rgSerial/rgSerial/.tmp/rgSerial1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64 -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lGLEW -L/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -50,15 +50,21 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../rgSerial/main.cpp \
 		../rgSerial/mainwindow.cpp \
-		../rgSerial/settingsdialog.cpp qrc_icons.cpp \
+		../rgSerial/settingsdialog.cpp \
+		../rgSerial/glwidget.cpp \
+		../rgSerial/glprimitives.cpp qrc_icons.cpp \
 		moc_mainwindow.cpp \
-		moc_settingsdialog.cpp
+		moc_settingsdialog.cpp \
+		moc_glwidget.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		settingsdialog.o \
+		glwidget.o \
+		glprimitives.o \
 		qrc_icons.o \
 		moc_mainwindow.o \
-		moc_settingsdialog.o
+		moc_settingsdialog.o \
+		moc_glwidget.o
 DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spec_pre.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/common/shell-unix.conf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/common/unix.conf \
@@ -161,6 +167,7 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_pre.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resolve_config.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_post.prf \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/c++11.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/warn_on.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/qt.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resources.prf \
@@ -173,9 +180,14 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/yacc.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/lex.prf \
 		../rgSerial/rgSerial.pro ../rgSerial/mainwindow.h \
-		../rgSerial/settingsdialog.h ../rgSerial/main.cpp \
+		../rgSerial/settingsdialog.h \
+		../rgSerial/glwidget.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h ../rgSerial/main.cpp \
 		../rgSerial/mainwindow.cpp \
-		../rgSerial/settingsdialog.cpp
+		../rgSerial/settingsdialog.cpp \
+		../rgSerial/glwidget.cpp \
+		../rgSerial/glprimitives.cpp
 QMAKE_TARGET  = rgSerial
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = rgSerial
@@ -308,6 +320,7 @@ Makefile: ../rgSerial/rgSerial.pro /media/ajbernal/SSD1/research/qt/5.4/gcc_64/m
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_pre.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resolve_config.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_post.prf \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/c++11.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/warn_on.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/qt.prf \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resources.prf \
@@ -321,6 +334,7 @@ Makefile: ../rgSerial/rgSerial.pro /media/ajbernal/SSD1/research/qt/5.4/gcc_64/m
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/lex.prf \
 		../rgSerial/rgSerial.pro \
 		../rgSerial/icons.qrc \
+		/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5OpenGL.prl \
 		/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Widgets.prl \
 		/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Gui.prl \
 		/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Core.prl \
@@ -428,6 +442,7 @@ Makefile: ../rgSerial/rgSerial.pro /media/ajbernal/SSD1/research/qt/5.4/gcc_64/m
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_pre.prf:
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resolve_config.prf:
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/default_post.prf:
+/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/c++11.prf:
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/warn_on.prf:
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/qt.prf:
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/resources.prf:
@@ -441,6 +456,7 @@ Makefile: ../rgSerial/rgSerial.pro /media/ajbernal/SSD1/research/qt/5.4/gcc_64/m
 /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/lex.prf:
 ../rgSerial/rgSerial.pro:
 ../rgSerial/icons.qrc:
+/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5OpenGL.prl:
 /home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Widgets.prl:
 /home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Gui.prl:
 /home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib/libQt5Core.prl:
@@ -460,8 +476,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgSerial/icons.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgSerial/mainwindow.h ../rgSerial/settingsdialog.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgSerial/main.cpp ../rgSerial/mainwindow.cpp ../rgSerial/settingsdialog.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgSerial/mainwindow.h ../rgSerial/settingsdialog.h ../rgSerial/glwidget.h ../rgSerial/robot.h ../rgSerial/glprimitivies.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgSerial/main.cpp ../rgSerial/mainwindow.cpp ../rgSerial/settingsdialog.cpp ../rgSerial/glwidget.cpp ../rgSerial/glprimitives.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgSerial/mainwindow.ui ../rgSerial/settingsdialog.ui $(DISTDIR)/
 
 
@@ -504,9 +520,9 @@ qrc_icons.cpp: ../rgSerial/icons.qrc \
 		../rgSerial/icons/bulbOn.png
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/rcc -name icons ../rgSerial/icons.qrc -o qrc_icons.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_settingsdialog.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_settingsdialog.cpp moc_glwidget.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_settingsdialog.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_settingsdialog.cpp moc_glwidget.cpp
 moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMainWindow \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
@@ -618,8 +634,10 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/QSerialPort \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialport.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h \
 		../rgSerial/mainwindow.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgSerial/rgSerial -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgSerial/mainwindow.h -o moc_mainwindow.cpp
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgSerial/rgSerial -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgSerial/mainwindow.h -o moc_mainwindow.cpp
 
 moc_settingsdialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
@@ -728,14 +746,242 @@ moc_settingsdialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWi
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialport.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportglobal.h \
 		../rgSerial/settingsdialog.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgSerial/rgSerial -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgSerial/settingsdialog.h -o moc_settingsdialog.cpp
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgSerial/rgSerial -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgSerial/settingsdialog.h -o moc_settingsdialog.cpp
+
+moc_glwidget.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qconfig.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfeatures.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypetraits.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsysinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlogging.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qflags.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv7.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv6.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv5.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_ia64.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_mips.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_x86.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_gcc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_unix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmutex.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnumeric.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnamespace.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstring.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qchar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrefcount.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qarraydata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qalgorithms.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmetatype.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qisenum.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmargins.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpaintdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrect.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsize.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpoint.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpalette.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcolor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qrgb.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatastream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiodevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpair.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregexp.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qbrush.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvector.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qmatrix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpolygon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qregion.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qline.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtransform.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpainterpath.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qimage.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixelformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qshareddata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qhash.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfont.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontmetrics.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qkeysequence.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvariant.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdebug.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtextstream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlocale.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qset.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontiguouscache.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurlquery.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfile.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QSurfaceFormat \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qsurfaceformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h \
+		../rgSerial/glwidget.h
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgSerial/rgSerial -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgSerial/glwidget.h -o moc_glwidget.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
 compiler_uic_make_all: ui_mainwindow.h ui_settingsdialog.h
 compiler_uic_clean:
 	-$(DEL_FILE) ui_mainwindow.h ui_settingsdialog.h
-ui_mainwindow.h: ../rgSerial/mainwindow.ui
+ui_mainwindow.h: ../rgSerial/mainwindow.ui \
+		../rgSerial/glwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qconfig.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfeatures.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypetraits.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsysinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlogging.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qflags.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv7.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv6.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv5.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_ia64.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_mips.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_x86.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_gcc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_unix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmutex.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnumeric.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnamespace.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstring.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qchar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrefcount.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qarraydata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qalgorithms.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmetatype.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qisenum.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmargins.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpaintdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrect.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsize.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpoint.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpalette.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcolor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qrgb.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatastream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiodevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpair.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregexp.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qbrush.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvector.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qmatrix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpolygon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qregion.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qline.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtransform.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpainterpath.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qimage.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixelformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qshareddata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qhash.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfont.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontmetrics.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qkeysequence.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvariant.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdebug.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtextstream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlocale.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qset.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontiguouscache.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurlquery.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfile.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QSurfaceFormat \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qsurfaceformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/uic ../rgSerial/mainwindow.ui -o ui_mainwindow.h
 
 ui_settingsdialog.h: ../rgSerial/settingsdialog.ui
@@ -863,6 +1109,8 @@ main.o: ../rgSerial/main.cpp ../rgSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/QSerialPort \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialport.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -984,6 +1232,8 @@ mainwindow.o: ../rgSerial/mainwindow.cpp ../rgSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/QSerialPort \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialport.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
@@ -998,8 +1248,13 @@ mainwindow.o: ../rgSerial/mainwindow.cpp ../rgSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QButtonGroup \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QComboBox \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qcombobox.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
@@ -1010,20 +1265,6 @@ mainwindow.o: ../rgSerial/mainwindow.cpp ../rgSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHBoxLayout \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qboxlayout.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayout.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qgridlayout.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QLabel \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlabel.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMenuBar \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenubar.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenu.h \
@@ -1032,9 +1273,26 @@ mainwindow.o: ../rgSerial/mainwindow.cpp ../rgSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractbutton.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QStatusBar \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstatusbar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QTextBrowser \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtextbrowser.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtextedit.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextdocument.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpen.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QToolBar \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtoolbar.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
+		../rgSerial/glwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QSurfaceFormat \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qsurfaceformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportinfo.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
@@ -1208,8 +1466,127 @@ settingsdialog.o: ../rgSerial/settingsdialog.cpp ../rgSerial/settingsdialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextcursor.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextformat.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpen.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextoption.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtextoption.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o settingsdialog.o ../rgSerial/settingsdialog.cpp
+
+glwidget.o: ../rgSerial/glwidget.cpp ../rgSerial/glwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qconfig.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfeatures.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtypetraits.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsysinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlogging.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qflags.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv7.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv6.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_armv5.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_ia64.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_mips.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_x86.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_gcc.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qatomic_unix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmutex.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnumeric.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qnamespace.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstring.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qchar.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrefcount.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qarraydata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qalgorithms.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiterator.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmetatype.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qisenum.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qobject_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmargins.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpaintdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qrect.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsize.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpoint.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpalette.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcolor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qrgb.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringlist.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatastream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qiodevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qpair.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregexp.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qbrush.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvector.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qmatrix.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpolygon.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qregion.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qline.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtransform.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpainterpath.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qimage.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixelformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qpixmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qshareddata.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qhash.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfont.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontmetrics.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qfontinfo.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qcursor.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qkeysequence.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qevent.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qvariant.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qmap.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdebug.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtextstream.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qlocale.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qset.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcontiguouscache.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qurlquery.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfile.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QSurfaceFormat \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qsurfaceformat.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengl.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
+		../rgSerial/robot.h \
+		../rgSerial/glprimitivies.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o ../rgSerial/glwidget.cpp
+
+glprimitives.o: ../rgSerial/glprimitives.cpp ../rgSerial/glprimitivies.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glprimitives.o ../rgSerial/glprimitives.cpp
 
 qrc_icons.o: qrc_icons.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_icons.o qrc_icons.cpp
@@ -1219,6 +1596,9 @@ moc_mainwindow.o: moc_mainwindow.cpp
 
 moc_settingsdialog.o: moc_settingsdialog.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_settingsdialog.o moc_settingsdialog.cpp
+
+moc_glwidget.o: moc_glwidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_glwidget.o moc_glwidget.cpp
 
 ####### Install
 

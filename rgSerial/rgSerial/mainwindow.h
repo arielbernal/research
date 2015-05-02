@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <settingsdialog.h>
+#include <robot.h>
+
 
 namespace Ui {
 class MainWindow;
@@ -22,10 +24,13 @@ class MainWindow : public QMainWindow {
   void handleError(QSerialPort::SerialPortError error);
   void writeSomedata();
   void pushButton2();
+  void pushButton3();
  private:
   Ui::MainWindow* ui;
   SettingsDialog* settings;
   QSerialPort* serial;
+
+  Robot* robot;
 };
 
 #endif  // MAINWINDOW_H

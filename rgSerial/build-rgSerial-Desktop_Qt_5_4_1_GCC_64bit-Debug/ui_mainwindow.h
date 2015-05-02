@@ -21,6 +21,7 @@
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include "glwidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -33,7 +34,10 @@ public:
     QAction *actionExit;
     QWidget *centralWidget;
     QTextBrowser *textConsole;
+    QPushButton *pushButton_2;
     QPushButton *pushButton;
+    GLWidget *glScene;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -68,10 +72,19 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         textConsole = new QTextBrowser(centralWidget);
         textConsole->setObjectName(QStringLiteral("textConsole"));
-        textConsole->setGeometry(QRect(190, 20, 256, 491));
+        textConsole->setGeometry(QRect(10, 80, 256, 461));
+        pushButton_2 = new QPushButton(centralWidget);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setGeometry(QRect(20, 40, 75, 23));
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(20, 80, 99, 27));
+        pushButton->setGeometry(QRect(20, 10, 75, 23));
+        glScene = new GLWidget(centralWidget);
+        glScene->setObjectName(QStringLiteral("glScene"));
+        glScene->setGeometry(QRect(290, 10, 561, 521));
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(110, 10, 75, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -113,7 +126,9 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionExit->setToolTip(QApplication::translate("MainWindow", "Exit", 0));
 #endif // QT_NO_TOOLTIP
-        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Send 1", 0));
+        pushButton_3->setText(QApplication::translate("MainWindow", "Read", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 

@@ -29,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(ui->pushButton, SIGNAL(pressed()), this, SLOT(writeSomedata()));
   connect(ui->pushButton_2, SIGNAL(pressed()), this, SLOT(pushButton2()));
+  connect(ui->pushButton_3, SIGNAL(pressed()), this, SLOT(pushButton3()));
+
+  robot = new Robot(12, 7, 100);
+  ui->glScene->setRobot(robot);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -85,3 +89,10 @@ void MainWindow::closeSerialPort() {
 void MainWindow::writeSomedata() { serial->write("1"); }
 
 void MainWindow::pushButton2() { serial->write("2"); }
+
+void MainWindow::pushButton3() {
+
+
+}
+
+
