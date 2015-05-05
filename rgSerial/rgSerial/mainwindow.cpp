@@ -3,10 +3,12 @@
 
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMessageBox>
+#include <QTime>
 
-MainWindow::MainWindow(QWidget *parent)
+#include <iostream>
+
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
-
   ui->setupUi(this);
   settings = new SettingsDialog;
   serial = new QSerialPort;
@@ -19,11 +21,13 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(ui->actionConfiguration, SIGNAL(triggered()), settings, SLOT(show()));
   connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort()));
-  connect(ui->actionDisconnect, SIGNAL(triggered()), this,
-          SLOT(closeSerialPort()));
+  connect(
+      ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
   connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-  connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
+  connect(serial,
+          SIGNAL(error(QSerialPort::SerialPortError)),
+          this,
           SLOT(handleError(QSerialPort::SerialPortError)));
   connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 
@@ -31,11 +35,14 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->pushButton_2, SIGNAL(pressed()), this, SLOT(pushButton2()));
   connect(ui->pushButton_3, SIGNAL(pressed()), this, SLOT(pushButton3()));
 
-  robot = new Robot(12, 7, 100);
+  robot = new Robot(6, 5, 180);
   ui->glScene->setRobot(robot);
+  receiveData = false;
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+  delete ui;
+}
 
 void MainWindow::openSerialPort() {
   SettingsDialog::Settings p = settings->settings();
@@ -63,11 +70,30 @@ void MainWindow::openSerialPort() {
   }
 }
 
-void MainWindow::writeData(const QByteArray &data) { serial->write(data); }
+void MainWindow::writeData(const QByteArray& data) {
+  serial->write(data);
+}
+
+void MainWindow::delay(int ms) {
+  QTime dieTime = QTime::currentTime().addMSecs(ms);
+  while (QTime::currentTime() < dieTime)
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
 
 void MainWindow::readData() {
-  QByteArray data = serial->readAll();
-  ui->textConsole->insertPlainText(QString(data));
+  if (receiveData) {
+    QByteArray q = serial->readAll();
+    std::cout << "Actual read = " << bytesTotalRead << " Read = " << q.size() << " Total = " << bytesTotalRead + q.size() << std::endl;
+    memcpy(&data[bytesTotalRead], q.data(), q.size());
+    bytesTotalRead += q.size();
+    if (bytesTotalRead >= 180 * 2) {
+      receiveData = false;
+      robot->appendData((uint16_t*)data);
+      ui->glScene->repaint();
+    }
+  } else {
+    QByteArray q = serial->readAll();
+  }
 }
 
 void MainWindow::handleError(QSerialPort::SerialPortError error) {
@@ -86,13 +112,16 @@ void MainWindow::closeSerialPort() {
   ui->statusBar->showMessage(tr("Disconnected"));
 }
 
-void MainWindow::writeSomedata() { serial->write("1"); }
-
-void MainWindow::pushButton2() { serial->write("2"); }
-
-void MainWindow::pushButton3() {
-
-
+void MainWindow::writeSomedata() {
+  serial->write("1");
+  bytesTotalRead = 0;
+  bytesRead = 0;
+  receiveData = true;
 }
 
+void MainWindow::pushButton2() {
+  serial->write("2");
+}
 
+void MainWindow::pushButton3() {
+}

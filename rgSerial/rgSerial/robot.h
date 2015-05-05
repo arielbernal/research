@@ -4,44 +4,42 @@
 #include <GL/glew.h>
 #include <vector>
 #include <glprimitivies.h>
+#include <stdint.h>
+#include <iostream.>
+
+#define M_PI 3.14159265358
 
 struct Point2D {
   Point2D(float x, float y) : x(x), y(y) {}
   float x, y;
 };
 
-class UltraSonicSensor {
- public:
-  UltraSonicSensor(size_t ReadSize) : ReadSize(ReadSize) {}
-
-  Point2D polarToCartesian(float angle, float d) {
-    Point2D p(0, 0);
-    return p;
-  }
-
-  void appendData(float* data) {
-    for (size_t i = 0; i < ReadSize; ++i)
-      Points.push_back(polarToCartesian(i, data[i]));
-  }
-
- private:
-  size_t ReadSize;
-  std::vector<Point2D> Points;
-};
-
 class Robot {
  public:
   Robot(float Radius, float SensorY, size_t ReadSize)
-      : Radius(Radius), SensorY(SensorY), Sensor(ReadSize) {}
+      : Radius(Radius), SensorY(SensorY), ReadSize(ReadSize) {}
 
-  void appendData(float* data) { Sensor.appendData(data); }
+  Point2D polarToCartesian(float angle, float d) {
+    float angleR = angle * M_PI / 180.0f;
+    Point2D p(d * cos(angleR), d * sin(angleR));
+    return p;
+  }
 
-  UltraSonicSensor* getSensor() { return &Sensor; }
+  float usTocm(float time) { return time / 58 + 2.5; }
+
+  void appendData(uint16_t* data) {
+    for (size_t i = 0; i < ReadSize; ++i) {
+      Points.push_back(polarToCartesian(i, usTocm(data[i])));
+      Point2D p = polarToCartesian(i, usTocm(data[i]));
+      std::cout << "t = " << data[i] <<  " P.x = " << p.x << " p.y = " << p.y << std::endl;
+    }
+
+  }
 
   void set2DMode() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, 150, 0, 150);
+    gluOrtho2D(0, 100, 0, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
   }
@@ -49,20 +47,39 @@ class Robot {
   void render() {
     set2DMode();
     glPushMatrix();
-    glTranslatef(75, Radius, 0);
+    glTranslatef(50, Radius, 0);
     glColor3f(0.5, 0.5, 0.5);
     glp::circle(Radius);
     glp::draw_axes(Radius, Radius);
-    glColor3f(0.5, 0.2, 0.1);
+    glColor3f(0.5f, 0.2f, 0.1f);
     glTranslatef(0, SensorY, 0);
-    glp::circle(Radius / 5);
+    glp::circle(Radius / 8);
+    glColor3f(2/255.0f,132/255.0f,130/255.0f);
+    glBegin(GL_LINES);
+    for (auto& e : Points) {
+      glVertex2f(0, 0);
+      glVertex2f(e.x, e.y);
+    }
+    glEnd();
+    glColor3f(1, 1, 1);
+    glBegin(GL_LINES);
+    glVertex2f(-7,0);
+    glVertex2f(-7,12);
+    glVertex2f(-7,12);
+    glVertex2f(23,12);
+    glVertex2f(23,12);
+    glVertex2f(23,0);
+
+    glEnd();
+
     glPopMatrix();
   }
 
  private:
   float Radius;   // Robot radius
   float SensorY;  // Y Sensor distance from center
-  UltraSonicSensor Sensor;
+  size_t ReadSize;
+  std::vector<Point2D> Points;
 };
 
 #endif  // ROBOT

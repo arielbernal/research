@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow {
  public:
   explicit MainWindow(QWidget* parent = 0);
   ~MainWindow();
+   void delay(int ms);
  private slots:
   void openSerialPort();
   void closeSerialPort();
@@ -31,6 +32,11 @@ class MainWindow : public QMainWindow {
   QSerialPort* serial;
 
   Robot* robot;
+  bool receiveData;
+  char data[2000];
+  int bytesRead;
+  int bytesTotalRead;
+
 };
 
 #endif  // MAINWINDOW_H

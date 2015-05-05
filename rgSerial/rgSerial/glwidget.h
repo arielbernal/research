@@ -1,7 +1,7 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-//#define GLEW_STATIC
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <QOpenGLWidget>
 #include <robot.h>

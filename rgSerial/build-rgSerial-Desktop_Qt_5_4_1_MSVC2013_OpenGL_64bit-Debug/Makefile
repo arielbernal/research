@@ -184,6 +184,7 @@ Makefile: ..\rgSerial\rgSerial.pro E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\resolve_config.prf \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds_post.prf \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\default_post.prf \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\c++11.prf \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\win32\rtti.prf \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\precompile_header.prf \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\warn_on.prf \
@@ -200,6 +201,7 @@ Makefile: ..\rgSerial\rgSerial.pro E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\
 		..\rgSerial\rgSerial.pro \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/qtmaind.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Cored.prl \
+		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5OpenGL.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Widgets.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Gui.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5SerialPort.prl \
@@ -316,6 +318,7 @@ E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\win32\default_pre.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\resolve_config.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds_post.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\default_post.prf:
+E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\c++11.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\win32\rtti.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\precompile_header.prf:
 E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\warn_on.prf:
@@ -332,6 +335,7 @@ E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\lex.prf:
 ..\rgSerial\rgSerial.pro:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/qtmaind.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Cored.prl:
+E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5OpenGL.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Widgets.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Gui.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5SerialPort.prl:

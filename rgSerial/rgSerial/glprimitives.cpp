@@ -1,4 +1,6 @@
 #include <glprimitivies.h>
+#define M_PI 3.14159265358
+
 
 namespace glp {
 

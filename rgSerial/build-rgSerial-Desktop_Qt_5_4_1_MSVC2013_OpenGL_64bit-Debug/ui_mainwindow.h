@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
@@ -20,7 +21,9 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "glwidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -32,9 +35,15 @@ public:
     QAction *actionDisconnect;
     QAction *actionExit;
     QWidget *centralWidget;
-    QTextBrowser *textConsole;
-    QPushButton *pushButton_2;
+    GLWidget *glScene;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout_2;
+    QVBoxLayout *verticalLayout;
+    QHBoxLayout *horizontalLayout;
     QPushButton *pushButton;
+    QPushButton *pushButton_3;
+    QPushButton *pushButton_2;
+    QTextBrowser *textConsole;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -43,7 +52,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(873, 639);
+        MainWindow->resize(1132, 935);
         actionConfiguration = new QAction(MainWindow);
         actionConfiguration->setObjectName(QStringLiteral("actionConfiguration"));
         actionConfiguration->setCheckable(true);
@@ -67,19 +76,53 @@ public:
         actionExit->setIcon(icon3);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        textConsole = new QTextBrowser(centralWidget);
-        textConsole->setObjectName(QStringLiteral("textConsole"));
-        textConsole->setGeometry(QRect(190, 20, 256, 491));
-        pushButton_2 = new QPushButton(centralWidget);
-        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-        pushButton_2->setGeometry(QRect(20, 110, 75, 23));
-        pushButton = new QPushButton(centralWidget);
+        glScene = new GLWidget(centralWidget);
+        glScene->setObjectName(QStringLiteral("glScene"));
+        glScene->setGeometry(QRect(270, 10, 841, 841));
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(9, 9, 258, 256));
+        verticalLayout_2 = new QVBoxLayout(widget);
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(6);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        pushButton = new QPushButton(widget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(20, 80, 75, 23));
+
+        horizontalLayout->addWidget(pushButton);
+
+        pushButton_3 = new QPushButton(widget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+
+        horizontalLayout->addWidget(pushButton_3);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+
+        pushButton_2 = new QPushButton(widget);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+
+        verticalLayout->addWidget(pushButton_2);
+
+
+        verticalLayout_2->addLayout(verticalLayout);
+
+        textConsole = new QTextBrowser(widget);
+        textConsole->setObjectName(QStringLiteral("textConsole"));
+
+        verticalLayout_2->addWidget(textConsole);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 873, 21));
+        menuBar->setGeometry(QRect(0, 0, 1132, 21));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -117,8 +160,9 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionExit->setToolTip(QApplication::translate("MainWindow", "Exit", 0));
 #endif // QT_NO_TOOLTIP
-        pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Send 1", 0));
+        pushButton_3->setText(QApplication::translate("MainWindow", "Read", 0));
+        pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
