@@ -1,5 +1,6 @@
 #include "glwidget.h"
 #include <iostream>
+#include <QTimer>
 
 GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
   robot = nullptr;
@@ -7,6 +8,10 @@ GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
   if (!cap->isOpened()) {
     std::cout << "Camera error" << std::endl;
   }
+
+  QTimer *timer = new QTimer(this);
+      connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+      timer->start(33);
 }
 
 GLWidget::~GLWidget() {
@@ -36,6 +41,7 @@ void GLWidget::cameraInit() {
   cap->read(frame);
 
   cv::flip(frame, frame, 0);
+  glEnable(GL_TEXTURE_2D);
   glGenTextures(1, &textureTrash);
   glBindTexture(GL_TEXTURE_2D, textureTrash);
 
@@ -53,7 +59,7 @@ void GLWidget::cameraInit() {
       frame.cols,     // Image width  i.e. 640 for Kinect in standard mode
       frame.rows,     // Image height i.e. 480 for Kinect in standard mode
       0,              // Border width in pixels (can either be 1 or 0)
-      GL_RGB,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+      GL_BGR,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
       GL_UNSIGNED_BYTE,  // Image data type
       frame.ptr());      // The actual image data itself
 }
@@ -61,7 +67,6 @@ void GLWidget::cameraInit() {
 bool GLWidget::getFrame() {
   cv::Mat frame;
   cap->read(frame);
-  std::cout << "GetFrame cols = "  << frame.cols << " Rows = " << frame.rows << std::endl;
   glColor3f(1, 1, 1);
   glEnable(GL_TEXTURE_2D);
   glTexImage2D(
@@ -71,11 +76,10 @@ bool GLWidget::getFrame() {
       frame.cols,     // Image width  i.e. 640 for Kinect in standard mode
       frame.rows,     // Image height i.e. 480 for Kinect in standard mode
       0,              // Border width in pixels (can either be 1 or 0)
-      GL_RGB,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+      GL_BGR,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
       GL_UNSIGNED_BYTE,  // Image data type
       frame.ptr());      // The actual image data itself
   glBindTexture(GL_TEXTURE_2D, textureTrash);
-
   // Draw a textured quad
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -83,14 +87,10 @@ bool GLWidget::getFrame() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glBegin(GL_QUADS);
-  glTexCoord2f(0, 0);
-  glVertex3f(0, 0, 0);
-  glTexCoord2f(0, 1);
-  glVertex3f(0, 100, 0);
-  glTexCoord2f(1, 1);
-  glVertex3f(100, 100, 0);
-  glTexCoord2f(1, 0);
-  glVertex3f(100, 0, 0);
+  glTexCoord2f(0, 0);  glVertex2f(0, 0);
+  glTexCoord2f(1, 0);  glVertex2f(100, 0);
+  glTexCoord2f(1, 1);  glVertex2f(100, 100);
+  glTexCoord2f(0, 1);  glVertex2f(0, 100);
   glEnd();
 
   return true;
@@ -99,7 +99,7 @@ bool GLWidget::getFrame() {
 void GLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if (robot) {
-    robot->render();
+  //  robot->render();
   }
   if (cap->isOpened()) {
     getFrame();
