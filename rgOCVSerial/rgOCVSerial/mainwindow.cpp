@@ -39,9 +39,6 @@ MainWindow::MainWindow(QWidget* parent)
   robot = new Robot(6, 5, 180);
   ui->glScene->setRobot(robot);
   receiveData = false;
-
-  cv::Mat inputImage = cv::imread("/home/ajbernal/dev/bat/research/rgOCVSerial/bulb.png");
-//  if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
 }
 
 MainWindow::~MainWindow() {
@@ -87,7 +84,8 @@ void MainWindow::delay(int ms) {
 void MainWindow::readData() {
   if (receiveData) {
     QByteArray q = serial->readAll();
-    std::cout << "Actual read = " << bytesTotalRead << " Read = " << q.size() << " Total = " << bytesTotalRead + q.size() << std::endl;
+    std::cout << "Actual read = " << bytesTotalRead << " Read = " << q.size()
+              << " Total = " << bytesTotalRead + q.size() << std::endl;
     memcpy(&data[bytesTotalRead], q.data(), q.size());
     bytesTotalRead += q.size();
     if (bytesTotalRead >= 180 * 2) {
@@ -128,4 +126,5 @@ void MainWindow::pushButton2() {
 }
 
 void MainWindow::pushButton3() {
+
 }

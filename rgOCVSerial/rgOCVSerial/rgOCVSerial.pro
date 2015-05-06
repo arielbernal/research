@@ -33,7 +33,9 @@ CONFIG += c++11
 win32 {
   INCLUDEPATH += C:\dev\research\external\vs\glew-1.12.0\include
   INCLUDEPATH += C:\dev\research\external\vs\glm
+  INCLUDEPATH += E:\opencv\build\include
   LIBS += -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64 -lglew32s
+  LIBS += -L"E:\opencv\build\x64\vc12\lib" -lopencv_ts300 -lopencv_world300
 } else {
   LIBS += -lGLEW -lGL -lGLU
   INCLUDEPATH += -I/usr/local/include/opencv
