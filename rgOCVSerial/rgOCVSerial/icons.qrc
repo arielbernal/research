@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/Time.png</file>
+        <file>icons/Stop.png</file>
+        <file>icons/Shutdown.png</file>
+        <file>icons/Settings.png</file>
+        <file>icons/Search.png</file>
+        <file>icons/Refresh.png</file>
+        <file>icons/Reboot.png</file>
+        <file>icons/Info.png</file>
+        <file>icons/Help.png</file>
+        <file>icons/Go.png</file>
+        <file>icons/Games.png</file>
+        <file>icons/Favorites.png</file>
+        <file>icons/Edit-clear.png</file>
+        <file>icons/bulbOn.png</file>
+        <file>icons/bulbOff.png</file>
+    </qresource>
+</RCC>
