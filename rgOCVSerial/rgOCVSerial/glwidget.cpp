@@ -16,7 +16,7 @@ GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
   cap = new cv::VideoCapture(0);
   if (!cap->isOpened()) {
     std::cout << "Camera error" << std::endl;
-    exit - 1;
+    exit(- 1);
   } else {
     CamWidth = cap->get(CV_CAP_PROP_FRAME_WIDTH);
     CamHeight = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -82,16 +82,16 @@ bool GLWidget::getFrame() {
   else
     cw = CamWidth / float(CamHeight);
   glBegin(GL_QUADS);
-  glTexCoord2f(0, 0);
-  glVertex2f(0, 0);
-  glTexCoord2f(1, 0);
-  glVertex2f(cw, 0);
-  glTexCoord2f(1, 1);
-  glVertex2f(cw, cv);
   glTexCoord2f(0, 1);
+  glVertex2f(0, 0);
+  glTexCoord2f(1, 1);
+  glVertex2f(cw, 0);
+  glTexCoord2f(1, 0);
+  glVertex2f(cw, cv);
+  glTexCoord2f(0, 0);
   glVertex2f(0, cv);
   glEnd();
-
+  glDisable(GL_TEXTURE_2D);
   return true;
 }
 

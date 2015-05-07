@@ -41,7 +41,7 @@ public:
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButton;
-    QPushButton *pushButton_3;
+    QPushButton *btnRead;
     QPushButton *pushButton_2;
     QTextBrowser *textConsole;
     GLWidget *glScene;
@@ -98,10 +98,10 @@ public:
 
         horizontalLayout->addWidget(pushButton);
 
-        pushButton_3 = new QPushButton(centralWidget);
-        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        btnRead = new QPushButton(centralWidget);
+        btnRead->setObjectName(QStringLiteral("btnRead"));
 
-        horizontalLayout->addWidget(pushButton_3);
+        horizontalLayout->addWidget(btnRead);
 
 
         verticalLayout->addLayout(horizontalLayout);
@@ -140,7 +140,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1132, 21));
+        menuBar->setGeometry(QRect(0, 0, 1132, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -179,7 +179,7 @@ public:
         actionExit->setToolTip(QApplication::translate("MainWindow", "Exit", 0));
 #endif // QT_NO_TOOLTIP
         pushButton->setText(QApplication::translate("MainWindow", "Send 1", 0));
-        pushButton_3->setText(QApplication::translate("MainWindow", "Read", 0));
+        btnRead->setText(QApplication::translate("MainWindow", "Read", 0));
         pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
