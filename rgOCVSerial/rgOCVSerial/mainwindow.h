@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow {
   void handleError(QSerialPort::SerialPortError error);
   void writeSomedata();
   void pushButton2();
-  void pushButton3();
+  void btnRead();
  private:
   Ui::MainWindow* ui;
   SettingsDialog* settings;

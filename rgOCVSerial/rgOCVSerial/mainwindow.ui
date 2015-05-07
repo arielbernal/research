@@ -31,7 +31,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_3">
+             <widget class="QPushButton" name="btnRead">
               <property name="text">
                <string>Read</string>
               </property>
@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>1132</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

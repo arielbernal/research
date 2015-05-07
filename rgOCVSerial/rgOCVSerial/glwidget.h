@@ -22,13 +22,13 @@ signals:
   void initialized();
 
  protected:
-  void cameraInit();
   bool getFrame();
 
  private:
   float* data;
   Robot* robot;
-  int Width, Height;
+  int Width;
+  int Height;
   cv::VideoCapture* cap;
   size_t CamWidth;
   size_t CamHeight;

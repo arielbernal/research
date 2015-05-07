@@ -11,13 +11,24 @@
 
 struct Point2D {
   Point2D(float x, float y) : x(x), y(y) {}
+  void set(float cx, float cy) {
+    x = cx;
+    y = cy;
+  }
+
   float x, y;
 };
 
 class Robot {
  public:
   Robot(float Radius, float SensorY, size_t ReadSize)
-      : Radius(Radius), SensorY(SensorY), ReadSize(ReadSize) {}
+      : Radius(Radius),
+        SensorY(SensorY),
+        ReadSize(ReadSize),
+        Position(0, 0),
+        Angle(0) {
+      Position.set(50, 50);
+  }
 
   Point2D polarToCartesian(float angle, float d) {
     float angleR = angle * M_PI / 180.0f;
@@ -31,9 +42,23 @@ class Robot {
     for (size_t i = 0; i < ReadSize; ++i) {
       Points.push_back(polarToCartesian(i, usTocm(data[i])));
       Point2D p = polarToCartesian(i, usTocm(data[i]));
-      std::cout << "t = " << data[i] <<  " P.x = " << p.x << " p.y = " << p.y << std::endl;
+      std::cout << "t = " << data[i] << " P.x = " << p.x << " p.y = " << p.y
+                << std::endl;
     }
+  }
 
+  void moveTo(float x, float y, float angle) {
+    Position.set(x, y);
+    Angle = angle;
+  }
+
+  void randomMove() {
+    Angle += rand() / float(RAND_MAX) * 10 - 5;
+    float x = Position.x + rand() / float(RAND_MAX) * 2 - 1;
+    float y = Position.y + rand() / float(RAND_MAX) * 2 - 1;
+    Position.set(x, y);
+
+    std::cout << "Angle = " << Angle << std::endl;
   }
 
   void set2DMode() {
@@ -47,14 +72,15 @@ class Robot {
   void render() {
     set2DMode();
     glPushMatrix();
-    glTranslatef(50, Radius, 0);
-    glColor3f(0.5, 0.5, 0.5);
+    glTranslatef(Position.x, Position.y, 0);
+    glRotatef(Angle, 0, 0, 1);
+    glColor3f(1.0f, 1.0f, 1.0f);
     glp::circle(Radius);
     glp::draw_axes(Radius, Radius);
     glColor3f(0.5f, 0.2f, 0.1f);
     glTranslatef(0, SensorY, 0);
     glp::circle(Radius / 8);
-    glColor3f(2/255.0f,132/255.0f,130/255.0f);
+    glColor3f(2 / 255.0f, 132 / 255.0f, 130 / 255.0f);
     glBegin(GL_LINES);
     for (auto& e : Points) {
       glVertex2f(0, 0);
@@ -62,16 +88,6 @@ class Robot {
     }
     glEnd();
     glColor3f(1, 1, 1);
-    glBegin(GL_LINES);
-    glVertex2f(-7,0);
-    glVertex2f(-7,12);
-    glVertex2f(-7,12);
-    glVertex2f(23,12);
-    glVertex2f(23,12);
-    glVertex2f(23,0);
-
-    glEnd();
-
     glPopMatrix();
   }
 
@@ -79,6 +95,8 @@ class Robot {
   float Radius;   // Robot radius
   float SensorY;  // Y Sensor distance from center
   size_t ReadSize;
+  Point2D Position;
+  float Angle;
   std::vector<Point2D> Points;
 };
 

@@ -39,7 +39,7 @@ win32 {
 } else {
   LIBS += -lGLEW -lGL -lGLU
   INCLUDEPATH += -I/usr/local/include/opencv
-  LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui
+  LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_video -lopencv_videoio
 }
 
 

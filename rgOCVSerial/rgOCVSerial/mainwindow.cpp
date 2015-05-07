@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->pushButton, SIGNAL(pressed()), this, SLOT(writeSomedata()));
   connect(ui->pushButton_2, SIGNAL(pressed()), this, SLOT(pushButton2()));
-  connect(ui->pushButton_3, SIGNAL(pressed()), this, SLOT(pushButton3()));
+  connect(ui->btnRead, SIGNAL(pressed()), this, SLOT(btnRead()));
 
   robot = new Robot(6, 5, 180);
   ui->glScene->setRobot(robot);
@@ -122,9 +122,15 @@ void MainWindow::writeSomedata() {
 }
 
 void MainWindow::pushButton2() {
-  serial->write("2");
+  robot->randomMove();
 }
 
-void MainWindow::pushButton3() {
-
+void MainWindow::btnRead() {
+  uint16_t b[2000];
+  b[0] = 2000;
+  for (int i = 1; i < 180; ++i) {
+    float v = b[i - 1] + (rand() / float(RAND_MAX) * 2 - 1) * 50;
+    b[i] = v < 0 ? 100 : v > 4000 ? 4000 : v;
+  }
+  robot->appendData(b);
 }
