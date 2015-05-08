@@ -32,7 +32,8 @@ signals:
   cv::VideoCapture* cap;
   size_t CamWidth;
   size_t CamHeight;
-  GLuint textureTrash;
+  GLuint texCamId;
+  GLuint texPId;
 };
 
 #endif  // GLWIDGET_H

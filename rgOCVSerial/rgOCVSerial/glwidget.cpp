@@ -18,6 +18,8 @@ GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
     std::cout << "Camera error" << std::endl;
     exit(- 1);
   } else {
+      cap->set(CV_CAP_PROP_FRAME_WIDTH, 960);
+      cap->set(CV_CAP_PROP_FRAME_HEIGHT, 720);
     CamWidth = cap->get(CV_CAP_PROP_FRAME_WIDTH);
     CamHeight = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
     std::cout << "Camera initialized width = " << CamWidth
@@ -48,13 +50,20 @@ void GLWidget::initializeGL() {
   glEnable(GL_CULL_FACE);
 
   glEnable(GL_TEXTURE_2D);
-  glGenTextures(1, &textureTrash);
-  glBindTexture(GL_TEXTURE_2D, textureTrash);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glGenTextures(1, &texCamId);
+  glBindTexture(GL_TEXTURE_2D, texCamId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // Set texture clamping method
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glGenTextures(1, &texPId);
+  glBindTexture(GL_TEXTURE_2D, texPId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+
 
   emit initialized();
 }
@@ -62,6 +71,11 @@ void GLWidget::initializeGL() {
 bool GLWidget::getFrame() {
   cv::Mat frame;
   cap->read(frame);
+  cv::Mat redOnly(frame);
+  //cv::inRange(frame, cv::Scalar(0,80,180), cv::Scalar(50,120,255), redOnly);
+  cv::inRange(frame, cv::Scalar(140,180,80), cv::Scalar(180,240,130), redOnly);
+
+
   glColor3f(1, 1, 1);
   glEnable(GL_TEXTURE_2D);
   glTexImage2D(
@@ -74,13 +88,30 @@ bool GLWidget::getFrame() {
       GL_BGR,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
       GL_UNSIGNED_BYTE,  // Image data type
       frame.ptr());      // The actual image data itself
-  glBindTexture(GL_TEXTURE_2D, textureTrash);
+  glBindTexture(GL_TEXTURE_2D, texCamId);
+
+  glTexImage2D(
+      GL_TEXTURE_2D,  // Type of texture
+      0,              // Pyramid level (for mip-mapping) - 0 is the top level
+      GL_RGB,         // Internal colour format to convert to
+      redOnly.cols,     // Image width  i.e. 640 for Kinect in standard mode
+      redOnly.rows,     // Image height i.e. 480 for Kinect in standard mode
+      0,              // Border width in pixels (can either be 1 or 0)
+      GL_LUMINANCE,         // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+      GL_UNSIGNED_BYTE,  // Image data type
+      redOnly.ptr());      // The actual image data itself
+
+
+
   // Draw a textured quad
   float cw = 1, cv = 1;
-  if (CamWidth >= CamHeight)
-    cv = CamHeight / float(CamWidth);
+  float CH = Height / 2;
+  if (Width >= CH)
+    cv = CH / float(Width);
   else
-    cw = CamWidth / float(CamHeight);
+    cw = Width / float(CH);
+
+  glBindTexture(GL_TEXTURE_2D, texCamId);
   glBegin(GL_QUADS);
   glTexCoord2f(0, 1);
   glVertex2f(0, 0);
@@ -90,6 +121,17 @@ bool GLWidget::getFrame() {
   glVertex2f(cw, cv);
   glTexCoord2f(0, 0);
   glVertex2f(0, cv);
+  glEnd();
+  glBindTexture(GL_TEXTURE_2D, texPId);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0, 1);
+  glVertex2f(0, cv);
+  glTexCoord2f(1, 1);
+  glVertex2f(cw, cv);
+  glTexCoord2f(1, 0);
+  glVertex2f(cw, 2*cv);
+  glTexCoord2f(0, 0);
+  glVertex2f(0, 2*cv);
   glEnd();
   glDisable(GL_TEXTURE_2D);
   return true;

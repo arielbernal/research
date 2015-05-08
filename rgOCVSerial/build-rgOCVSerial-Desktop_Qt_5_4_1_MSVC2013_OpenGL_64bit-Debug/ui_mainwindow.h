@@ -129,8 +129,8 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(glScene->sizePolicy().hasHeightForWidth());
         glScene->setSizePolicy(sizePolicy);
-        glScene->setMinimumSize(QSize(800, 800));
-        glScene->setMaximumSize(QSize(800, 800));
+        glScene->setMinimumSize(QSize(960, 960));
+        glScene->setMaximumSize(QSize(960, 960));
 
         horizontalLayout_2->addWidget(glScene);
 
@@ -140,7 +140,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1132, 25));
+        menuBar->setGeometry(QRect(0, 0, 1132, 21));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
