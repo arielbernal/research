@@ -1,7 +1,6 @@
 #include <glprimitivies.h>
 #define M_PI 3.14159265358
 
-
 namespace glp {
 
 void circle(float radius, float segments) {
@@ -33,5 +32,50 @@ void draw_axes(float width, float height) {
   glEnd();
 }
 
+uint32_t newTextureId() {
+  GLuint texId;
+  glEnable(GL_TEXTURE_2D);
+  glGenTextures(1, &texId);
+  glBindTexture(GL_TEXTURE_2D, texId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glDisable(GL_TEXTURE_2D);
+  return texId;
+}
+
+void setTexture(size_t texId,
+                size_t width,
+                size_t height,
+                GLenum DataFormat,
+                uint8_t* buffer) {
+  glBindTexture(GL_TEXTURE_2D, texId);
+  glTexImage2D(GL_TEXTURE_2D,
+               0,
+               GL_RGB,
+               width,
+               height,
+               0,
+               DataFormat,
+               GL_UNSIGNED_BYTE,
+               buffer);
+}
+
+void renderTexture(size_t texId,
+                   float x,
+                   float y,
+                   float width,
+                   float height) {
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, texId);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0, 1);  glVertex2f(x, y);
+  glTexCoord2f(1, 1);  glVertex2f(x + width, y);
+  glTexCoord2f(1, 0);  glVertex2f(x + width, y + height);
+  glTexCoord2f(0, 0);  glVertex2f(x, y + height);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
 
 }  // namespace glp

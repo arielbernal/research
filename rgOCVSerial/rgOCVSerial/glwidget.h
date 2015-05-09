@@ -6,12 +6,12 @@
 #include <QOpenGLWidget>
 #include <opencv2/opencv.hpp>
 #include <robot.h>
+#include <robotdetect.h>
 
 class GLWidget : public QOpenGLWidget {
   Q_OBJECT
  public:
   explicit GLWidget(QWidget* parent = 0);
-  ~GLWidget();
 
   void initializeGL();
   void paintGL();
@@ -27,13 +27,10 @@ signals:
  private:
   float* data;
   Robot* robot;
+  CamDetect* cam;
   int Width;
   int Height;
-  cv::VideoCapture* cap;
-  size_t CamWidth;
-  size_t CamHeight;
-  GLuint texCamId;
-  GLuint texPId;
+
 };
 
 #endif  // GLWIDGET_H

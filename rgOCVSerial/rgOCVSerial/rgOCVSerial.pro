@@ -22,7 +22,8 @@ HEADERS  += mainwindow.h \
     settingsdialog.h \
     glwidget.h \
     robot.h \
-    glprimitivies.h
+    glprimitivies.h \
+    robotdetect.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui
@@ -39,7 +40,7 @@ win32 {
 } else {
   LIBS += -lGLEW -lGL -lGLU
   INCLUDEPATH += -I/usr/local/include/opencv
-  LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_video -lopencv_videoio
+  LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc -lopencv_videoio
 }
 
 
