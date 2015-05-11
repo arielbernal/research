@@ -65,7 +65,8 @@ DIST          =  ..\rgOCVSerial\mainwindow.h \
 		..\rgOCVSerial\settingsdialog.h \
 		..\rgOCVSerial\glwidget.h \
 		..\rgOCVSerial\robot.h \
-		..\rgOCVSerial\glprimitivies.h ..\rgOCVSerial\main.cpp \
+		..\rgOCVSerial\glprimitivies.h \
+		..\rgOCVSerial\robotdetect.h ..\rgOCVSerial\main.cpp \
 		..\rgOCVSerial\mainwindow.cpp \
 		..\rgOCVSerial\settingsdialog.cpp \
 		..\rgOCVSerial\glwidget.cpp \
@@ -535,8 +536,59 @@ debug\moc_glwidget.cpp: ..\..\external\vs\glew-1.12.0\include\GL\glew.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qt_windows.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopengles2ext.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopenglext.h \
+		E:\opencv\build\include\opencv2\opencv.hpp \
+		E:\opencv\build\include\opencv2\core.hpp \
+		E:\opencv\build\include\opencv2\core\cvdef.h \
+		E:\opencv\build\include\opencv2\hal\defs.h \
+		E:\opencv\build\include\opencv2\core\version.hpp \
+		E:\opencv\build\include\opencv2\core\base.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.hpp \
+		E:\opencv\build\include\opencv2\core\ptr.inl.hpp \
+		E:\opencv\build\include\opencv2\hal.hpp \
+		E:\opencv\build\include\opencv2\core\sse_utils.hpp \
+		E:\opencv\build\include\opencv2\core\traits.hpp \
+		E:\opencv\build\include\opencv2\core\matx.hpp \
+		E:\opencv\build\include\opencv2\core\types.hpp \
+		E:\opencv\build\include\opencv2\core\mat.hpp \
+		E:\opencv\build\include\opencv2\core\bufferpool.hpp \
+		E:\opencv\build\include\opencv2\core\mat.inl.hpp \
+		E:\opencv\build\include\opencv2\core\persistence.hpp \
+		E:\opencv\build\include\opencv2\core\operations.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.inl.hpp \
+		E:\opencv\build\include\opencv2\core\utility.hpp \
+		E:\opencv\build\include\opencv2\core\core_c.h \
+		E:\opencv\build\include\opencv2\core\types_c.h \
+		E:\opencv\build\include\opencv2\core\optim.hpp \
+		E:\opencv\build\include\opencv2\imgproc.hpp \
+		E:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
+		E:\opencv\build\include\opencv2\imgproc\types_c.h \
+		E:\opencv\build\include\opencv2\photo.hpp \
+		E:\opencv\build\include\opencv2\photo\photo_c.h \
+		E:\opencv\build\include\opencv2\video.hpp \
+		E:\opencv\build\include\opencv2\video\tracking.hpp \
+		E:\opencv\build\include\opencv2\video\background_segm.hpp \
+		E:\opencv\build\include\opencv2\video\tracking_c.h \
+		E:\opencv\build\include\opencv2\features2d.hpp \
+		E:\opencv\build\include\opencv2\flann\miniflann.hpp \
+		E:\opencv\build\include\opencv2\flann\defines.h \
+		E:\opencv\build\include\opencv2\flann\config.h \
+		E:\opencv\build\include\opencv2\objdetect.hpp \
+		E:\opencv\build\include\opencv2\objdetect\detection_based_tracker.hpp \
+		E:\opencv\build\include\opencv2\objdetect\objdetect_c.h \
+		E:\opencv\build\include\opencv2\calib3d.hpp \
+		E:\opencv\build\include\opencv2\core\affine.hpp \
+		E:\opencv\build\include\opencv2\calib3d\calib3d_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs.hpp \
+		E:\opencv\build\include\opencv2\videoio.hpp \
+		E:\opencv\build\include\opencv2\highgui.hpp \
+		E:\opencv\build\include\opencv2\highgui\highgui_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs\imgcodecs_c.h \
+		E:\opencv\build\include\opencv2\videoio\videoio_c.h \
+		E:\opencv\build\include\opencv2\ml.hpp \
 		..\rgOCVSerial\robot.h \
 		..\rgOCVSerial\glprimitivies.h \
+		..\rgOCVSerial\robotdetect.h \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\QDebug \
 		..\rgOCVSerial\glwidget.h
 	E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/mkspecs/win32-msvc2013 -IC:/dev/research/rgOCVSerial/rgOCVSerial -IC:/dev/research/external/vs/glew-1.12.0/include -IC:/dev/research/external/vs/glm -IE:/opencv/build/include -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtOpenGL -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtWidgets -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtGui -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtSerialPort -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtCore -I. ..\rgOCVSerial\glwidget.h -o debug\moc_glwidget.cpp
 
@@ -658,8 +710,59 @@ ui_mainwindow.h: ..\rgOCVSerial\mainwindow.ui \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qt_windows.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopengles2ext.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopenglext.h \
+		E:\opencv\build\include\opencv2\opencv.hpp \
+		E:\opencv\build\include\opencv2\core.hpp \
+		E:\opencv\build\include\opencv2\core\cvdef.h \
+		E:\opencv\build\include\opencv2\hal\defs.h \
+		E:\opencv\build\include\opencv2\core\version.hpp \
+		E:\opencv\build\include\opencv2\core\base.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.hpp \
+		E:\opencv\build\include\opencv2\core\ptr.inl.hpp \
+		E:\opencv\build\include\opencv2\hal.hpp \
+		E:\opencv\build\include\opencv2\core\sse_utils.hpp \
+		E:\opencv\build\include\opencv2\core\traits.hpp \
+		E:\opencv\build\include\opencv2\core\matx.hpp \
+		E:\opencv\build\include\opencv2\core\types.hpp \
+		E:\opencv\build\include\opencv2\core\mat.hpp \
+		E:\opencv\build\include\opencv2\core\bufferpool.hpp \
+		E:\opencv\build\include\opencv2\core\mat.inl.hpp \
+		E:\opencv\build\include\opencv2\core\persistence.hpp \
+		E:\opencv\build\include\opencv2\core\operations.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.inl.hpp \
+		E:\opencv\build\include\opencv2\core\utility.hpp \
+		E:\opencv\build\include\opencv2\core\core_c.h \
+		E:\opencv\build\include\opencv2\core\types_c.h \
+		E:\opencv\build\include\opencv2\core\optim.hpp \
+		E:\opencv\build\include\opencv2\imgproc.hpp \
+		E:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
+		E:\opencv\build\include\opencv2\imgproc\types_c.h \
+		E:\opencv\build\include\opencv2\photo.hpp \
+		E:\opencv\build\include\opencv2\photo\photo_c.h \
+		E:\opencv\build\include\opencv2\video.hpp \
+		E:\opencv\build\include\opencv2\video\tracking.hpp \
+		E:\opencv\build\include\opencv2\video\background_segm.hpp \
+		E:\opencv\build\include\opencv2\video\tracking_c.h \
+		E:\opencv\build\include\opencv2\features2d.hpp \
+		E:\opencv\build\include\opencv2\flann\miniflann.hpp \
+		E:\opencv\build\include\opencv2\flann\defines.h \
+		E:\opencv\build\include\opencv2\flann\config.h \
+		E:\opencv\build\include\opencv2\objdetect.hpp \
+		E:\opencv\build\include\opencv2\objdetect\detection_based_tracker.hpp \
+		E:\opencv\build\include\opencv2\objdetect\objdetect_c.h \
+		E:\opencv\build\include\opencv2\calib3d.hpp \
+		E:\opencv\build\include\opencv2\core\affine.hpp \
+		E:\opencv\build\include\opencv2\calib3d\calib3d_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs.hpp \
+		E:\opencv\build\include\opencv2\videoio.hpp \
+		E:\opencv\build\include\opencv2\highgui.hpp \
+		E:\opencv\build\include\opencv2\highgui\highgui_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs\imgcodecs_c.h \
+		E:\opencv\build\include\opencv2\videoio\videoio_c.h \
+		E:\opencv\build\include\opencv2\ml.hpp \
 		..\rgOCVSerial\robot.h \
-		..\rgOCVSerial\glprimitivies.h
+		..\rgOCVSerial\glprimitivies.h \
+		..\rgOCVSerial\robotdetect.h \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\QDebug
 	E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\bin\uic.exe ..\rgOCVSerial\mainwindow.ui -o ui_mainwindow.h
 
 ui_settingsdialog.h: ..\rgOCVSerial\settingsdialog.ui
@@ -1206,8 +1309,62 @@ debug\glwidget.obj: ..\rgOCVSerial\glwidget.cpp ..\rgOCVSerial\glwidget.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qt_windows.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopengles2ext.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtGui\qopenglext.h \
+		E:\opencv\build\include\opencv2\opencv.hpp \
+		E:\opencv\build\include\opencv2\core.hpp \
+		E:\opencv\build\include\opencv2\core\cvdef.h \
+		E:\opencv\build\include\opencv2\hal\defs.h \
+		E:\opencv\build\include\opencv2\core\version.hpp \
+		E:\opencv\build\include\opencv2\core\base.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.hpp \
+		E:\opencv\build\include\opencv2\core\ptr.inl.hpp \
+		E:\opencv\build\include\opencv2\hal.hpp \
+		E:\opencv\build\include\opencv2\core\sse_utils.hpp \
+		E:\opencv\build\include\opencv2\core\traits.hpp \
+		E:\opencv\build\include\opencv2\core\matx.hpp \
+		E:\opencv\build\include\opencv2\core\types.hpp \
+		E:\opencv\build\include\opencv2\core\mat.hpp \
+		E:\opencv\build\include\opencv2\core\bufferpool.hpp \
+		E:\opencv\build\include\opencv2\core\mat.inl.hpp \
+		E:\opencv\build\include\opencv2\core\persistence.hpp \
+		E:\opencv\build\include\opencv2\core\operations.hpp \
+		E:\opencv\build\include\opencv2\core\cvstd.inl.hpp \
+		E:\opencv\build\include\opencv2\core\utility.hpp \
+		E:\opencv\build\include\opencv2\core\core_c.h \
+		E:\opencv\build\include\opencv2\core\types_c.h \
+		E:\opencv\build\include\opencv2\core\optim.hpp \
+		E:\opencv\build\include\opencv2\imgproc.hpp \
+		E:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
+		E:\opencv\build\include\opencv2\imgproc\types_c.h \
+		E:\opencv\build\include\opencv2\photo.hpp \
+		E:\opencv\build\include\opencv2\photo\photo_c.h \
+		E:\opencv\build\include\opencv2\video.hpp \
+		E:\opencv\build\include\opencv2\video\tracking.hpp \
+		E:\opencv\build\include\opencv2\video\background_segm.hpp \
+		E:\opencv\build\include\opencv2\video\tracking_c.h \
+		E:\opencv\build\include\opencv2\features2d.hpp \
+		E:\opencv\build\include\opencv2\flann\miniflann.hpp \
+		E:\opencv\build\include\opencv2\flann\defines.h \
+		E:\opencv\build\include\opencv2\flann\config.h \
+		E:\opencv\build\include\opencv2\objdetect.hpp \
+		E:\opencv\build\include\opencv2\objdetect\detection_based_tracker.hpp \
+		E:\opencv\build\include\opencv2\objdetect\objdetect_c.h \
+		E:\opencv\build\include\opencv2\calib3d.hpp \
+		E:\opencv\build\include\opencv2\core\affine.hpp \
+		E:\opencv\build\include\opencv2\calib3d\calib3d_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs.hpp \
+		E:\opencv\build\include\opencv2\videoio.hpp \
+		E:\opencv\build\include\opencv2\highgui.hpp \
+		E:\opencv\build\include\opencv2\highgui\highgui_c.h \
+		E:\opencv\build\include\opencv2\imgcodecs\imgcodecs_c.h \
+		E:\opencv\build\include\opencv2\videoio\videoio_c.h \
+		E:\opencv\build\include\opencv2\ml.hpp \
 		..\rgOCVSerial\robot.h \
-		..\rgOCVSerial\glprimitivies.h
+		..\rgOCVSerial\glprimitivies.h \
+		..\rgOCVSerial\robotdetect.h \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\QDebug \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\QTimer \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qtimer.h \
+		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qbasictimer.h
 
 debug\glprimitives.obj: ..\rgOCVSerial\glprimitives.cpp ..\rgOCVSerial\glprimitivies.h \
 		..\..\external\vs\glew-1.12.0\include\GL\glew.h

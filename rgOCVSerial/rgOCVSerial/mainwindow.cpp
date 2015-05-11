@@ -38,7 +38,51 @@ MainWindow::MainWindow(QWidget* parent)
 
   robot = new Robot(6, 5, 180);
   ui->glScene->setRobot(robot);
+
+  connect(ui->sldHL, SIGNAL(sliderMoved(int)), this, SLOT(changeHL(int)));
+  connect(ui->sldHH, SIGNAL(sliderMoved(int)), this, SLOT(changeHH(int)));
+  connect(ui->sldSL, SIGNAL(sliderMoved(int)), this, SLOT(changeSL(int)));
+  connect(ui->sldSH, SIGNAL(sliderMoved(int)), this, SLOT(changeSH(int)));
+  connect(ui->sldVL, SIGNAL(sliderMoved(int)), this, SLOT(changeVL(int)));
+  connect(ui->sldVH, SIGNAL(sliderMoved(int)), this, SLOT(changeVH(int)));
+
   receiveData = false;
+}
+
+void MainWindow::changeHL(int v) {
+  v = float(v) / 99 * 180;
+  ui->glScene->getCamDetect()->HL = v;
+  ui->edHL->setText(QString::number(v));
+}
+
+void MainWindow::changeHH(int v) {
+  v = float(v) / 99 * 180;
+  ui->glScene->getCamDetect()->HH = v;
+  ui->edHH->setText(QString::number(v));
+}
+
+void MainWindow::changeSL(int v) {
+  v = float(v) / 99 * 255;
+  ui->glScene->getCamDetect()->SL = v;
+  ui->edSL->setText(QString::number(v));
+}
+
+void MainWindow::changeSH(int v) {
+  v = float(v) / 99 * 255;
+  ui->glScene->getCamDetect()->SH = v;
+  ui->edSH->setText(QString::number(v));
+}
+
+void MainWindow::changeVL(int v) {
+  v = float(v) / 99 * 255;
+  ui->glScene->getCamDetect()->VL = v;
+  ui->edVL->setText(QString::number(v));
+}
+
+void MainWindow::changeVH(int v) {
+  v = float(v) / 99 * 255;
+  ui->glScene->getCamDetect()->VH = v;
+  ui->edVH->setText(QString::number(v));
 }
 
 MainWindow::~MainWindow() {

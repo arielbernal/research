@@ -3,12 +3,15 @@
 
 #include <GL/glew.h>
 #include <cmath>
+#include <stdint.h>
 
 namespace glp {
 
 void circle(float radius, float segments = 0);
 
 void draw_axes(float width, float height);
+
+void cross(float x, float y, float size);
 
 uint32_t newTextureId();
 

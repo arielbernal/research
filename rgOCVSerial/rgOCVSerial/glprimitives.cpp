@@ -32,6 +32,19 @@ void draw_axes(float width, float height) {
   glEnd();
 }
 
+void cross(float x, float y, float size) {
+  glColor3f(1, 0, 0);
+  glBegin(GL_LINES);
+  glVertex3f(x - size / 2, y, 0);
+  glVertex3f(x + size / 2, y, 0);
+  glEnd();
+  glColor3f(0, 0, 1);
+  glBegin(GL_LINES);
+  glVertex3f(x, y - size / 2, 0);
+  glVertex3f(x, y + size / 2, 0);
+  glEnd();
+}
+
 uint32_t newTextureId() {
   GLuint texId;
   glEnable(GL_TEXTURE_2D);
@@ -62,18 +75,18 @@ void setTexture(size_t texId,
                buffer);
 }
 
-void renderTexture(size_t texId,
-                   float x,
-                   float y,
-                   float width,
-                   float height) {
+void renderTexture(size_t texId, float x, float y, float width, float height) {
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texId);
   glBegin(GL_QUADS);
-  glTexCoord2f(0, 1);  glVertex2f(x, y);
-  glTexCoord2f(1, 1);  glVertex2f(x + width, y);
-  glTexCoord2f(1, 0);  glVertex2f(x + width, y + height);
-  glTexCoord2f(0, 0);  glVertex2f(x, y + height);
+  glTexCoord2f(0, 1);
+  glVertex2f(x, y);
+  glTexCoord2f(1, 1);
+  glVertex2f(x + width, y);
+  glTexCoord2f(1, 0);
+  glVertex2f(x + width, y + height);
+  glTexCoord2f(0, 0);
+  glVertex2f(x, y + height);
   glEnd();
   glDisable(GL_TEXTURE_2D);
 }

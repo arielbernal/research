@@ -2,7 +2,7 @@
 #include <iostream>
 #include <QTimer>
 #include <glprimitivies.h>
-
+#include <QMouseEvent>
 
 GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
   robot = nullptr;
@@ -45,4 +45,8 @@ void GLWidget::resizeGL(int width, int height) {
   Width = width;
   Height = height;
   cam->setSize(Width, Height);
+}
+
+void GLWidget::mousePressEvent(QMouseEvent *event) {
+  cam->mousePressed(event->x(), event->y());
 }

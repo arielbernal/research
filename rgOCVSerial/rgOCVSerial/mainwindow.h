@@ -26,6 +26,14 @@ class MainWindow : public QMainWindow {
   void writeSomedata();
   void pushButton2();
   void btnRead();
+
+  void changeHL(int v);
+  void changeHH(int v);
+  void changeSL(int v);
+  void changeSH(int v);
+  void changeVL(int v);
+  void changeVH(int v);
+
  private:
   Ui::MainWindow* ui;
   SettingsDialog* settings;
