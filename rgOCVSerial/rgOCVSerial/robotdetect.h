@@ -146,7 +146,9 @@ class CamDetect {
 //    if (p2.x > 0 && p2.y > 0)
 //      glp::cross(p2.x / 960.0f * 640, 480 - p2.y / 720.0f * 480, 50, colorRed);
 
-    cv::Point pm = (p1 + p2) / 2;
+    cv::Point pm = (p1 + p2) ;
+    pm.x /=2;
+    pm.y /=2;
     if (pm.x > 0 && pm.y > 0) {
     //  glp::cross(pm.x / 960.0f * 640,
 //                 480 - pm.y / 720.0f * 480,

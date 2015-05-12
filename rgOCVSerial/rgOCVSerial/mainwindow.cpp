@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <imagedialog.h>
+
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -46,7 +48,18 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->sldVL, SIGNAL(sliderMoved(int)), this, SLOT(changeVL(int)));
   connect(ui->sldVH, SIGNAL(sliderMoved(int)), this, SLOT(changeVH(int)));
 
+  connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(openNewImage()));
+
   receiveData = false;
+}
+
+
+void MainWindow::openNewImage() {
+  ImageDialog* imageDialog = new ImageDialog();
+  imageDialog->setAttribute(Qt::WA_DeleteOnClose);
+  imageDialog->setModal(false);
+  imageDialog->show();
+  imageDialog->raise();
 }
 
 void MainWindow::changeHL(int v) {

@@ -16,17 +16,22 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
     glwidget.cpp \
-    glprimitives.cpp
+    glprimitives.cpp \
+    imagedialog.cpp \
+    genericglwidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
     glwidget.h \
     robot.h \
     glprimitivies.h \
-    robotdetect.h
+    robotdetect.h \
+    imagedialog.h \
+    genericglwidget.h
 
 FORMS    += mainwindow.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    imagedialog.ui
 
 CONFIG += c++11
 

@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow {
   void changeSH(int v);
   void changeVL(int v);
   void changeVH(int v);
+  void openNewImage();
 
  private:
   Ui::MainWindow* ui;
