@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <list>
 #include <opencv2/opencv.hpp>
+#include <glm/glm.hpp>
 
 class CamDetect {
  public:
@@ -92,7 +93,7 @@ class CamDetect {
 
     cv::Mat HSV;
     cv::Mat RedMask;
-    cv::Mat GreenMask;
+    cv::Mat YellowMask;
     cv::Mat ThresholdMask;
     cv::cvtColor(frame, HSV, cv::COLOR_BGR2HSV);
     if (mPressed) {
@@ -106,18 +107,23 @@ class CamDetect {
       VH = 255;
       mPressed = false;
     }
-    // cv::inRange(HSV, cv::Scalar(HL, SL, VL), cv::Scalar(HH, SH, VH),
-    // GreenMask);
+//         cv::inRange(HSV, cv::Scalar(HL, SL, VL), cv::Scalar(HH, SH, VH),
+//         YellowMask);
     cv::inRange(
-        HSV, cv::Scalar(20, 150, 100), cv::Scalar(40, 255, 255), GreenMask);
+        HSV, cv::Scalar(25, 120, 210), cv::Scalar(50, 255, 255), YellowMask);
     cv::inRange(
-        HSV, cv::Scalar(150, 100, 144), cv::Scalar(180, 255, 255), RedMask);
+        HSV, cv::Scalar(150, 120, 180), cv::Scalar(180, 255, 255), RedMask);
 
-    cv::blur(GreenMask, GreenMask, cv::Size(10, 10));
-    cv::threshold(GreenMask, GreenMask, 200, 255, cv::THRESH_BINARY);
+    cv::dilate(RedMask, RedMask, cv::Mat());
+    cv::dilate(RedMask, RedMask, cv::Mat());
+    cv::dilate(YellowMask, YellowMask, cv::Mat());
+    cv::dilate(YellowMask, YellowMask, cv::Mat());
+
+    cv::blur(YellowMask, YellowMask, cv::Size(10, 10));
+    cv::threshold(YellowMask, YellowMask, 200, 255, cv::THRESH_BINARY);
     cv::blur(RedMask, RedMask, cv::Size(10, 10));
     cv::threshold(RedMask, RedMask, 200, 255, cv::THRESH_BINARY);
-    cv::add(GreenMask, RedMask, ThresholdMask);
+    cv::add(RedMask, YellowMask, ThresholdMask);
 
     glp::setTexture(texCamId, frame.cols, frame.rows, GL_BGR, frame.ptr());
     glp::setTexture(texPId,
@@ -126,26 +132,37 @@ class CamDetect {
                     GL_LUMINANCE,
                     ThresholdMask.ptr());
 
+    glm::vec3 colorYellow(1, 1, 0);
+    cv::Moments m1 = cv::moments(YellowMask);
+    cv::Point p1(m1.m10 / m1.m00, m1.m01 / m1.m00);
+    glDisable(GL_TEXTURE_2D);
+//    if (p1.x > 0 && p1.y > 0)
+//      glp::cross(
+//          p1.x / 960.0f * 640, 480 - p1.y / 720.0f * 480, 50, colorYellow);
+
+    glm::vec3 colorRed(1, 0, 0);
+    cv::Moments m2 = cv::moments(RedMask);
+    cv::Point p2(m2.m10 / m2.m00, m2.m01 / m2.m00);
+//    if (p2.x > 0 && p2.y > 0)
+//      glp::cross(p2.x / 960.0f * 640, 480 - p2.y / 720.0f * 480, 50, colorRed);
+
+    cv::Point pm = (p1 + p2) / 2;
+    if (pm.x > 0 && pm.y > 0) {
+    //  glp::cross(pm.x / 960.0f * 640,
+//                 480 - pm.y / 720.0f * 480,
+//                 50,
+//                 glm::vec3(1, 1, 1));
+      glPushMatrix();
+      glTranslatef(pm.x / 960.0f * 640,
+                  480 - pm.y / 720.0f * 480,0);
+      glp::circle(20,0);
+      glPopMatrix();
+    }
+
     // Draw a textured quad
     float CW, CH;
     getBestFit(frame.cols, frame.rows, Width, Height / 2, CW, CH);
     // std::cout << "CW = " << CW << " CH = " << CH << std::endl;
-
-    {
-      cv::Moments m = cv::moments(GreenMask);
-      cv::Point p(m.m10 / m.m00, m.m01 / m.m00);
-      glDisable(GL_TEXTURE_2D);
-      if (p.x > 0 && p.y > 0)
-        glp::cross(p.x / 960.0f * 640, 480 - p.y / 720.0f * 480, 50);
-    }
-    {
-      cv::Moments m = cv::moments(RedMask);
-      cv::Point p(m.m10 / m.m00, m.m01 / m.m00);
-      glDisable(GL_TEXTURE_2D);
-      if (p.x > 0 && p.y > 0)
-        glp::cross(p.x / 960.0f * 640, 480 - p.y / 720.0f * 480, 50);
-    }
-
     glColor3f(1, 1, 1);
     glp::renderTexture(texCamId, 0, 0, CW, CH);
     glp::renderTexture(texPId, 0, Height / 2, CW, CH);

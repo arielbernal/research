@@ -44,6 +44,18 @@ void cross(float x, float y, float size) {
   glVertex3f(x, y + size / 2, 0);
   glEnd();
 }
+void cross(float x, float y, float size, const glm::vec3& color)
+{
+  glColor3f(color.r, color.g, color.b);
+  glBegin(GL_LINES);
+  glVertex3f(x - size / 2, y, 0);
+  glVertex3f(x + size / 2, y, 0);
+  glEnd();
+  glBegin(GL_LINES);
+  glVertex3f(x, y - size / 2, 0);
+  glVertex3f(x, y + size / 2, 0);
+  glEnd();
+}
 
 uint32_t newTextureId() {
   GLuint texId;

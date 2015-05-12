@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <cmath>
 #include <stdint.h>
+#include <glm/glm.hpp>
 
 namespace glp {
 
@@ -12,6 +13,7 @@ void circle(float radius, float segments = 0);
 void draw_axes(float width, float height);
 
 void cross(float x, float y, float size);
+void cross(float x, float y, float size, const glm::vec3& color);
 
 uint32_t newTextureId();
 
