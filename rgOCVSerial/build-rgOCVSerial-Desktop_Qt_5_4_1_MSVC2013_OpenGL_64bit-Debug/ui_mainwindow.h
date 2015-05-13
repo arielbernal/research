@@ -37,15 +37,15 @@ public:
     QAction *actionDisconnect;
     QAction *actionExit;
     QWidget *centralWidget;
-    QTextBrowser *textConsole;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButton;
     QPushButton *btnRead;
     QPushButton *pushButton_2;
-    QWidget *widget1;
-    QHBoxLayout *horizontalLayout_8;
+    QTextBrowser *textConsole;
+    QPushButton *pushButton_3;
+    QWidget *widget;
     QVBoxLayout *verticalLayout_3;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_2;
@@ -99,12 +99,10 @@ public:
         actionExit->setIcon(icon3);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        textConsole = new QTextBrowser(centralWidget);
-        textConsole->setObjectName(QStringLiteral("textConsole"));
-        textConsole->setGeometry(QRect(-40, -290, 176, 341));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        verticalLayout = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(40, 10, 180, 64));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
@@ -112,12 +110,12 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        pushButton = new QPushButton(widget);
+        pushButton = new QPushButton(layoutWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
 
         horizontalLayout->addWidget(pushButton);
 
-        btnRead = new QPushButton(widget);
+        btnRead = new QPushButton(layoutWidget);
         btnRead->setObjectName(QStringLiteral("btnRead"));
 
         horizontalLayout->addWidget(btnRead);
@@ -125,35 +123,38 @@ public:
 
         verticalLayout->addLayout(horizontalLayout);
 
-        pushButton_2 = new QPushButton(widget);
+        pushButton_2 = new QPushButton(layoutWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
 
         verticalLayout->addWidget(pushButton_2);
 
-        widget1 = new QWidget(centralWidget);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(11, 10, 1226, 962));
-        horizontalLayout_8 = new QHBoxLayout(widget1);
-        horizontalLayout_8->setSpacing(6);
-        horizontalLayout_8->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
-        horizontalLayout_8->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_3 = new QVBoxLayout();
+        textConsole = new QTextBrowser(centralWidget);
+        textConsole->setObjectName(QStringLiteral("textConsole"));
+        textConsole->setGeometry(QRect(50, 630, 157, 78));
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(80, 150, 99, 27));
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(12, 331, 248, 269));
+        verticalLayout_3 = new QVBoxLayout(widget);
         verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        sldHL = new QSlider(widget1);
+        sldHL = new QSlider(widget);
         sldHL->setObjectName(QStringLiteral("sldHL"));
         sldHL->setOrientation(Qt::Horizontal);
 
         horizontalLayout_2->addWidget(sldHL);
 
-        edHL = new QLineEdit(widget1);
+        edHL = new QLineEdit(widget);
         edHL->setObjectName(QStringLiteral("edHL"));
 
         horizontalLayout_2->addWidget(edHL);
@@ -164,13 +165,13 @@ public:
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        sldHH = new QSlider(widget1);
+        sldHH = new QSlider(widget);
         sldHH->setObjectName(QStringLiteral("sldHH"));
         sldHH->setOrientation(Qt::Horizontal);
 
         horizontalLayout_3->addWidget(sldHH);
 
-        edHH = new QLineEdit(widget1);
+        edHH = new QLineEdit(widget);
         edHH->setObjectName(QStringLiteral("edHH"));
 
         horizontalLayout_3->addWidget(edHH);
@@ -181,13 +182,13 @@ public:
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(6);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        sldSL = new QSlider(widget1);
+        sldSL = new QSlider(widget);
         sldSL->setObjectName(QStringLiteral("sldSL"));
         sldSL->setOrientation(Qt::Horizontal);
 
         horizontalLayout_4->addWidget(sldSL);
 
-        edSL = new QLineEdit(widget1);
+        edSL = new QLineEdit(widget);
         edSL->setObjectName(QStringLiteral("edSL"));
 
         horizontalLayout_4->addWidget(edSL);
@@ -198,13 +199,13 @@ public:
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(6);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
-        sldSH = new QSlider(widget1);
+        sldSH = new QSlider(widget);
         sldSH->setObjectName(QStringLiteral("sldSH"));
         sldSH->setOrientation(Qt::Horizontal);
 
         horizontalLayout_5->addWidget(sldSH);
 
-        edSH = new QLineEdit(widget1);
+        edSH = new QLineEdit(widget);
         edSH->setObjectName(QStringLiteral("edSH"));
 
         horizontalLayout_5->addWidget(edSH);
@@ -215,13 +216,13 @@ public:
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
-        sldVL = new QSlider(widget1);
+        sldVL = new QSlider(widget);
         sldVL->setObjectName(QStringLiteral("sldVL"));
         sldVL->setOrientation(Qt::Horizontal);
 
         horizontalLayout_6->addWidget(sldVL);
 
-        edVL = new QLineEdit(widget1);
+        edVL = new QLineEdit(widget);
         edVL->setObjectName(QStringLiteral("edVL"));
 
         horizontalLayout_6->addWidget(edVL);
@@ -232,13 +233,13 @@ public:
         horizontalLayout_7 = new QHBoxLayout();
         horizontalLayout_7->setSpacing(6);
         horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
-        sldVH = new QSlider(widget1);
+        sldVH = new QSlider(widget);
         sldVH->setObjectName(QStringLiteral("sldVH"));
         sldVH->setOrientation(Qt::Horizontal);
 
         horizontalLayout_7->addWidget(sldVH);
 
-        edVH = new QLineEdit(widget1);
+        edVH = new QLineEdit(widget);
         edVH->setObjectName(QStringLiteral("edVH"));
 
         horizontalLayout_7->addWidget(edVH);
@@ -249,11 +250,9 @@ public:
 
         verticalLayout_3->addLayout(verticalLayout_2);
 
-
-        horizontalLayout_8->addLayout(verticalLayout_3);
-
-        glScene = new GLWidget(widget1);
+        glScene = new GLWidget(centralWidget);
         glScene->setObjectName(QStringLiteral("glScene"));
+        glScene->setGeometry(QRect(266, 11, 960, 960));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -261,13 +260,14 @@ public:
         glScene->setSizePolicy(sizePolicy);
         glScene->setMinimumSize(QSize(960, 960));
         glScene->setMaximumSize(QSize(960, 960));
-
-        horizontalLayout_8->addWidget(glScene);
-
         MainWindow->setCentralWidget(centralWidget);
+        layoutWidget->raise();
+        layoutWidget->raise();
+        textConsole->raise();
+        pushButton_3->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1148, 21));
+        menuBar->setGeometry(QRect(0, 0, 1148, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -308,6 +308,7 @@ public:
         pushButton->setText(QApplication::translate("MainWindow", "Send 1", 0));
         btnRead->setText(QApplication::translate("MainWindow", "Read", 0));
         pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
+        pushButton_3->setText(QApplication::translate("MainWindow", "PushButton", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
