@@ -10,29 +10,29 @@
 
 class GLWidget : public QOpenGLWidget {
   Q_OBJECT
- public:
-  explicit GLWidget(QWidget* parent = 0);
+public:
+  explicit GLWidget(QWidget *parent = 0);
   ~GLWidget() { delete cam; }
 
   void initializeGL();
   void paintGL();
   void resizeGL(int w, int h);
-  void setRobot(Robot* R) { robot = R; }
-  CamDetect* getCamDetect() { return cam; }
+  void setRobot(Robot *R) { robot = R; }
+  CamDetect *getCamDetect() { return cam; }
 
 signals:
   void initialized();
 
- protected:
+protected:
   bool getFrame();
   void mousePressEvent(QMouseEvent *event);
 
- private:
-  float* data;
-  Robot* robot;
-  CamDetect* cam;
+private:
+  float *data;
+  Robot *robot;
+  CamDetect *cam;
   int Width;
   int Height;
 };
 
-#endif  // GLWIDGET_H
+#endif // GLWIDGET_H

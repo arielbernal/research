@@ -6,6 +6,7 @@
 #include <list>
 #include <opencv2/opencv.hpp>
 #include <glm/glm.hpp>
+#include <imageshow.h>
 
 class CamDetect {
  public:
@@ -28,6 +29,8 @@ class CamDetect {
     mPressed = false;
   }
 
+  cv::Mat frame;
+
   void init() {
     cap = new cv::VideoCapture(0);
     if (!cap->isOpened()) {
@@ -44,6 +47,8 @@ class CamDetect {
 
     texCamId = glp::newTextureId();
     texPId = glp::newTextureId();
+
+
   }
   ~CamDetect() {
     qDebug() << "Camera Released";
@@ -79,6 +84,7 @@ class CamDetect {
     v1 = (int)a.ptr()[3 * (y * xmax + x)];
     v2 = (int)a.ptr()[3 * (y * xmax + x) + 1];
     v3 = (int)a.ptr()[3 * (y * xmax + x) + 2];
+
   }
 
   void render() {
@@ -88,8 +94,8 @@ class CamDetect {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    cv::Mat frame;
     cap->read(frame);
+    glp::ImageShow::Show("FirstImage", frame);
 
     cv::Mat HSV;
     cv::Mat RedMask;

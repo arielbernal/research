@@ -8,6 +8,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <imagedialog.h>
+#include <imageshow.h>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -55,11 +56,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 
 void MainWindow::openNewImage() {
-  ImageDialog* imageDialog = new ImageDialog();
-  imageDialog->setAttribute(Qt::WA_DeleteOnClose);
-  imageDialog->setModal(false);
-  imageDialog->show();
-  imageDialog->raise();
+  cv::Mat image(720, 960, CV_8UC3);
+  image.setTo(cv::Scalar(0, 255, 0));
+
+
 }
 
 void MainWindow::changeHL(int v) {

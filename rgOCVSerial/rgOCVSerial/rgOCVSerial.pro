@@ -18,7 +18,7 @@ SOURCES += main.cpp\
     glwidget.cpp \
     glprimitives.cpp \
     imagedialog.cpp \
-    genericglwidget.cpp
+    imageglwidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     glprimitivies.h \
     robotdetect.h \
     imagedialog.h \
-    genericglwidget.h
+    imageglwidget.h \
+    imageshow.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

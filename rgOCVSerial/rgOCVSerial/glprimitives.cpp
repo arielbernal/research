@@ -44,8 +44,7 @@ void cross(float x, float y, float size) {
   glVertex3f(x, y + size / 2, 0);
   glEnd();
 }
-void cross(float x, float y, float size, const glm::vec3& color)
-{
+void cross(float x, float y, float size, const glm::vec3 &color) {
   glColor3f(color.r, color.g, color.b);
   glBegin(GL_LINES);
   glVertex3f(x - size / 2, y, 0);
@@ -70,21 +69,11 @@ uint32_t newTextureId() {
   return texId;
 }
 
-void setTexture(size_t texId,
-                size_t width,
-                size_t height,
-                GLenum DataFormat,
-                uint8_t* buffer) {
+void setTexture(size_t texId, size_t width, size_t height, GLenum DataFormat,
+                uint8_t *buffer) {
   glBindTexture(GL_TEXTURE_2D, texId);
-  glTexImage2D(GL_TEXTURE_2D,
-               0,
-               GL_RGB,
-               width,
-               height,
-               0,
-               DataFormat,
-               GL_UNSIGNED_BYTE,
-               buffer);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, DataFormat,
+               GL_UNSIGNED_BYTE, buffer);
 }
 
 void renderTexture(size_t texId, float x, float y, float width, float height) {
@@ -103,4 +92,4 @@ void renderTexture(size_t texId, float x, float y, float width, float height) {
   glDisable(GL_TEXTURE_2D);
 }
 
-}  // namespace glp
+} // namespace glp

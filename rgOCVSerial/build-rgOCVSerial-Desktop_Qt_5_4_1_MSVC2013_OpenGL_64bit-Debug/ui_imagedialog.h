@@ -16,7 +16,6 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QVBoxLayout>
-#include <genericglwidget.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -24,20 +23,19 @@ class Ui_ImageDialog
 {
 public:
     QVBoxLayout *verticalLayout;
-    GenericGLWidget *widget;
 
     void setupUi(QDialog *ImageDialog)
     {
         if (ImageDialog->objectName().isEmpty())
             ImageDialog->setObjectName(QStringLiteral("ImageDialog"));
-        ImageDialog->resize(603, 571);
+        ImageDialog->resize(626, 624);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(ImageDialog->sizePolicy().hasHeightForWidth());
+        ImageDialog->setSizePolicy(sizePolicy);
         verticalLayout = new QVBoxLayout(ImageDialog);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        widget = new GenericGLWidget(ImageDialog);
-        widget->setObjectName(QStringLiteral("widget"));
-
-        verticalLayout->addWidget(widget);
-
 
         retranslateUi(ImageDialog);
 
