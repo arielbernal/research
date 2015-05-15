@@ -15,20 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
-    glwidget.cpp \
     glprimitives.cpp \
-    imagedialog.cpp \
-    imageglwidget.cpp
+    ocvTools/imageglwidget.cpp \
+    ocvTools/imagedialog.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
-    glwidget.h \
     robot.h \
     glprimitivies.h \
-    robotdetect.h \
-    imagedialog.h \
-    imageglwidget.h \
-    imageshow.h
+    ocvTools/imageshow.h \
+    ocvTools/imagedialog.h \
+    ocvTools/imageglwidget.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
@@ -52,3 +49,5 @@ win32 {
 
 RESOURCES += \
     icons.qrc
+
+DISTFILES +=

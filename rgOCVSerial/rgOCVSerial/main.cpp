@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include <imagedialog.h>
+#include <ocvTools/imagedialog.h>
 #include <opencv2/opencv.hpp>
 
 namespace ocv {

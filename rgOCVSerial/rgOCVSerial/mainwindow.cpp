@@ -7,11 +7,9 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <imagedialog.h>
-#include <imageshow.h>
+#include <ocvTools/imageshow.h>
 
-
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   settings = new SettingsDialog;
@@ -19,19 +17,19 @@ MainWindow::MainWindow(QWidget* parent)
 
   ui->actionConnect->setVisible(true);
   ui->actionDisconnect->setVisible(false);
+  ui->actionCamera->setVisible(true);
   ui->actionExit->setEnabled(true);
   ui->actionConfiguration->setEnabled(true);
+  ui->actionCamera->setEnabled(true);
   ui->statusBar->showMessage(tr("Disconnected"));
 
   connect(ui->actionConfiguration, SIGNAL(triggered()), settings, SLOT(show()));
   connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort()));
-  connect(
-      ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
+  connect(ui->actionDisconnect, SIGNAL(triggered()), this,
+          SLOT(closeSerialPort()));
   connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-  connect(serial,
-          SIGNAL(error(QSerialPort::SerialPortError)),
-          this,
+  connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
           SLOT(handleError(QSerialPort::SerialPortError)));
   connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 
@@ -40,67 +38,22 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->btnRead, SIGNAL(pressed()), this, SLOT(btnRead()));
 
   robot = new Robot(6, 5, 180);
-  ui->glScene->setRobot(robot);
-
-  connect(ui->sldHL, SIGNAL(sliderMoved(int)), this, SLOT(changeHL(int)));
-  connect(ui->sldHH, SIGNAL(sliderMoved(int)), this, SLOT(changeHH(int)));
-  connect(ui->sldSL, SIGNAL(sliderMoved(int)), this, SLOT(changeSL(int)));
-  connect(ui->sldSH, SIGNAL(sliderMoved(int)), this, SLOT(changeSH(int)));
-  connect(ui->sldVL, SIGNAL(sliderMoved(int)), this, SLOT(changeVL(int)));
-  connect(ui->sldVH, SIGNAL(sliderMoved(int)), this, SLOT(changeVH(int)));
 
   connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(openNewImage()));
 
   receiveData = false;
 }
 
-
 void MainWindow::openNewImage() {
-  cv::Mat image(720, 960, CV_8UC3);
-  image.setTo(cv::Scalar(0, 255, 0));
-
-
+  cv::Mat frame(720, 960, CV_8UC3);
+  glp::ImageShow::Show("Frame", frame);
+  glp::ImageShow::Show("Frame1", frame);
+  glp::ImageShow::Show("Frame2", frame);
 }
 
-void MainWindow::changeHL(int v) {
-  v = float(v) / 99 * 180;
-  ui->glScene->getCamDetect()->HL = v;
-  ui->edHL->setText(QString::number(v));
-}
+MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::changeHH(int v) {
-  v = float(v) / 99 * 180;
-  ui->glScene->getCamDetect()->HH = v;
-  ui->edHH->setText(QString::number(v));
-}
-
-void MainWindow::changeSL(int v) {
-  v = float(v) / 99 * 255;
-  ui->glScene->getCamDetect()->SL = v;
-  ui->edSL->setText(QString::number(v));
-}
-
-void MainWindow::changeSH(int v) {
-  v = float(v) / 99 * 255;
-  ui->glScene->getCamDetect()->SH = v;
-  ui->edSH->setText(QString::number(v));
-}
-
-void MainWindow::changeVL(int v) {
-  v = float(v) / 99 * 255;
-  ui->glScene->getCamDetect()->VL = v;
-  ui->edVL->setText(QString::number(v));
-}
-
-void MainWindow::changeVH(int v) {
-  v = float(v) / 99 * 255;
-  ui->glScene->getCamDetect()->VH = v;
-  ui->edVH->setText(QString::number(v));
-}
-
-MainWindow::~MainWindow() {
-  delete ui;
-}
+void MainWindow::closeEvent(QCloseEvent *event) { glp::ImageShow::CloseAll(); }
 
 void MainWindow::openSerialPort() {
   SettingsDialog::Settings p = settings->settings();
@@ -128,9 +81,7 @@ void MainWindow::openSerialPort() {
   }
 }
 
-void MainWindow::writeData(const QByteArray& data) {
-  serial->write(data);
-}
+void MainWindow::writeData(const QByteArray &data) { serial->write(data); }
 
 void MainWindow::delay(int ms) {
   QTime dieTime = QTime::currentTime().addMSecs(ms);
@@ -147,8 +98,7 @@ void MainWindow::readData() {
     bytesTotalRead += q.size();
     if (bytesTotalRead >= 180 * 2) {
       receiveData = false;
-      robot->appendData((uint16_t*)data);
-      ui->glScene->repaint();
+      robot->appendData((uint16_t *)data);
     }
   } else {
     QByteArray q = serial->readAll();
@@ -178,9 +128,7 @@ void MainWindow::writeSomedata() {
   receiveData = true;
 }
 
-void MainWindow::pushButton2() {
-  robot->randomMove();
-}
+void MainWindow::pushButton2() { robot->randomMove(); }
 
 void MainWindow::btnRead() {
   uint16_t b[2000];

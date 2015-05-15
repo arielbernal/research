@@ -19,11 +19,9 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include "glwidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -34,16 +32,15 @@ public:
     QAction *actionConnect;
     QAction *actionDisconnect;
     QAction *actionExit;
+    QAction *actionCamera;
     QWidget *centralWidget;
-    GLWidget *glScene;
-    QWidget *widget;
-    QVBoxLayout *verticalLayout_2;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButton;
-    QPushButton *pushButton_3;
+    QPushButton *btnRead;
     QPushButton *pushButton_2;
-    QTextBrowser *textConsole;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -52,10 +49,9 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1132, 935);
+        MainWindow->resize(1148, 1053);
         actionConfiguration = new QAction(MainWindow);
         actionConfiguration->setObjectName(QStringLiteral("actionConfiguration"));
-        actionConfiguration->setCheckable(true);
         QIcon icon;
         icon.addFile(QStringLiteral(":/icons/Settings.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionConfiguration->setIcon(icon);
@@ -74,55 +70,49 @@ public:
         QIcon icon3;
         icon3.addFile(QStringLiteral(":/icons/Shutdown.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionExit->setIcon(icon3);
+        actionCamera = new QAction(MainWindow);
+        actionCamera->setObjectName(QStringLiteral("actionCamera"));
+        QIcon icon4;
+        icon4.addFile(QStringLiteral(":/icons/Games.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionCamera->setIcon(icon4);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        glScene = new GLWidget(centralWidget);
-        glScene->setObjectName(QStringLiteral("glScene"));
-        glScene->setGeometry(QRect(270, 10, 841, 841));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(9, 9, 258, 256));
-        verticalLayout_2 = new QVBoxLayout(widget);
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-        verticalLayout = new QVBoxLayout();
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(40, 10, 180, 64));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        pushButton = new QPushButton(widget);
+        pushButton = new QPushButton(layoutWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
 
         horizontalLayout->addWidget(pushButton);
 
-        pushButton_3 = new QPushButton(widget);
-        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        btnRead = new QPushButton(layoutWidget);
+        btnRead->setObjectName(QStringLiteral("btnRead"));
 
-        horizontalLayout->addWidget(pushButton_3);
+        horizontalLayout->addWidget(btnRead);
 
 
         verticalLayout->addLayout(horizontalLayout);
 
-        pushButton_2 = new QPushButton(widget);
+        pushButton_2 = new QPushButton(layoutWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
 
         verticalLayout->addWidget(pushButton_2);
 
-
-        verticalLayout_2->addLayout(verticalLayout);
-
-        textConsole = new QTextBrowser(widget);
-        textConsole->setObjectName(QStringLiteral("textConsole"));
-
-        verticalLayout_2->addWidget(textConsole);
-
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(80, 150, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1132, 21));
+        menuBar->setGeometry(QRect(0, 0, 1148, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -134,6 +124,9 @@ public:
         toolBar->addAction(actionConnect);
         toolBar->addAction(actionDisconnect);
         toolBar->addAction(actionConfiguration);
+        toolBar->addSeparator();
+        toolBar->addAction(actionCamera);
+        toolBar->addSeparator();
         toolBar->addAction(actionExit);
 
         retranslateUi(MainWindow);
@@ -160,9 +153,15 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionExit->setToolTip(QApplication::translate("MainWindow", "Exit", 0));
 #endif // QT_NO_TOOLTIP
+        actionCamera->setText(QApplication::translate("MainWindow", "Camera", 0));
+#ifndef QT_NO_TOOLTIP
+        actionCamera->setToolTip(QApplication::translate("MainWindow", "Activate Camera", 0));
+#endif // QT_NO_TOOLTIP
+        actionCamera->setShortcut(QApplication::translate("MainWindow", "Alt+C", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Send 1", 0));
-        pushButton_3->setText(QApplication::translate("MainWindow", "Read", 0));
+        btnRead->setText(QApplication::translate("MainWindow", "Read", 0));
         pushButton_2->setText(QApplication::translate("MainWindow", "Send 2", 0));
+        pushButton_3->setText(QApplication::translate("MainWindow", "PushButton", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 

@@ -1,4 +1,4 @@
-#include <imageglwidget.h>
+#include <ocvTools/imageglwidget.h>
 #include <iostream>
 #include "GL/glu.h"
 #include <QTimer>
@@ -34,7 +34,7 @@ void ImageGLWidget::paintGL() {
   glColor3f(1, 1, 1);
   glp::setTexture(TextureId, Image.cols, Image.rows, GL_BGR, Image.ptr());
   glp::renderTexture(TextureId, 0, 0, width(), height());
-  std::cout << "painting" << std::endl;
+  //std::cout << "painting" << std::endl;
 }
 
 void ImageGLWidget::resizeGL(int width, int height) {}

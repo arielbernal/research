@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <map>
-#include <imagedialog.h>
+#include <ocvTools/imagedialog.h>
 
 namespace glp {
 
@@ -21,6 +21,8 @@ public:
 
   static void Remove(const std::string &Name) { getInstance().remove(Name); }
 
+  static void CloseAll() { getInstance().closeAll(); }
+
 protected:
   void show(const std::string &Name, cv::Mat &Image) {
     Iterator I = Dialogs.find(Name);
@@ -33,8 +35,16 @@ protected:
 
   void remove(const std::string &Name) {
     Iterator I = Dialogs.find(Name);
-    if (I != Dialogs.end())
+    if (I != Dialogs.end()) {
       Dialogs.erase(I);
+    }
+  }
+
+  void closeAll() {
+    std::cout << "Close All ImageDialogs" << std::endl;
+    for (auto &e : Dialogs) {
+      e.second->close();
+    }
   }
 
 private:
@@ -42,6 +52,7 @@ private:
   ImageShow() {}
   ImageShow(const ImageShow &) = delete;
   void operator=(const ImageShow &) = delete;
+
   std::map<std::string, ImageDialog *> Dialogs;
 };
 

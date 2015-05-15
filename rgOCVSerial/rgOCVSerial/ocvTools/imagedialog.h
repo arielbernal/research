@@ -2,7 +2,7 @@
 #define IMAGEDIALOG_H
 
 #include <QDialog>
-#include <imageglwidget.h>
+#include <ocvTools/imageglwidget.h>
 #include <opencv2/opencv.hpp>
 
 namespace Ui {
@@ -16,7 +16,8 @@ public:
   explicit ImageDialog(const std::string &Name, cv::Mat &Image,
                        QWidget *parent = 0);
   ~ImageDialog();
-
+protected:
+    void closeEvent(QCloseEvent *event);
 private:
   Ui::ImageDialog *ui;
   ImageGLWidget *imageWidget;
