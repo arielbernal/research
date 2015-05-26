@@ -9,12 +9,12 @@
 class NNDataset {
 public:
   NNDataset(size_t N, size_t Size)
-      : Data(N * Size), Labels(N), N(N), Size(Size), Loaded(false), Cols(Size),
-        Rows(1), CurrentId(0) {}
+      : Data(N * Size), Labels(N), N(N), Size(Size), Cols(Size), Rows(1),
+        CurrentId(0), Loaded(false) {}
 
   NNDataset(size_t N, size_t Rows, size_t Cols)
-      : Data(N * Rows * Cols), Labels(N), N(N), Size(Rows * Cols),
-        Loaded(false), Cols(Cols), Rows(Rows), CurrentId(0) {}
+      : Data(N * Rows * Cols), Labels(N), N(N), Size(Rows * Cols), Cols(Cols),
+        Rows(Rows), CurrentId(0), Loaded(false) {}
 
   uint8_t getN() { return N; }
 
@@ -28,6 +28,8 @@ public:
     return Data[id * Size + y * Cols + x];
   }
 
+  uint8_t *getSample() { return &Data[CurrentId * Size]; }
+
   uint8_t getLabel() { return Labels[CurrentId]; }
 
   uint8_t getXYValue(size_t x, size_t y) {
@@ -35,7 +37,7 @@ public:
   }
 
   void setCurrentId(size_t id) {
-    if (id >= 0 && id < N) {
+    if (id < N) {
       CurrentId = id;
     }
   }
@@ -96,8 +98,8 @@ private:
   size_t Size;
   size_t Cols;
   size_t Rows;
-  bool Loaded;
   size_t CurrentId;
+  bool Loaded;
 };
 
 #endif // NNDATASET

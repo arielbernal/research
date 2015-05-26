@@ -26,7 +26,8 @@ HEADERS  += mainwindow.h \
     oglTools/glprimitivies.h \
     oglTools/fps.h \
     oglTools/simpleglwidget.h \
-    nndataset.h
+    nndataset.h \
+    nnclass.h
 
 FORMS    += mainwindow.ui \
     imagedialog.ui

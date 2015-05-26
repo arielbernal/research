@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
   connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
-  connect(ui->edId,SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
+  connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
+  connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
 
   Training = new NNDataset(TRAINING_SAMPLES, SAMPLE_COLS, SAMPLE_ROWS);
 
@@ -24,9 +25,11 @@ MainWindow::MainWindow(QWidget *parent)
   ui->glDigit->setCallbackRenderer(fp);
   if (Training->isLoaded())
     return;
-  Training->load("E:/MNIST/train-images.idx3-ubyte", 16,
-                 "E:/MNIST/train-labels.idx1-ubyte", 8);
+  Training->load("../data/train-images.idx3-ubyte", 16,
+                 "../data/train-labels.idx1-ubyte", 8);
   updateControls();
+
+  nnff = new NNFeedForward(28 * 28, 28 * 28, 1, 10);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -53,8 +56,9 @@ void MainWindow::nextImage() {
 }
 
 void MainWindow::FrameRenderer() {
-  float dx = ui->glDigit->width() / 28.0f;
-  float dy = ui->glDigit->height() / 28.0f;
+  float dx = ui->glDigit->width() / 28.05f;
+  float dy = ui->glDigit->height() / 28.05f;
+  glTranslatef(0.1, 0.1, 0);
   glColor3f(1, 0, 0);
   glBegin(GL_LINES);
   for (size_t x = 0; x <= 28; ++x) {
@@ -65,7 +69,6 @@ void MainWindow::FrameRenderer() {
     glVertex2f(0, (28 - y) * dy);
     glVertex2f(28 * dx, (28 - y) * dy);
   }
-
   glEnd();
   glColor3f(1, 1, 1);
   if (Training->isLoaded()) {
@@ -82,4 +85,12 @@ void MainWindow::FrameRenderer() {
     }
     glEnd();
   }
+}
+
+void MainWindow::trainNN() {
+  float output[10];
+  nnff->feedForward(Training->getSample(), output);
+  for (size_t i = 0; i < 10; ++i)
+      std::cout << output[i] << " ";
+  std::cout << std::endl;
 }
