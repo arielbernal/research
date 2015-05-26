@@ -15,17 +15,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
-    glprimitives.cpp \
     ocvTools/imageglwidget.cpp \
-    ocvTools/imagedialog.cpp
+    ocvTools/imagedialog.cpp \
+    oglTools/glprimitives.cpp \
+    detect.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
     robot.h \
-    glprimitivies.h \
     ocvTools/imageshow.h \
     ocvTools/imagedialog.h \
-    ocvTools/imageglwidget.h
+    ocvTools/imageglwidget.h \
+    oglTools/glprimitivies.h \
+    detect.h \
+    oglTools/fps.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

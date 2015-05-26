@@ -3,13 +3,20 @@
 #include "GL/glu.h"
 #include <QTimer>
 
-ImageGLWidget::ImageGLWidget(cv::Mat &Image, QWidget *parent)
-    : QOpenGLWidget(parent), Image(Image) {
+ImageGLWidget::ImageGLWidget(const std::string &Name, cv::Mat &Image,
+                             QWidget *parent)
+    : QOpenGLWidget(parent), Name(Name), Image(Image) {
   std::cout << "GLWidget created " << Image.cols << ", " << Image.rows
             << std::endl;
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(update()));
   timer->start(33);
+  channels = 1 + (Image.type() >> CV_CN_SHIFT);
+  depth = Image.type() & CV_MAT_DEPTH_MASK;
+  DataFormat = GL_BGR;
+  if (channels == 1)
+    DataFormat = GL_LUMINANCE;
+  FPSEnable = false;
 }
 
 ImageGLWidget::~ImageGLWidget() { glDeleteTextures(1, &TextureId); }
@@ -32,9 +39,20 @@ void ImageGLWidget::initializeGL() {
 void ImageGLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glColor3f(1, 1, 1);
-  glp::setTexture(TextureId, Image.cols, Image.rows, GL_BGR, Image.ptr());
+  if (FPSEnable) {
+    float fpsVal = fps.update();
+    char str[20];
+    sprintf_s(str, "FPS = %5.2f", fpsVal);
+    cv::putText(Image, str, cv::Point(600, 25), CV_FONT_HERSHEY_SIMPLEX, 1,
+                cv::Scalar::all(255));
+  }
+
+  if (isCallbackEnabled) {
+    CallbackRenderer();
+  }
+  glp::setTexture(TextureId, Image.cols, Image.rows, DataFormat, Image.ptr());
   glp::renderTexture(TextureId, 0, 0, width(), height());
-  //std::cout << "painting" << std::endl;
+
 }
 
 void ImageGLWidget::resizeGL(int width, int height) {}

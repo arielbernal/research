@@ -15,5 +15,8 @@
         <file>icons/Edit-clear.png</file>
         <file>icons/bulbOn.png</file>
         <file>icons/bulbOff.png</file>
+        <file>icons/camera.png</file>
+        <file>icons/camera_green.png</file>
+        <file>icons/camera_red.png</file>
     </qresource>
 </RCC>

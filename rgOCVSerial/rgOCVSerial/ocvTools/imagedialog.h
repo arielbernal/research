@@ -16,8 +16,14 @@ public:
   explicit ImageDialog(const std::string &Name, cv::Mat &Image,
                        QWidget *parent = 0);
   ~ImageDialog();
+  void enableFPS(bool enabled = true) { imageWidget->enableFPS(enabled); }
+  void setCallbackRenderer(std::function<void()> Func) {
+      imageWidget->setCallbackRenderer(Func);
+  }
+
 protected:
-    void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event);
+
 private:
   Ui::ImageDialog *ui;
   ImageGLWidget *imageWidget;

@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <vector>
-#include <glprimitivies.h>
+#include <oglTools/glprimitivies.h>
 #include <stdint.h>
 #include <iostream>
 

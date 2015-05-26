@@ -71,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -90,7 +90,8 @@
    <addaction name="actionDisconnect"/>
    <addaction name="actionConfiguration"/>
    <addaction name="separator"/>
-   <addaction name="actionCamera"/>
+   <addaction name="actionCameraOn"/>
+   <addaction name="actionCameraOff"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
   </widget>
@@ -142,19 +143,32 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionCamera">
+  <action name="actionCameraOn">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/Games.png</normaloff>:/icons/Games.png</iconset>
+     <normaloff>:/icons/camera.png</normaloff>
+     <normalon>:/icons/camera.png</normalon>:/icons/camera.png</iconset>
    </property>
    <property name="text">
-    <string>Camera</string>
+    <string>Camera On</string>
    </property>
    <property name="toolTip">
     <string>Activate Camera</string>
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionCameraOff">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/camera_red.png</normaloff>:/icons/camera_red.png</iconset>
+   </property>
+   <property name="text">
+    <string>Camera Off</string>
+   </property>
+   <property name="toolTip">
+    <string>Turn Camera Off</string>
    </property>
   </action>
  </widget>

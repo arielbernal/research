@@ -13,7 +13,7 @@ ImageDialog::ImageDialog(const std::string &Name, cv::Mat &Image,
   setModal(false);
   setWindowTitle(Name.c_str());
 
-  imageWidget = new ImageGLWidget(Image);
+  imageWidget = new ImageGLWidget(Name, Image);
   imageWidget->setFixedSize(Image.cols, Image.rows);
   layout()->addWidget(imageWidget);
   adjustSize();
@@ -22,7 +22,7 @@ ImageDialog::ImageDialog(const std::string &Name, cv::Mat &Image,
 }
 
 ImageDialog::~ImageDialog() {
-  glp::ImageShow::Remove(Name);
+  glp::RemoveImage(Name);
   std::cout << "Deleted ImageDialog " << Name << std::endl;
   delete ui;
 }

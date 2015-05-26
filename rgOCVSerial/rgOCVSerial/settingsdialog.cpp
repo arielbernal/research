@@ -141,7 +141,7 @@ void SettingsDialog::fillPortsInfo() {
                  : blankString);
 
     ui->serialPortInfoListBox->addItem(list.first(), list);
-    if (manufacturer.contains("Arduino")) {
+    if (description.contains("Bluetooth")) {
       listIndex = i;
     }
     ++i;

@@ -17,10 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
 
   ui->actionConnect->setVisible(true);
   ui->actionDisconnect->setVisible(false);
-  ui->actionCamera->setVisible(true);
+  ui->actionCameraOn->setVisible(true);
+  ui->actionCameraOff->setVisible(false);
   ui->actionExit->setEnabled(true);
   ui->actionConfiguration->setEnabled(true);
-  ui->actionCamera->setEnabled(true);
+  ui->actionCameraOn->setEnabled(true);
   ui->statusBar->showMessage(tr("Disconnected"));
 
   connect(ui->actionConfiguration, SIGNAL(triggered()), settings, SLOT(show()));
@@ -41,19 +42,19 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(openNewImage()));
 
+  connect(ui->actionCameraOn, SIGNAL(triggered()), this, SLOT(cameraOn()));
+  connect(ui->actionCameraOff, SIGNAL(triggered()), this, SLOT(cameraOff()));
+
+  detect = new RobotDetect();
   receiveData = false;
 }
 
-void MainWindow::openNewImage() {
-  cv::Mat frame(720, 960, CV_8UC3);
-  glp::ImageShow::Show("Frame", frame);
-  glp::ImageShow::Show("Frame1", frame);
-  glp::ImageShow::Show("Frame2", frame);
+MainWindow::~MainWindow() {
+  delete detect;
+  delete ui;
 }
 
-MainWindow::~MainWindow() { delete ui; }
-
-void MainWindow::closeEvent(QCloseEvent *event) { glp::ImageShow::CloseAll(); }
+void MainWindow::closeEvent(QCloseEvent *event) { glp::CloseAllImages(); }
 
 void MainWindow::openSerialPort() {
   SettingsDialog::Settings p = settings->settings();
@@ -138,4 +139,23 @@ void MainWindow::btnRead() {
     b[i] = v < 0 ? 100 : v > 4000 ? 4000 : v;
   }
   robot->appendData(b);
+}
+
+void MainWindow::cameraOn() {
+  if (!detect->turnCameraOn()) {
+    QMessageBox::critical(this, tr("Critical Error"), tr("Camera Error"));
+    return;
+  }
+
+  ui->actionCameraOn->setVisible(false);
+
+  ui->actionCameraOff->setVisible(true);
+}
+void MainWindow::cameraOff() {
+  detect->turnCameraOff();
+  ui->actionCameraOff->setVisible(false);
+  ui->actionCameraOn->setVisible(true);
+}
+
+void MainWindow::openNewImage() {
 }
