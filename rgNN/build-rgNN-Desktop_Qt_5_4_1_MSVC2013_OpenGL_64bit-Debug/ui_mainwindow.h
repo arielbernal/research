@@ -32,7 +32,7 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_2;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
@@ -41,6 +41,7 @@ public:
     QPushButton *btnPrev;
     QLineEdit *edId;
     QPushButton *btnNext;
+    QPushButton *btnTrain;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -52,10 +53,10 @@ public:
         MainWindow->resize(1148, 1053);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(0, 0, 404, 472));
-        verticalLayout_2 = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(20, 10, 404, 475));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setContentsMargins(11, 11, 11, 11);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
@@ -63,7 +64,7 @@ public:
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        lbLabel = new QLabel(widget);
+        lbLabel = new QLabel(layoutWidget);
         lbLabel->setObjectName(QStringLiteral("lbLabel"));
         lbLabel->setMaximumSize(QSize(10000, 50));
         QFont font;
@@ -79,7 +80,7 @@ public:
 
         verticalLayout->addWidget(lbLabel);
 
-        glDigit = new SimpleGLWidget(widget);
+        glDigit = new SimpleGLWidget(layoutWidget);
         glDigit->setObjectName(QStringLiteral("glDigit"));
         glDigit->setMinimumSize(QSize(400, 400));
 
@@ -91,18 +92,18 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        btnPrev = new QPushButton(widget);
+        btnPrev = new QPushButton(layoutWidget);
         btnPrev->setObjectName(QStringLiteral("btnPrev"));
 
         horizontalLayout->addWidget(btnPrev);
 
-        edId = new QLineEdit(widget);
+        edId = new QLineEdit(layoutWidget);
         edId->setObjectName(QStringLiteral("edId"));
         edId->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(edId);
 
-        btnNext = new QPushButton(widget);
+        btnNext = new QPushButton(layoutWidget);
         btnNext->setObjectName(QStringLiteral("btnNext"));
 
         horizontalLayout->addWidget(btnNext);
@@ -110,10 +111,13 @@ public:
 
         verticalLayout_2->addLayout(horizontalLayout);
 
+        btnTrain = new QPushButton(centralWidget);
+        btnTrain->setObjectName(QStringLiteral("btnTrain"));
+        btnTrain->setGeometry(QRect(460, 10, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1148, 21));
+        menuBar->setGeometry(QRect(0, 0, 1148, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -136,6 +140,7 @@ public:
         lbLabel->setText(QString());
         btnPrev->setText(QApplication::translate("MainWindow", "<", 0));
         btnNext->setText(QApplication::translate("MainWindow", ">", 0));
+        btnTrain->setText(QApplication::translate("MainWindow", "Train", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
