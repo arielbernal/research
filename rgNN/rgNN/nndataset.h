@@ -16,9 +16,9 @@ public:
       : Data(N * Rows * Cols), Labels(N), N(N), Size(Rows * Cols), Cols(Cols),
         Rows(Rows), CurrentId(0), Loaded(false) {}
 
-  uint8_t getN() { return N; }
+  size_t getN() { return N; }
 
-  uint8_t getSize() { return Size; }
+  size_t getSize() { return Size; }
 
   uint8_t *getSample(size_t id) { return &Data[id * Size]; }
 
