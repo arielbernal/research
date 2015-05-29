@@ -641,6 +641,7 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
 		../rgNN/nndataset.h \
+		../rgNN/nnclass.h \
 		../rgNN/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgNN -I/home/ajbernal/dev/bat/research/rgNN/rgNN/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgNN/mainwindow.h -o moc_mainwindow.cpp
 
@@ -1239,6 +1240,7 @@ main.o: ../rgNN/main.cpp ../rgNN/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
 		../rgNN/nndataset.h \
+		../rgNN/nnclass.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1355,6 +1357,7 @@ mainwindow.o: ../rgNN/mainwindow.cpp ../rgNN/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
 		../rgNN/nndataset.h \
+		../rgNN/nnclass.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \

@@ -88,9 +88,11 @@ void MainWindow::FrameRenderer() {
 }
 
 void MainWindow::trainNN() {
-  float output[10];
-  nnff->feedForward(Training->getSample(), output);
-  for (size_t i = 0; i < 10; ++i)
-      std::cout << output[i] << " ";
-  std::cout << std::endl;
+
+  nnff->train(Training, 1);
+//  float output[10];
+//  nnff->feedForward(Training->getSample(), output);
+//  for (size_t i = 0; i < 10; ++i)
+//      std::cout << output[i] << " ";
+//  std::cout << std::endl;
 }

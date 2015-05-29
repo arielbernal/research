@@ -29,6 +29,8 @@ HEADERS  += mainwindow.h \
     nndataset.h \
     nnclass.h
 
+DEPENDPATH *= $
+
 FORMS    += mainwindow.ui \
     imagedialog.ui
 
