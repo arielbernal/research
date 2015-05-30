@@ -6,7 +6,7 @@
 #include <fstream>
 #include <stdint.h>
 
-class NNDataset {
+template <typename T, typename K> class NNDataset {
 public:
   NNDataset(size_t N, size_t Size)
       : Data(N * Size), Labels(N), N(N), Size(Size), Cols(Size), Rows(1),
@@ -20,19 +20,19 @@ public:
 
   size_t getSize() { return Size; }
 
-  uint8_t *getSample(size_t id) { return &Data[id * Size]; }
+  T *getSample(size_t id) { return &Data[id * Size]; }
 
-  uint8_t getLabel(size_t id) { return Labels[id]; }
+  K getLabel(size_t id) { return Labels[id]; }
 
   uint8_t getXYValue(size_t id, size_t x, size_t y) {
     return Data[id * Size + y * Cols + x];
   }
 
-  uint8_t *getSample() { return &Data[CurrentId * Size]; }
+  T *getSample() { return &Data[CurrentId * Size]; }
 
-  uint8_t getLabel() { return Labels[CurrentId]; }
+  K getLabel() { return Labels[CurrentId]; }
 
-  uint8_t getXYValue(size_t x, size_t y) {
+  T getXYValue(size_t x, size_t y) {
     return Data[CurrentId * Size + y * Cols + x];
   }
 
@@ -65,6 +65,13 @@ public:
     return Loaded;
   }
 
+  void load(T *data, size_t DataSize, K *labels, size_t LabelsSize) {
+    for (size_t i = 0; i < DataSize; ++i)
+      Data[i] = data[i];
+    for (size_t i = 0; i < LabelsSize; ++i)
+      Labels[i] = labels[i];
+  }
+
 protected:
   bool loadData(const std::string &Filename, size_t Offset = 0) {
     std::ifstream ifs(Filename.c_str(),
@@ -92,8 +99,8 @@ protected:
   }
 
 private:
-  std::vector<uint8_t> Data;
-  std::vector<uint8_t> Labels;
+  std::vector<T> Data;
+  std::vector<K> Labels;
   size_t N;
   size_t Size;
   size_t Cols;

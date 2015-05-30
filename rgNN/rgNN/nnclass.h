@@ -7,20 +7,21 @@
 struct NNLayer {
   enum { INPUT, HIDDEN, OUTPUT };
 
-  NNLayer(size_t N)
-      : N(N), A(N + 1), delta(N + 1), Prev(0), Next(0), Type(INPUT) {}
+  NNLayer(size_t N) : N(N), A(N + 1), Prev(0), Next(0), Type(INPUT) {
+    A[N] = -1;
+  }
 
   NNLayer(size_t N, NNLayer *Prev, size_t Type)
-      : N(N), A(N + 1), W(N + 1, std::vector<float>(Prev->N + 1)), delta(N + 1),
+      : N(N), A(N + 1), W(N, std::vector<float>(Prev->N + 1)), delta(N),
         Prev(Prev), Next(0), Type(Type) {
-    Prev->Next = this;
+    A[N] = -1;
     setRandomWeights();
-    A[N] = 1;
+    Prev->Next = this;
   }
 
   template <typename T> void set(T *input) {
     for (size_t i = 0; i < N; ++i)
-      A[i] = input[i];
+      A[i] = float(input[i]);
   }
 
   template <typename T> void get(T *output) {
@@ -47,41 +48,63 @@ struct NNLayer {
   float g(float x) { return 1 / (1 + exp(-x)); }
 
   void setRandomWeights() {
-    for (size_t i = 0; i < N + 1; ++i) {
+    for (size_t i = 0; i < N; ++i) {
       for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[i][j] = float(rand()) / RAND_MAX - 0.5f;
+        W[i][j] = 2 * (float(rand()) / RAND_MAX) - 1.0f;
     }
   }
 
   void computeDeltas(float *t) {
-    if (Type == OUTPUT) {
-      for (size_t k = 0; k < N + 1; ++k)
-        delta[k] = (A[k] - t[k]) * A[k] * (1 - A[k]);
-    }
+    for (size_t k = 0; k < N; ++k)
+      delta[k] = (A[k] - t[k]) * A[k] * (1 - A[k]);
   }
+
   void computeDeltas() {
-    if (Type == HIDDEN) {
-      for (size_t j = 0; j < N + 1; ++j) {
-        float S = 0;
-        for (size_t k = 0; k < Next->N + 1; ++k)
-          S += Next->delta[k] * Next->W[k][j];
-        delta[j] = A[j] * (1 - A[j]) * S;
-      }
+    for (size_t j = 0; j < N; ++j) {
+      float S = 0;
+      for (size_t k = 0; k < Next->N; ++k)
+        S += Next->delta[k] * Next->W[k][j];
+      delta[j] = A[j] * (1 - A[j]) * S;
     }
   }
 
   void updateWeights(float eta) {
-    if (Type == HIDDEN || Type == OUTPUT) {
-      for (size_t k = 0; k < N + 1; ++k) {
-        for (size_t j = 0; j < Prev->N + 1; ++j)
-          W[k][j] = -eta * delta[k] * Prev->A[j];
+    for (size_t k = 0; k < N; ++k)
+      for (size_t j = 0; j < Prev->N + 1; ++j)
+        W[k][j] -= eta * delta[k] * Prev->A[j];
+  }
+
+  void dump() {
+    if (Type == INPUT) {
+      std::cout << "------ INPUT LAYER --------" << std::endl;
+      for (size_t i = 0; i < A.size(); ++i)
+        printf("%7.4f\n", A[i]);
+      std::cout << std::endl;
+    }
+    if (Type == HIDDEN) {
+      std::cout << "------ HIDDEN LAYER --------" << std::endl;
+      for (size_t i = 0; i < A.size() - 1; ++i) {
+        printf("%7.4f | ", A[i]);
+        for (size_t j = 0; j < W[i].size(); ++j)
+          printf("%7.4f ", W[i][j]);
+        printf("| %7.4f\n", delta[i]);
+      }
+      printf("%7.4f\n", A.back());
+    }
+    if (Type == OUTPUT) {
+      std::cout << "------ OUTPUT LAYER --------" << std::endl;
+      for (size_t i = 0; i < A.size() - 1; ++i) {
+        printf("%7.4f | ", A[i]);
+        for (size_t j = 0; j < W[i].size(); ++j)
+          printf("%7.4f ", W[i][j]);
+        printf("| %7.4f\n", delta[i]);
       }
     }
   }
 
   size_t N;
   std::vector<float> A;
-  std::vector<std::vector<float> > W;
+  std::vector<std::vector<float>> W;
   std::vector<float> delta;
   NNLayer *Prev;
   NNLayer *Next;
@@ -95,9 +118,6 @@ public:
                 size_t NOutput) {
     init(NInput, NHidden, NHiddenLayers, NOutput);
   }
-
-  ~NNFeedForward() { clear(); }
-
   void clear() {
     for (auto &e : Layers)
       delete e;
@@ -108,90 +128,80 @@ public:
             size_t NOutput) {
     clear();
 
-    Layers.push_back(new NNLayer(NInput));
+    Input = new NNLayer(NInput);
+    Layers.push_back(Input);
     for (size_t i = 0; i < NHiddenLayers; ++i)
       Layers.push_back(new NNLayer(NHidden, Layers.back(), NNLayer::HIDDEN));
-    Layers.push_back(new NNLayer(NOutput, Layers.back(), NNLayer::OUTPUT));
+    Output = new NNLayer(NOutput, Layers.back(), NNLayer::OUTPUT);
+    Layers.push_back(Output);
   }
 
   template <typename T, typename S> void feedForward(T *input, S *output) {
-    Layers[0]->set(input);
-    for (size_t i = 1; i < Layers.size(); ++i) {
+    Input->set(input);
+    for (size_t i = 1; i < Layers.size(); ++i)
       Layers[i]->feedForward();
-    }
-    Layers.back()->get(output);
+    Output->get(output);
   }
 
-  void backPropagate(float *OutputLabel) {
-    int NOut = Layers.size() - 1;
-    Layers[NOut]->computeDeltas(OutputLabel);
-    for (int i = NOut - 1; i > 0; i--) {
+  void dump() {
+    for (auto &e : Layers)
+      e->dump();
+    std::cout << "-----------------------------" << std::endl;
+  }
+
+  void backPropagate(float *Pattern) {
+    Output->computeDeltas(Pattern);
+    for (size_t i = Layers.size() - 2; i > 0; i--) {
       Layers[i]->computeDeltas();
     }
-    for (int i = 1; i <= NOut; i++) {
-      Layers[i]->updateWeights(0.01);
+    for (size_t i = 1; i < Layers.size(); i++) {
+      Layers[i]->updateWeights(0.1);
     }
   }
 
-  void train(NNDataset *Training, size_t MaxEpochs) {
+  void labelToPattern(uint8_t label, float *pattern, size_t Size) {
+    for (size_t i = 0; i < Size; ++i) {
+      if (i == label)
+        pattern[i] = 1;
+      else
+        pattern[i] = 0;
+    }
+  }
+
+  template <typename T, typename S>
+  void train(NNDataset<T, S> *Training, size_t MaxEpochs = 1) {
+    float *Output = new float[Training->getSize()];
+    float *Pattern = new float[Training->getSize()];
+    std::cout << "Epochs = " << MaxEpochs << " N = " << Training->getN() << " Size = " << Training->getSize() << std::endl;
     for (size_t k = 0; k < MaxEpochs; ++k) {
-      // for (size_t i = 0; i < Training->getN() / 1000 ; ++i) {
-      for (size_t i = 0; i < 1; ++i) {
-        float Output[10];
-        float OutputLabel[10];
-        for (int h = 0; h < 10; ++h) {
-          feedForward(Training->getSample(i), Output);
-          labelToOutput(Training->getLabel(i), OutputLabel);
-          std::cout << "---------------------------------" << std::endl;
-          std::cout << "I = " << i << " Label = " << (int)Training->getLabel(i)
-                    << std::endl;
-          for (int j = 0; j < 10; ++j)
-            std::cout << Output[j] << " ";
-          std::cout << std::endl;
-
-          backPropagate(OutputLabel);
-          feedForward(Training->getSample(i), Output);
-          for (int j = 0; j < 10; ++j)
-            std::cout << Output[j] << " ";
-          std::cout << std::endl;
-        }
-
-        // std::cout << "Training i = " << i << std::endl;
+      for (size_t i = 0; i < 100; ++i) {
+          size_t id = rand() % 4;
+          feedForward(Training->getSample(id), Output);
+          labelToPattern(Training->getLabel(id), Pattern, Training->getSize());
+          //          std::cout << "---------------------------------" <<
+          //          std::endl;
+          //          std::cout << "I = " << i << " Label = " <<
+          //          (int)Training->getLabel(i)
+          //                    << std::endl;
+          //          for (int j = 0; j < Training->getSize(); ++j)
+          //            std::cout << Output[j] << " ";
+          //          std::cout << std::endl;
+          backPropagate(Pattern);
+          //          feedForward(Training->getSample(i), Output);
+          //          for (int j = 0; j < Training->getSize(); ++j)
+          //            std::cout << Output[j] << " ";
+          //          std::cout << std::endl;
       }
-      float mse = MSE(Training);
-      std::cout << "MSE = " << mse << std::endl;
+      //std::cout << "Epoch = " << k << std::endl;
     }
-  }
-
-protected:
-  float MSE(float *a, float *b, size_t n) {
-    float mse = 0;
-    for (size_t i = 0; i < n; ++i) {
-      float d = a[i] - b[i];
-      mse += d * d;
-    }
-    return mse / n;
-  }
-
-  void labelToOutput(uint8_t label, float *output) {
-    memset(output, 0, 10 * sizeof(float));
-    output[label] = 1;
-  }
-
-  float MSE(NNDataset *Dataset) {
-    float mse = 0;
-    for (size_t i = 0; i < Dataset->getN() / 1000; ++i) {
-      float Output[10];
-      float OutputLabel[10];
-      feedForward(Dataset->getSample(i), Output);
-      labelToOutput(Dataset->getLabel(i), OutputLabel);
-      mse += MSE(Output, OutputLabel, 10);
-    }
-    return mse / Dataset->getN();
+    delete Output;
+    delete Pattern;
   }
 
 private:
   std::vector<NNLayer *> Layers;
+  NNLayer *Input;
+  NNLayer *Output;
 };
 
 #endif // NNCLASS

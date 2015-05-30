@@ -19,9 +19,10 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
   connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
 
-  Training = new NNDataset(TRAINING_SAMPLES, SAMPLE_COLS, SAMPLE_ROWS);
+  Training = new NNDataset<uint8_t, uint8_t>(TRAINING_SAMPLES, SAMPLE_COLS,
+                                             SAMPLE_ROWS);
 
-  auto fp = std::bind(&MainWindow::FrameRenderer, this);
+  auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
   if (Training->isLoaded())
     return;
@@ -29,7 +30,14 @@ MainWindow::MainWindow(QWidget *parent)
                  "../data/train-labels.idx1-ubyte", 8);
   updateControls();
 
-  nnff = new NNFeedForward(28 * 28, 28 * 28, 1, 10);
+  // nnff = new NNFeedForward(28 * 28, 28 * 28, 1, 10);
+
+  T1 = new NNDataset<float, uint8_t>(4, 2);
+  float A[8] = {0, 0, 0, 1, 1, 0, 1, 1};
+  uint8_t l[4] = {0, 1, 1, 0};
+  T1->load(A, 8, l, 4);
+
+  nnff = new NNFeedForward(2, 2, 1, 2);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -55,7 +63,7 @@ void MainWindow::nextImage() {
   updateControls();
 }
 
-void MainWindow::FrameRenderer() {
+void MainWindow::DigitRenderer() {
   float dx = ui->glDigit->width() / 28.05f;
   float dy = ui->glDigit->height() / 28.05f;
   glTranslatef(0.1, 0.1, 0);
@@ -89,10 +97,15 @@ void MainWindow::FrameRenderer() {
 
 void MainWindow::trainNN() {
 
-  nnff->train(Training, 1);
-//  float output[10];
-//  nnff->feedForward(Training->getSample(), output);
-//  for (size_t i = 0; i < 10; ++i)
-//      std::cout << output[i] << " ";
-//  std::cout << std::endl;
+  nnff->train(T1, 40000);
+
+  //  nnff->train(Training, 1);
+  float output[2];
+  for (size_t i = 0; i < 4; ++i) {
+    float *p = T1->getSample(i);
+    nnff->feedForward(p, output);
+    std::cout << "----------------" << i << "-----------------" << std::endl;
+    std::cout << p[0] << " " << p[1] << std::endl;
+    std::cout << output[0] << " " << output[1] << std::endl;
+  }
 }
