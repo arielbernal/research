@@ -107,6 +107,16 @@
      <string>Train</string>
     </property>
    </widget>
+   <widget class="SimpleGLWidget" name="plot2d" native="true">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>60</y>
+      <width>391</width>
+      <height>391</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -114,7 +124,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

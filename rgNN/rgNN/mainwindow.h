@@ -25,7 +25,9 @@ private slots:
 
 protected:
   void DigitRenderer();
+  void Plot2DRenderer();
   void updateControls();
+  void NNProgress(size_t i, float mse);
 
 private:
   Ui::MainWindow *ui;

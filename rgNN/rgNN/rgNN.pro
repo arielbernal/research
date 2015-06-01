@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     oglTools/fps.h \
     oglTools/simpleglwidget.h \
     nndataset.h \
-    nnclass.h
+    nnclass.h \
+    nnlayer.h
 
 DEPENDPATH *= $
 
