@@ -42,6 +42,7 @@ public:
     QLineEdit *edId;
     QPushButton *btnNext;
     QPushButton *btnTrain;
+    SimpleGLWidget *plot2d;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -114,6 +115,9 @@ public:
         btnTrain = new QPushButton(centralWidget);
         btnTrain->setObjectName(QStringLiteral("btnTrain"));
         btnTrain->setGeometry(QRect(460, 10, 99, 27));
+        plot2d = new SimpleGLWidget(centralWidget);
+        plot2d->setObjectName(QStringLiteral("plot2d"));
+        plot2d->setGeometry(QRect(450, 60, 391, 391));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
