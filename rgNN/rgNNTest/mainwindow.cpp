@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
   uint8_t l[8] = {0, 1, 1, 0, 0, 1, 0, 1};
   T1->load(A, 16, l, 8);
 
-  nnff = new NNFeedForward(2, 10, 1, 2);
+  nnff = new NNFeedForward(2, 40, 2, 2);
   auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
