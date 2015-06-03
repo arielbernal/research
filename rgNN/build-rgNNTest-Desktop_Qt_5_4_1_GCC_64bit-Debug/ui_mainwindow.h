@@ -21,6 +21,7 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "../common/oglTools/simpleglwidget.h"
+#include "../common/qtTools/qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -30,6 +31,7 @@ public:
     QWidget *centralWidget;
     QPushButton *btnTrain;
     SimpleGLWidget *plot2d;
+    QCustomPlot *chartMSE;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -39,6 +41,7 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1148, 1053);
+        MainWindow->setMinimumSize(QSize(1024, 1024));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         btnTrain = new QPushButton(centralWidget);
@@ -47,6 +50,9 @@ public:
         plot2d = new SimpleGLWidget(centralWidget);
         plot2d->setObjectName(QStringLiteral("plot2d"));
         plot2d->setGeometry(QRect(10, 10, 391, 391));
+        chartMSE = new QCustomPlot(centralWidget);
+        chartMSE->setObjectName(QStringLiteral("chartMSE"));
+        chartMSE->setGeometry(QRect(10, 410, 391, 381));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

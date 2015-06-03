@@ -7,13 +7,10 @@
 #include <../common/nnlayer.h>
 #include <../common/nndataset.h>
 
-
 class NNFeedForward {
- public:
+public:
   NNFeedForward() {}
-  NNFeedForward(size_t NInput,
-                size_t NHidden,
-                size_t NHiddenLayers,
+  NNFeedForward(size_t NInput, size_t NHidden, size_t NHiddenLayers,
                 size_t NOutput) {
     init(NInput, NHidden, NHiddenLayers, NOutput);
   }
@@ -23,9 +20,7 @@ class NNFeedForward {
     Layers.clear();
   }
 
-  void init(size_t NInput,
-            size_t NHidden,
-            size_t NHiddenLayers,
+  void init(size_t NInput, size_t NHidden, size_t NHiddenLayers,
             size_t NOutput) {
     clear();
 
@@ -51,8 +46,7 @@ class NNFeedForward {
     std::cout << "-----------------------------" << std::endl;
   }
 
-  template <typename T>
-  void backPropagate(const std::vector<T>& Pattern) {
+  template <typename T> void backPropagate(const std::vector<T>& Pattern) {
     Output->computeDeltas(Pattern);
     for (size_t i = Layers.size() - 2; i > 0; i--)
       Layers[i]->computeDeltas();
@@ -76,18 +70,18 @@ class NNFeedForward {
     std::vector<float> Pattern(Training->getSize());
     std::cout << "Epochs = " << MaxEpochs << " N = " << Training->getN()
               << " Size = " << Training->getSize() << std::endl;
-    for (size_t k = 0; k < MaxEpochs; ++k) {
+    size_t epoch = 0;
+    while (epoch < MaxEpochs) {
       for (size_t i = 0; i < Training->getN(); ++i) {
         feedForward(Training->getSample(i), Output);
         labelToPattern(Training->getLabel(i), Pattern);
         backPropagate(Pattern);
-
-        feedForward(Training->getSample(i), Output);
       }
       float mse = MSE(Training);
       if (CallbackProgress) {
-        CallbackProgress(k, mse);
+        CallbackProgress(epoch, mse);
       }
+      epoch++;
     }
   }
 
@@ -101,28 +95,43 @@ class NNFeedForward {
     return mse / Yp.size();
   }
 
-  template <typename T, typename S>
-  float MSE(NNDataset<T, S>* Training) {
+  template <typename T>
+  bool isSameOutput(const std::vector<T>& Output,
+                    const std::vector<T>& Pattern) {
+    for (size_t i = 0; i < Yp.size(); ++i)
+      if (Pattern[i] != roundedOutput(Output[i]))
+        return false;
+    return true;
+  }
+
+  template <typename T, typename S> void stat(NNDataset<T, S>* Training) {
     std::vector<float> Output(Training->getSize());
     std::vector<float> Pattern(Training->getSize());
     float mse = 0;
+    size_t errors = 0;
     for (size_t i = 0; i < Training->getN(); ++i) {
       feedForward(Training->getSample(i), Output);
       labelToPattern(Training->getLabel(i), Pattern);
       mse += MSE(Output, Pattern);
+      if (!isSameOutput(Output, Pattern)) {
+        errors++;
+      }
     }
-    return mse / Training->getN();
+    TrainingMSE = mse / Training->getN();
+    TrainingError = 100 - (errors / float(Training->getN()) * 100);
   }
 
   void setCallbackProgress(std::function<void(size_t, float)> Func) {
     CallbackProgress = Func;
   }
 
- private:
+private:
   std::vector<NNLayer*> Layers;
   NNLayer* Input;
   NNLayer* Output;
   std::function<void(size_t, float)> CallbackProgress;
+  float TrainingMSE;
+  float TrainingError;
 };
 
-#endif  // NNCLASS
+#endif // NNCLASS

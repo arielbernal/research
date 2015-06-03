@@ -11,7 +11,7 @@
 #define SAMPLE_SIZE (SAMPLE_ROWS * SAMPLE_COLS)
 #define TRAINING_SAMPLES (60000)
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
@@ -20,22 +20,26 @@ MainWindow::MainWindow(QWidget* parent)
   ui->plot2d->setCallbackRenderer(fp2);
 
   T1 = new NNDataset<float, uint8_t>(8, 2);
-  float A[16] = {0, 0, 0, 1, 1, 0, 1, 1, 0.5f, 0.5f, 0.25f, 0.75f, 0.0f, 0.5f, 0.75f,0.75f};
+  float A[16] = {0,    0,    0,     1,     1,    0,    1,     1,
+                 0.5f, 0.5f, 0.25f, 0.75f, 0.0f, 0.5f, 0.75f, 0.75f};
   uint8_t l[8] = {0, 1, 1, 0, 0, 1, 0, 1};
   T1->load(A, 16, l, 8);
 
   nnff = new NNFeedForward(2, 10, 1, 2);
-  auto fp1 = std::bind(&MainWindow::NNProgress,
-                       this,
-                       std::placeholders::_1,
+  auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
+
+  ui->chartMSE->addGraph();
+  ui->chartMSE->xAxis->setLabel("Epochs");
+  ui->chartMSE->yAxis->setLabel("MSE");
+  ui->chartMSE->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
+                                QCP::iSelectPlottables);
+  ui->chartMSE->graph(0)->rescaleAxes();
+  ui->chartMSE->replot();
 }
 
-MainWindow::~MainWindow() {
-  delete ui;
-}
-
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::trainNN() {
   nnff->train(T1, 40000);
@@ -43,7 +47,7 @@ void MainWindow::trainNN() {
   //  nnff->train(Training, 1);
   std::vector<float> output(2);
   for (size_t i = 0; i < 6; ++i) {
-    float* p = T1->getSample(i);
+    float *p = T1->getSample(i);
     nnff->feedForward(p, output);
     std::cout << "----------------" << i << "-----------------" << std::endl;
     std::cout << p[0] << " " << p[1] << std::endl;
@@ -57,7 +61,12 @@ void MainWindow::trainNN() {
 }
 
 void MainWindow::NNProgress(size_t i, float mse) {
-  std::cout << "Epoch = " << i << " mse = " << mse << std::endl;
+  if (i % 100 == 0) {
+      std::cout << " i = " << i << " mse = " << mse << std::endl;
+    ui->chartMSE->graph(0)->addData(i, mse);
+    ui->chartMSE->graph(0)->rescaleAxes();
+    ui->chartMSE->replot();
+  }
 }
 
 void MainWindow::Plot2DRenderer() {

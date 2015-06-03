@@ -12,39 +12,31 @@ struct NNLayer {
     A[N] = -1;
   }
 
-  NNLayer(size_t N, NNLayer* Prev, size_t Type)
-      : N(N),
-        A(N + 1),
-        W(N, std::vector<float>(Prev->N + 1)),
-        delta(N),
-        Prev(Prev),
-        Next(0),
+  NNLayer(size_t N, NNLayer *Prev, size_t Type)
+      : N(N), A(N + 1), W(N, std::vector<float>(Prev->N + 1)),
+        DW(N, std::vector<float>(Prev->N + 1)), delta(N), Prev(Prev), Next(0),
         Type(Type) {
     A[N] = -1;
     setRandomWeights();
     Prev->Next = this;
   }
 
-  template <typename T>
-  void set(T* input) {
+  template <typename T> void set(T *input) {
     for (size_t i = 0; i < N; ++i)
       A[i] = float(input[i]);
   }
 
-  template <typename T>
-  void set(const std::vector<T>& input) {
+  template <typename T> void set(const std::vector<T> &input) {
     for (size_t i = 0; i < N; ++i)
       A[i] = float(input[i]);
   }
 
-  template <typename T>
-  void get(T* output) {
+  template <typename T> void get(T *output) {
     for (size_t i = 0; i < N; ++i)
       output[i] = A[i];
   }
 
-  template <typename T>
-  void get(std::vector<T>& output) {
+  template <typename T> void get(std::vector<T> &output) {
     for (size_t i = 0; i < N; ++i)
       output[i] = A[i];
   }
@@ -56,8 +48,8 @@ struct NNLayer {
     }
   }
 
-  float weightedSum(const std::vector<float>& Inputs,
-                    const std::vector<float>& Weights) {
+  float weightedSum(const std::vector<float> &Inputs,
+                    const std::vector<float> &Weights) {
     float S = 0;
     for (size_t j = 0; j < Prev->N + 1; ++j) {
       S += Inputs[j] * Weights[j];
@@ -74,8 +66,7 @@ struct NNLayer {
     }
   }
 
-  template <typename T>
-  void computeDeltas(const std::vector<T>& t) {
+  template <typename T> void computeDeltas(const std::vector<T> &t) {
     for (size_t k = 0; k < N; ++k)
       delta[k] = (A[k] - t[k]) * A[k] * (1 - A[k]);
   }
@@ -89,10 +80,23 @@ struct NNLayer {
     }
   }
 
+  // Use momentum and store DW
+  void updateWeights(float eta, float mu) {
+    for (size_t k = 0; k < N; ++k)
+      for (size_t j = 0; j < Prev->N + 1; ++j) {
+        float dw = -eta * delta[k] * Prev->A[j] + mu * DW[k][j];
+        W[k][j] += dw;
+        DW[k][j] = dw;
+      }
+  }
+
+  // Not using momentum
   void updateWeights(float eta) {
     for (size_t k = 0; k < N; ++k)
-      for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[k][j] -= eta * delta[k] * Prev->A[j];
+      for (size_t j = 0; j < Prev->N + 1; ++j) {
+        float dw = -eta * delta[k] * Prev->A[j];
+        W[k][j] += dw;
+      }
   }
 
   void dump() {
@@ -125,12 +129,12 @@ struct NNLayer {
 
   size_t N;
   std::vector<float> A;
-  std::vector<std::vector<float> > W;
+  std::vector<std::vector<float>> W;
+  std::vector<std::vector<float>> DW;
   std::vector<float> delta;
-  NNLayer* Prev;
-  NNLayer* Next;
+  NNLayer *Prev;
+  NNLayer *Next;
   size_t Type;
 };
 
 #endif // NNLAYER_H
-

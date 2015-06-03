@@ -6,7 +6,7 @@
 
 QT       += core gui opengl
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport printsupport
 
 TARGET = rgNN
 TEMPLATE = app
@@ -17,7 +17,9 @@ SOURCES += main.cpp\
     ../common/ocvTools/imageglwidget.cpp \
     ../common/ocvTools/imagedialog.cpp \
     ../common/oglTools/glprimitives.cpp \
-    ../common/oglTools/simpleglwidget.cpp
+    ../common/oglTools/simpleglwidget.cpp \
+    ../common/qtTools/chartdialog.cpp \
+    ../common/qtTools/qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     ../common/ocvTools/imageshow.h \
@@ -26,15 +28,18 @@ HEADERS  += mainwindow.h \
     ../common/oglTools/glprimitivies.h \
     ../common/oglTools/fps.h \
     ../common/oglTools/simpleglwidget.h \
+    ../common/qtTools/chartdialog.h \
     ../common/nndataset.h \
     ../common/nnclass.h \
-    ../common/nnlayer.h
+    ../common/nnlayer.h \
+    ../common/qtTools/qcustomplot.h
 
 DEPENDPATH *= $
 DEPENDPATH += ../common
 
 FORMS    += mainwindow.ui \
-    ../common/imagedialog.ui
+    ../common/imagedialog.ui \
+    ../common/chartdialog.ui
 
 CONFIG += c++11
 
