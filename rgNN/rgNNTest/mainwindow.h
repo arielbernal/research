@@ -22,11 +22,11 @@ private slots:
 
 protected:
   void Plot2DRenderer();
-  void NNProgress(size_t i, float mse);
+  void NNProgress(size_t i, NNStatistics& stat);
 
 private:
   Ui::MainWindow *ui;
   NNDataset<float, uint8_t> *T1;
-  NNFeedForward *nnff;
+  NNFeedForward<float> *nnff;
 };
 #endif // MAINWINDOW_H

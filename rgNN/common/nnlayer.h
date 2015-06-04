@@ -90,15 +90,6 @@ struct NNLayer {
       }
   }
 
-  // Not using momentum
-  void updateWeights(float eta) {
-    for (size_t k = 0; k < N; ++k)
-      for (size_t j = 0; j < Prev->N + 1; ++j) {
-        float dw = -eta * delta[k] * Prev->A[j];
-        W[k][j] += dw;
-      }
-  }
-
   void dump() {
     if (Type == INPUT) {
       std::cout << "------ INPUT LAYER --------" << std::endl;
