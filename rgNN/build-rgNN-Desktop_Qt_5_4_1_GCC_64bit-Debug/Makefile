@@ -540,8 +540,10 @@ qrc_icons.cpp: ../rgNN/icons.qrc \
 		../rgNN/icons/camera_green.png \
 		../rgNN/icons/bulbOff.png \
 		../rgNN/icons/Time.png \
+		../rgNN/icons/SaveAs.png \
 		../rgNN/icons/camera.png \
 		../rgNN/icons/Search.png \
+		../rgNN/icons/Save.png \
 		../rgNN/icons/Settings.png \
 		../rgNN/icons/Shutdown.png \
 		../rgNN/icons/Stop.png \
@@ -550,6 +552,7 @@ qrc_icons.cpp: ../rgNN/icons.qrc \
 		../rgNN/icons/Help.png \
 		../rgNN/icons/Reboot.png \
 		../rgNN/icons/Refresh.png \
+		../rgNN/icons/Open.png \
 		../rgNN/icons/bulbOn.png \
 		../rgNN/icons/Info.png \
 		../rgNN/icons/Edit-clear.png \
@@ -668,6 +671,16 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		../rgNN/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgNN -I/home/ajbernal/dev/bat/research/rgNN/rgNN/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtPrintSupport -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgNN/mainwindow.h -o moc_mainwindow.cpp
 
@@ -2337,6 +2350,16 @@ main.o: ../rgNN/main.cpp ../rgNN/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -2455,6 +2478,16 @@ mainwindow.o: ../rgNN/mainwindow.cpp ../rgNN/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \

@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <sstream>
 #include <../common/nnlayer.h>
 #include <../common/nndataset.h>
 #include <../common/rapidjson/document.h>
@@ -88,8 +89,6 @@ public:
         feedForward(Training->getSample(i), Result);
         Training->getLabel(i, Pattern);
         backPropagate(Pattern);
-        if (i % 1000 == 0)
-          std::cout << "Tr = " << i << std::endl;
       }
       if (epoch % EpochStat == 0) {
         statistics(Training, TrainingStat);
@@ -130,42 +129,72 @@ public:
   void setEpochStat(size_t n) { EpochStat = n; }
   void setTrainingAccuracy(double accuracy) { TrainingAccuracy = accuracy; }
 
+  size_t getNInput() { return Input->N; }
+  size_t getNHidden() { return Layers[1]->N; }
+  size_t getNOutput() { return Output->N; }
+  size_t getNHiddenLayers() { return Layers.size() - 2; }
+
   bool save(const std::string& Filename) {
-
-//    rapidjson::Document d;
-//    d.SetObject();
-//    d.AddMember("NInput", Input->N, d.GetAllocator());
-//    d.AddMember("NHidden", Layers[1]->N, d.GetAllocator());
-//    d.AddMember("NOutput", Output->N, d.GetAllocator());
-//    d.AddMember("NHiddenLayers", Layers.size() - 2, d.GetAllocator());
-
-//    rapidjson::Value LayersGroup("Layers", Layers.size() - 1);
-//    d.AddMember(LayersGroup, d.GetAllocator());
-//    for (size_t i = 1; i < Layers.size(); ++i) {
-//      rapidjson::Value Layer("Layer", i);
-//      LayersGroup.AddMember(Layer,d.GetAllocator());
-//      for (size_t j = 0; j < Layers[i]->W.size(); ++j) {
-//        for (size_t k = 0; k < Layers[i]->W[j].size(); ++k) {
-//          std::cout << "i, j, k = " << i << " " << j << " " << k << " "
-//                    << Layers[i]->W[j][k] << std::endl;
-//        }
-//      }
-//    }
-
-
-    std::ofstream ofj("Test.json");
+    std::ofstream ofs(Filename.c_str());
+    if (!ofs.is_open()) {
+      std::cout << "Error saving to file : " << Filename << std::endl;
+      return false;
+    }
     rapidjson::GenericStringBuffer<rapidjson::UTF8<> > buffer;
     rapidjson::PrettyWriter<rapidjson::GenericStringBuffer<rapidjson::UTF8<> > >
         writer(buffer);
     writer.StartObject();
+    writer.String("NInput");
+    writer.Int64(getNInput());
+    writer.String("NHidden");
+    writer.Int64(getNHidden());
+    writer.String("NOutput");
+    writer.Int64(getNOutput());
+    writer.String("NHiddenLayers");
+    writer.Int64(getNHiddenLayers());
+    writer.String("Weights");
     writer.StartArray();
+    for (size_t i = 1; i < Layers.size(); ++i) {
+      for (size_t j = 0; j < Layers[i]->W.size(); ++j) {
+        for (size_t k = 0; k < Layers[i]->W[j].size(); ++k) {
+          writer.Double(Layers[i]->W[j][k]);
+        }
+      }
+    }
     writer.EndArray();
     writer.EndObject();
+    ofs << buffer.GetString();
+    ofs.close();
+    return true;
+  }
 
-
-    ofj << buffer.GetString();
-    ofj.close();
-
+  bool load(const std::string& Filename) {
+    std::ifstream ifs(Filename.c_str());
+    if (!ifs.is_open()) {
+      std::cout << "Error file not found : " << Filename << std::endl;
+      return false;
+    }
+    std::stringstream buffer;
+    buffer << ifs.rdbuf();
+    ifs.close();
+    rapidjson::Document d;
+    if (d.Parse<0>(buffer.str().c_str()).HasParseError()) {
+      std::cout << "Error parsing json file : " << Filename << std::endl;
+      return false;
+    }
+    size_t NInput = d["NInput"].GetInt64();
+    size_t NHidden = d["NHidden"].GetInt64();
+    size_t NOutput = d["NOutput"].GetInt64();
+    size_t NHiddenLayers = d["NHiddenLayers"].GetInt64();
+    init(NInput, NHidden, NOutput, NHiddenLayers);
+    const rapidjson::Value& L = d["Weights"];
+    for (size_t i = 1; i < Layers.size(); ++i) {
+      for (size_t j = 0; j < Layers[i]->W.size(); ++j) {
+        for (size_t k = 0; k < Layers[i]->W[j].size(); ++k) {
+          Layers[i]->W[j][k] = L[i].GetDouble();
+        }
+      }
+    }
     return true;
   }
 

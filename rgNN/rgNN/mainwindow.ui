@@ -150,8 +150,47 @@
     <bool>false</bool>
    </attribute>
    <addaction name="separator"/>
+   <addaction name="actionLoad"/>
+   <addaction name="actionSave"/>
    <addaction name="separator"/>
+   <addaction name="actionTrain"/>
   </widget>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Open.png</normaloff>:/icons/Open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Weights</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/SaveAs.png</normaloff>:/icons/SaveAs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Weights</string>
+   </property>
+  </action>
+  <action name="actionTrain">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Reboot.png</normaloff>:/icons/Reboot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Train</string>
+   </property>
+   <property name="toolTip">
+    <string>Train NN</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -168,6 +207,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

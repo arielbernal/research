@@ -32,6 +32,9 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionLoad;
+    QAction *actionSave;
+    QAction *actionTrain;
     QWidget *centralWidget;
     QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_2;
@@ -54,6 +57,21 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1148, 1053);
+        actionLoad = new QAction(MainWindow);
+        actionLoad->setObjectName(QStringLiteral("actionLoad"));
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/icons/Open.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionLoad->setIcon(icon);
+        actionSave = new QAction(MainWindow);
+        actionSave->setObjectName(QStringLiteral("actionSave"));
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/icons/SaveAs.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionSave->setIcon(icon1);
+        actionTrain = new QAction(MainWindow);
+        actionTrain->setObjectName(QStringLiteral("actionTrain"));
+        QIcon icon2;
+        icon2.addFile(QStringLiteral(":/icons/Reboot.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionTrain->setIcon(icon2);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         layoutWidget = new QWidget(centralWidget);
@@ -136,7 +154,10 @@ public:
         MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
 
         toolBar->addSeparator();
+        toolBar->addAction(actionLoad);
+        toolBar->addAction(actionSave);
         toolBar->addSeparator();
+        toolBar->addAction(actionTrain);
 
         retranslateUi(MainWindow);
 
@@ -146,6 +167,18 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        actionLoad->setText(QApplication::translate("MainWindow", "Load", 0));
+#ifndef QT_NO_TOOLTIP
+        actionLoad->setToolTip(QApplication::translate("MainWindow", "Load Weights", 0));
+#endif // QT_NO_TOOLTIP
+        actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
+#ifndef QT_NO_TOOLTIP
+        actionSave->setToolTip(QApplication::translate("MainWindow", "Save Weights", 0));
+#endif // QT_NO_TOOLTIP
+        actionTrain->setText(QApplication::translate("MainWindow", "Train", 0));
+#ifndef QT_NO_TOOLTIP
+        actionTrain->setToolTip(QApplication::translate("MainWindow", "Train NN", 0));
+#endif // QT_NO_TOOLTIP
         lbLabel->setText(QString());
         btnPrev->setText(QApplication::translate("MainWindow", "<", 0));
         btnNext->setText(QApplication::translate("MainWindow", ">", 0));

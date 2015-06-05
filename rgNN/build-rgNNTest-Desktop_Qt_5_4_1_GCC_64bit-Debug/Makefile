@@ -658,6 +658,16 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		../rgNNTest/mainwindow.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgNNTest -I/home/ajbernal/dev/bat/research/rgNN/rgNNTest/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtPrintSupport -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgNNTest/mainwindow.h -o moc_mainwindow.cpp
 
@@ -2327,6 +2337,16 @@ main.o: ../rgNNTest/main.cpp ../rgNNTest/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -2445,63 +2465,22 @@ mainwindow.o: ../rgNNTest/mainwindow.cpp ../rgNNTest/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/rapidjson/document.h \
+		../common/rapidjson/reader.h \
+		../common/rapidjson/rapidjson.h \
+		../common/rapidjson/internal/pow10.h \
+		../common/rapidjson/internal/stack.h \
+		../common/rapidjson/internal/strfunc.h \
+		../common/rapidjson/prettywriter.h \
+		../common/rapidjson/writer.h \
+		../common/rapidjson/filestream.h \
+		../common/rapidjson/stringbuffer.h \
 		ui_mainwindow.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qaction.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qactiongroup.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qeventloop.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qguiapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QButtonGroup \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMenuBar \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenubar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmenu.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QPushButton \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qpushbutton.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractbutton.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QStatusBar \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstatusbar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QToolBar \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtoolbar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
-		../common/oglTools/simpleglwidget.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QSurfaceFormat \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qsurfaceformat.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengl.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../common/oglTools/glprimitivies.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmessagebox.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../rgNNTest/mainwindow.cpp
 
 imageglwidget.o: ../common/ocvTools/imageglwidget.cpp ../common/ocvTools/imageglwidget.h \
@@ -2743,43 +2722,6 @@ imagedialog.o: ../common/ocvTools/imagedialog.cpp ../common/ocvTools/imagedialog
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
 		../common/oglTools/fps.h \
 		ui_imagedialog.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qaction.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qicon.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qactiongroup.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qeventloop.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qguiapplication.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qinputmethod.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QButtonGroup \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QHeaderView \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qheaderview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qframe.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyleoption.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvalidator.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qregularexpression.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qabstractslider.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qstyle.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabbar.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qtabwidget.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qrubberband.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QVBoxLayout \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qboxlayout.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayout.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qgridlayout.h \
 		../common/ocvTools/imageshow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagedialog.o ../common/ocvTools/imagedialog.cpp
 

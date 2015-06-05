@@ -21,6 +21,8 @@ private slots:
   void nextImage();
   void currentImage();
   void trainNN();
+  void saveNN();
+  void loadNN();
 
 protected:
   void DigitRenderer();

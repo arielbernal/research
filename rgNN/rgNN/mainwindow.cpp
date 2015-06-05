@@ -17,14 +17,16 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
   connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
   connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
-  connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
+  connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadNN()));
+  connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveNN()));
+  connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainNN()));
 
   Training = new NNDataset<uint8_t, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  Training->load(3000, "../data/train-images.idx3-ubyte",
+  Training->load(300, "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte", 16, 8);
   updateControls();
 
@@ -32,12 +34,6 @@ MainWindow::MainWindow(QWidget* parent)
   auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
-
-  nnff->setTrainingAccuracy(0.8);
-  nnff->setLearningRate(0.001);
-  nnff->setMomentum(0.9);
-  nnff->setMaxEpochs(100);
-  nnff->setEpochStat(10);
 
   ui->chartMSE->addGraph();
   ui->chartMSE->xAxis->setLabel("Epochs");
@@ -112,8 +108,23 @@ void MainWindow::DigitRenderer() {
   }
 }
 
-void MainWindow::trainNN() { // nnff->train(Training);
-  nnff->save("Test.txt");
+void MainWindow::loadNN() {
+  nnff->load("../data/NN.json");
+  NNStatistics stat;
+  nnff->statistics(Training, stat);
+  std::cout << "Loaded statistics = " << stat.Errors << " " << stat.MSE << " " << stat.getAccuracy() << std::endl;
+}
+
+void MainWindow::saveNN() { nnff->save("../data/NN.json"); }
+
+void MainWindow::trainNN() {
+  nnff->setTrainingAccuracy(0.8);
+  nnff->setLearningRate(0.01);
+  nnff->setMomentum(0.8);
+  nnff->setMaxEpochs(100);
+  nnff->setEpochStat(10);
+
+  nnff->train(Training);
 }
 
 void MainWindow::NNProgress(size_t i, NNStatistics& stat) {

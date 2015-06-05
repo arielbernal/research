@@ -32,6 +32,7 @@ public:
     QPushButton *btnTrain;
     SimpleGLWidget *plot2d;
     QCustomPlot *chartMSE;
+    QCustomPlot *chartErrors;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -53,6 +54,9 @@ public:
         chartMSE = new QCustomPlot(centralWidget);
         chartMSE->setObjectName(QStringLiteral("chartMSE"));
         chartMSE->setGeometry(QRect(10, 410, 391, 381));
+        chartErrors = new QCustomPlot(centralWidget);
+        chartErrors->setObjectName(QStringLiteral("chartErrors"));
+        chartErrors->setGeometry(QRect(410, 410, 391, 381));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
