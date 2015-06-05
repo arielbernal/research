@@ -19,41 +19,45 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
   connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
 
-  Training = new NNDataset<uint8_t, uint8_t>(
-      TRAINING_SAMPLES, SAMPLE_COLS, SAMPLE_ROWS);
+  Training = new NNDataset<uint8_t, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  auto fp2 = std::bind(&MainWindow::Plot2DRenderer, this);
-  ui->plot2d->setCallbackRenderer(fp2);
-
-  if (Training->isLoaded())
-    return;
-  Training->load("../data/train-images.idx3-ubyte",
-                 16,
-                 "../data/train-labels.idx1-ubyte",
-                 8);
+  Training->load(3000, "../data/train-images.idx3-ubyte",
+                 "../data/train-labels.idx1-ubyte", 16, 8);
   updateControls();
 
-  // nnff = new NNFeedForward(28 * 28, 28 * 28, 1, 10);
-
-  T1 = new NNDataset<float, uint8_t>(8, 2);
-  float A[16] = {0, 0, 0, 1, 1, 0, 1, 1, 0.5f, 0.5f, 0.25f, 0.75f, 0.0f, 0.5f, 0.75f,0.75f};
-  uint8_t l[8] = {0, 1, 1, 0, 0, 1, 0, 1};
-  T1->load(A, 16, l, 8);
-
-  nnff = new NNFeedForward(2, 10, 1, 2);
-  auto fp1 = std::bind(&MainWindow::NNProgress,
-                       this,
-                       std::placeholders::_1,
+  nnff = new NNFeedForward<float>(28 * 28, 15, 10);
+  auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
+
+  nnff->setTrainingAccuracy(0.8);
+  nnff->setLearningRate(0.001);
+  nnff->setMomentum(0.9);
+  nnff->setMaxEpochs(100);
+  nnff->setEpochStat(10);
+
+  ui->chartMSE->addGraph();
+  ui->chartMSE->xAxis->setLabel("Epochs");
+  ui->chartMSE->yAxis->setLabel("MSE");
+  ui->chartMSE->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
+                                QCP::iSelectPlottables);
+  ui->chartMSE->graph(0)->rescaleAxes();
+  ui->chartMSE->replot();
+
+  ui->chartErrors->addGraph();
+  ui->chartErrors->xAxis->setLabel("Epochs");
+  ui->chartErrors->yAxis->setLabel("Errors");
+  ui->chartErrors->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
+                                   QCP::iSelectPlottables);
+  ui->chartErrors->graph(0)->rescaleAxes();
+  ui->chartErrors->graph(0)->setPen(QPen(QColor("#FFA100")));
+  ui->chartErrors->replot();
 }
 
-MainWindow::~MainWindow() {
-  delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::updateControls() {
   ui->lbLabel->setText(QString::number(Training->getLabel()));
@@ -92,7 +96,7 @@ void MainWindow::DigitRenderer() {
   }
   glEnd();
   glColor3f(1, 1, 1);
-  if (Training->isLoaded()) {
+  if (Training->getN() > 0) {
     glBegin(GL_QUADS);
     for (size_t y = 0; y < 28; ++y) {
       for (size_t x = 0; x < 28; ++x) {
@@ -108,47 +112,18 @@ void MainWindow::DigitRenderer() {
   }
 }
 
-void MainWindow::trainNN() {
-  nnff->train(T1, 40000);
-
-  //  nnff->train(Training, 1);
-  std::vector<float> output(2);
-  for (size_t i = 0; i < 6; ++i) {
-    float* p = T1->getSample(i);
-    nnff->feedForward(p, output);
-    std::cout << "----------------" << i << "-----------------" << std::endl;
-    std::cout << p[0] << " " << p[1] << std::endl;
-    std::cout << output[0] << " " << output[1] << std::endl;
-  }
-  std::cout << "new " << std::endl;
-  float input[2] = {0.2f, 0.8f};
-  nnff->feedForward(input, output);
-  std::cout << output[0] << " " << output[1] << std::endl;
-  ui->plot2d->update();
+void MainWindow::trainNN() { // nnff->train(Training);
+  nnff->save("Test.txt");
 }
 
-void MainWindow::NNProgress(size_t i, float mse) {
-  std::cout << "Epoch = " << i << " mse = " << mse << std::endl;
-}
-
-void MainWindow::Plot2DRenderer() {
-  glTranslatef(0.1f, 0.1f, 0);
-  size_t W = ui->plot2d->width();
-  size_t H = ui->plot2d->height();
-  std::vector<float> output(2);
-  glBegin(GL_POINTS);
-  for (size_t y = 0; y < H; ++y) {
-    for (size_t x = 0; x < W; ++x) {
-      float yy = y / float(H);
-      float xx = x / float(W);
-      float input[2] = {xx, yy};
-      nnff->feedForward(input, output);
-      if (output[0] > output[1])
-        glColor3f(output[0], 0, 0);
-      else
-        glColor3f(0, output[1], 0);
-      glVertex2f(x, y);
-    }
-  }
-  glEnd();
+void MainWindow::NNProgress(size_t i, NNStatistics& stat) {
+  std::cout << " i = " << i << " mse = " << stat.MSE
+            << " accuracy = " << stat.getAccuracy()
+            << "  Errors = " << stat.Errors << std::endl;
+  ui->chartMSE->graph(0)->addData(i, stat.MSE);
+  ui->chartMSE->graph(0)->rescaleAxes();
+  ui->chartMSE->replot();
+  ui->chartErrors->graph(0)->addData(i, stat.Errors);
+  ui->chartErrors->graph(0)->rescaleAxes();
+  ui->chartErrors->replot();
 }

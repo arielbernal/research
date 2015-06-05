@@ -2,10 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <nndataset.h>
-#include <nnclass.h>
+#include <../common/nndataset.h>
+#include <../common/nnclass.h>
 #include <stdint.h>
-
 
 namespace Ui {
 class MainWindow;
@@ -25,14 +24,12 @@ private slots:
 
 protected:
   void DigitRenderer();
-  void Plot2DRenderer();
   void updateControls();
-  void NNProgress(size_t i, float mse);
+  void NNProgress(size_t i, NNStatistics &stat);
 
 private:
   Ui::MainWindow *ui;
   NNDataset<uint8_t, uint8_t> *Training;
-  NNDataset<float, uint8_t> *T1;
-  NNFeedForward *nnff;
+  NNFeedForward<float> *nnff;
 };
 #endif // MAINWINDOW_H

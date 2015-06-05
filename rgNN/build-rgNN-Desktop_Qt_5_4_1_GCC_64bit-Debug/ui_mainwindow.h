@@ -24,6 +24,7 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "../common/qtTools/qcustomplot.h"
 #include "oglTools/simpleglwidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -42,7 +43,8 @@ public:
     QLineEdit *edId;
     QPushButton *btnNext;
     QPushButton *btnTrain;
-    SimpleGLWidget *plot2d;
+    QCustomPlot *chartErrors;
+    QCustomPlot *chartMSE;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -115,9 +117,12 @@ public:
         btnTrain = new QPushButton(centralWidget);
         btnTrain->setObjectName(QStringLiteral("btnTrain"));
         btnTrain->setGeometry(QRect(460, 10, 99, 27));
-        plot2d = new SimpleGLWidget(centralWidget);
-        plot2d->setObjectName(QStringLiteral("plot2d"));
-        plot2d->setGeometry(QRect(450, 60, 391, 391));
+        chartErrors = new QCustomPlot(centralWidget);
+        chartErrors->setObjectName(QStringLiteral("chartErrors"));
+        chartErrors->setGeometry(QRect(420, 490, 391, 381));
+        chartMSE = new QCustomPlot(centralWidget);
+        chartMSE->setObjectName(QStringLiteral("chartMSE"));
+        chartMSE->setGeometry(QRect(20, 490, 391, 381));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

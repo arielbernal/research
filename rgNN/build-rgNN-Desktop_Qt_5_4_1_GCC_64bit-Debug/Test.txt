@@ -1,0 +1,4 @@
+NInput = 784
+NHidden = 15
+NOutput = 10
+NHiddenLayers = 1

@@ -6,6 +6,10 @@
 #include <iostream>
 #include <../common/nnlayer.h>
 #include <../common/nndataset.h>
+#include <../common/rapidjson/document.h>
+#include <../common/rapidjson/prettywriter.h>
+#include <../common/rapidjson/filestream.h>
+#include <../common/rapidjson/stringbuffer.h>
 
 struct NNStatistics {
   NNStatistics() : MSE(1.0), Errors(1), N(1) {}
@@ -32,6 +36,13 @@ public:
         TrainingAccuracy(NNFFTrainingAccuracy) {
     init(NInput, NHidden, NOutput, NHiddenLayers);
   }
+
+  NNFeedForward()
+      : LearningRate(NNFFLearningRate),
+        Momentum(NNFFMomentum),
+        MaxEpochs(NNFFMaxEpochs),
+        EpochStat(NNFFEpochStat),
+        TrainingAccuracy(NNFFTrainingAccuracy) {}
 
   ~NNFeedForward() { clear(); }
 
@@ -68,35 +79,40 @@ public:
   }
 
   template <typename K, typename S> void train(NNDataset<K, S>* Training) {
-    std::vector<T> Output(Training->getSize());
-    std::vector<T> Pattern(Training->getSize());
+    std::vector<T> Result(Output->N);
+    std::vector<T> Pattern(Output->N);
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy)) {
       for (size_t i = 0; i < Training->getN(); ++i) {
-        feedForward(Training->getSample(i), Output);
+        feedForward(Training->getSample(i), Result);
         Training->getLabel(i, Pattern);
         backPropagate(Pattern);
+        if (i % 1000 == 0)
+          std::cout << "Tr = " << i << std::endl;
       }
-      if (epoch % EpochStat == 0)
+      if (epoch % EpochStat == 0) {
         statistics(Training, TrainingStat);
-      if (CallbackProgress)
-        CallbackProgress(epoch, TrainingStat);
+        if (CallbackProgress)
+          CallbackProgress(epoch, TrainingStat);
+      }
       epoch++;
     }
+    if (CallbackProgress)
+      CallbackProgress(epoch, TrainingStat);
   }
 
   template <typename K, typename S>
   void statistics(NNDataset<K, S>* Dataset, NNStatistics& Stat) {
-    std::vector<T> Output(Dataset->getSize());
-    std::vector<T> Pattern(Dataset->getSize());
+    std::vector<T> Result(Output->N);
+    std::vector<T> Pattern(Output->N);
     T mse = 0;
     size_t errors = 0;
     for (size_t i = 0; i < Dataset->getN(); ++i) {
-      feedForward(Dataset->getSample(i), Output);
+      feedForward(Dataset->getSample(i), Result);
       Dataset->getLabel(i, Pattern);
-      mse += MSE(Output, Pattern);
-      if (!isSameOutput(Output, Pattern))
+      mse += MSE(Result, Pattern);
+      if (!isSameOutput(Result, Pattern))
         errors++;
     }
     Stat.N = Dataset->getN();
@@ -114,6 +130,45 @@ public:
   void setEpochStat(size_t n) { EpochStat = n; }
   void setTrainingAccuracy(double accuracy) { TrainingAccuracy = accuracy; }
 
+  bool save(const std::string& Filename) {
+
+//    rapidjson::Document d;
+//    d.SetObject();
+//    d.AddMember("NInput", Input->N, d.GetAllocator());
+//    d.AddMember("NHidden", Layers[1]->N, d.GetAllocator());
+//    d.AddMember("NOutput", Output->N, d.GetAllocator());
+//    d.AddMember("NHiddenLayers", Layers.size() - 2, d.GetAllocator());
+
+//    rapidjson::Value LayersGroup("Layers", Layers.size() - 1);
+//    d.AddMember(LayersGroup, d.GetAllocator());
+//    for (size_t i = 1; i < Layers.size(); ++i) {
+//      rapidjson::Value Layer("Layer", i);
+//      LayersGroup.AddMember(Layer,d.GetAllocator());
+//      for (size_t j = 0; j < Layers[i]->W.size(); ++j) {
+//        for (size_t k = 0; k < Layers[i]->W[j].size(); ++k) {
+//          std::cout << "i, j, k = " << i << " " << j << " " << k << " "
+//                    << Layers[i]->W[j][k] << std::endl;
+//        }
+//      }
+//    }
+
+
+    std::ofstream ofj("Test.json");
+    rapidjson::GenericStringBuffer<rapidjson::UTF8<> > buffer;
+    rapidjson::PrettyWriter<rapidjson::GenericStringBuffer<rapidjson::UTF8<> > >
+        writer(buffer);
+    writer.StartObject();
+    writer.StartArray();
+    writer.EndArray();
+    writer.EndObject();
+
+
+    ofj << buffer.GetString();
+    ofj.close();
+
+    return true;
+  }
+
 protected:
   template <typename K> void backPropagate(const std::vector<K>& Pattern) {
     Output->computeDeltas(Pattern);
@@ -122,8 +177,6 @@ protected:
     for (size_t i = 1; i < Layers.size(); i++)
       Layers[i]->updateWeights(LearningRate, Momentum);
   }
-
-
 
   template <typename K>
   T MSE(const std::vector<K>& Yp, const std::vector<K>& Y) {

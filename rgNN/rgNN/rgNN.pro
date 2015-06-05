@@ -6,7 +6,7 @@
 
 QT       += core gui opengl
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport printsupport
 
 TARGET = rgNN
 TEMPLATE = app
@@ -14,26 +14,41 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ocvTools/imageglwidget.cpp \
-    ocvTools/imagedialog.cpp \
-    oglTools/glprimitives.cpp \
-    oglTools/simpleglwidget.cpp
+    ../common/ocvTools/imageglwidget.cpp \
+    ../common/ocvTools/imagedialog.cpp \
+    ../common/oglTools/glprimitives.cpp \
+    ../common/oglTools/simpleglwidget.cpp \
+    ../common/qtTools/chartdialog.cpp \
+    ../common/qtTools/qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
-    ocvTools/imageshow.h \
-    ocvTools/imagedialog.h \
-    ocvTools/imageglwidget.h \
-    oglTools/glprimitivies.h \
-    oglTools/fps.h \
-    oglTools/simpleglwidget.h \
-    nndataset.h \
-    nnclass.h \
-    nnlayer.h
+    ../common/ocvTools/imageshow.h \
+    ../common/ocvTools/imagedialog.h \
+    ../common/ocvTools/imageglwidget.h \
+    ../common/oglTools/glprimitivies.h \
+    ../common/oglTools/fps.h \
+    ../common/oglTools/simpleglwidget.h \
+    ../common/qtTools/chartdialog.h \
+    ../common/nndataset.h \
+    ../common/nnclass.h \
+    ../common/nnlayer.h \
+    ../common/qtTools/qcustomplot.h \
+    ../common/rapidjson/internal/pow10.h \
+    ../common/rapidjson/internal/stack.h \
+    ../common/rapidjson/internal/strfunc.h \
+    ../common/rapidjson/document.h \
+    ../common/rapidjson/filestream.h \
+    ../common/rapidjson/prettywriter.h \
+    ../common/rapidjson/rapidjson.h \
+    ../common/rapidjson/reader.h \
+    ../common/rapidjson/stringbuffer.h \
+    ../common/rapidjson/writer.h
 
 DEPENDPATH *= $
 
 FORMS    += mainwindow.ui \
-    imagedialog.ui
+    ../common/imagedialog.ui \
+    ../common/chartdialog.ui
 
 CONFIG += c++11
 
