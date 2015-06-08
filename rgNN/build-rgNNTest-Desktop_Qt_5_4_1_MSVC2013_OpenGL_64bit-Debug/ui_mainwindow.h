@@ -32,6 +32,9 @@ public:
     QPushButton *btnTrain;
     SimpleGLWidget *plot2d;
     QCustomPlot *chartMSE;
+    QCustomPlot *chartErrors;
+    QPushButton *btnSave;
+    QPushButton *btnLoad;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -53,10 +56,19 @@ public:
         chartMSE = new QCustomPlot(centralWidget);
         chartMSE->setObjectName(QStringLiteral("chartMSE"));
         chartMSE->setGeometry(QRect(10, 410, 391, 381));
+        chartErrors = new QCustomPlot(centralWidget);
+        chartErrors->setObjectName(QStringLiteral("chartErrors"));
+        chartErrors->setGeometry(QRect(410, 410, 391, 381));
+        btnSave = new QPushButton(centralWidget);
+        btnSave->setObjectName(QStringLiteral("btnSave"));
+        btnSave->setGeometry(QRect(410, 50, 99, 27));
+        btnLoad = new QPushButton(centralWidget);
+        btnLoad->setObjectName(QStringLiteral("btnLoad"));
+        btnLoad->setGeometry(QRect(410, 90, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1148, 25));
+        menuBar->setGeometry(QRect(0, 0, 1148, 21));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -77,6 +89,8 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         btnTrain->setText(QApplication::translate("MainWindow", "Train", 0));
+        btnSave->setText(QApplication::translate("MainWindow", "Save", 0));
+        btnLoad->setText(QApplication::translate("MainWindow", "Load", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 

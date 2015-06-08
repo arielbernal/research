@@ -202,6 +202,7 @@ Makefile: ..\rgNN\rgNN.pro E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\win32-ms
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/qtmaind.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Cored.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5OpenGL.prl \
+		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5PrintSupport.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Widgets.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Gui.prl \
 		E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5SerialPort.prl \
@@ -336,6 +337,7 @@ E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\mkspecs\features\lex.prf:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/qtmaind.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Cored.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5OpenGL.prl:
+E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5PrintSupport.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Widgets.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5Gui.prl:
 E:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/lib/Qt5SerialPort.prl:

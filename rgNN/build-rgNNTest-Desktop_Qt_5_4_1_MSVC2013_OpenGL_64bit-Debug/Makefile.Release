@@ -390,6 +390,16 @@ release\moc_mainwindow.cpp: E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtWidge
 		..\common\nndataset.h \
 		..\common\nnclass.h \
 		..\common\nnlayer.h \
+		..\common\rapidjson\document.h \
+		..\common\rapidjson\reader.h \
+		..\common\rapidjson\rapidjson.h \
+		..\common\rapidjson\internal\pow10.h \
+		..\common\rapidjson\internal\stack.h \
+		..\common\rapidjson\internal\strfunc.h \
+		..\common\rapidjson\prettywriter.h \
+		..\common\rapidjson\writer.h \
+		..\common\rapidjson\filestream.h \
+		..\common\rapidjson\stringbuffer.h \
 		..\rgNNTest\mainwindow.h
 	E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/mkspecs/win32-msvc2013 -IC:/dev/research/rgNN/rgNNTest -IC:/dev/research/external/vs/glew-1.12.0/include -IC:/dev/research/external/vs/glm -IE:/opencv/build/include -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtOpenGL -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtPrintSupport -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtWidgets -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtGui -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtSerialPort -IE:/Qt/Qt5.4.1/5.4/msvc2013_64_opengl/include/QtCore -I. ..\rgNNTest\mainwindow.h -o release\moc_mainwindow.cpp
 
@@ -2475,6 +2485,16 @@ release\main.obj: ..\rgNNTest\main.cpp ..\rgNNTest\mainwindow.h \
 		..\common\nndataset.h \
 		..\common\nnclass.h \
 		..\common\nnlayer.h \
+		..\common\rapidjson\document.h \
+		..\common\rapidjson\reader.h \
+		..\common\rapidjson\rapidjson.h \
+		..\common\rapidjson\internal\pow10.h \
+		..\common\rapidjson\internal\stack.h \
+		..\common\rapidjson\internal\strfunc.h \
+		..\common\rapidjson\prettywriter.h \
+		..\common\rapidjson\writer.h \
+		..\common\rapidjson\filestream.h \
+		..\common\rapidjson\stringbuffer.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtWidgets\QApplication \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtWidgets\qapplication.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtCore\qcoreapplication.h \
@@ -2592,6 +2612,16 @@ release\mainwindow.obj: ..\rgNNTest\mainwindow.cpp ..\rgNNTest\mainwindow.h \
 		..\common\nndataset.h \
 		..\common\nnclass.h \
 		..\common\nnlayer.h \
+		..\common\rapidjson\document.h \
+		..\common\rapidjson\reader.h \
+		..\common\rapidjson\rapidjson.h \
+		..\common\rapidjson\internal\pow10.h \
+		..\common\rapidjson\internal\stack.h \
+		..\common\rapidjson\internal\strfunc.h \
+		..\common\rapidjson\prettywriter.h \
+		..\common\rapidjson\writer.h \
+		..\common\rapidjson\filestream.h \
+		..\common\rapidjson\stringbuffer.h \
 		ui_mainwindow.h \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtWidgets\QMessageBox \
 		E:\Qt\Qt5.4.1\5.4\msvc2013_64_opengl\include\QtWidgets\qmessagebox.h \

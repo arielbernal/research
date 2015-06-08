@@ -26,11 +26,11 @@ MainWindow::MainWindow(QWidget* parent)
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  Training->load(300, "../data/train-images.idx3-ubyte",
+  Training->load(6000, "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte", 16, 8);
   updateControls();
 
-  nnff = new NNFeedForward<float>(28 * 28, 15, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 15, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
@@ -119,9 +119,9 @@ void MainWindow::saveNN() { nnff->save("../data/NN.json"); }
 
 void MainWindow::trainNN() {
   nnff->setTrainingAccuracy(0.8);
-  nnff->setLearningRate(0.01);
-  nnff->setMomentum(0.8);
-  nnff->setMaxEpochs(100);
+  nnff->setLearningRate(0.1);
+  nnff->setMomentum(0.9);
+  nnff->setMaxEpochs(500);
   nnff->setEpochStat(10);
 
   nnff->train(Training);

@@ -11,10 +11,12 @@
 #define SAMPLE_SIZE (SAMPLE_ROWS * SAMPLE_COLS)
 #define TRAINING_SAMPLES (60000)
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   connect(ui->btnTrain, SIGNAL(clicked()), this, SLOT(trainNN()));
+  connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(saveNN()));
+  connect(ui->btnLoad, SIGNAL(clicked()), this, SLOT(loadNN()));
 
   auto fp2 = std::bind(&MainWindow::Plot2DRenderer, this);
   ui->plot2d->setCallbackRenderer(fp2);
@@ -45,14 +47,16 @@ MainWindow::MainWindow(QWidget *parent)
 
   T1->randomizeOrder();
 
-  nnff = new NNFeedForward<float>(2, 25, 3, 1);
-  auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
+  nnff = new NNFeedForward<float>(2, 2, 3, 1);
+  auto fp1 = std::bind(&MainWindow::NNProgress,
+                       this,
+                       std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
 
-  nnff->setTrainingAccuracy(0.9);
+  nnff->setTrainingAccuracy(0.98);
   nnff->setMaxEpochs(16000);
-  nnff->setEpochStat(1000);
+  nnff->setEpochStat(100);
 
   ui->chartMSE->addGraph();
   ui->chartMSE->xAxis->setLabel("Epochs");
@@ -72,14 +76,24 @@ MainWindow::MainWindow(QWidget *parent)
   ui->chartErrors->replot();
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+  delete ui;
+}
 
 void MainWindow::trainNN() {
   nnff->train(T1);
   ui->plot2d->update();
 }
 
-void MainWindow::NNProgress(size_t i, NNStatistics &stat) {
+void MainWindow::loadNN() {
+  nnff->load("../data/test.nn");
+}
+
+void MainWindow::saveNN() {
+  nnff->save("../data/test.nn");
+}
+
+void MainWindow::NNProgress(size_t i, NNStatistics& stat) {
   std::cout << " i = " << i << " mse = " << stat.MSE
             << " accuracy = " << stat.getAccuracy()
             << "  Errors = " << stat.Errors << std::endl;
@@ -113,7 +127,7 @@ void MainWindow::Plot2DRenderer() {
     for (size_t x = 0; x < W; ++x) {
       float yy = y / float(H);
       float xx = x / float(W);
-      float input[2] = { xx, yy };
+      float input[2] = {xx, yy};
       nnff->feedForward(input, output);
       glColor3f(output[0], output[1], output[2]);
       glVertex2f(x, y);

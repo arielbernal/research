@@ -32,6 +32,6 @@ protected:
 private:
   Ui::MainWindow *ui;
   NNDataset<uint8_t, uint8_t> *Training;
-  NNFeedForward<float> *nnff;
+  NNFeedForward<double> *nnff;
 };
 #endif // MAINWINDOW_H

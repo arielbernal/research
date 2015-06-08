@@ -19,6 +19,8 @@ public:
   ~MainWindow();
 private slots:
   void trainNN();
+  void saveNN();
+  void loadNN();
 
 protected:
   void Plot2DRenderer();
