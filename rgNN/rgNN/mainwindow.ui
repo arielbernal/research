@@ -94,7 +94,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="btnTrain">
+   <widget class="QPushButton" name="btnTest">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -104,7 +104,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Train</string>
+     <string>Test</string>
     </property>
    </widget>
    <widget class="QCustomPlot" name="chartErrors" native="true">

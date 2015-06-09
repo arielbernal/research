@@ -37,7 +37,7 @@ public:
       if (i == label)
         pattern[i] = 1;
       else
-        pattern[i] = 0;
+        pattern[i] = -1;
     }
   }
 
@@ -66,7 +66,7 @@ public:
       CurrentId--;
   }
 
-  bool load(size_t n, const std::string &DataFile,
+  bool load(size_t x0, size_t n, const std::string &DataFile,
             const std::string &LabelsFile, size_t DataOffset = 0,
             size_t LabelsOffset = 0) {
     Data.resize(n * Size);
@@ -77,7 +77,7 @@ public:
       std::cout << "Error Data file no found : " << DataFile << std::endl;
       return false;
     }
-    ifsd.read((char *)&Data[0], DataOffset);
+    ifsd.seekg(DataOffset + x0 * Size * sizeof(T));
     ifsd.read((char *)&Data[0], n * Size * sizeof(T));
     ifsd.close();
 
@@ -87,11 +87,18 @@ public:
       std::cout << "Error Labels file no found : " << LabelsFile << std::endl;
       return false;
     }
-    ifsl.read((char *)&Labels[0], LabelsOffset);
+    ifsl.seekg(LabelsOffset + x0 * sizeof(K));
     ifsl.read((char *)&Labels[0], n * sizeof(K));
     ifsl.close();
     N += n;
     return true;
+  }
+
+
+  bool load(size_t n, const std::string &DataFile,
+            const std::string &LabelsFile, size_t DataOffset = 0,
+            size_t LabelsOffset = 0) {
+      return load(0, n, DataFile, LabelsFile, DataOffset, LabelsOffset);
   }
 
   void randomizeOrder() {

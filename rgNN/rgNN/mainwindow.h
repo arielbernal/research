@@ -23,6 +23,7 @@ private slots:
   void trainNN();
   void saveNN();
   void loadNN();
+  void testSampleNN();
 
 protected:
   void DigitRenderer();

@@ -20,17 +20,18 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadNN()));
   connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveNN()));
   connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainNN()));
+  connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
 
   Training = new NNDataset<uint8_t, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  Training->load(6000, "../data/train-images.idx3-ubyte",
+  Training->load(0, 600, "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte", 16, 8);
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 15, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 60, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
@@ -112,19 +113,38 @@ void MainWindow::loadNN() {
   nnff->load("../data/NN.json");
   NNStatistics stat;
   nnff->statistics(Training, stat);
-  std::cout << "Loaded statistics = " << stat.Errors << " " << stat.MSE << " " << stat.getAccuracy() << std::endl;
+  std::cout << "Loaded statistics  Errors = " << stat.Errors << " MSE = " << stat.MSE << " Accuracy = "
+            << stat.getAccuracy() << std::endl;
 }
 
 void MainWindow::saveNN() { nnff->save("../data/NN.json"); }
 
 void MainWindow::trainNN() {
-  nnff->setTrainingAccuracy(0.8);
-  nnff->setLearningRate(0.1);
-  nnff->setMomentum(0.9);
-  nnff->setMaxEpochs(500);
-  nnff->setEpochStat(10);
+  nnff->setTrainingAccuracy(0.9);
+  nnff->setLearningRate(0.0005);
+  nnff->setMomentum(0.98);
+  nnff->setMaxEpochs(1);
+  nnff->setEpochStat(1);
 
   nnff->train(Training);
+}
+
+size_t getLabel(std::vector<double>& Result) {
+  double vmax = Result[0];
+  size_t imax = 0;
+  for (size_t i = 0; i < Result.size(); ++i) {
+    if (Result[i] > vmax) {
+      vmax = Result[i];
+      imax = i;
+    }
+  }
+  return imax;
+}
+
+void MainWindow::testSampleNN() {
+  std::vector<double> Result(10);
+  nnff->feedForward(Training->getSample(), Result);
+  std::cout << "FF = " << getLabel(Result) << std::endl;
 }
 
 void MainWindow::NNProgress(size_t i, NNStatistics& stat) {

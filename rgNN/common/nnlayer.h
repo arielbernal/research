@@ -13,8 +13,13 @@ struct NNLayer {
   }
 
   NNLayer(size_t N, NNLayer *Prev, size_t Type)
-      : N(N), A(N + 1), W(N, std::vector<float>(Prev->N + 1)),
-        DW(N, std::vector<float>(Prev->N + 1)), delta(N), Prev(Prev), Next(0),
+      : N(N),
+        A(N + 1),
+        W(N, std::vector<double>(Prev->N + 1)),
+        DW(N, std::vector<double>(Prev->N + 1)),
+        delta(N),
+        Prev(Prev),
+        Next(0),
         Type(Type) {
     A[N] = -1;
     setRandomWeights();
@@ -43,13 +48,13 @@ struct NNLayer {
 
   void feedForward() {
     for (size_t k = 0; k < N; ++k) {
-      float Z = weightedSum(Prev->A, W[k]);
+      double Z = weightedSum(Prev->A, W[k]);
       A[k] = g(Z);
     }
   }
 
-  float weightedSum(const std::vector<float> &Inputs,
-                    const std::vector<float> &Weights) {
+  float weightedSum(const std::vector<double> &Inputs,
+                    const std::vector<double> &Weights) {
     float S = 0;
     for (size_t j = 0; j < Prev->N + 1; ++j) {
       S += Inputs[j] * Weights[j];
@@ -57,18 +62,25 @@ struct NNLayer {
     return S;
   }
 
-  float g(float x) { return 1 / (1 + exp(-x)); }
+  //  float g(float x) { return 1 / (1 + exp(-x)); }
+  //  float gp(float x) { return x * (1 - x); }
+
+  //float g(float x) { return 1.7159 * tanh(0.66666667 * x); }
+  float g(float x) { return tanh(x); }
+  float gp(float x) {
+    return 0.66666667 / 1.7159 * (1.7159 + x) * (1.7159 - x);
+  }
 
   void setRandomWeights() {
     for (size_t i = 0; i < N; ++i) {
       for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[i][j] = 2 * (float(rand()) / RAND_MAX) - 1.0f;
+        W[i][j] = 0.2 * (float(rand()) / RAND_MAX) - 0.1f;
     }
   }
 
   template <typename T> void computeDeltas(const std::vector<T> &t) {
     for (size_t k = 0; k < N; ++k)
-      delta[k] = (A[k] - t[k]) * A[k] * (1 - A[k]);
+      delta[k] = (A[k] - t[k]) * gp(A[k]);
   }
 
   void computeDeltas() {
@@ -76,7 +88,7 @@ struct NNLayer {
       float S = 0;
       for (size_t k = 0; k < Next->N; ++k)
         S += Next->delta[k] * Next->W[k][j];
-      delta[j] = A[j] * (1 - A[j]) * S;
+      delta[j] = gp(A[j]) * S;
     }
   }
 
@@ -119,10 +131,10 @@ struct NNLayer {
   }
 
   size_t N;
-  std::vector<float> A;
-  std::vector<std::vector<float>> W;
-  std::vector<std::vector<float>> DW;
-  std::vector<float> delta;
+  std::vector<double> A;
+  std::vector<std::vector<double> > W;
+  std::vector<std::vector<double> > DW;
+  std::vector<double> delta;
   NNLayer *Prev;
   NNLayer *Next;
   size_t Type;
