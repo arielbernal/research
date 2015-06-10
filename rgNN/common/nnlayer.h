@@ -62,11 +62,8 @@ struct NNLayer {
     return S;
   }
 
-  //  float g(float x) { return 1 / (1 + exp(-x)); }
-  //  float gp(float x) { return x * (1 - x); }
-
-  //float g(float x) { return 1.7159 * tanh(0.66666667 * x); }
-  float g(float x) { return tanh(x); }
+  float g(float x) { return 1.7159 * tanh(0.66666667 * x); }
+  //float g(float x) { return tanh(x); }
   float gp(float x) {
     return 0.66666667 / 1.7159 * (1.7159 + x) * (1.7159 - x);
   }
@@ -74,11 +71,11 @@ struct NNLayer {
   void setRandomWeights() {
     for (size_t i = 0; i < N; ++i) {
       for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[i][j] = 0.2 * (float(rand()) / RAND_MAX) - 0.1f;
+        W[i][j] = 0.02 * (float(rand()) / RAND_MAX) - 0.01f;
     }
   }
 
-  template <typename T> void computeDeltas(const std::vector<T> &t) {
+  template <typename T> void computeDeltas(const T* t) {
     for (size_t k = 0; k < N; ++k)
       delta[k] = (A[k] - t[k]) * gp(A[k]);
   }

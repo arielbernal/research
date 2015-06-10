@@ -36,7 +36,8 @@ public:
     QAction *actionSave;
     QAction *actionTrain;
     QWidget *centralWidget;
-    QWidget *layoutWidget;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout_4;
     QVBoxLayout *verticalLayout_2;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
@@ -46,8 +47,10 @@ public:
     QLineEdit *edId;
     QPushButton *btnNext;
     QPushButton *btnTest;
-    QCustomPlot *chartErrors;
+    QWidget *widget1;
+    QVBoxLayout *verticalLayout_3;
     QCustomPlot *chartMSE;
+    QCustomPlot *chartErrors;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -74,18 +77,21 @@ public:
         actionTrain->setIcon(icon2);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        layoutWidget = new QWidget(centralWidget);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(20, 10, 404, 475));
-        verticalLayout_2 = new QVBoxLayout(layoutWidget);
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(20, 10, 406, 510));
+        verticalLayout_4 = new QVBoxLayout(widget);
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        verticalLayout_4->setContentsMargins(0, 0, 0, 0);
+        verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        lbLabel = new QLabel(layoutWidget);
+        lbLabel = new QLabel(widget);
         lbLabel->setObjectName(QStringLiteral("lbLabel"));
         lbLabel->setMaximumSize(QSize(10000, 50));
         QFont font;
@@ -101,7 +107,7 @@ public:
 
         verticalLayout->addWidget(lbLabel);
 
-        glDigit = new SimpleGLWidget(layoutWidget);
+        glDigit = new SimpleGLWidget(widget);
         glDigit->setObjectName(QStringLiteral("glDigit"));
         glDigit->setMinimumSize(QSize(400, 400));
 
@@ -113,18 +119,18 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        btnPrev = new QPushButton(layoutWidget);
+        btnPrev = new QPushButton(widget);
         btnPrev->setObjectName(QStringLiteral("btnPrev"));
 
         horizontalLayout->addWidget(btnPrev);
 
-        edId = new QLineEdit(layoutWidget);
+        edId = new QLineEdit(widget);
         edId->setObjectName(QStringLiteral("edId"));
         edId->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(edId);
 
-        btnNext = new QPushButton(layoutWidget);
+        btnNext = new QPushButton(widget);
         btnNext->setObjectName(QStringLiteral("btnNext"));
 
         horizontalLayout->addWidget(btnNext);
@@ -132,16 +138,41 @@ public:
 
         verticalLayout_2->addLayout(horizontalLayout);
 
-        btnTest = new QPushButton(centralWidget);
+
+        verticalLayout_4->addLayout(verticalLayout_2);
+
+        btnTest = new QPushButton(widget);
         btnTest->setObjectName(QStringLiteral("btnTest"));
-        btnTest->setGeometry(QRect(460, 10, 99, 27));
-        chartErrors = new QCustomPlot(centralWidget);
-        chartErrors->setObjectName(QStringLiteral("chartErrors"));
-        chartErrors->setGeometry(QRect(420, 490, 391, 381));
-        chartMSE = new QCustomPlot(centralWidget);
+
+        verticalLayout_4->addWidget(btnTest);
+
+        widget1 = new QWidget(centralWidget);
+        widget1->setObjectName(QStringLiteral("widget1"));
+        widget1->setGeometry(QRect(440, 10, 302, 608));
+        verticalLayout_3 = new QVBoxLayout(widget1);
+        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+        chartMSE = new QCustomPlot(widget1);
         chartMSE->setObjectName(QStringLiteral("chartMSE"));
-        chartMSE->setGeometry(QRect(20, 490, 391, 381));
+        chartMSE->setMinimumSize(QSize(300, 300));
+        chartMSE->setMaximumSize(QSize(300, 300));
+
+        verticalLayout_3->addWidget(chartMSE);
+
+        chartErrors = new QCustomPlot(widget1);
+        chartErrors->setObjectName(QStringLiteral("chartErrors"));
+        chartErrors->setMinimumSize(QSize(300, 300));
+        chartErrors->setMaximumSize(QSize(300, 300));
+
+        verticalLayout_3->addWidget(chartErrors);
+
         MainWindow->setCentralWidget(centralWidget);
+        btnTest->raise();
+        chartErrors->raise();
+        chartMSE->raise();
+        glDigit->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1148, 25));

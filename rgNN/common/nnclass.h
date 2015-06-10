@@ -11,6 +11,7 @@
 #include <../common/rapidjson/prettywriter.h>
 #include <../common/rapidjson/filestream.h>
 #include <../common/rapidjson/stringbuffer.h>
+#include <../common/utilities/rgScopedTimer.h>
 
 struct NNStatistics {
   NNStatistics() : MSE(1.0), Errors(1), N(1) {}
@@ -81,42 +82,54 @@ public:
 
   template <typename K, typename S> void train(NNDataset<K, S>* Training) {
     std::vector<T> Result(Output->N);
-    std::vector<T> Pattern(Output->N);
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy)) {
-      size_t h = 1;
-      while (h < Training->getN()) {
-        size_t i = 0;
-        while (i < h) {
-          size_t k = 0;
-          Training->getLabel(i, Pattern);
-          while (true) {
-            feedForward(Training->getSample(i), Result);
-            ++k;
-            if (isSameOutput(Result, Pattern))
-              break;
-            backPropagate(Pattern);
+      double TRandomizeOrder = 0;
+      double TfeedForward = 0;
+      double TisSameOutput = 0;
+      double TbackPropagate = 0;
+      double Tstatistics = 0;
+      double TTotal = 0;
+      {
+        rg::scoped_timer totalTimer(TTotal);
+        {
+          rg::scoped_timer timer(TRandomizeOrder);
+          Training->randomizeOrder();
+        }
+        for (size_t i = 0; i < Training->getN(); ++i) {
+          {
+            rg::scoped_timer timer(TfeedForward, true);
+            feedForward(Training->getInput(i), Result);
           }
-          if (k == 1)
-            i++;
-          else {
-//            std::cout << "h = " << h << "   i = " << i << " k = " << k
-//                      << std::endl;
-            i = 0;
+          bool isSame;
+          {
+            rg::scoped_timer timer(TisSameOutput, true);
+            isSame = isSameOutput(Result, Training->getOutput(i));
+          }
+          if (isSame)
+            continue;
+          {
+            rg::scoped_timer timer(TbackPropagate, true);
+            backPropagate(Training->getOutput(i));
           }
         }
-        std::cout << "h = " << h << " %" << h / float(Training->getN()) * 100
-                  << std::endl;
-        h++;
-        i = 0;
-      }
 
-      if (epoch % EpochStat == 0) {
-        statistics(Training, TrainingStat);
-        if (CallbackProgress)
-          CallbackProgress(epoch, TrainingStat);
+        if (epoch % EpochStat == 0) {
+          {
+            rg::scoped_timer timer(Tstatistics, true);
+            statistics(Training, TrainingStat);
+          }
+          if (CallbackProgress)
+            CallbackProgress(epoch, TrainingStat);
+        }
       }
+      std::cout << "TotalTime = " << TTotal << " Randomize = " << TRandomizeOrder
+                << "  Stat = " << Tstatistics << std::endl;
+      std::cout << " FF = " << TfeedForward
+                << " isSame = " << TisSameOutput
+                << " backP = " << TbackPropagate << std::endl;
+
       epoch++;
     }
     if (CallbackProgress)
@@ -126,14 +139,12 @@ public:
   template <typename K, typename S>
   void statistics(NNDataset<K, S>* Dataset, NNStatistics& Stat) {
     std::vector<T> Result(Output->N);
-    std::vector<T> Pattern(Output->N);
     T mse = 0;
     size_t errors = 0;
     for (size_t i = 0; i < Dataset->getN(); ++i) {
-      feedForward(Dataset->getSample(i), Result);
-      Dataset->getLabel(i, Pattern);
-      mse += MSE(Result, Pattern);
-      if (!isSameOutput(Result, Pattern))
+      feedForward(Dataset->getInput(i), Result);
+      mse += MSE(Result, Dataset->getOutput(i));
+      if (!isSameOutput(Result, Dataset->getOutput(i)))
         errors++;
     }
     Stat.N = Dataset->getN();
@@ -223,7 +234,7 @@ public:
   }
 
 protected:
-  template <typename K> void backPropagate(const std::vector<K>& Pattern) {
+  template <typename K> void backPropagate(const K* Pattern) {
     Output->computeDeltas(Pattern);
     for (size_t i = Layers.size() - 2; i > 0; i--)
       Layers[i]->computeDeltas();
@@ -232,7 +243,7 @@ protected:
   }
 
   template <typename K>
-  T MSE(const std::vector<K>& Yp, const std::vector<K>& Y) {
+  T MSE(const std::vector<K>& Yp, const K* Y) {
     T mse = 0;
     for (size_t i = 0; i < Yp.size(); ++i) {
       T d = Yp[i] - Y[i];
@@ -251,7 +262,7 @@ protected:
 
   template <typename K>
   bool isSameOutput(const std::vector<K>& Output,
-                    const std::vector<K>& Pattern) {
+                    const K* Pattern) {
     for (size_t i = 0; i < Output.size(); ++i)
       if (Pattern[i] != roundedOutput(Output[i]))
         return false;

@@ -42,7 +42,8 @@ HEADERS  += mainwindow.h \
     ../common/rapidjson/rapidjson.h \
     ../common/rapidjson/reader.h \
     ../common/rapidjson/stringbuffer.h \
-    ../common/rapidjson/writer.h
+    ../common/rapidjson/writer.h \
+    ../common/utilities/rgScopedTimer.h
 
 DEPENDPATH *= $
 

@@ -22,16 +22,16 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainNN()));
   connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
 
-  Training = new NNDataset<uint8_t, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
+  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  Training->load(0, 600, "../data/train-images.idx3-ubyte",
+  Training->load(0, 200, "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte", 16, 8);
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 60, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 100, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
@@ -120,10 +120,10 @@ void MainWindow::loadNN() {
 void MainWindow::saveNN() { nnff->save("../data/NN.json"); }
 
 void MainWindow::trainNN() {
-  nnff->setTrainingAccuracy(0.9);
-  nnff->setLearningRate(0.0005);
-  nnff->setMomentum(0.98);
-  nnff->setMaxEpochs(1);
+  nnff->setTrainingAccuracy(0.997);
+  nnff->setLearningRate(0.001);
+  nnff->setMomentum(0.9);
+  nnff->setMaxEpochs(1000);
   nnff->setEpochStat(1);
 
   nnff->train(Training);
@@ -143,7 +143,7 @@ size_t getLabel(std::vector<double>& Result) {
 
 void MainWindow::testSampleNN() {
   std::vector<double> Result(10);
-  nnff->feedForward(Training->getSample(), Result);
+  nnff->feedForward(Training->getInput(), Result);
   std::cout << "FF = " << getLabel(Result) << std::endl;
 }
 
