@@ -13,12 +13,13 @@
 #include <../common/rapidjson/stringbuffer.h>
 #include <../common/utilities/rgScopedTimer.h>
 
+template <typename T>
 struct NNStatistics {
   NNStatistics() : MSE(1.0), Errors(1), N(1) {}
-  float MSE;
+  T MSE;
   size_t Errors;
   size_t N;
-  float getAccuracy() { return 1 - Errors / float(N); }
+  T getAccuracy() { return 1 - Errors / float(N); }
 };
 
 const double NNFFLearningRate = 0.1;
@@ -27,9 +28,12 @@ const size_t NNFFMaxEpochs = 4500;
 const size_t NNFFEpochStat = 100;
 const double NNFFTrainingAccuracy = 0.9;
 
-template <typename T> class NNFeedForward {
-public:
-  NNFeedForward(size_t NInput, size_t NHidden, size_t NOutput,
+template <typename T>
+class NNFeedForward {
+ public:
+  NNFeedForward(size_t NInput,
+                size_t NHidden,
+                size_t NOutput,
                 size_t NHiddenLayers = 1)
       : LearningRate(NNFFLearningRate),
         Momentum(NNFFMomentum),
@@ -54,34 +58,31 @@ public:
     Layers.clear();
   }
 
-  void init(size_t NInput, size_t NHidden, size_t NOutput,
+  void init(size_t NInput,
+            size_t NHidden,
+            size_t NOutput,
             size_t NHiddenLayers = 1) {
     clear();
 
-    Input = new NNLayer(NInput);
+    Input = new NNLayer<T>(NInput);
     Layers.push_back(Input);
     for (size_t i = 0; i < NHiddenLayers; ++i)
-      Layers.push_back(new NNLayer(NHidden, Layers.back(), NNLayer::HIDDEN));
-    Output = new NNLayer(NOutput, Layers.back(), NNLayer::OUTPUT);
+      Layers.push_back(new NNLayer<T>(NHidden, Layers.back()));
+    Output = new NNLayer<T>(NOutput, Layers.back());
     Layers.push_back(Output);
+    OutputSize = NOutput;
   }
 
-  template <typename K, typename S>
-  void feedForward(K* input, std::vector<S>& output) {
+  void feedForward(T* input, T* output) {
     Input->set(input);
     for (size_t i = 1; i < Layers.size(); ++i)
       Layers[i]->feedForward();
     Output->get(output);
   }
 
-  void dump() {
-    for (auto& e : Layers)
-      e->dump();
-    std::cout << "-----------------------------" << std::endl;
-  }
-
-  template <typename K, typename S> void train(NNDataset<K, S>* Training) {
-    std::vector<T> Result(Output->N);
+  template <typename S>
+  void train(NNDataset<T, S>* Training) {
+    std::vector<T> Result(OutputSize);
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy)) {
@@ -100,12 +101,12 @@ public:
         for (size_t i = 0; i < Training->getN(); ++i) {
           {
             rg::scoped_timer timer(TfeedForward, true);
-            feedForward(Training->getInput(i), Result);
+            feedForward(Training->getInput(i), Result.data());
           }
           bool isSame;
           {
             rg::scoped_timer timer(TisSameOutput, true);
-            isSame = isSameOutput(Result, Training->getOutput(i));
+            isSame = isSameOutput(Result.data(), Training->getOutput(i));
           }
           if (isSame)
             continue;
@@ -119,15 +120,15 @@ public:
           {
             rg::scoped_timer timer(Tstatistics, true);
             statistics(Training, TrainingStat);
+            if (CallbackProgress)
+              CallbackProgress(epoch, TrainingStat);
           }
-          if (CallbackProgress)
-            CallbackProgress(epoch, TrainingStat);
         }
       }
-      std::cout << "TotalTime = " << TTotal << " Randomize = " << TRandomizeOrder
+      std::cout << "TotalTime = " << TTotal
+                << " Randomize = " << TRandomizeOrder
                 << "  Stat = " << Tstatistics << std::endl;
-      std::cout << " FF = " << TfeedForward
-                << " isSame = " << TisSameOutput
+      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
                 << " backP = " << TbackPropagate << std::endl;
 
       epoch++;
@@ -136,15 +137,24 @@ public:
       CallbackProgress(epoch, TrainingStat);
   }
 
-  template <typename K, typename S>
-  void statistics(NNDataset<K, S>* Dataset, NNStatistics& Stat) {
-    std::vector<T> Result(Output->N);
+  template <typename S>
+  void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
+    std::vector<T> Result(OutputSize);
     T mse = 0;
     size_t errors = 0;
     for (size_t i = 0; i < Dataset->getN(); ++i) {
-      feedForward(Dataset->getInput(i), Result);
-      mse += MSE(Result, Dataset->getOutput(i));
-      if (!isSameOutput(Result, Dataset->getOutput(i)))
+      feedForward(Dataset->getInput(i), Result.data());
+      mse += MSE(Result.data(), Dataset->getOutput(i));
+//      if (i==5) {
+//          for (int h = 0; h < OutputSize; ++h)
+//              std::cout << Dataset->getOutput(i)[h] << " ";
+//          std::cout << std::endl;
+//          for (int h = 0; h < OutputSize; ++h)
+//              std::cout << Result.data()[h] << " ";
+//          std::cout << std::endl;
+
+//      }
+      if (!isSameOutput(Result.data(), Dataset->getOutput(i)))
         errors++;
     }
     Stat.N = Dataset->getN();
@@ -152,7 +162,7 @@ public:
     Stat.Errors = errors;
   }
 
-  void setCallbackProgress(std::function<void(size_t, NNStatistics&)> Func) {
+  void setCallbackProgress(std::function<void(size_t, NNStatistics<T>&)> Func) {
     CallbackProgress = Func;
   }
 
@@ -161,6 +171,8 @@ public:
   void setMaxEpochs(size_t n) { MaxEpochs = n; }
   void setEpochStat(size_t n) { EpochStat = n; }
   void setTrainingAccuracy(double accuracy) { TrainingAccuracy = accuracy; }
+
+  double getLearningRate() { return LearningRate; }
 
   size_t getNInput() { return Input->N; }
   size_t getNHidden() { return Layers[1]->N; }
@@ -233,8 +245,8 @@ public:
     return true;
   }
 
-protected:
-  template <typename K> void backPropagate(const K* Pattern) {
+ protected:
+  void backPropagate(const T* Pattern) {
     Output->computeDeltas(Pattern);
     for (size_t i = Layers.size() - 2; i > 0; i--)
       Layers[i]->computeDeltas();
@@ -242,45 +254,43 @@ protected:
       Layers[i]->updateWeights(LearningRate, Momentum);
   }
 
-  template <typename K>
-  T MSE(const std::vector<K>& Yp, const K* Y) {
+  T MSE(const T* Yp, const T* Y) {
     T mse = 0;
-    for (size_t i = 0; i < Yp.size(); ++i) {
+    for (size_t i = 0; i < OutputSize; ++i) {
       T d = Yp[i] - Y[i];
       mse += d * d;
     }
-    return mse / Yp.size();
+    return mse / T(OutputSize);
   }
 
   T roundedOutput(T v) {
-    if (v >= 0.8)
+    if (v >= 0.7)
       return 1;
-    if (v <= -0.8)
+    if (v <= -0.7)
       return -1;
     return 0;
   }
 
-  template <typename K>
-  bool isSameOutput(const std::vector<K>& Output,
-                    const K* Pattern) {
-    for (size_t i = 0; i < Output.size(); ++i)
+  bool isSameOutput(const T* Output, const T* Pattern) {
+    for (size_t i = 0; i < OutputSize; ++i)
       if (Pattern[i] != roundedOutput(Output[i]))
         return false;
     return true;
   }
 
-private:
+ private:
   double LearningRate;
   double Momentum;
   size_t MaxEpochs;
   size_t EpochStat;
   double TrainingAccuracy;
 
-  std::vector<NNLayer*> Layers;
-  NNLayer* Input;
-  NNLayer* Output;
-  std::function<void(size_t, NNStatistics&)> CallbackProgress;
-  NNStatistics TrainingStat;
+  std::vector<NNLayer<T>*> Layers;
+  NNLayer<T>* Input;
+  NNLayer<T>* Output;
+  size_t OutputSize;
+  std::function<void(size_t, NNStatistics<T>&)> CallbackProgress;
+  NNStatistics<T> TrainingStat;
 };
 
-#endif // NNCLASS
+#endif  // NNCLASS

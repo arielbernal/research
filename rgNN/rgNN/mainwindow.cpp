@@ -22,17 +22,23 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainNN()));
   connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
 
-  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS);
+  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
-  Training->load(0, 200, "../data/train-images.idx3-ubyte",
-                 "../data/train-labels.idx1-ubyte", 16, 8);
+  Training->load(0,
+                 60000,
+                 "../data/train-images.idx3-ubyte",
+                 "../data/train-labels.idx1-ubyte",
+                 16,
+                 8);
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 100, 10);
-  auto fp1 = std::bind(&MainWindow::NNProgress, this, std::placeholders::_1,
+  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
+  auto fp1 = std::bind(&MainWindow::NNProgress,
+                       this,
+                       std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
 
@@ -54,7 +60,9 @@ MainWindow::MainWindow(QWidget* parent)
   ui->chartErrors->replot();
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+  delete ui;
+}
 
 void MainWindow::updateControls() {
   ui->lbLabel->setText(QString::number(Training->getLabel()));
@@ -110,22 +118,24 @@ void MainWindow::DigitRenderer() {
 }
 
 void MainWindow::loadNN() {
-  nnff->load("../data/NN.json");
-  NNStatistics stat;
+ // nnff->load("../data/NN.json");
+  NNStatistics<double> stat;
   nnff->statistics(Training, stat);
-  std::cout << "Loaded statistics  Errors = " << stat.Errors << " MSE = " << stat.MSE << " Accuracy = "
-            << stat.getAccuracy() << std::endl;
+  std::cout << "Loaded statistics  Errors = " << stat.Errors
+            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << std::endl;
 }
 
-void MainWindow::saveNN() { nnff->save("../data/NN.json"); }
+void MainWindow::saveNN() {
+  nnff->save("../data/NN.json");
+}
 
 void MainWindow::trainNN() {
-  nnff->setTrainingAccuracy(0.997);
+  nnff->setTrainingAccuracy(1);
   nnff->setLearningRate(0.001);
   nnff->setMomentum(0.9);
-  nnff->setMaxEpochs(1000);
-  nnff->setEpochStat(1);
-
+  nnff->setMaxEpochs(10000);
+  nnff->setEpochStat(10);
   nnff->train(Training);
 }
 
@@ -143,14 +153,25 @@ size_t getLabel(std::vector<double>& Result) {
 
 void MainWindow::testSampleNN() {
   std::vector<double> Result(10);
-  nnff->feedForward(Training->getInput(), Result);
+  nnff->feedForward(Training->getInput(), Result.data());
   std::cout << "FF = " << getLabel(Result) << std::endl;
 }
 
-void MainWindow::NNProgress(size_t i, NNStatistics& stat) {
-  std::cout << " i = " << i << " mse = " << stat.MSE
+void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
+  if (i % 1000 == 0) {
+      char str[200];
+      sprintf(str, "../data/MNIST/FFNN%i.json", i);
+      nnff->save(str);
+//    double lr = nnff->getLearningRate() * 0.9f;
+//    nnff->setLearningRate(lr);
+  }
+  std::cout << "--------------------------------------------------\n"
+            << "i = " << i << " mse = " << stat.MSE
+            << " Learning = " << nnff->getLearningRate()
             << " accuracy = " << stat.getAccuracy()
-            << "  Errors = " << stat.Errors << std::endl;
+            << " Errors = " << stat.Errors
+            << "\n--------------------------------------------------"
+            << std::endl;
   ui->chartMSE->graph(0)->addData(i, stat.MSE);
   ui->chartMSE->graph(0)->rescaleAxes();
   ui->chartMSE->replot();

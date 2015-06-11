@@ -24,7 +24,7 @@ private slots:
 
 protected:
   void Plot2DRenderer();
-  void NNProgress(size_t i, NNStatistics& stat);
+  void NNProgress(size_t i, NNStatistics<& stat);
 
 private:
   Ui::MainWindow *ui;

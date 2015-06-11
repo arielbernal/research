@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -pipe -g -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CXXFLAGS      = -pipe -fopenmp -g -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I../rgNN -I. -I-I/usr/local/include/opencv -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtOpenGL -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtPrintSupport -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore -I. -I. -I/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/qmake
 DEL_FILE      = rm -f
@@ -36,7 +36,7 @@ DISTNAME      = rgNN1.0.0
 DISTDIR = /home/ajbernal/dev/bat/research/rgNN/rgNN/.tmp/rgNN1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64 -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib
-LIBS          = $(SUBLIBS) -lGLEW -lGLU -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc -lopencv_videoio -L/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib -lQt5OpenGL -lQt5PrintSupport -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lGLEW -lGLU -fopenmp -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc -lopencv_videoio -L/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib -lQt5OpenGL -lQt5PrintSupport -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed

@@ -52,7 +52,7 @@ FORMS    += mainwindow.ui \
     ../common/chartdialog.ui
 
 CONFIG += c++11
-
+QMAKE_CXXFLAGS += -fopenmp
 
 win32 {
   INCLUDEPATH += C:\dev\research\external\vs\glew-1.12.0\include
@@ -61,7 +61,7 @@ win32 {
   LIBS += -LC:\dev\research\external\vs\glew-1.12.0\lib\Release\x64 -lglew32s
   LIBS += -L"E:\opencv\build\x64\vc12\lib" -lopencv_ts300 -lopencv_world300
 } else {
-  LIBS += -lGLEW -lGL -lGLU
+  LIBS += -lGLEW -lGL -lGLU -fopenmp
   INCLUDEPATH += -I/usr/local/include/opencv
   LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc -lopencv_videoio
 }

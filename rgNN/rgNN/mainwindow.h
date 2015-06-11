@@ -28,7 +28,7 @@ private slots:
 protected:
   void DigitRenderer();
   void updateControls();
-  void NNProgress(size_t i, NNStatistics &stat);
+  void NNProgress(size_t i, NNStatistics<double> &stat);
 
 private:
   Ui::MainWindow *ui;

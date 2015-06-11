@@ -6,8 +6,9 @@
 #include <fstream>
 #include <stdint.h>
 
-template <typename DataType, typename FileDataType> class NNDataset {
-public:
+template <typename DataType, typename FileDataType>
+class NNDataset {
+ public:
   NNDataset(size_t Rows, size_t Cols, size_t OutputSize)
       : N(0),
         Size(Rows * Cols),
@@ -30,15 +31,15 @@ public:
   size_t getCols() { return Cols; }
   size_t getOutputSize() { return OutputSize; }
 
-  void addSample(std::vector<FileDataType> &sample, uint8_t label) {
-    for (auto &e : sample)
+  void addSample(std::vector<FileDataType>& sample, uint8_t label) {
+    for (auto& e : sample)
       Data.push_back(e);
     Labels.push_back(label);
     N++;
   }
 
-  FileDataType *getData(size_t id) { return &Data[id * Size]; }
-  FileDataType *getData() { return &Data[CurrentId * Size]; }
+  FileDataType* getData(size_t id) { return &Data[id * Size]; }
+  FileDataType* getData() { return &Data[CurrentId * Size]; }
   uint8_t getLabel(size_t id) { return Labels[id]; }
   uint8_t getLabel() { return Labels[CurrentId]; }
 
@@ -47,7 +48,6 @@ public:
   }
 
   FileDataType getXYValue(size_t x, size_t y) {
-      std::cout << Size << std::endl;
     return Data[CurrentId * Size + y * Cols + x];
   }
 
@@ -68,15 +68,17 @@ public:
       CurrentId--;
   }
 
-  DataType *getInput(size_t id) { return &Inputs[id * Size]; }
-  DataType *getInput() { return &Inputs[CurrentId * Size]; }
-  DataType *getOutput(size_t id) { return &Outputs[id * OutputSize]; }
-  DataType *getOutput() { return &Outputs[CurrentId * OutputSize]; }
+  DataType* getInput(size_t id) { return &Inputs[id * Size]; }
+  DataType* getInput() { return &Inputs[CurrentId * Size]; }
+  DataType* getOutput(size_t id) { return &Outputs[id * OutputSize]; }
+  DataType* getOutput() { return &Outputs[CurrentId * OutputSize]; }
 
-  bool load(size_t x0, size_t n, const std::string &DataFile,
-            const std::string &LabelsFile, size_t DataOffset = 0,
+  bool load(size_t x0,
+            size_t n,
+            const std::string& DataFile,
+            const std::string& LabelsFile,
+            size_t DataOffset = 0,
             size_t LabelsOffset = 0) {
-
     Data.resize(n * Size);
     Labels.resize(n);
 
@@ -87,7 +89,7 @@ public:
       return false;
     }
     ifsd.seekg(DataOffset + x0 * Size * sizeof(FileDataType));
-    ifsd.read((char *)&Data[0], n * Size * sizeof(FileDataType));
+    ifsd.read((char*)&Data[0], n * Size * sizeof(FileDataType));
     ifsd.close();
 
     std::ifstream ifsl(LabelsFile.c_str(),
@@ -97,10 +99,13 @@ public:
       return false;
     }
     ifsl.seekg(LabelsOffset + x0 * sizeof(uint8_t));
-    ifsl.read((char *)&Labels[0], n * sizeof(uint8_t));
+    ifsl.read((char*)&Labels[0], n * sizeof(uint8_t));
     ifsl.close();
 
     N = n;
+    generateOutputs();
+    generateInputs();
+    //randomizeOrder();
     return true;
   }
 
@@ -116,6 +121,21 @@ public:
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
         Inputs[i * Size + j] = DataType(Data[i * Size + j]);
+
+    processInputs();
+  }
+
+  void processInputs() {
+    // Removing mean values
+    std::vector<DataType> VMed(Size);
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+        VMed[j] += Inputs[i * Size + j];
+    for (size_t j = 0; j < Size; ++j)
+      VMed[j] /= N;
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+        Inputs[i * Size + j] -= VMed[j];
   }
 
   void randomizeOrder() {
@@ -132,7 +152,7 @@ public:
     }
   }
 
-private:
+ private:
   std::vector<FileDataType> Data;
   std::vector<uint8_t> Labels;
   std::vector<DataType> Inputs;
@@ -145,4 +165,4 @@ private:
   size_t CurrentId;
 };
 
-#endif // NNDATASET
+#endif  // NNDATASET
