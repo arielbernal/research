@@ -213,7 +213,8 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		../common/rapidjson/reader.h \
 		../common/rapidjson/stringbuffer.h \
 		../common/rapidjson/writer.h \
-		../common/utilities/rgScopedTimer.h ../rgNN/main.cpp \
+		../common/utilities/rgScopedTimer.h \
+		../common/utilities/rgRng.h ../rgNN/main.cpp \
 		../rgNN/mainwindow.cpp \
 		../common/ocvTools/imageglwidget.cpp \
 		../common/ocvTools/imagedialog.cpp \
@@ -511,7 +512,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgNN/icons.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgNN/mainwindow.h ../common/ocvTools/imageshow.h ../common/ocvTools/imagedialog.h ../common/ocvTools/imageglwidget.h ../common/oglTools/glprimitivies.h ../common/oglTools/fps.h ../common/oglTools/simpleglwidget.h ../common/qtTools/chartdialog.h ../common/nndataset.h ../common/nnclass.h ../common/nnlayer.h ../common/qtTools/qcustomplot.h ../common/rapidjson/internal/pow10.h ../common/rapidjson/internal/stack.h ../common/rapidjson/internal/strfunc.h ../common/rapidjson/document.h ../common/rapidjson/filestream.h ../common/rapidjson/prettywriter.h ../common/rapidjson/rapidjson.h ../common/rapidjson/reader.h ../common/rapidjson/stringbuffer.h ../common/rapidjson/writer.h ../common/utilities/rgScopedTimer.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgNN/mainwindow.h ../common/ocvTools/imageshow.h ../common/ocvTools/imagedialog.h ../common/ocvTools/imageglwidget.h ../common/oglTools/glprimitivies.h ../common/oglTools/fps.h ../common/oglTools/simpleglwidget.h ../common/qtTools/chartdialog.h ../common/nndataset.h ../common/nnclass.h ../common/nnlayer.h ../common/qtTools/qcustomplot.h ../common/rapidjson/internal/pow10.h ../common/rapidjson/internal/stack.h ../common/rapidjson/internal/strfunc.h ../common/rapidjson/document.h ../common/rapidjson/filestream.h ../common/rapidjson/prettywriter.h ../common/rapidjson/rapidjson.h ../common/rapidjson/reader.h ../common/rapidjson/stringbuffer.h ../common/rapidjson/writer.h ../common/utilities/rgScopedTimer.h ../common/utilities/rgRng.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgNN/main.cpp ../rgNN/mainwindow.cpp ../common/ocvTools/imageglwidget.cpp ../common/ocvTools/imagedialog.cpp ../common/oglTools/glprimitives.cpp ../common/oglTools/simpleglwidget.cpp ../common/qtTools/chartdialog.cpp ../common/qtTools/qcustomplot.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgNN/mainwindow.ui ../common/imagedialog.ui ../common/chartdialog.ui $(DISTDIR)/
 
@@ -672,6 +673,7 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/utilities/rgRng.h \
 		../common/rapidjson/document.h \
 		../common/rapidjson/reader.h \
 		../common/rapidjson/rapidjson.h \
@@ -2353,6 +2355,7 @@ main.o: ../rgNN/main.cpp ../rgNN/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/utilities/rgRng.h \
 		../common/rapidjson/document.h \
 		../common/rapidjson/reader.h \
 		../common/rapidjson/rapidjson.h \
@@ -2483,6 +2486,7 @@ mainwindow.o: ../rgNN/mainwindow.cpp ../rgNN/mainwindow.h \
 		../common/nndataset.h \
 		../common/nnclass.h \
 		../common/nnlayer.h \
+		../common/utilities/rgRng.h \
 		../common/rapidjson/document.h \
 		../common/rapidjson/reader.h \
 		../common/rapidjson/rapidjson.h \

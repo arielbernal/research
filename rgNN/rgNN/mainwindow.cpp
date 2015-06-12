@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->glDigit->setCallbackRenderer(fp);
 
   Training->load(0,
-                 60000,
+                 300,
                  "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte",
                  16,
@@ -135,7 +135,7 @@ void MainWindow::trainNN() {
   nnff->setLearningRate(0.001);
   nnff->setMomentum(0.9);
   nnff->setMaxEpochs(10000);
-  nnff->setEpochStat(10);
+  nnff->setEpochStat(1);
   nnff->train(Training);
 }
 
@@ -165,12 +165,12 @@ void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
 //    double lr = nnff->getLearningRate() * 0.9f;
 //    nnff->setLearningRate(lr);
   }
-  std::cout << "--------------------------------------------------\n"
-            << "i = " << i << " mse = " << stat.MSE
+ // std::cout << "--------------------------------------------------\n"
+   std::cout<< "i = " << i << " mse = " << stat.MSE
             << " Learning = " << nnff->getLearningRate()
             << " accuracy = " << stat.getAccuracy()
             << " Errors = " << stat.Errors
-            << "\n--------------------------------------------------"
+            //<< "\n--------------------------------------------------"
             << std::endl;
   ui->chartMSE->graph(0)->addData(i, stat.MSE);
   ui->chartMSE->graph(0)->rescaleAxes();

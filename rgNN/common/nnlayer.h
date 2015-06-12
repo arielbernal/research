@@ -4,11 +4,15 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <../common/utilities/rgRng.h>
 
-//#define SIGMOID(x) (1.7159*tanh(0.66666667*x))
+#define SIGMOID_A (1.715904709)
+#define SIGMOID_B (0.6666666667)
+#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
+#define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
+#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
+//#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
 #define SIGMOID(x) (tanh(x))
-#define DSIGMOID(S) (0.66666667 / 1.7159 * (1.7159 + (S)) * (1.7159 - (S)))
-
 template <typename T>
 struct NNLayer {
   NNLayer(size_t N) : N(N), A(N + 1), Prev(0), Next(0) { A[N] = -1; }
@@ -28,7 +32,7 @@ struct NNLayer {
 
   void set(T* input) {
     for (size_t i = 0; i < N; ++i)
-      A[i] = float(input[i]);
+      A[i] = T(input[i]);
   }
 
   void set(const std::vector<T>& input) {
@@ -47,52 +51,53 @@ struct NNLayer {
   }
 
   void feedForward() {
-#pragma omp parallel for
+    //#pragma omp parallel for
     for (size_t k = 0; k < N; ++k) {
       T Z = weightedSum(Prev->A, W[k]);
       A[k] = SIGMOID(Z);
     }
   }
 
-  float weightedSum(const std::vector<T>& Inputs,
+  T weightedSum(const std::vector<T>& Inputs,
                     const std::vector<T>& Weights) {
-    float S = 0;
+    T S = 0;
     for (size_t j = 0; j < Prev->N + 1; ++j) {
       S += Inputs[j] * Weights[j];
     }
     return S;
   }
 
-  // T g(T x) { return 1.7159 * tanh(0.66666667 * x); }
-  float g(float x) { return tanh(x); }
-  T gp(T x) { return 0.66666667 / 1.7159 * (1.7159 + x) * (1.7159 - x); }
-
   void setRandomWeights() {
+    //    srand(0);
+    double sigma = 1 / sqrt(Prev->N + 1);
+    std::cout << "SIGMA = " << sigma << std::endl;
     for (size_t i = 0; i < N; ++i) {
       for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[i][j] = 0.002 * (float(rand()) / RAND_MAX) - 0.001f;
+        W[i][j] = rg::normal(0.0, sigma);
     }
   }
 
   void computeDeltas(const T* t) {
-#pragma omp parallel for
-    for (size_t k = 0; k < N; ++k)
+    //#pragma omp parallel for
+    for (size_t k = 0; k < N; ++k) {
       delta[k] = (A[k] - t[k]) * DSIGMOID(A[k]);
+    }
   }
 
   void computeDeltas() {
-#pragma omp parallel for
+    //#pragma omp parallel for
     for (size_t j = 0; j < N; ++j) {
-      float S = 0;
+      T S = 0;
       for (size_t k = 0; k < Next->N; ++k)
         S += Next->delta[k] * Next->W[k][j];
-      delta[j] = DSIGMOID(A[j]) * S;
+      delta[j] = S * DSIGMOID(A[j]);
     }
   }
 
   // Use momentum and store DW
   void updateWeights(T eta, T mu) {
-#pragma omp parallel for
+  //  eta = 0.0001 * sqrt(T(N));
+    //#pragma omp parallel for
     for (size_t k = 0; k < N; ++k)
       for (size_t j = 0; j < Prev->N + 1; ++j) {
         T dw = -eta * delta[k] * Prev->A[j] + mu * DW[k][j];

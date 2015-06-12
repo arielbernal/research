@@ -125,11 +125,11 @@ class NNFeedForward {
           }
         }
       }
-      std::cout << "TotalTime = " << TTotal
-                << " Randomize = " << TRandomizeOrder
-                << "  Stat = " << Tstatistics << std::endl;
-      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
-                << " backP = " << TbackPropagate << std::endl;
+//      std::cout << "TotalTime = " << TTotal
+//                << " Randomize = " << TRandomizeOrder
+//                << "  Stat = " << Tstatistics << std::endl;
+//      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
+//                << " backP = " << TbackPropagate << std::endl;
 
       epoch++;
     }
@@ -145,15 +145,13 @@ class NNFeedForward {
     for (size_t i = 0; i < Dataset->getN(); ++i) {
       feedForward(Dataset->getInput(i), Result.data());
       mse += MSE(Result.data(), Dataset->getOutput(i));
-//      if (i==5) {
-//          for (int h = 0; h < OutputSize; ++h)
-//              std::cout << Dataset->getOutput(i)[h] << " ";
-//          std::cout << std::endl;
-//          for (int h = 0; h < OutputSize; ++h)
-//              std::cout << Result.data()[h] << " ";
-//          std::cout << std::endl;
-
-//      }
+            if (std::isnan(mse)) {
+                for (int j = 0; j < 10; ++j)
+                    std::cout << Result[i] << " ";
+                std::cout << std::endl;
+                save("../data/error.json");
+                exit(-1);
+            }
       if (!isSameOutput(Result.data(), Dataset->getOutput(i)))
         errors++;
     }
