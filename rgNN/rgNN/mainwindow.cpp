@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->glDigit->setCallbackRenderer(fp);
 
   Training->load(0,
-                 300,
+                 60000,
                  "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte",
                  16,
@@ -132,10 +132,10 @@ void MainWindow::saveNN() {
 
 void MainWindow::trainNN() {
   nnff->setTrainingAccuracy(1);
-  nnff->setLearningRate(0.001);
+  nnff->setLearningRate(0.0001);
   nnff->setMomentum(0.9);
   nnff->setMaxEpochs(10000);
-  nnff->setEpochStat(1);
+  nnff->setEpochStat(2);
   nnff->train(Training);
 }
 
@@ -158,7 +158,7 @@ void MainWindow::testSampleNN() {
 }
 
 void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
-  if (i % 1000 == 0) {
+  if (i % 10 == 0) {
       char str[200];
       sprintf(str, "../data/MNIST/FFNN%i.json", i);
       nnff->save(str);

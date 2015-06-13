@@ -105,7 +105,7 @@ class NNDataset {
     N = n;
     generateOutputs();
     generateInputs();
-    //randomizeOrder();
+    // randomizeOrder();
     return true;
   }
 
@@ -128,6 +128,10 @@ class NNDataset {
   void processInputs() {
     // Removing mean values
     std::vector<DataType> VMed(Size);
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+          Inputs[i * Size + j] /= 256;
+
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
         VMed[j] += Inputs[i * Size + j];

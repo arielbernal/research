@@ -4,7 +4,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
-#include <../common/utilities/rgRng.h>
+#include <random>
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
@@ -51,41 +51,43 @@ struct NNLayer {
   }
 
   void feedForward() {
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (size_t k = 0; k < N; ++k) {
       T Z = weightedSum(Prev->A, W[k]);
       A[k] = SIGMOID(Z);
+//      if (A[k] >= 1.7159 && N < 400) {
+//        std::cout << "feedForward = " << N << " " << k << " " << Z << std::endl;
+//      }
     }
   }
 
-  T weightedSum(const std::vector<T>& Inputs,
-                    const std::vector<T>& Weights) {
+  T weightedSum(const std::vector<T>& Inputs, const std::vector<T>& Weights) {
     T S = 0;
-    for (size_t j = 0; j < Prev->N + 1; ++j) {
+    for (size_t j = 0; j < Prev->N + 1; ++j)
       S += Inputs[j] * Weights[j];
-    }
     return S;
   }
 
   void setRandomWeights() {
-    //    srand(0);
     double sigma = 1 / sqrt(Prev->N + 1);
+    std::default_random_engine generator;
+    std::normal_distribution<T> distribution(0, sigma);
+
     std::cout << "SIGMA = " << sigma << std::endl;
-    for (size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Prev->N + 1; ++j)
-        W[i][j] = rg::normal(0.0, sigma);
-    }
+        W[i][j] = distribution(generator);
   }
 
   void computeDeltas(const T* t) {
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (size_t k = 0; k < N; ++k) {
       delta[k] = (A[k] - t[k]) * DSIGMOID(A[k]);
     }
   }
 
   void computeDeltas() {
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (size_t j = 0; j < N; ++j) {
       T S = 0;
       for (size_t k = 0; k < Next->N; ++k)
@@ -96,8 +98,8 @@ struct NNLayer {
 
   // Use momentum and store DW
   void updateWeights(T eta, T mu) {
-  //  eta = 0.0001 * sqrt(T(N));
-    //#pragma omp parallel for
+    //  eta = 0.0001 * sqrt(T(N));
+    #pragma omp parallel for
     for (size_t k = 0; k < N; ++k)
       for (size_t j = 0; j < Prev->N + 1; ++j) {
         T dw = -eta * delta[k] * Prev->A[j] + mu * DW[k][j];
