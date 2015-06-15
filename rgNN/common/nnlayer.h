@@ -52,7 +52,7 @@ struct NNLayer {
 
   void feedForward() {
     #pragma omp parallel for
-    for (size_t k = 0; k < N; ++k) {
+    for (int k = 0; k < N; ++k) {
       T Z = weightedSum(Prev->A, W[k]);
       A[k] = SIGMOID(Z);
 //      if (A[k] >= 1.7159 && N < 400) {
@@ -81,14 +81,14 @@ struct NNLayer {
 
   void computeDeltas(const T* t) {
     #pragma omp parallel for
-    for (size_t k = 0; k < N; ++k) {
+    for (int k = 0; k < N; ++k) {
       delta[k] = (A[k] - t[k]) * DSIGMOID(A[k]);
     }
   }
 
   void computeDeltas() {
     #pragma omp parallel for
-    for (size_t j = 0; j < N; ++j) {
+    for (int j = 0; j < N; ++j) {
       T S = 0;
       for (size_t k = 0; k < Next->N; ++k)
         S += Next->delta[k] * Next->W[k][j];
@@ -100,7 +100,7 @@ struct NNLayer {
   void updateWeights(T eta, T mu) {
     //  eta = 0.0001 * sqrt(T(N));
     #pragma omp parallel for
-    for (size_t k = 0; k < N; ++k)
+    for (int k = 0; k < N; ++k)
       for (size_t j = 0; j < Prev->N + 1; ++j) {
         T dw = -eta * delta[k] * Prev->A[j] + mu * DW[k][j];
         W[k][j] += dw;

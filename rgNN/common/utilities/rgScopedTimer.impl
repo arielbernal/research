@@ -1,8 +1,8 @@
 #ifndef RGSCOPEDTIMER_IMPL
 #define RGSCOPEDTIMER_IMPL
 
-#include <sys/time.h>
-
+#include <time.h>
+#if !WIN32
 namespace rg {
 
 template <typename source_t, typename stamp_t, typename value_t>
@@ -148,5 +148,5 @@ system_time_source::get_time_value_us(stamp_type begin, stamp_type end) {
 }
 
 }  // namespace rg
-
+#endif
 #endif  // RGSCOPEDTIMER_H

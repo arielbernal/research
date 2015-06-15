@@ -17,15 +17,25 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
   connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
   connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
+  connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
+  connect(ui->btnStatTraining, SIGNAL(clicked()), this, SLOT(statTraining()));
+  connect(ui->btnStatTest, SIGNAL(clicked()), this, SLOT(statTest()));
   connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadNN()));
   connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveNN()));
-  connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainNN()));
-  connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
+  connect(ui->actionStartTraining,
+          SIGNAL(triggered()),
+          this,
+          SLOT(startTraining()));
+  connect(
+      ui->actionStopTraining, SIGNAL(triggered()), this, SLOT(stopTraining()));
 
-  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
+  ui->actionStopTraining->setDisabled(true);
 
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
+
+  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
+  Test = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
 
   Training->load(0,
                  60000,
@@ -33,6 +43,13 @@ MainWindow::MainWindow(QWidget* parent)
                  "../data/train-labels.idx1-ubyte",
                  16,
                  8);
+  Test->load(0,
+             10000,
+             "../data/t10k-images.idx3-ubyte",
+             "../data/t10k-labels.idx1-ubyte",
+             16,
+             8);
+
   updateControls();
 
   nnff = new NNFeedForward<double>(28 * 28, 300, 10);
@@ -41,6 +58,8 @@ MainWindow::MainWindow(QWidget* parent)
                        std::placeholders::_1,
                        std::placeholders::_2);
   nnff->setCallbackProgress(fp1);
+
+  TTrhead = new TrainingThread<double, uint8_t>(nnff, Training);
 
   ui->chartMSE->addGraph();
   ui->chartMSE->xAxis->setLabel("Epochs");
@@ -65,23 +84,23 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateControls() {
-  ui->lbLabel->setText(QString::number(Training->getLabel()));
-  ui->edId->setText(QString::number(Training->getCurrentId()));
+  ui->lbLabel->setText(QString::number(Dataset->getLabel()));
+  ui->edId->setText(QString::number(Dataset->getCurrentId()));
   ui->glDigit->update();
 }
 
 void MainWindow::currentImage() {
-  Training->setCurrentId(ui->edId->text().toLong());
+  Dataset->setCurrentId(ui->edId->text().toLong());
   updateControls();
 }
 
 void MainWindow::prevImage() {
-  Training->prev();
+  Dataset->prev();
   updateControls();
 }
 
 void MainWindow::nextImage() {
-  Training->next();
+  Dataset->next();
   updateControls();
 }
 
@@ -101,11 +120,11 @@ void MainWindow::DigitRenderer() {
   }
   glEnd();
   glColor3f(1, 1, 1);
-  if (Training->getN() > 0) {
+  if (Dataset->getN() > 0) {
     glBegin(GL_QUADS);
     for (size_t y = 0; y < 28; ++y) {
       for (size_t x = 0; x < 28; ++x) {
-        float pixelColor = Training->getXYValue(x, y) / 255.0f;
+        float pixelColor = Dataset->getXYValue(x, y) / 255.0f;
         glColor3f(pixelColor, pixelColor, pixelColor);
         glVertex2f(x * dx, (28 - y) * dy);
         glVertex2f((x + 1) * dx, (28 - y) * dy);
@@ -118,10 +137,26 @@ void MainWindow::DigitRenderer() {
 }
 
 void MainWindow::loadNN() {
- // nnff->load("../data/NN.json");
+  nnff->load("../data/MNIST/FFNN_0err.json");
+  NNStatistics<double> stat;
+  nnff->statistics(Test, stat);
+  std::cout << "Loaded statistics  Errors = " << stat.Errors
+            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << std::endl;
+}
+
+void MainWindow::statTraining() {
   NNStatistics<double> stat;
   nnff->statistics(Training, stat);
-  std::cout << "Loaded statistics  Errors = " << stat.Errors
+  std::cout << "Training statistics  Errors = " << stat.Errors
+            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << std::endl;
+}
+
+void MainWindow::statTest() {
+  NNStatistics<double> stat;
+  nnff->statistics(Test, stat);
+  std::cout << "Test statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
             << std::endl;
 }
@@ -130,13 +165,36 @@ void MainWindow::saveNN() {
   nnff->save("../data/NN.json");
 }
 
-void MainWindow::trainNN() {
-  nnff->setTrainingAccuracy(1);
+void MainWindow::startTraining() {
+  nnff->setTrainingAccuracy(2);
   nnff->setLearningRate(0.0001);
   nnff->setMomentum(0.9);
   nnff->setMaxEpochs(10000);
   nnff->setEpochStat(2);
-  nnff->train(Training);
+  TTrhead->start();
+  ui->actionStartTraining->setDisabled(true);
+  ui->actionStopTraining->setDisabled(false);
+}
+
+#ifdef Q_OS_WIN
+#include <windows.h>  // for Sleep
+#endif
+void qSleep(int ms) {
+#ifdef Q_OS_WIN
+  Sleep(uint(ms));
+#else
+  struct timespec ts = {ms / 1000, (ms % 1000) * 1000 * 1000};
+  nanosleep(&ts, NULL);
+#endif
+}
+
+void MainWindow::stopTraining() {
+  TTrhead->stopTraining();
+  while (!TTrhead->isStopped()) {
+    qSleep(10);
+  }
+  ui->actionStartTraining->setDisabled(false);
+  ui->actionStopTraining->setDisabled(true);
 }
 
 size_t getLabel(std::vector<double>& Result) {
@@ -159,23 +217,23 @@ void MainWindow::testSampleNN() {
 
 void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
   if (i % 10 == 0) {
-      char str[200];
-      sprintf(str, "../data/MNIST/FFNN%i.json", i);
-      nnff->save(str);
-//    double lr = nnff->getLearningRate() * 0.9f;
-//    nnff->setLearningRate(lr);
+    char str[200];
+    sprintf(str, "../data/MNIST/FFNN%i.json", i);
+    nnff->save(str);
+    //    double lr = nnff->getLearningRate() * 0.9f;
+    //    nnff->setLearningRate(lr);
   }
- // std::cout << "--------------------------------------------------\n"
-   std::cout<< "i = " << i << " mse = " << stat.MSE
+  // std::cout << "--------------------------------------------------\n"
+  std::cout << "i = " << i << " mse = " << stat.MSE
             << " Learning = " << nnff->getLearningRate()
-            << " accuracy = " << stat.getAccuracy()
-            << " Errors = " << stat.Errors
+            << " accuracy = " << stat.getAccuracy() << " Errors = "
+            << stat.Errors
             //<< "\n--------------------------------------------------"
             << std::endl;
-  ui->chartMSE->graph(0)->addData(i, stat.MSE);
-  ui->chartMSE->graph(0)->rescaleAxes();
-  ui->chartMSE->replot();
-  ui->chartErrors->graph(0)->addData(i, stat.Errors);
-  ui->chartErrors->graph(0)->rescaleAxes();
-  ui->chartErrors->replot();
+//  ui->chartMSE->graph(0)->addData(i, stat.MSE);
+//  ui->chartMSE->graph(0)->rescaleAxes();
+//  ui->chartMSE->replot();
+//  ui->chartErrors->graph(0)->addData(i, stat.Errors);
+//  ui->chartErrors->graph(0)->rescaleAxes();
+//  ui->chartErrors->replot();
 }

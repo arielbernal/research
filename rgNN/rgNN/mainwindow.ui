@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -65,7 +65,6 @@
              <height>400</height>
             </size>
            </property>
-           <zorder></zorder>
           </widget>
          </item>
         </layout>
@@ -106,7 +105,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -150,12 +149,32 @@
      </item>
     </layout>
    </widget>
-   <zorder>layoutWidget</zorder>
-   <zorder>btnTest</zorder>
-   <zorder>chartErrors</zorder>
-   <zorder>chartMSE</zorder>
-   <zorder>glDigit</zorder>
-   <zorder></zorder>
+   <widget class="QPushButton" name="btnStatTraining">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>580</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stat Training</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnStatTest">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>580</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stat Test</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -163,7 +182,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -178,11 +197,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
    <addaction name="actionLoad"/>
    <addaction name="actionSave"/>
    <addaction name="separator"/>
-   <addaction name="actionTrain"/>
+   <addaction name="actionStartTraining"/>
+   <addaction name="actionStopTraining"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionLoad">
    <property name="icon">
@@ -208,16 +228,22 @@
     <string>Save Weights</string>
    </property>
   </action>
-  <action name="actionTrain">
+  <action name="actionStartTraining">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/Reboot.png</normaloff>:/icons/Reboot.png</iconset>
+     <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
    </property>
    <property name="text">
-    <string>Train</string>
+    <string>StartTraining</string>
    </property>
-   <property name="toolTip">
-    <string>Train NN</string>
+  </action>
+  <action name="actionStopTraining">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Stop.png</normaloff>:/icons/Stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>StopTraining</string>
    </property>
   </action>
  </widget>

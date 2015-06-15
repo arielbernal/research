@@ -71,6 +71,7 @@ class NNFeedForward {
     Output = new NNLayer<T>(NOutput, Layers.back());
     Layers.push_back(Output);
     OutputSize = NOutput;
+    StopTraining = false;
   }
 
   void feedForward(T* input, T* output) {
@@ -80,12 +81,15 @@ class NNFeedForward {
     Output->get(output);
   }
 
+  void stopTraining() { StopTraining = true; }
+
   template <typename S>
   void train(NNDataset<T, S>* Training) {
+    StopTraining = false;
     std::vector<T> Result(OutputSize);
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
-           (TrainingStat.getAccuracy() < TrainingAccuracy)) {
+           (TrainingStat.getAccuracy() < TrainingAccuracy) && !StopTraining) {
       double TRandomizeOrder = 0;
       double TfeedForward = 0;
       double TisSameOutput = 0;
@@ -93,32 +97,34 @@ class NNFeedForward {
       double Tstatistics = 0;
       double TTotal = 0;
       {
-        rg::scoped_timer totalTimer(TTotal);
+        //  rg::scoped_timer totalTimer(TTotal);
         {
-          rg::scoped_timer timer(TRandomizeOrder);
+          //     rg::scoped_timer timer(TRandomizeOrder);
           Training->randomizeOrder();
         }
         for (size_t i = 0; i < Training->getN(); ++i) {
+          if (StopTraining)
+            break;
           {
-            rg::scoped_timer timer(TfeedForward, true);
+            //        rg::scoped_timer timer(TfeedForward, true);
             feedForward(Training->getInput(i), Result.data());
           }
-          bool isSame;
+          bool isSame = false;
           {
-            rg::scoped_timer timer(TisSameOutput, true);
-            isSame = isSameOutput(Result.data(), Training->getOutput(i));
+            //       rg::scoped_timer timer(TisSameOutput, true);
+            // isSame = isSameOutput(Result.data(), Training->getOutput(i));
           }
           if (isSame)
             continue;
           {
-            rg::scoped_timer timer(TbackPropagate, true);
+            //     rg::scoped_timer timer(TbackPropagate, true);
             backPropagate(Training->getOutput(i));
           }
         }
 
         if (epoch % EpochStat == 0) {
           {
-            rg::scoped_timer timer(Tstatistics, true);
+            //       rg::scoped_timer timer(Tstatistics, true);
             statistics(Training, TrainingStat);
             if (CallbackProgress)
               CallbackProgress(epoch, TrainingStat);
@@ -145,13 +151,13 @@ class NNFeedForward {
     for (size_t i = 0; i < Dataset->getN(); ++i) {
       feedForward(Dataset->getInput(i), Result.data());
       mse += MSE(Result.data(), Dataset->getOutput(i));
-            if (std::isnan(mse)) {
-                for (int j = 0; j < 10; ++j)
-                    std::cout << Result[i] << " ";
-                std::cout << std::endl;
-                save("../data/error.json");
-                exit(-1);
-            }
+      if (std::isnan(mse)) {
+        for (int j = 0; j < 10; ++j)
+          std::cout << Result[i] << " ";
+        std::cout << std::endl;
+        save("../data/error.json");
+        exit(-1);
+      }
       if (!isSameOutput(Result.data(), Dataset->getOutput(i)))
         errors++;
     }
@@ -262,9 +268,9 @@ class NNFeedForward {
   }
 
   T roundedOutput(T v) {
-    if (v >= 0.7)
+    if (v >= 0.8)
       return 1;
-    if (v <= -0.7)
+    if (v <= -0.8)
       return -1;
     return 0;
   }
@@ -282,6 +288,7 @@ class NNFeedForward {
   size_t MaxEpochs;
   size_t EpochStat;
   double TrainingAccuracy;
+  bool StopTraining;
 
   std::vector<NNLayer<T>*> Layers;
   NNLayer<T>* Input;

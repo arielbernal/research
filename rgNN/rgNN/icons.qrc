@@ -21,5 +21,9 @@
         <file>icons/Save.png</file>
         <file>icons/SaveAs.png</file>
         <file>icons/Open.png</file>
+        <file>icons/cancel.png</file>
+        <file>icons/nnImplementationV2.zip</file>
+        <file>icons/pause.png</file>
+        <file>icons/play.png</file>
     </qresource>
 </RCC>
