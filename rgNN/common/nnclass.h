@@ -20,6 +20,7 @@ struct NNStatistics {
   size_t Errors;
   size_t N;
   T getAccuracy() { return 1 - Errors / float(N); }
+  std::vector<size_t> ErrorIds;
 };
 
 const double NNFFLearningRate = 0.1;
@@ -143,23 +144,33 @@ class NNFeedForward {
       CallbackProgress(epoch, TrainingStat);
   }
 
+  size_t getLabel(std::vector<double>& Result) {
+    double vmax = Result[0];
+    size_t imax = 0;
+    for (size_t i = 0; i < Result.size(); ++i) {
+      if (Result[i] > vmax) {
+        vmax = Result[i];
+        imax = i;
+      }
+    }
+    return imax;
+  }
+
+
   template <typename S>
   void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
+    Stat.ErrorIds.clear();
     std::vector<T> Result(OutputSize);
     T mse = 0;
     size_t errors = 0;
     for (size_t i = 0; i < Dataset->getN(); ++i) {
       feedForward(Dataset->getInput(i), Result.data());
       mse += MSE(Result.data(), Dataset->getOutput(i));
-      if (std::isnan(mse)) {
-        for (int j = 0; j < 10; ++j)
-          std::cout << Result[i] << " ";
-        std::cout << std::endl;
-        save("../data/error.json");
-        exit(-1);
-      }
-      if (!isSameOutput(Result.data(), Dataset->getOutput(i)))
+     // if (!isSameOutput(Result.data(), Dataset->getOutput(i))) {
+      if (getLabel(Result) !=  Dataset->getLabel(i)) {
         errors++;
+        Stat.ErrorIds.push_back(i);
+      }
     }
     Stat.N = Dataset->getN();
     Stat.MSE = mse / Dataset->getN();

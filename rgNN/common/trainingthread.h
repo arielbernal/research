@@ -15,11 +15,8 @@ class TrainingThread : public QThread {
 
   void stopTraining() { nnff->stopTraining(); }
 
-  bool isRunning() { return Stauts == RUNNING; }
+  bool isRunning() { return Status == RUNNING; }
   bool isStopped() { return Status == STOPPED; }
-
- private:
-  QMutex m_mutex;
 
   void run() {
     Status = RUNNING;

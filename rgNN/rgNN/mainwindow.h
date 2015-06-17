@@ -28,6 +28,8 @@ private slots:
   void testSampleNN();
   void statTraining();
   void statTest();
+  void errPrev();
+  void errNext();
 
 protected:
   void DigitRenderer();
@@ -41,7 +43,9 @@ private:
   NNDataset<double, uint8_t> *Training;
   NNDataset<double, uint8_t> *Test;
   NNDataset<double, uint8_t> *Dataset;
+  NNStatistics<double> stat;
   NNFeedForward<double> *nnff;
   TrainingThread<double, uint8_t>* TTrhead;
+  size_t statId;
 };
 #endif // MAINWINDOW_H

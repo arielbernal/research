@@ -3,6 +3,7 @@
 
 #include <time.h>
 #if !WIN32
+#include <sys/time.h>
 namespace rg {
 
 template <typename source_t, typename stamp_t, typename value_t>

@@ -16,6 +16,9 @@ MainWindow::MainWindow(QWidget* parent)
   ui->setupUi(this);
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
   connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
+  connect(ui->btnErrPrev, SIGNAL(clicked()), this, SLOT(errPrev()));
+  connect(ui->btnErrNext, SIGNAL(clicked()), this, SLOT(errNext()));
+
   connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
   connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
   connect(ui->btnStatTraining, SIGNAL(clicked()), this, SLOT(statTraining()));
@@ -36,6 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
   Test = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
+  Dataset = Training;
 
   Training->load(0,
                  60000,
@@ -43,6 +47,7 @@ MainWindow::MainWindow(QWidget* parent)
                  "../data/train-labels.idx1-ubyte",
                  16,
                  8);
+
   Test->load(0,
              10000,
              "../data/t10k-images.idx3-ubyte",
@@ -77,6 +82,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->chartErrors->graph(0)->rescaleAxes();
   ui->chartErrors->graph(0)->setPen(QPen(QColor("#FFA100")));
   ui->chartErrors->replot();
+  statId = 0;
 }
 
 MainWindow::~MainWindow() {
@@ -136,29 +142,58 @@ void MainWindow::DigitRenderer() {
   }
 }
 
+void MainWindow::errPrev() {
+  if (!stat.ErrorIds.empty()) {
+    if (statId > 0)
+      statId--;
+    Dataset->setCurrentId(stat.ErrorIds[statId]);
+  }
+  updateControls();
+}
+
+void MainWindow::errNext() {
+  if (!stat.ErrorIds.empty()) {
+    if (statId < stat.ErrorIds.size() - 1)
+      statId++;
+    Dataset->setCurrentId(stat.ErrorIds[statId]);
+  }
+  updateControls();
+}
+
 void MainWindow::loadNN() {
   nnff->load("../data/MNIST/FFNN_0err.json");
   NNStatistics<double> stat;
   nnff->statistics(Test, stat);
   std::cout << "Loaded statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
 }
 
 void MainWindow::statTraining() {
-  NNStatistics<double> stat;
+  Dataset = Training;
   nnff->statistics(Training, stat);
   std::cout << "Training statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+               << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
+  if (!stat.ErrorIds.empty()) {
+    Dataset->setCurrentId(stat.ErrorIds[0]);
+    updateControls();
+  }
 }
 
 void MainWindow::statTest() {
-  NNStatistics<double> stat;
+  Dataset = Test;
   nnff->statistics(Test, stat);
   std::cout << "Test statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
+  if (!stat.ErrorIds.empty()) {
+    Dataset->setCurrentId(stat.ErrorIds[0]);
+    updateControls();
+  }
 }
 
 void MainWindow::saveNN() {
@@ -211,7 +246,7 @@ size_t getLabel(std::vector<double>& Result) {
 
 void MainWindow::testSampleNN() {
   std::vector<double> Result(10);
-  nnff->feedForward(Training->getInput(), Result.data());
+  nnff->feedForward(Dataset->getInput(), Result.data());
   std::cout << "FF = " << getLabel(Result) << std::endl;
 }
 
@@ -230,10 +265,10 @@ void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
             << stat.Errors
             //<< "\n--------------------------------------------------"
             << std::endl;
-//  ui->chartMSE->graph(0)->addData(i, stat.MSE);
-//  ui->chartMSE->graph(0)->rescaleAxes();
-//  ui->chartMSE->replot();
-//  ui->chartErrors->graph(0)->addData(i, stat.Errors);
-//  ui->chartErrors->graph(0)->rescaleAxes();
-//  ui->chartErrors->replot();
+  //  ui->chartMSE->graph(0)->addData(i, stat.MSE);
+  //  ui->chartMSE->graph(0)->rescaleAxes();
+  //  ui->chartMSE->replot();
+  //  ui->chartErrors->graph(0)->addData(i, stat.Errors);
+  //  ui->chartErrors->graph(0)->rescaleAxes();
+  //  ui->chartErrors->replot();
 }

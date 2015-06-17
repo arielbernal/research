@@ -130,7 +130,7 @@ class NNDataset {
     std::vector<DataType> VMed(Size);
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-          Inputs[i * Size + j] /= 256;
+        Inputs[i * Size + j] /= 256;
 
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
@@ -157,10 +157,10 @@ class NNDataset {
   }
 
  private:
-  std::vector<FileDataType> Data;
-  std::vector<uint8_t> Labels;
-  std::vector<DataType> Inputs;
-  std::vector<DataType> Outputs;
+  std::vector<FileDataType> Data;  // Data
+  std::vector<uint8_t> Labels;     // Data labels
+  std::vector<DataType> Inputs;    // Inputs
+  std::vector<DataType> Outputs;   // Training/Testing Outputs
   size_t N;
   size_t Size;
   size_t Cols;
