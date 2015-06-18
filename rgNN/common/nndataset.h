@@ -103,43 +103,54 @@ class NNDataset {
     ifsl.close();
 
     N = n;
+
+    Outputs.resize(N * OutputSize);
+    Inputs.resize(N * Size);
+    VMean.resize(Size);
+
     generateOutputs();
-    generateInputs();
-    // randomizeOrder();
+    normalizeInputs();
+    computeMeanVector();
+    processInputs();
+
     return true;
   }
 
   void generateOutputs() {
-    Outputs.resize(N * OutputSize);
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < OutputSize; ++j)
         Outputs[i * OutputSize + j] = Labels[i] == j ? 1 : -1;
   }
 
-  void generateInputs() {
-    Inputs.resize(N * Size);
+  void normalizeInputs() {
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-        Inputs[i * Size + j] = DataType(Data[i * Size + j]);
+        Inputs[i * Size + j] = DataType(Data[i * Size + j]) / 256.0f;
+  }
 
-    processInputs();
+  void computeMeanVector() {
+    std::fill(VMean.begin(), VMean.end(), 0);
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+        VMean[j] += Inputs[i * Size + j];
+    for (size_t j = 0; j < Size; ++j)
+      VMean[j] /= N;
   }
 
   void processInputs() {
     // Removing mean values
-    std::vector<DataType> VMed(Size);
     for (size_t i = 0; i < N; ++i)
-      for (size_t j = 0; j < Size; ++j)
-        Inputs[i * Size + j] /= 256;
+      for (size_t j = 0; j < Size; ++j) {
+        Inputs[i * Size + j] -= VMean[j];
+      }
+  }
 
-    for (size_t i = 0; i < N; ++i)
-      for (size_t j = 0; j < Size; ++j)
-        VMed[j] += Inputs[i * Size + j];
-    for (size_t j = 0; j < Size; ++j)
-      VMed[j] /= N;
-    for (size_t i = 0; i < N; ++i)
-      for (size_t j = 0; j < Size; ++j)
-        Inputs[i * Size + j] -= VMed[j];
+  void addDilateSamples(size_t n) {
+      for (size_t i = 0; i < n; ++i) {
+         size_t id = rand() % N;
+
+
+      }
   }
 
   void randomizeOrder() {
@@ -156,11 +167,15 @@ class NNDataset {
     }
   }
 
+  std::vector<DataType>& getMeanVector() { return VMean; }
+  void setMeanVector(std::vector<DataType>& V) { VMean = V; }
+
  private:
   std::vector<FileDataType> Data;  // Data
   std::vector<uint8_t> Labels;     // Data labels
   std::vector<DataType> Inputs;    // Inputs
   std::vector<DataType> Outputs;   // Training/Testing Outputs
+  std::vector<DataType> VMean;
   size_t N;
   size_t Size;
   size_t Cols;

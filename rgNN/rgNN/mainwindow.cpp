@@ -34,6 +34,10 @@ MainWindow::MainWindow(QWidget* parent)
 
   ui->actionStopTraining->setDisabled(true);
 
+  QTimer* timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(updateGraphs()));
+  timer->start(50);
+
   auto fp = std::bind(&MainWindow::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
@@ -55,9 +59,13 @@ MainWindow::MainWindow(QWidget* parent)
              16,
              8);
 
+  Test->setMeanVector(Training->getMeanVector());
+  Test->normalizeInputs();
+  Test->processInputs();
+
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 600, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
                        this,
                        std::placeholders::_1,
@@ -83,6 +91,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->chartErrors->graph(0)->setPen(QPen(QColor("#FFA100")));
   ui->chartErrors->replot();
   statId = 0;
+  isGraphUpdated = false;
 }
 
 MainWindow::~MainWindow() {
@@ -160,22 +169,12 @@ void MainWindow::errNext() {
   updateControls();
 }
 
-void MainWindow::loadNN() {
-  nnff->load("../data/MNIST/FFNN_0err.json");
-  NNStatistics<double> stat;
-  nnff->statistics(Test, stat);
-  std::cout << "Loaded statistics  Errors = " << stat.Errors
-            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
-            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
-            << std::endl;
-}
-
 void MainWindow::statTraining() {
   Dataset = Training;
   nnff->statistics(Training, stat);
   std::cout << "Training statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
-               << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
+            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
   if (!stat.ErrorIds.empty()) {
     Dataset->setCurrentId(stat.ErrorIds[0]);
@@ -196,12 +195,22 @@ void MainWindow::statTest() {
   }
 }
 
+void MainWindow::loadNN() {
+  nnff->load("../data/MNIST/NN.json");
+  NNStatistics<double> stat;
+  nnff->statistics(Test, stat);
+  std::cout << "Loaded statistics  Errors = " << stat.Errors
+            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
+            << std::endl;
+}
+
 void MainWindow::saveNN() {
-  nnff->save("../data/NN.json");
+  nnff->save("../data/MNIST/NN.json");
 }
 
 void MainWindow::startTraining() {
-  nnff->setTrainingAccuracy(2);
+  nnff->setTrainingAccuracy(2 + 1 - 0.0001);
   nnff->setLearningRate(0.0001);
   nnff->setMomentum(0.9);
   nnff->setMaxEpochs(10000);
@@ -247,28 +256,46 @@ size_t getLabel(std::vector<double>& Result) {
 void MainWindow::testSampleNN() {
   std::vector<double> Result(10);
   nnff->feedForward(Dataset->getInput(), Result.data());
-  std::cout << "FF = " << getLabel(Result) << std::endl;
+  std::cout << "FF = " << getLabel(Result) << "  -- ";
+  for (size_t i = 0; i < Result.size(); ++i)
+    printf("%6.4f ", Result[i]);
+  std::cout << std::endl;
 }
 
-void MainWindow::NNProgress(size_t i, NNStatistics<double>& stat) {
-  if (i % 10 == 0) {
-    char str[200];
-    sprintf(str, "../data/MNIST/FFNN%i.json", i);
-    nnff->save(str);
-    //    double lr = nnff->getLearningRate() * 0.9f;
-    //    nnff->setLearningRate(lr);
-  }
+void MainWindow::NNProgress(size_t i, NNStatistics<double>& Stat) {
+  //  if (i % 10 == 0) {
+  //    char str[200];
+  //    sprintf(str, "../data/MNIST/FFNN%i.json", i);
+  //    nnff->save(str);
+  //    //    double lr = nnff->getLearningRate() * 0.9f;
+  //    //    nnff->setLearningRate(lr);
+  //  }
   // std::cout << "--------------------------------------------------\n"
-  std::cout << "i = " << i << " mse = " << stat.MSE
-            << " Learning = " << nnff->getLearningRate()
-            << " accuracy = " << stat.getAccuracy() << " Errors = "
-            << stat.Errors
+  if (i % 4 == 0) {
+    nnff->statistics(Test, stat);
+    std::cout << "Test statistics  Errors = " << stat.Errors
+              << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
+              << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
+              << std::endl;
+  }
+  std::cout << "i = " << i << " Learning = " << nnff->getLearningRate()
+            << " MSE = " << Stat.MSE << " Accuracy = " << Stat.getAccuracy()
+            << " Error = " << (1 - Stat.getAccuracy()) * 100 << "%"
+            << " Errors = "
+            << Stat.Errors
             //<< "\n--------------------------------------------------"
             << std::endl;
-  //  ui->chartMSE->graph(0)->addData(i, stat.MSE);
-  //  ui->chartMSE->graph(0)->rescaleAxes();
-  //  ui->chartMSE->replot();
-  //  ui->chartErrors->graph(0)->addData(i, stat.Errors);
-  //  ui->chartErrors->graph(0)->rescaleAxes();
-  //  ui->chartErrors->replot();
+  ui->chartMSE->graph(0)->addData(i, Stat.MSE);
+  ui->chartMSE->graph(0)->rescaleAxes();
+  ui->chartErrors->graph(0)->addData(i, Stat.Errors);
+  ui->chartErrors->graph(0)->rescaleAxes();
+  isGraphUpdated = true;
+}
+
+void MainWindow::updateGraphs() {
+  if (isGraphUpdated) {
+    ui->chartMSE->replot();
+    ui->chartErrors->replot();
+    isGraphUpdated = false;
+  }
 }

@@ -30,6 +30,7 @@ private slots:
   void statTest();
   void errPrev();
   void errNext();
+  void updateGraphs();
 
 protected:
   void DigitRenderer();
@@ -47,5 +48,6 @@ private:
   NNFeedForward<double> *nnff;
   TrainingThread<double, uint8_t>* TTrhead;
   size_t statId;
+  bool isGraphUpdated;
 };
 #endif // MAINWINDOW_H

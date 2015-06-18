@@ -132,11 +132,11 @@ class NNFeedForward {
           }
         }
       }
-      std::cout << "TotalTime = " << TTotal
-                << " Randomize = " << TRandomizeOrder
-                << "  Stat = " << Tstatistics << std::endl;
-      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
-                << " backP = " << TbackPropagate << std::endl;
+//      std::cout << "TotalTime = " << TTotal
+//                << " Randomize = " << TRandomizeOrder
+//                << "  Stat = " << Tstatistics << std::endl;
+//      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
+//                << " backP = " << TbackPropagate << std::endl;
 
       epoch++;
     }
