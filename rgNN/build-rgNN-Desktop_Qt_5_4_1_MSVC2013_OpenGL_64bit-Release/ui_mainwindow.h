@@ -52,8 +52,16 @@ public:
     QVBoxLayout *verticalLayout_3;
     QCustomPlot *chartMSE;
     QCustomPlot *chartErrors;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_3;
+    QVBoxLayout *verticalLayout_5;
     QPushButton *btnStatTraining;
     QPushButton *btnStatTest;
+    QVBoxLayout *verticalLayout_6;
+    QLabel *label;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *btnErrPrev;
+    QPushButton *btnErrNext;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -176,16 +184,62 @@ public:
 
         verticalLayout_3->addWidget(chartErrors);
 
-        btnStatTraining = new QPushButton(centralWidget);
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(60, 570, 295, 64));
+        horizontalLayout_3 = new QHBoxLayout(widget);
+        horizontalLayout_3->setSpacing(6);
+        horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+        verticalLayout_5 = new QVBoxLayout();
+        verticalLayout_5->setSpacing(6);
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
+        btnStatTraining = new QPushButton(widget);
         btnStatTraining->setObjectName(QStringLiteral("btnStatTraining"));
-        btnStatTraining->setGeometry(QRect(90, 580, 75, 23));
-        btnStatTest = new QPushButton(centralWidget);
+
+        verticalLayout_5->addWidget(btnStatTraining);
+
+        btnStatTest = new QPushButton(widget);
         btnStatTest->setObjectName(QStringLiteral("btnStatTest"));
-        btnStatTest->setGeometry(QRect(180, 580, 75, 23));
+
+        verticalLayout_5->addWidget(btnStatTest);
+
+
+        horizontalLayout_3->addLayout(verticalLayout_5);
+
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setSpacing(6);
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        label = new QLabel(widget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setAlignment(Qt::AlignCenter);
+
+        verticalLayout_6->addWidget(label);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        btnErrPrev = new QPushButton(widget);
+        btnErrPrev->setObjectName(QStringLiteral("btnErrPrev"));
+
+        horizontalLayout_2->addWidget(btnErrPrev);
+
+        btnErrNext = new QPushButton(widget);
+        btnErrNext->setObjectName(QStringLiteral("btnErrNext"));
+
+        horizontalLayout_2->addWidget(btnErrNext);
+
+
+        verticalLayout_6->addLayout(horizontalLayout_2);
+
+
+        horizontalLayout_3->addLayout(verticalLayout_6);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1148, 21));
+        menuBar->setGeometry(QRect(0, 0, 1148, 25));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -225,6 +279,9 @@ public:
         btnTest->setText(QApplication::translate("MainWindow", "Test", 0));
         btnStatTraining->setText(QApplication::translate("MainWindow", "Stat Training", 0));
         btnStatTest->setText(QApplication::translate("MainWindow", "Stat Test", 0));
+        label->setText(QApplication::translate("MainWindow", "Errors", 0));
+        btnErrPrev->setText(QApplication::translate("MainWindow", "<", 0));
+        btnErrNext->setText(QApplication::translate("MainWindow", ">", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 

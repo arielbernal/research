@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 600, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
                        this,
                        std::placeholders::_1,
@@ -211,7 +211,7 @@ void MainWindow::saveNN() {
 
 void MainWindow::startTraining() {
   nnff->setTrainingAccuracy(2 + 1 - 0.0001);
-  nnff->setLearningRate(0.0001);
+  nnff->setLearningRate(0.0005);
   nnff->setMomentum(0.9);
   nnff->setMaxEpochs(10000);
   nnff->setEpochStat(2);

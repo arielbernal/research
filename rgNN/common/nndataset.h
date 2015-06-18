@@ -125,7 +125,8 @@ class NNDataset {
   void normalizeInputs() {
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-        Inputs[i * Size + j] = DataType(Data[i * Size + j]) / 256.0f;
+          Inputs[i * Size + j] = DataType(Data[i * Size + j]) > 127 ? 0.5 : -0.5;
+        //Inputs[i * Size + j] = DataType(Data[i * Size + j]) / 256.0f;
   }
 
   void computeMeanVector() {
