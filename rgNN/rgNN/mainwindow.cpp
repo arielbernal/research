@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   updateControls();
 
-  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 150, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
                        this,
                        std::placeholders::_1,
@@ -196,7 +196,7 @@ void MainWindow::statTest() {
 }
 
 void MainWindow::loadNN() {
-  nnff->load("../data/MNIST/NN.json");
+  nnff->load("../data/MNIST/NN150-LR0.00001-TR0.0083-T2.14.json");
   NNStatistics<double> stat;
   nnff->statistics(Test, stat);
   std::cout << "Loaded statistics  Errors = " << stat.Errors

@@ -125,8 +125,7 @@ class NNDataset {
   void normalizeInputs() {
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-          Inputs[i * Size + j] = DataType(Data[i * Size + j]) > 127 ? 0.5 : -0.5;
-        //Inputs[i * Size + j] = DataType(Data[i * Size + j]) / 256.0f;
+        Inputs[i * Size + j] = DataType(Data[i * Size + j]) / 256.0f;
   }
 
   void computeMeanVector() {
@@ -147,11 +146,21 @@ class NNDataset {
   }
 
   void addDilateSamples(size_t n) {
-      for (size_t i = 0; i < n; ++i) {
-         size_t id = rand() % N;
+    for (size_t i = 0; i < n; ++i) {
+      size_t id = rand() % N;
+    }
+  }
 
-
+  void findClosestSample(T* ) {
+    float dmin = computeDistance(getInput(0), );
+    size_t i = 0;
+    for (size_t i = 1; i < N; ++i) {
+      float d = computeDistance(getInput(i), );
+      if (d < dmin) {
+        dmin = d;
+        imin = i;
       }
+    }
   }
 
   void randomizeOrder() {
