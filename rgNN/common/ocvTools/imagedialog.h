@@ -12,22 +12,23 @@ class ImageDialog;
 class ImageDialog : public QDialog {
   Q_OBJECT
 
-public:
-  explicit ImageDialog(const std::string &Name, cv::Mat &Image,
-                       QWidget *parent = 0);
+ public:
+  explicit ImageDialog(const std::string& Name,
+                       cv::Mat& Image,
+                       QWidget* parent = 0);
   ~ImageDialog();
   void enableFPS(bool enabled = true) { imageWidget->enableFPS(enabled); }
   void setCallbackRenderer(std::function<void()> Func) {
-      imageWidget->setCallbackRenderer(Func);
+    imageWidget->setCallbackRenderer(Func);
   }
 
-protected:
-  void closeEvent(QCloseEvent *event);
+ protected:
+  void closeEvent(QCloseEvent* event);
 
-private:
-  Ui::ImageDialog *ui;
-  ImageGLWidget *imageWidget;
+ private:
+  Ui::ImageDialog* ui;
+  ImageGLWidget* imageWidget;
   std::string Name;
 };
 
-#endif // IMAGEDIALOG_H
+#endif  // IMAGEDIALOG_H

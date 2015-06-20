@@ -18,8 +18,8 @@ SOURCES += main.cpp\
     ../common/ocvTools/imagedialog.cpp \
     ../common/oglTools/glprimitives.cpp \
     ../common/oglTools/simpleglwidget.cpp \
-    ../common/qtTools/chartdialog.cpp \
-    ../common/qtTools/qcustomplot.cpp
+    ../common/qtTools/qcustomplot.cpp \
+    ../common/datasetviewer.cpp
 
 HEADERS  += mainwindow.h \
     ../common/ocvTools/imageshow.h \
@@ -28,11 +28,11 @@ HEADERS  += mainwindow.h \
     ../common/oglTools/glprimitivies.h \
     ../common/oglTools/fps.h \
     ../common/oglTools/simpleglwidget.h \
-    ../common/qtTools/chartdialog.h \
     ../common/nndataset.h \
     ../common/nnclass.h \
     ../common/nnlayer.h \
     ../common/trainingthread.h \
+    ../common/datasetviewer.h \
     ../common/qtTools/qcustomplot.h \
     ../common/rapidjson/internal/pow10.h \
     ../common/rapidjson/internal/stack.h \
@@ -50,7 +50,7 @@ DEPENDPATH *= $
 
 FORMS    += mainwindow.ui \
     ../common/imagedialog.ui \
-    ../common/chartdialog.ui
+    ../common/datasetviewer.ui
 
 CONFIG += c++11
 

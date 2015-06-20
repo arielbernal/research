@@ -55,9 +55,6 @@ struct NNLayer {
     for (int k = 0; k < N; ++k) {
       T Z = weightedSum(Prev->A, W[k]);
       A[k] = SIGMOID(Z);
-//      if (A[k] >= 1.7159 && N < 400) {
-//        std::cout << "feedForward = " << N << " " << k << " " << Z << std::endl;
-//      }
     }
   }
 

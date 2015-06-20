@@ -26,7 +26,7 @@ void SimpleGLWidget::paintGL() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glColor3f(1, 1, 1);
-  if (isCallbackEnabled) {
+  if (isCallbackEnabled && CallbackRenderer) {
     CallbackRenderer();
   }
 }

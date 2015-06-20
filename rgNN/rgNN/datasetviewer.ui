@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>711</width>
+    <height>745</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>406</width>
+     <height>510</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="lbLabel">
+          <property name="maximumSize">
+           <size>
+            <width>10000</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid green;
+     border-radius: 4px;
+     padding: 2px;
+ background-color: lightblue;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="SimpleGLWidget" name="glDigit" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>400</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="btnPrev">
+          <property name="text">
+           <string>&lt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="edId">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnNext">
+          <property name="text">
+           <string>&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnTest">
+      <property name="text">
+       <string>Test</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SimpleGLWidget</class>
+   <extends>QWidget</extends>
+   <header>oglTools/simpleglwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

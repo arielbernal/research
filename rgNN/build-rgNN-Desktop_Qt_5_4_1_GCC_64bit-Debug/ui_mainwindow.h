@@ -60,8 +60,8 @@ public:
     QVBoxLayout *verticalLayout_6;
     QLabel *label;
     QHBoxLayout *horizontalLayout_2;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
+    QPushButton *btnErrPrev;
+    QPushButton *btnErrNext;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -220,15 +220,15 @@ public:
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        pushButton = new QPushButton(widget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        btnErrPrev = new QPushButton(widget);
+        btnErrPrev->setObjectName(QStringLiteral("btnErrPrev"));
 
-        horizontalLayout_2->addWidget(pushButton);
+        horizontalLayout_2->addWidget(btnErrPrev);
 
-        pushButton_2 = new QPushButton(widget);
-        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        btnErrNext = new QPushButton(widget);
+        btnErrNext->setObjectName(QStringLiteral("btnErrNext"));
 
-        horizontalLayout_2->addWidget(pushButton_2);
+        horizontalLayout_2->addWidget(btnErrNext);
 
 
         verticalLayout_6->addLayout(horizontalLayout_2);
@@ -280,8 +280,8 @@ public:
         btnStatTraining->setText(QApplication::translate("MainWindow", "Stat Training", 0));
         btnStatTest->setText(QApplication::translate("MainWindow", "Stat Test", 0));
         label->setText(QApplication::translate("MainWindow", "Errors", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "<", 0));
-        pushButton_2->setText(QApplication::translate("MainWindow", ">", 0));
+        btnErrPrev->setText(QApplication::translate("MainWindow", "<", 0));
+        btnErrNext->setText(QApplication::translate("MainWindow", ">", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 

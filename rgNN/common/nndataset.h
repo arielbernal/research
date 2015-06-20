@@ -145,22 +145,26 @@ class NNDataset {
       }
   }
 
-  void addDilateSamples(size_t n) {
-    for (size_t i = 0; i < n; ++i) {
-      size_t id = rand() % N;
+  DataType computeDistance(DataType* a, DataType* b) {
+    DataType d2 = 0;
+    for (size_t i = 0; i < Size; ++i) {
+      DataType d = a[i] - b[i];
+      d2 += d * d;
     }
+    return d2 / Size;
   }
 
-  void findClosestSample(T* ) {
-    float dmin = computeDistance(getInput(0), );
-    size_t i = 0;
+  size_t findClosestSample(DataType* input) {
+    DataType dmin = computeDistance(getInput(0), input);
+    size_t imin = 0;
     for (size_t i = 1; i < N; ++i) {
-      float d = computeDistance(getInput(i), );
+      DataType d = computeDistance(getInput(i), input);
       if (d < dmin) {
         dmin = d;
         imin = i;
       }
     }
+    return imin;
   }
 
   void randomizeOrder() {
@@ -186,6 +190,164 @@ class NNDataset {
   std::vector<DataType> Inputs;    // Inputs
   std::vector<DataType> Outputs;   // Training/Testing Outputs
   std::vector<DataType> VMean;
+  size_t N;
+  size_t Size;
+  size_t Cols;
+  size_t Rows;
+  size_t OutputSize;
+  size_t CurrentId;
+};
+
+template <typename DataType = double,
+          typename FileDataType = uint8_t,
+          typename LabelType = uint8_t>
+struct NNSample {
+  NNSample(size_t DataSize, size_t OutputSize) {
+    Data = new FileDataType[DataSize];
+    Input = new DataType[DataSize];
+    Output = new DataType[OutputSize];
+  }
+
+  ~NNSample() {
+    delete Data;
+    delete Input;
+    delete Output;
+  }
+
+  FileDataType* Data;
+  LabelType Label;
+  DataType* Input;
+  DataType* Output;
+};
+
+template <typename DataType = double,
+          typename FileDataType = uint8_t,
+          typename LabelType = uint8_t>
+class NNDataset1 {
+ public:
+  NNDataset1(size_t Rows, size_t Cols, size_t OutputSize)
+      : N(0),
+        Size(Rows * Cols),
+        Cols(Cols),
+        Rows(Rows),
+        OutputSize(OutputSize),
+        CurrentId(0) {}
+
+  NNDataset1(size_t Size, size_t OutputSize)
+      : N(0),
+        Size(Size),
+        Cols(Size),
+        Rows(1),
+        OutputSize(OutputSize),
+        CurrentId(0) {}
+
+  size_t getN() { return N; }
+  size_t getSize() { return Size; }
+  size_t getRows() { return Rows; }
+  size_t getCols() { return Cols; }
+  size_t getOutputSize() { return OutputSize; }
+
+  FileDataType* getData(size_t id) { return Samples[id].Data; }
+  FileDataType* getData() { return Samples[CurrentId].Data; }
+  LabelType getLabel(size_t id) { return Samples[id].Label; }
+  LabelType getLabel() { return Samples[CurrentId].Label; }
+
+  FileDataType getXYValue(size_t id, size_t x, size_t y) {
+    return Samples[id].Data[y * Cols + x];
+  }
+
+  FileDataType getXYValue(size_t x, size_t y) {
+    return Samples[CurrentId].Data[y * Cols + x];
+  }
+
+  void setCurrentId(size_t id) {
+    if (id < N)
+      CurrentId = id;
+  }
+
+  size_t getCurrentId() { return CurrentId; }
+
+  void next() {
+    if (CurrentId < N - 1)
+      CurrentId++;
+  }
+
+  void prev() {
+    if (CurrentId > 0)
+      CurrentId--;
+  }
+
+  void last() { CurrentId = N - 1; }
+
+  void first() { CurrentId = 0; }
+
+  DataType* getInput(size_t id) { return Samples[id].Input; }
+  DataType* getInput() { return Samples[CurrentId].Input; }
+  DataType* getOutput(size_t id) { return Samples[id].Output; }
+  DataType* getOutput() { return Samples[CurrentId].Output; }
+
+  bool load(size_t x0,
+            size_t n,
+            const std::string& DataFile,
+            const std::string& LabelsFile,
+            size_t DataOffset = 0,
+            size_t LabelsOffset = 0) {
+    std::vector<FileDataType> Data(n * Size);
+    std::vector<LabelType> Labels(n);
+
+    std::ifstream ifsd(DataFile.c_str(),
+                       std::ifstream::in | std::ifstream::binary);
+    if (!ifsd.is_open()) {
+      std::cout << "Error Data file no found : " << DataFile << std::endl;
+      return false;
+    }
+    ifsd.seekg(DataOffset + x0 * Size * sizeof(FileDataType));
+    ifsd.read((char*)&Data[0], n * Size * sizeof(FileDataType));
+    ifsd.close();
+
+    std::ifstream ifsl(LabelsFile.c_str(),
+                       std::ifstream::in | std::ifstream::binary);
+    if (!ifsl.is_open()) {
+      std::cout << "Error Labels file no found : " << LabelsFile << std::endl;
+      return false;
+    }
+    ifsl.seekg(LabelsOffset + x0 * sizeof(uint8_t));
+    ifsl.read((char*)&Labels[0], n * sizeof(uint8_t));
+    ifsl.close();
+
+    N = n;
+
+    Samples.clear();
+    Indices.clear();
+
+    Samples.resize(n);
+    Indices.resize(n);
+    for (size_t i = 0; i < n; ++i) {
+      Indices[i] = i;
+      Samples[i].Label = Labels[i];
+      for (size_t j = 0; j < Size; ++j)
+        Samples[i].Data[j] = Data[i * Size + j];
+    }
+    return true;
+  }
+
+  void applyFilterByIndex(std::vector<size_t> idx) {
+    Indices.clear();
+    for (auto& e : idx)
+      Indices.push_back(e);
+  }
+
+  void applyFilterByLabel(LabelType Label) {
+      Indices.clear();
+      for (auto &e : Samples) {
+          if (e.Label == Label)
+              Indices.push_back(e.Id);
+      }
+  }
+
+ private:
+  std::vector<NNSample<DataType, FileDataType, LabelType> > Samples;
+  std::vector<size_t> Indices;
   size_t N;
   size_t Size;
   size_t Cols;

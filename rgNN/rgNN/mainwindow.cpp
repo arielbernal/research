@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <../common/datasetviewer.h>
+
 #define SAMPLE_ROWS 28
 #define SAMPLE_COLS 28
 #define SAMPLE_SIZE (SAMPLE_ROWS * SAMPLE_COLS)
@@ -92,6 +94,8 @@ MainWindow::MainWindow(QWidget* parent)
   ui->chartErrors->replot();
   statId = 0;
   isGraphUpdated = false;
+  DatasetViewer *pDialog = new DatasetViewer("NewViewer");
+  pDialog->show();
 }
 
 MainWindow::~MainWindow() {
