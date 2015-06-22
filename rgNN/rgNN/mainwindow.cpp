@@ -94,7 +94,15 @@ MainWindow::MainWindow(QWidget* parent)
   ui->chartErrors->replot();
   statId = 0;
   isGraphUpdated = false;
-  DatasetViewer *pDialog = new DatasetViewer("NewViewer");
+
+  NNDataset1<>* NewDataset = new NNDataset1<>(28, 28, 10);
+  NewDataset->load(0,
+                   10000,
+                   "../data/t10k-images.idx3-ubyte",
+                   "../data/t10k-labels.idx1-ubyte",
+                   16,
+                   8);
+  DatasetViewer* pDialog = new DatasetViewer("NewViewer", NewDataset);
   pDialog->show();
 }
 
