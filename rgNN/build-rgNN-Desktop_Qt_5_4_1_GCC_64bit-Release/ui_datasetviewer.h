@@ -32,18 +32,19 @@ class Ui_DatasetViewer
 {
 public:
     QGridLayout *gridLayout;
-    QHBoxLayout *horizontalLayout_20;
     QVBoxLayout *verticalLayout_8;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
     SimpleGLWidget *glDigit;
     QHBoxLayout *horizontalLayout_19;
+    QPushButton *btnFirst;
     QPushButton *btnPrev;
     QLineEdit *edIndex;
     QLineEdit *edSamples;
     QFrame *line;
     QLineEdit *edSampleId;
     QPushButton *btnNext;
+    QPushButton *btnLast;
     QVBoxLayout *verticalLayout_7;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_5;
@@ -111,11 +112,9 @@ public:
     {
         if (DatasetViewer->objectName().isEmpty())
             DatasetViewer->setObjectName(QStringLiteral("DatasetViewer"));
-        DatasetViewer->resize(750, 504);
+        DatasetViewer->resize(693, 490);
         gridLayout = new QGridLayout(DatasetViewer);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        horizontalLayout_20 = new QHBoxLayout();
-        horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         verticalLayout = new QVBoxLayout();
@@ -156,11 +155,17 @@ public:
 
         horizontalLayout_19 = new QHBoxLayout();
         horizontalLayout_19->setObjectName(QStringLiteral("horizontalLayout_19"));
-        horizontalLayout_19->setSizeConstraint(QLayout::SetFixedSize);
+        btnFirst = new QPushButton(DatasetViewer);
+        btnFirst->setObjectName(QStringLiteral("btnFirst"));
+        btnFirst->setMinimumSize(QSize(40, 0));
+        btnFirst->setMaximumSize(QSize(40, 16777215));
+
+        horizontalLayout_19->addWidget(btnFirst);
+
         btnPrev = new QPushButton(DatasetViewer);
         btnPrev->setObjectName(QStringLiteral("btnPrev"));
-        btnPrev->setMinimumSize(QSize(60, 0));
-        btnPrev->setMaximumSize(QSize(60, 16777215));
+        btnPrev->setMinimumSize(QSize(40, 0));
+        btnPrev->setMaximumSize(QSize(40, 16777215));
 
         horizontalLayout_19->addWidget(btnPrev);
 
@@ -200,16 +205,23 @@ public:
 
         btnNext = new QPushButton(DatasetViewer);
         btnNext->setObjectName(QStringLiteral("btnNext"));
-        btnNext->setMinimumSize(QSize(60, 0));
-        btnNext->setMaximumSize(QSize(60, 16777215));
+        btnNext->setMinimumSize(QSize(40, 0));
+        btnNext->setMaximumSize(QSize(40, 16777215));
 
         horizontalLayout_19->addWidget(btnNext);
+
+        btnLast = new QPushButton(DatasetViewer);
+        btnLast->setObjectName(QStringLiteral("btnLast"));
+        btnLast->setMinimumSize(QSize(40, 0));
+        btnLast->setMaximumSize(QSize(40, 16777215));
+
+        horizontalLayout_19->addWidget(btnLast);
 
 
         verticalLayout_8->addLayout(horizontalLayout_19);
 
 
-        horizontalLayout_20->addLayout(verticalLayout_8);
+        gridLayout->addLayout(verticalLayout_8, 0, 0, 1, 1);
 
         verticalLayout_7 = new QVBoxLayout();
         verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
@@ -632,50 +644,8 @@ public:
         verticalLayout_7->addLayout(verticalLayout_6);
 
 
-        horizontalLayout_20->addLayout(verticalLayout_7);
+        gridLayout->addLayout(verticalLayout_7, 0, 1, 1, 1);
 
-
-        gridLayout->addLayout(horizontalLayout_20, 0, 0, 1, 1);
-
-        edSamples->raise();
-        edSampleId->raise();
-        lbLabel_2->raise();
-        lbErrors->raise();
-        lbMSE->raise();
-        lbAccuracy->raise();
-        lbErrorRate->raise();
-        edErrors->raise();
-        edAccuracy->raise();
-        lbMSE->raise();
-        edErrorRate->raise();
-        edMSE->raise();
-        btnUpdateStats->raise();
-        lbLabel_3->raise();
-        chkAutoTest->raise();
-        btnUpdateTest->raise();
-        ed0->raise();
-        ed5->raise();
-        ed1->raise();
-        ed2->raise();
-        ed3->raise();
-        ed4->raise();
-        ed6->raise();
-        ed8->raise();
-        ed9->raise();
-        ed7->raise();
-        ed4->raise();
-        label->raise();
-        label_2->raise();
-        label_3->raise();
-        label_4->raise();
-        label_5->raise();
-        label_6->raise();
-        label_7->raise();
-        label_8->raise();
-        label_9->raise();
-        label_10->raise();
-        lbResult->raise();
-        line->raise();
 
         retranslateUi(DatasetViewer);
 
@@ -686,8 +656,10 @@ public:
     {
         DatasetViewer->setWindowTitle(QApplication::translate("DatasetViewer", "Dialog", 0));
         lbLabel->setText(QString());
+        btnFirst->setText(QApplication::translate("DatasetViewer", "|<", 0));
         btnPrev->setText(QApplication::translate("DatasetViewer", "<", 0));
         btnNext->setText(QApplication::translate("DatasetViewer", ">", 0));
+        btnLast->setText(QApplication::translate("DatasetViewer", ">|", 0));
         lbLabel_2->setText(QApplication::translate("DatasetViewer", "Dataset Statistics", 0));
         btnUpdateStats->setText(QApplication::translate("DatasetViewer", "Update", 0));
         lbErrors->setText(QApplication::translate("DatasetViewer", "Errors", 0));
