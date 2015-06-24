@@ -11,11 +11,13 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   setModal(false);
   setWindowTitle(Name.c_str());
 
-
+  connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
+  connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
+  connect(ui->btnFirst, SIGNAL(clicked()), this, SLOT(firstImage()));
+  connect(ui->btnLast, SIGNAL(clicked()), this, SLOT(lastImage()));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
-
 }
 
 DatasetViewer::~DatasetViewer() {
@@ -24,7 +26,6 @@ DatasetViewer::~DatasetViewer() {
 
 void DatasetViewer::closeEvent(QCloseEvent* event) {
 }
-
 
 void DatasetViewer::DigitRenderer() {
   float dx = ui->glDigit->width() / 28.05f;
@@ -56,4 +57,31 @@ void DatasetViewer::DigitRenderer() {
     }
     glEnd();
   }
+}
+
+void DatasetViewer::updateControls() {
+  ui->edIndex->setText(QString::number(Dataset->getCurrentId()));
+  ui->edN->setText(QString::number(Dataset->getN()-1));
+  ui->edSampleId->setText(QString::number(Dataset->getCurrentSampleId()));
+  ui->glDigit->update();
+}
+
+void DatasetViewer::nextImage() {
+  Dataset->next();
+  updateControls();
+}
+
+void DatasetViewer::prevImage() {
+  Dataset->prev();
+  updateControls();
+}
+
+void DatasetViewer::firstImage() {
+  Dataset->first();
+  updateControls();
+}
+
+void DatasetViewer::lastImage() {
+  Dataset->last();
+  updateControls();
 }

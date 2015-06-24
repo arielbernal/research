@@ -40,12 +40,11 @@ public:
     QPushButton *btnFirst;
     QPushButton *btnPrev;
     QLineEdit *edIndex;
-    QLineEdit *edSamples;
+    QLineEdit *edN;
     QFrame *line;
-    QLineEdit *edSampleId;
     QPushButton *btnNext;
     QPushButton *btnLast;
-    QVBoxLayout *verticalLayout_7;
+    QVBoxLayout *verticalLayout_9;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_5;
     QLabel *lbLabel_2;
@@ -67,10 +66,14 @@ public:
     QLabel *lbErrorRate;
     QSpacerItem *horizontalSpacer_4;
     QLineEdit *edErrorRate;
-    QVBoxLayout *verticalLayout_6;
+    QVBoxLayout *verticalLayout_7;
     QHBoxLayout *horizontalLayout_18;
     QLabel *lbLabel_3;
     QPushButton *btnUpdateTest;
+    QVBoxLayout *verticalLayout_6;
+    QHBoxLayout *horizontalLayout_20;
+    QLabel *label_11;
+    QLineEdit *edSampleId;
     QCheckBox *chkAutoTest;
     QHBoxLayout *horizontalLayout_17;
     QLabel *lbResult;
@@ -107,12 +110,13 @@ public:
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_8;
     QLineEdit *ed9;
+    QCheckBox *checkBox;
 
     void setupUi(QDialog *DatasetViewer)
     {
         if (DatasetViewer->objectName().isEmpty())
             DatasetViewer->setObjectName(QStringLiteral("DatasetViewer"));
-        DatasetViewer->resize(693, 490);
+        DatasetViewer->resize(704, 500);
         gridLayout = new QGridLayout(DatasetViewer);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         verticalLayout_8 = new QVBoxLayout();
@@ -178,14 +182,18 @@ public:
 
         horizontalLayout_19->addWidget(edIndex);
 
-        edSamples = new QLineEdit(DatasetViewer);
-        edSamples->setObjectName(QStringLiteral("edSamples"));
-        edSamples->setMinimumSize(QSize(60, 0));
-        edSamples->setMaximumSize(QSize(60, 16777215));
-        edSamples->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-        edSamples->setReadOnly(true);
+        edN = new QLineEdit(DatasetViewer);
+        edN->setObjectName(QStringLiteral("edN"));
+        edN->setMinimumSize(QSize(60, 0));
+        edN->setMaximumSize(QSize(60, 16777215));
+        edN->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
+        edN->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        edN->setReadOnly(true);
 
-        horizontalLayout_19->addWidget(edSamples);
+        horizontalLayout_19->addWidget(edN);
 
         line = new QFrame(DatasetViewer);
         line->setObjectName(QStringLiteral("line"));
@@ -193,15 +201,6 @@ public:
         line->setFrameShadow(QFrame::Sunken);
 
         horizontalLayout_19->addWidget(line);
-
-        edSampleId = new QLineEdit(DatasetViewer);
-        edSampleId->setObjectName(QStringLiteral("edSampleId"));
-        edSampleId->setMinimumSize(QSize(60, 0));
-        edSampleId->setMaximumSize(QSize(60, 16777215));
-        edSampleId->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-        edSampleId->setReadOnly(true);
-
-        horizontalLayout_19->addWidget(edSampleId);
 
         btnNext = new QPushButton(DatasetViewer);
         btnNext->setObjectName(QStringLiteral("btnNext"));
@@ -223,8 +222,8 @@ public:
 
         gridLayout->addLayout(verticalLayout_8, 0, 0, 1, 1);
 
-        verticalLayout_7 = new QVBoxLayout();
-        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
+        verticalLayout_9 = new QVBoxLayout();
+        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
         verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         horizontalLayout_5 = new QHBoxLayout();
@@ -360,10 +359,10 @@ public:
         verticalLayout_3->addLayout(verticalLayout_2);
 
 
-        verticalLayout_7->addLayout(verticalLayout_3);
+        verticalLayout_9->addLayout(verticalLayout_3);
 
-        verticalLayout_6 = new QVBoxLayout();
-        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        verticalLayout_7 = new QVBoxLayout();
+        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         horizontalLayout_18 = new QHBoxLayout();
         horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
         lbLabel_3 = new QLabel(DatasetViewer);
@@ -386,13 +385,41 @@ public:
         horizontalLayout_18->addWidget(btnUpdateTest);
 
 
-        verticalLayout_6->addLayout(horizontalLayout_18);
+        verticalLayout_7->addLayout(horizontalLayout_18);
+
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        horizontalLayout_20 = new QHBoxLayout();
+        horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
+        label_11 = new QLabel(DatasetViewer);
+        label_11->setObjectName(QStringLiteral("label_11"));
+
+        horizontalLayout_20->addWidget(label_11);
+
+        edSampleId = new QLineEdit(DatasetViewer);
+        edSampleId->setObjectName(QStringLiteral("edSampleId"));
+        edSampleId->setMinimumSize(QSize(100, 0));
+        edSampleId->setMaximumSize(QSize(100, 16777215));
+        edSampleId->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
+        edSampleId->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        edSampleId->setReadOnly(true);
+
+        horizontalLayout_20->addWidget(edSampleId);
+
+
+        verticalLayout_6->addLayout(horizontalLayout_20);
 
         chkAutoTest = new QCheckBox(DatasetViewer);
         chkAutoTest->setObjectName(QStringLiteral("chkAutoTest"));
         chkAutoTest->setChecked(true);
 
         verticalLayout_6->addWidget(chkAutoTest);
+
+
+        verticalLayout_7->addLayout(verticalLayout_6);
 
         horizontalLayout_17 = new QHBoxLayout();
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
@@ -638,13 +665,18 @@ public:
         horizontalLayout_17->addLayout(horizontalLayout_16);
 
 
-        verticalLayout_6->addLayout(horizontalLayout_17);
+        verticalLayout_7->addLayout(horizontalLayout_17);
 
 
-        verticalLayout_7->addLayout(verticalLayout_6);
+        verticalLayout_9->addLayout(verticalLayout_7);
+
+        checkBox = new QCheckBox(DatasetViewer);
+        checkBox->setObjectName(QStringLiteral("checkBox"));
+
+        verticalLayout_9->addWidget(checkBox);
 
 
-        gridLayout->addLayout(verticalLayout_7, 0, 1, 1, 1);
+        gridLayout->addLayout(verticalLayout_9, 0, 1, 1, 1);
 
 
         retranslateUi(DatasetViewer);
@@ -668,6 +700,7 @@ public:
         lbErrorRate->setText(QApplication::translate("DatasetViewer", "Error Rate", 0));
         lbLabel_3->setText(QApplication::translate("DatasetViewer", "Sample Test", 0));
         btnUpdateTest->setText(QApplication::translate("DatasetViewer", "Update", 0));
+        label_11->setText(QApplication::translate("DatasetViewer", "Sample ID :", 0));
         chkAutoTest->setText(QApplication::translate("DatasetViewer", "AutoTest", 0));
         lbResult->setText(QString());
         label->setText(QApplication::translate("DatasetViewer", "0", 0));
@@ -680,6 +713,7 @@ public:
         label_10->setText(QApplication::translate("DatasetViewer", "7", 0));
         label_9->setText(QApplication::translate("DatasetViewer", "8", 0));
         label_8->setText(QApplication::translate("DatasetViewer", "9", 0));
+        checkBox->setText(QApplication::translate("DatasetViewer", "Digit Grid", 0));
     } // retranslateUi
 
 };

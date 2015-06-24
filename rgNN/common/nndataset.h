@@ -262,18 +262,18 @@ class NNDataset1 {
       Iterator = Indices.begin() + id;
   }
 
-  size_t getCurrentId() { return *Iterator; }
-
+  size_t getCurrentId() { return Iterator - Indices.begin(); }
+  size_t getCurrentSampleId() { return *Iterator; }
   void next() {
     Iterator++;
     if (Iterator == Indices.end())
-      Iterator = Indices.back();
+      Iterator = std::prev(Indices.end());
   }
   void prev() {
     if (Iterator != Indices.begin())
       Iterator--;
   }
-  void last() { Iterator = Indices.back(); }
+  void last() { Iterator = std::prev(Indices.end()); }
   void first() { Iterator = Indices.begin(); }
 
   FileDataType* getDataById(size_t id) { return Samples[id]->Data; }

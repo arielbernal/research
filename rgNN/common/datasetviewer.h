@@ -17,10 +17,17 @@ class DatasetViewer : public QDialog {
                          NNDataset1<>* Dataset,
                          QWidget* parent = 0);
   ~DatasetViewer();
+ private slots:
+  void prevImage();
+  void nextImage();
+  void firstImage();
+  void lastImage();
 
  protected:
   void closeEvent(QCloseEvent* event);
   void DigitRenderer();
+  void updateControls();
+
  private:
   Ui::DatasetViewer* ui;
   std::string Name;
