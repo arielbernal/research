@@ -21,9 +21,12 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 #include "oglTools/simpleglwidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,7 +34,7 @@ QT_BEGIN_NAMESPACE
 class Ui_DatasetViewer
 {
 public:
-    QGridLayout *gridLayout;
+    QGridLayout *gridLayout_2;
     QVBoxLayout *verticalLayout_8;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
@@ -39,12 +42,15 @@ public:
     QHBoxLayout *horizontalLayout_19;
     QPushButton *btnFirst;
     QPushButton *btnPrev;
+    QFrame *line_2;
     QLineEdit *edIndex;
     QLineEdit *edN;
     QFrame *line;
     QPushButton *btnNext;
     QPushButton *btnLast;
-    QVBoxLayout *verticalLayout_9;
+    QTabWidget *tabWidget;
+    QWidget *tab;
+    QGridLayout *gridLayout;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_5;
     QLabel *lbLabel_2;
@@ -66,15 +72,13 @@ public:
     QLabel *lbErrorRate;
     QSpacerItem *horizontalSpacer_4;
     QLineEdit *edErrorRate;
-    QVBoxLayout *verticalLayout_7;
     QHBoxLayout *horizontalLayout_18;
     QLabel *lbLabel_3;
     QPushButton *btnUpdateTest;
-    QVBoxLayout *verticalLayout_6;
     QHBoxLayout *horizontalLayout_20;
     QLabel *label_11;
     QLineEdit *edSampleId;
-    QCheckBox *chkAutoTest;
+    QLineEdit *edSamplesN;
     QHBoxLayout *horizontalLayout_17;
     QLabel *lbResult;
     QHBoxLayout *horizontalLayout_16;
@@ -111,25 +115,43 @@ public:
     QLabel *label_8;
     QLineEdit *ed9;
     QCheckBox *checkBox;
+    QCheckBox *chkAutoTest;
+    QWidget *tab_2;
+    QGridLayout *gridLayout_3;
+    QVBoxLayout *verticalLayout_6;
+    QListWidget *listFilter;
+    QHBoxLayout *horizontalLayout_22;
+    QLabel *label_12;
+    QLabel *lbAppliedFilter;
+    QHBoxLayout *horizontalLayout_21;
+    QPushButton *btnApplyFilter;
+    QPushButton *btnClearFilter;
+    QSpacerItem *verticalSpacer;
 
     void setupUi(QDialog *DatasetViewer)
     {
         if (DatasetViewer->objectName().isEmpty())
             DatasetViewer->setObjectName(QStringLiteral("DatasetViewer"));
-        DatasetViewer->resize(704, 500);
-        gridLayout = new QGridLayout(DatasetViewer);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        DatasetViewer->resize(724, 518);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(DatasetViewer->sizePolicy().hasHeightForWidth());
+        DatasetViewer->setSizePolicy(sizePolicy);
+        DatasetViewer->setMaximumSize(QSize(200000, 20000));
+        gridLayout_2 = new QGridLayout(DatasetViewer);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         lbLabel = new QLabel(DatasetViewer);
         lbLabel->setObjectName(QStringLiteral("lbLabel"));
-        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(lbLabel->sizePolicy().hasHeightForWidth());
-        lbLabel->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(lbLabel->sizePolicy().hasHeightForWidth());
+        lbLabel->setSizePolicy(sizePolicy1);
         lbLabel->setMinimumSize(QSize(400, 0));
         lbLabel->setMaximumSize(QSize(400, 50));
         QFont font;
@@ -147,8 +169,8 @@ public:
 
         glDigit = new SimpleGLWidget(DatasetViewer);
         glDigit->setObjectName(QStringLiteral("glDigit"));
-        sizePolicy.setHeightForWidth(glDigit->sizePolicy().hasHeightForWidth());
-        glDigit->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(glDigit->sizePolicy().hasHeightForWidth());
+        glDigit->setSizePolicy(sizePolicy1);
         glDigit->setMinimumSize(QSize(400, 400));
         glDigit->setMaximumSize(QSize(400, 400));
 
@@ -172,6 +194,13 @@ public:
         btnPrev->setMaximumSize(QSize(40, 16777215));
 
         horizontalLayout_19->addWidget(btnPrev);
+
+        line_2 = new QFrame(DatasetViewer);
+        line_2->setObjectName(QStringLiteral("line_2"));
+        line_2->setFrameShape(QFrame::VLine);
+        line_2->setFrameShadow(QFrame::Sunken);
+
+        horizontalLayout_19->addWidget(line_2);
 
         edIndex = new QLineEdit(DatasetViewer);
         edIndex->setObjectName(QStringLiteral("edIndex"));
@@ -220,15 +249,19 @@ public:
         verticalLayout_8->addLayout(horizontalLayout_19);
 
 
-        gridLayout->addLayout(verticalLayout_8, 0, 0, 1, 1);
+        gridLayout_2->addLayout(verticalLayout_8, 0, 0, 1, 1);
 
-        verticalLayout_9 = new QVBoxLayout();
-        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
+        tabWidget = new QTabWidget(DatasetViewer);
+        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tab = new QWidget();
+        tab->setObjectName(QStringLiteral("tab"));
+        gridLayout = new QGridLayout(tab);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
         verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
-        lbLabel_2 = new QLabel(DatasetViewer);
+        lbLabel_2 = new QLabel(tab);
         lbLabel_2->setObjectName(QStringLiteral("lbLabel_2"));
         lbLabel_2->setMaximumSize(QSize(10000, 50));
         lbLabel_2->setFont(font);
@@ -240,10 +273,10 @@ public:
 
         horizontalLayout_5->addWidget(lbLabel_2);
 
-        btnUpdateStats = new QPushButton(DatasetViewer);
+        btnUpdateStats = new QPushButton(tab);
         btnUpdateStats->setObjectName(QStringLiteral("btnUpdateStats"));
-        sizePolicy.setHeightForWidth(btnUpdateStats->sizePolicy().hasHeightForWidth());
-        btnUpdateStats->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(btnUpdateStats->sizePolicy().hasHeightForWidth());
+        btnUpdateStats->setSizePolicy(sizePolicy1);
 
         horizontalLayout_5->addWidget(btnUpdateStats);
 
@@ -254,13 +287,13 @@ public:
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        lbErrors = new QLabel(DatasetViewer);
+        lbErrors = new QLabel(tab);
         lbErrors->setObjectName(QStringLiteral("lbErrors"));
-        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(lbErrors->sizePolicy().hasHeightForWidth());
-        lbErrors->setSizePolicy(sizePolicy1);
+        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(lbErrors->sizePolicy().hasHeightForWidth());
+        lbErrors->setSizePolicy(sizePolicy2);
 
         horizontalLayout_4->addWidget(lbErrors);
 
@@ -268,10 +301,10 @@ public:
 
         horizontalLayout_4->addItem(horizontalSpacer);
 
-        edErrors = new QLineEdit(DatasetViewer);
+        edErrors = new QLineEdit(tab);
         edErrors->setObjectName(QStringLiteral("edErrors"));
-        sizePolicy.setHeightForWidth(edErrors->sizePolicy().hasHeightForWidth());
-        edErrors->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(edErrors->sizePolicy().hasHeightForWidth());
+        edErrors->setSizePolicy(sizePolicy1);
         edErrors->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edErrors->setReadOnly(true);
 
@@ -282,10 +315,10 @@ public:
 
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        lbAccuracy = new QLabel(DatasetViewer);
+        lbAccuracy = new QLabel(tab);
         lbAccuracy->setObjectName(QStringLiteral("lbAccuracy"));
-        sizePolicy1.setHeightForWidth(lbAccuracy->sizePolicy().hasHeightForWidth());
-        lbAccuracy->setSizePolicy(sizePolicy1);
+        sizePolicy2.setHeightForWidth(lbAccuracy->sizePolicy().hasHeightForWidth());
+        lbAccuracy->setSizePolicy(sizePolicy2);
 
         horizontalLayout_3->addWidget(lbAccuracy);
 
@@ -293,10 +326,10 @@ public:
 
         horizontalLayout_3->addItem(horizontalSpacer_2);
 
-        edAccuracy = new QLineEdit(DatasetViewer);
+        edAccuracy = new QLineEdit(tab);
         edAccuracy->setObjectName(QStringLiteral("edAccuracy"));
-        sizePolicy.setHeightForWidth(edAccuracy->sizePolicy().hasHeightForWidth());
-        edAccuracy->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(edAccuracy->sizePolicy().hasHeightForWidth());
+        edAccuracy->setSizePolicy(sizePolicy1);
         edAccuracy->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edAccuracy->setReadOnly(true);
 
@@ -307,10 +340,10 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        lbMSE = new QLabel(DatasetViewer);
+        lbMSE = new QLabel(tab);
         lbMSE->setObjectName(QStringLiteral("lbMSE"));
-        sizePolicy1.setHeightForWidth(lbMSE->sizePolicy().hasHeightForWidth());
-        lbMSE->setSizePolicy(sizePolicy1);
+        sizePolicy2.setHeightForWidth(lbMSE->sizePolicy().hasHeightForWidth());
+        lbMSE->setSizePolicy(sizePolicy2);
 
         horizontalLayout_2->addWidget(lbMSE);
 
@@ -318,10 +351,10 @@ public:
 
         horizontalLayout_2->addItem(horizontalSpacer_3);
 
-        edMSE = new QLineEdit(DatasetViewer);
+        edMSE = new QLineEdit(tab);
         edMSE->setObjectName(QStringLiteral("edMSE"));
-        sizePolicy.setHeightForWidth(edMSE->sizePolicy().hasHeightForWidth());
-        edMSE->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(edMSE->sizePolicy().hasHeightForWidth());
+        edMSE->setSizePolicy(sizePolicy1);
         edMSE->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edMSE->setReadOnly(true);
 
@@ -332,10 +365,10 @@ public:
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        lbErrorRate = new QLabel(DatasetViewer);
+        lbErrorRate = new QLabel(tab);
         lbErrorRate->setObjectName(QStringLiteral("lbErrorRate"));
-        sizePolicy1.setHeightForWidth(lbErrorRate->sizePolicy().hasHeightForWidth());
-        lbErrorRate->setSizePolicy(sizePolicy1);
+        sizePolicy2.setHeightForWidth(lbErrorRate->sizePolicy().hasHeightForWidth());
+        lbErrorRate->setSizePolicy(sizePolicy2);
 
         horizontalLayout->addWidget(lbErrorRate);
 
@@ -343,10 +376,10 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer_4);
 
-        edErrorRate = new QLineEdit(DatasetViewer);
+        edErrorRate = new QLineEdit(tab);
         edErrorRate->setObjectName(QStringLiteral("edErrorRate"));
-        sizePolicy.setHeightForWidth(edErrorRate->sizePolicy().hasHeightForWidth());
-        edErrorRate->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(edErrorRate->sizePolicy().hasHeightForWidth());
+        edErrorRate->setSizePolicy(sizePolicy1);
         edErrorRate->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edErrorRate->setReadOnly(true);
 
@@ -359,13 +392,11 @@ public:
         verticalLayout_3->addLayout(verticalLayout_2);
 
 
-        verticalLayout_9->addLayout(verticalLayout_3);
+        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 2);
 
-        verticalLayout_7 = new QVBoxLayout();
-        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         horizontalLayout_18 = new QHBoxLayout();
         horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
-        lbLabel_3 = new QLabel(DatasetViewer);
+        lbLabel_3 = new QLabel(tab);
         lbLabel_3->setObjectName(QStringLiteral("lbLabel_3"));
         lbLabel_3->setMaximumSize(QSize(10000, 50));
         lbLabel_3->setFont(font);
@@ -377,29 +408,27 @@ public:
 
         horizontalLayout_18->addWidget(lbLabel_3);
 
-        btnUpdateTest = new QPushButton(DatasetViewer);
+        btnUpdateTest = new QPushButton(tab);
         btnUpdateTest->setObjectName(QStringLiteral("btnUpdateTest"));
-        sizePolicy.setHeightForWidth(btnUpdateTest->sizePolicy().hasHeightForWidth());
-        btnUpdateTest->setSizePolicy(sizePolicy);
+        sizePolicy1.setHeightForWidth(btnUpdateTest->sizePolicy().hasHeightForWidth());
+        btnUpdateTest->setSizePolicy(sizePolicy1);
 
         horizontalLayout_18->addWidget(btnUpdateTest);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_18);
+        gridLayout->addLayout(horizontalLayout_18, 1, 0, 1, 2);
 
-        verticalLayout_6 = new QVBoxLayout();
-        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         horizontalLayout_20 = new QHBoxLayout();
         horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
-        label_11 = new QLabel(DatasetViewer);
+        label_11 = new QLabel(tab);
         label_11->setObjectName(QStringLiteral("label_11"));
 
         horizontalLayout_20->addWidget(label_11);
 
-        edSampleId = new QLineEdit(DatasetViewer);
+        edSampleId = new QLineEdit(tab);
         edSampleId->setObjectName(QStringLiteral("edSampleId"));
-        edSampleId->setMinimumSize(QSize(100, 0));
-        edSampleId->setMaximumSize(QSize(100, 16777215));
+        edSampleId->setMinimumSize(QSize(80, 0));
+        edSampleId->setMaximumSize(QSize(80, 16777215));
         edSampleId->setStyleSheet(QLatin1String("border: 2px solid green;\n"
 "     border-radius: 4px;\n"
 "     padding: 2px;\n"
@@ -409,21 +438,25 @@ public:
 
         horizontalLayout_20->addWidget(edSampleId);
 
+        edSamplesN = new QLineEdit(tab);
+        edSamplesN->setObjectName(QStringLiteral("edSamplesN"));
+        edSamplesN->setMinimumSize(QSize(80, 0));
+        edSamplesN->setMaximumSize(QSize(80, 16777215));
+        edSamplesN->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
+        edSamplesN->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        edSamplesN->setReadOnly(true);
 
-        verticalLayout_6->addLayout(horizontalLayout_20);
-
-        chkAutoTest = new QCheckBox(DatasetViewer);
-        chkAutoTest->setObjectName(QStringLiteral("chkAutoTest"));
-        chkAutoTest->setChecked(true);
-
-        verticalLayout_6->addWidget(chkAutoTest);
+        horizontalLayout_20->addWidget(edSamplesN);
 
 
-        verticalLayout_7->addLayout(verticalLayout_6);
+        gridLayout->addLayout(horizontalLayout_20, 2, 0, 1, 2);
 
         horizontalLayout_17 = new QHBoxLayout();
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
-        lbResult = new QLabel(DatasetViewer);
+        lbResult = new QLabel(tab);
         lbResult->setObjectName(QStringLiteral("lbResult"));
         lbResult->setMinimumSize(QSize(50, 50));
         lbResult->setMaximumSize(QSize(50, 50));
@@ -442,18 +475,18 @@ public:
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         horizontalLayout_7 = new QHBoxLayout();
         horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
-        label = new QLabel(DatasetViewer);
+        label = new QLabel(tab);
         label->setObjectName(QStringLiteral("label"));
 
         horizontalLayout_7->addWidget(label);
 
-        ed0 = new QLineEdit(DatasetViewer);
+        ed0 = new QLineEdit(tab);
         ed0->setObjectName(QStringLiteral("ed0"));
-        QSizePolicy sizePolicy2(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(ed0->sizePolicy().hasHeightForWidth());
-        ed0->setSizePolicy(sizePolicy2);
+        QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(ed0->sizePolicy().hasHeightForWidth());
+        ed0->setSizePolicy(sizePolicy3);
         ed0->setMinimumSize(QSize(80, 25));
         ed0->setMaximumSize(QSize(80, 25));
         ed0->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -466,15 +499,15 @@ public:
 
         horizontalLayout_8 = new QHBoxLayout();
         horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
-        label_2 = new QLabel(DatasetViewer);
+        label_2 = new QLabel(tab);
         label_2->setObjectName(QStringLiteral("label_2"));
 
         horizontalLayout_8->addWidget(label_2);
 
-        ed1 = new QLineEdit(DatasetViewer);
+        ed1 = new QLineEdit(tab);
         ed1->setObjectName(QStringLiteral("ed1"));
-        sizePolicy2.setHeightForWidth(ed1->sizePolicy().hasHeightForWidth());
-        ed1->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed1->sizePolicy().hasHeightForWidth());
+        ed1->setSizePolicy(sizePolicy3);
         ed1->setMinimumSize(QSize(80, 25));
         ed1->setMaximumSize(QSize(80, 25));
         ed1->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -487,15 +520,15 @@ public:
 
         horizontalLayout_10 = new QHBoxLayout();
         horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
-        label_3 = new QLabel(DatasetViewer);
+        label_3 = new QLabel(tab);
         label_3->setObjectName(QStringLiteral("label_3"));
 
         horizontalLayout_10->addWidget(label_3);
 
-        ed2 = new QLineEdit(DatasetViewer);
+        ed2 = new QLineEdit(tab);
         ed2->setObjectName(QStringLiteral("ed2"));
-        sizePolicy2.setHeightForWidth(ed2->sizePolicy().hasHeightForWidth());
-        ed2->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed2->sizePolicy().hasHeightForWidth());
+        ed2->setSizePolicy(sizePolicy3);
         ed2->setMinimumSize(QSize(80, 25));
         ed2->setMaximumSize(QSize(80, 25));
         ed2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -508,15 +541,15 @@ public:
 
         horizontalLayout_9 = new QHBoxLayout();
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
-        label_4 = new QLabel(DatasetViewer);
+        label_4 = new QLabel(tab);
         label_4->setObjectName(QStringLiteral("label_4"));
 
         horizontalLayout_9->addWidget(label_4);
 
-        ed3 = new QLineEdit(DatasetViewer);
+        ed3 = new QLineEdit(tab);
         ed3->setObjectName(QStringLiteral("ed3"));
-        sizePolicy2.setHeightForWidth(ed3->sizePolicy().hasHeightForWidth());
-        ed3->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed3->sizePolicy().hasHeightForWidth());
+        ed3->setSizePolicy(sizePolicy3);
         ed3->setMinimumSize(QSize(80, 25));
         ed3->setMaximumSize(QSize(80, 25));
         ed3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -529,15 +562,15 @@ public:
 
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
-        label_5 = new QLabel(DatasetViewer);
+        label_5 = new QLabel(tab);
         label_5->setObjectName(QStringLiteral("label_5"));
 
         horizontalLayout_6->addWidget(label_5);
 
-        ed4 = new QLineEdit(DatasetViewer);
+        ed4 = new QLineEdit(tab);
         ed4->setObjectName(QStringLiteral("ed4"));
-        sizePolicy2.setHeightForWidth(ed4->sizePolicy().hasHeightForWidth());
-        ed4->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed4->sizePolicy().hasHeightForWidth());
+        ed4->setSizePolicy(sizePolicy3);
         ed4->setMinimumSize(QSize(80, 25));
         ed4->setMaximumSize(QSize(80, 25));
         ed4->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -555,15 +588,15 @@ public:
         verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         horizontalLayout_11 = new QHBoxLayout();
         horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
-        label_6 = new QLabel(DatasetViewer);
+        label_6 = new QLabel(tab);
         label_6->setObjectName(QStringLiteral("label_6"));
 
         horizontalLayout_11->addWidget(label_6);
 
-        ed5 = new QLineEdit(DatasetViewer);
+        ed5 = new QLineEdit(tab);
         ed5->setObjectName(QStringLiteral("ed5"));
-        sizePolicy2.setHeightForWidth(ed5->sizePolicy().hasHeightForWidth());
-        ed5->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed5->sizePolicy().hasHeightForWidth());
+        ed5->setSizePolicy(sizePolicy3);
         ed5->setMinimumSize(QSize(80, 25));
         ed5->setMaximumSize(QSize(80, 25));
         ed5->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -576,15 +609,15 @@ public:
 
         horizontalLayout_12 = new QHBoxLayout();
         horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
-        label_7 = new QLabel(DatasetViewer);
+        label_7 = new QLabel(tab);
         label_7->setObjectName(QStringLiteral("label_7"));
 
         horizontalLayout_12->addWidget(label_7);
 
-        ed6 = new QLineEdit(DatasetViewer);
+        ed6 = new QLineEdit(tab);
         ed6->setObjectName(QStringLiteral("ed6"));
-        sizePolicy2.setHeightForWidth(ed6->sizePolicy().hasHeightForWidth());
-        ed6->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed6->sizePolicy().hasHeightForWidth());
+        ed6->setSizePolicy(sizePolicy3);
         ed6->setMinimumSize(QSize(80, 25));
         ed6->setMaximumSize(QSize(80, 25));
         ed6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -597,15 +630,15 @@ public:
 
         horizontalLayout_13 = new QHBoxLayout();
         horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
-        label_10 = new QLabel(DatasetViewer);
+        label_10 = new QLabel(tab);
         label_10->setObjectName(QStringLiteral("label_10"));
 
         horizontalLayout_13->addWidget(label_10);
 
-        ed7 = new QLineEdit(DatasetViewer);
+        ed7 = new QLineEdit(tab);
         ed7->setObjectName(QStringLiteral("ed7"));
-        sizePolicy2.setHeightForWidth(ed7->sizePolicy().hasHeightForWidth());
-        ed7->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed7->sizePolicy().hasHeightForWidth());
+        ed7->setSizePolicy(sizePolicy3);
         ed7->setMinimumSize(QSize(80, 25));
         ed7->setMaximumSize(QSize(80, 25));
         ed7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -618,15 +651,15 @@ public:
 
         horizontalLayout_14 = new QHBoxLayout();
         horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
-        label_9 = new QLabel(DatasetViewer);
+        label_9 = new QLabel(tab);
         label_9->setObjectName(QStringLiteral("label_9"));
 
         horizontalLayout_14->addWidget(label_9);
 
-        ed8 = new QLineEdit(DatasetViewer);
+        ed8 = new QLineEdit(tab);
         ed8->setObjectName(QStringLiteral("ed8"));
-        sizePolicy2.setHeightForWidth(ed8->sizePolicy().hasHeightForWidth());
-        ed8->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed8->sizePolicy().hasHeightForWidth());
+        ed8->setSizePolicy(sizePolicy3);
         ed8->setMinimumSize(QSize(80, 25));
         ed8->setMaximumSize(QSize(80, 25));
         ed8->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -639,15 +672,15 @@ public:
 
         horizontalLayout_15 = new QHBoxLayout();
         horizontalLayout_15->setObjectName(QStringLiteral("horizontalLayout_15"));
-        label_8 = new QLabel(DatasetViewer);
+        label_8 = new QLabel(tab);
         label_8->setObjectName(QStringLiteral("label_8"));
 
         horizontalLayout_15->addWidget(label_8);
 
-        ed9 = new QLineEdit(DatasetViewer);
+        ed9 = new QLineEdit(tab);
         ed9->setObjectName(QStringLiteral("ed9"));
-        sizePolicy2.setHeightForWidth(ed9->sizePolicy().hasHeightForWidth());
-        ed9->setSizePolicy(sizePolicy2);
+        sizePolicy3.setHeightForWidth(ed9->sizePolicy().hasHeightForWidth());
+        ed9->setSizePolicy(sizePolicy3);
         ed9->setMinimumSize(QSize(80, 25));
         ed9->setMaximumSize(QSize(80, 25));
         ed9->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -665,21 +698,131 @@ public:
         horizontalLayout_17->addLayout(horizontalLayout_16);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_17);
+        gridLayout->addLayout(horizontalLayout_17, 3, 0, 1, 2);
 
-
-        verticalLayout_9->addLayout(verticalLayout_7);
-
-        checkBox = new QCheckBox(DatasetViewer);
+        checkBox = new QCheckBox(tab);
         checkBox->setObjectName(QStringLiteral("checkBox"));
+        checkBox->setChecked(true);
 
-        verticalLayout_9->addWidget(checkBox);
+        gridLayout->addWidget(checkBox, 4, 0, 1, 1);
+
+        chkAutoTest = new QCheckBox(tab);
+        chkAutoTest->setObjectName(QStringLiteral("chkAutoTest"));
+        chkAutoTest->setChecked(false);
+
+        gridLayout->addWidget(chkAutoTest, 4, 1, 1, 1);
+
+        tabWidget->addTab(tab, QString());
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QStringLiteral("tab_2"));
+        gridLayout_3 = new QGridLayout(tab_2);
+        gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        listFilter = new QListWidget(tab_2);
+        QListWidgetItem *__qlistwidgetitem = new QListWidgetItem(listFilter);
+        __qlistwidgetitem->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem1 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem1->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem1->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem2 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem2->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem2->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem3 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem3->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem3->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem4 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem4->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem4->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem5 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem5->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem5->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem6 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem6->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem6->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem7 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem7->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem7->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem8 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem8->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem8->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem9 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem9->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem9->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem10 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem10->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem10->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem11 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem11->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem11->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        QListWidgetItem *__qlistwidgetitem12 = new QListWidgetItem(listFilter);
+        __qlistwidgetitem12->setCheckState(Qt::Unchecked);
+        __qlistwidgetitem12->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        listFilter->setObjectName(QStringLiteral("listFilter"));
+        listFilter->setMinimumSize(QSize(0, 300));
+
+        verticalLayout_6->addWidget(listFilter);
+
+        horizontalLayout_22 = new QHBoxLayout();
+        horizontalLayout_22->setObjectName(QStringLiteral("horizontalLayout_22"));
+        label_12 = new QLabel(tab_2);
+        label_12->setObjectName(QStringLiteral("label_12"));
+
+        horizontalLayout_22->addWidget(label_12);
+
+        lbAppliedFilter = new QLabel(tab_2);
+        lbAppliedFilter->setObjectName(QStringLiteral("lbAppliedFilter"));
+        lbAppliedFilter->setMinimumSize(QSize(170, 0));
+        lbAppliedFilter->setMaximumSize(QSize(10000, 50));
+        QFont font1;
+        font1.setPointSize(11);
+        font1.setBold(false);
+        font1.setWeight(50);
+        lbAppliedFilter->setFont(font1);
+        lbAppliedFilter->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: lightblue;"));
+        lbAppliedFilter->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        horizontalLayout_22->addWidget(lbAppliedFilter);
 
 
-        gridLayout->addLayout(verticalLayout_9, 0, 1, 1, 1);
+        verticalLayout_6->addLayout(horizontalLayout_22);
+
+        horizontalLayout_21 = new QHBoxLayout();
+        horizontalLayout_21->setObjectName(QStringLiteral("horizontalLayout_21"));
+        btnApplyFilter = new QPushButton(tab_2);
+        btnApplyFilter->setObjectName(QStringLiteral("btnApplyFilter"));
+
+        horizontalLayout_21->addWidget(btnApplyFilter);
+
+        btnClearFilter = new QPushButton(tab_2);
+        btnClearFilter->setObjectName(QStringLiteral("btnClearFilter"));
+
+        horizontalLayout_21->addWidget(btnClearFilter);
+
+
+        verticalLayout_6->addLayout(horizontalLayout_21);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout_6->addItem(verticalSpacer);
+
+
+        gridLayout_3->addLayout(verticalLayout_6, 0, 0, 1, 1);
+
+        tabWidget->addTab(tab_2, QString());
+
+        gridLayout_2->addWidget(tabWidget, 0, 1, 1, 1);
 
 
         retranslateUi(DatasetViewer);
+
+        tabWidget->setCurrentIndex(1);
+        listFilter->setCurrentRow(-1);
+
 
         QMetaObject::connectSlotsByName(DatasetViewer);
     } // setupUi
@@ -701,7 +844,6 @@ public:
         lbLabel_3->setText(QApplication::translate("DatasetViewer", "Sample Test", 0));
         btnUpdateTest->setText(QApplication::translate("DatasetViewer", "Update", 0));
         label_11->setText(QApplication::translate("DatasetViewer", "Sample ID :", 0));
-        chkAutoTest->setText(QApplication::translate("DatasetViewer", "AutoTest", 0));
         lbResult->setText(QString());
         label->setText(QApplication::translate("DatasetViewer", "0", 0));
         label_2->setText(QApplication::translate("DatasetViewer", "1", 0));
@@ -714,6 +856,44 @@ public:
         label_9->setText(QApplication::translate("DatasetViewer", "8", 0));
         label_8->setText(QApplication::translate("DatasetViewer", "9", 0));
         checkBox->setText(QApplication::translate("DatasetViewer", "Digit Grid", 0));
+        chkAutoTest->setText(QApplication::translate("DatasetViewer", "AutoTest", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("DatasetViewer", "Testing", 0));
+
+        const bool __sortingEnabled = listFilter->isSortingEnabled();
+        listFilter->setSortingEnabled(false);
+        QListWidgetItem *___qlistwidgetitem = listFilter->item(0);
+        ___qlistwidgetitem->setText(QApplication::translate("DatasetViewer", "0", 0));
+        QListWidgetItem *___qlistwidgetitem1 = listFilter->item(1);
+        ___qlistwidgetitem1->setText(QApplication::translate("DatasetViewer", "1", "1"));
+        QListWidgetItem *___qlistwidgetitem2 = listFilter->item(2);
+        ___qlistwidgetitem2->setText(QApplication::translate("DatasetViewer", "2", "2"));
+        QListWidgetItem *___qlistwidgetitem3 = listFilter->item(3);
+        ___qlistwidgetitem3->setText(QApplication::translate("DatasetViewer", "3", 0));
+        QListWidgetItem *___qlistwidgetitem4 = listFilter->item(4);
+        ___qlistwidgetitem4->setText(QApplication::translate("DatasetViewer", "4", 0));
+        QListWidgetItem *___qlistwidgetitem5 = listFilter->item(5);
+        ___qlistwidgetitem5->setText(QApplication::translate("DatasetViewer", "5", 0));
+        QListWidgetItem *___qlistwidgetitem6 = listFilter->item(6);
+        ___qlistwidgetitem6->setText(QApplication::translate("DatasetViewer", "6", 0));
+        QListWidgetItem *___qlistwidgetitem7 = listFilter->item(7);
+        ___qlistwidgetitem7->setText(QApplication::translate("DatasetViewer", "7", 0));
+        QListWidgetItem *___qlistwidgetitem8 = listFilter->item(8);
+        ___qlistwidgetitem8->setText(QApplication::translate("DatasetViewer", "8", 0));
+        QListWidgetItem *___qlistwidgetitem9 = listFilter->item(9);
+        ___qlistwidgetitem9->setText(QApplication::translate("DatasetViewer", "9", 0));
+        QListWidgetItem *___qlistwidgetitem10 = listFilter->item(10);
+        ___qlistwidgetitem10->setText(QApplication::translate("DatasetViewer", "Errors", "Err"));
+        QListWidgetItem *___qlistwidgetitem11 = listFilter->item(11);
+        ___qlistwidgetitem11->setText(QApplication::translate("DatasetViewer", "Sort by Accuracy", "Acc"));
+        QListWidgetItem *___qlistwidgetitem12 = listFilter->item(12);
+        ___qlistwidgetitem12->setText(QApplication::translate("DatasetViewer", "External Filter", 0));
+        listFilter->setSortingEnabled(__sortingEnabled);
+
+        label_12->setText(QApplication::translate("DatasetViewer", "Active Filter:", 0));
+        lbAppliedFilter->setText(QApplication::translate("DatasetViewer", "None", 0));
+        btnApplyFilter->setText(QApplication::translate("DatasetViewer", "Apply", 0));
+        btnClearFilter->setText(QApplication::translate("DatasetViewer", "Clear", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("DatasetViewer", "Filter", 0));
     } // retranslateUi
 
 };

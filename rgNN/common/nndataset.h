@@ -357,8 +357,15 @@ class NNDataset1 {
   void applyFilterByLabel(LabelType Label) {
     Indices.clear();
     for (auto& e : Samples)
-      if (e.Label == Label)
-        Indices.push_back(e.Id);
+      if (e->Label == Label)
+        Indices.push_back(e->Id);
+    Iterator = Indices.begin();
+  }
+
+  void clearFilter() {
+    Indices.clear();
+    for (auto& e : Samples)
+      Indices.push_back(e->Id);
     Iterator = Indices.begin();
   }
 

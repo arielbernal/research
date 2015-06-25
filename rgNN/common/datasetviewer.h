@@ -22,6 +22,8 @@ class DatasetViewer : public QDialog {
   void nextImage();
   void firstImage();
   void lastImage();
+  void applyFilter();
+  void clearFilter();
 
  protected:
   void closeEvent(QCloseEvent* event);

@@ -15,9 +15,12 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
   connect(ui->btnFirst, SIGNAL(clicked()), this, SLOT(firstImage()));
   connect(ui->btnLast, SIGNAL(clicked()), this, SLOT(lastImage()));
+  connect(ui->btnApplyFilter, SIGNAL(clicked()), this, SLOT(applyFilter()));
+  connect(ui->btnClearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
+  updateControls();
 }
 
 DatasetViewer::~DatasetViewer() {
@@ -61,8 +64,10 @@ void DatasetViewer::DigitRenderer() {
 
 void DatasetViewer::updateControls() {
   ui->edIndex->setText(QString::number(Dataset->getCurrentId()));
-  ui->edN->setText(QString::number(Dataset->getN()-1));
+  ui->edN->setText(QString::number(Dataset->getN() - 1));
   ui->edSampleId->setText(QString::number(Dataset->getCurrentSampleId()));
+  ui->edSamplesN->setText(QString::number(Dataset->getNSamples() - 1));
+  ui->lbLabel->setText(QString::number(Dataset->getLabel()));
   ui->glDigit->update();
 }
 
@@ -83,5 +88,17 @@ void DatasetViewer::firstImage() {
 
 void DatasetViewer::lastImage() {
   Dataset->last();
+  updateControls();
+}
+
+void DatasetViewer::applyFilter() {
+  if (ui->listFilter->currentItem()->text() == "Number 1") {
+    Dataset->applyFilterByLabel(1);
+  }
+  updateControls();
+}
+
+void DatasetViewer::clearFilter() {
+  Dataset->clearFilter();
   updateControls();
 }
