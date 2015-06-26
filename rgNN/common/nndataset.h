@@ -206,7 +206,8 @@ struct NNSample {
            size_t OutputSize,
            size_t id,
            LabelType label,
-           FileDataType* data) {
+           FileDataType* data)
+      : Id(id), Label(label), MSE(0), Error(false) {
     Data = new FileDataType[DataSize];
     Input = new DataType[DataSize];
     Output = new DataType[OutputSize];
@@ -223,10 +224,12 @@ struct NNSample {
   }
 
   FileDataType* Data;
-  LabelType Label;
   DataType* Input;
   DataType* Output;
   size_t Id;
+  LabelType Label;
+  DataType MSE;
+  bool Error;
 };
 
 template <typename DataType = double,
@@ -234,6 +237,8 @@ template <typename DataType = double,
           typename LabelType = uint8_t>
 class NNDataset1 {
  public:
+  typedef std::vector<size_t>::iterator IteratorType;
+
   NNDataset1(size_t Rows, size_t Cols, size_t OutputSize)
       : N(0),
         Size(Rows * Cols),
@@ -275,6 +280,8 @@ class NNDataset1 {
   }
   void last() { Iterator = std::prev(Indices.end()); }
   void first() { Iterator = Indices.begin(); }
+  IteratorType begin() { return Indices.begin(); }
+  IteratorType end() { return Indices.end(); }
 
   FileDataType* getDataById(size_t id) { return Samples[id]->Data; }
   LabelType getLabelById(size_t id) { return Samples[id]->Label; }
@@ -342,23 +349,55 @@ class NNDataset1 {
     std::fill(MeanSample.begin(), MeanSample.end(), 0);
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-        MeanSample[j] += Samples[i]->Inputs[j];
+        MeanSample[j] += Samples[i]->Input[j];
     for (size_t j = 0; j < Size; ++j)
       MeanSample[j] /= N;
   }
 
-  void applyFilterByIndex(std::vector<size_t> filter) {
+  void generateOutputs() {
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < OutputSize; ++j)
+        Samples[i]->Output[j] = Labels[i] == j ? 1 : -1;
+  }
+
+  void normalizeInputs() {
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+        Samples[i]->Input[j] = DataType(Samples[i]->Data[j]) / 256.0f;
+  }
+
+  void processInputs() {
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j) {
+        Samples[i]->Input[j] -= MeanSample[j];
+      }
+  }
+
+
+  void filterByIndex(std::vector<size_t> filter) {
     Indices.clear();
     for (auto& e : filter)
       Indices.push_back(e);
     Iterator = Indices.begin();
   }
 
-  void applyFilterByLabel(LabelType Label) {
+  void addFilterByLabel(LabelType Label) {
+    std::cout << "Size = " << Indices.size() << std::endl;
+    std::vector<size_t> Filter = Indices;
     Indices.clear();
-    for (auto& e : Samples)
-      if (e->Label == Label)
-        Indices.push_back(e->Id);
+    for (auto& e : Filter)
+      if (Samples[e]->Label == Label)
+        Indices.push_back(e);
+    Iterator = Indices.begin();
+    std::cout << "Size = " << Indices.size() << std::endl;
+  }
+
+  void addFilterByError() {
+    std::vector<size_t> Filter = Indices;
+    Indices.clear();
+    for (auto& e : Filter)
+      if (Samples[e]->Error)
+        Indices.push_back(e);
     Iterator = Indices.begin();
   }
 
@@ -371,7 +410,6 @@ class NNDataset1 {
 
  private:
   typedef NNSample<DataType, FileDataType, LabelType> SampleType;
-  typedef std::vector<size_t>::iterator IteratorType;
   std::vector<SampleType*> Samples;
   std::vector<size_t> Indices;
   std::vector<DataType> MeanSample;

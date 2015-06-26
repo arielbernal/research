@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <iostream>
 #include <../common/nndataset.h>
+#include <../common/nnclass.h>
 
 namespace Ui {
 class DatasetViewer;
@@ -15,6 +16,7 @@ class DatasetViewer : public QDialog {
  public:
   explicit DatasetViewer(const std::string& Name,
                          NNDataset1<>* Dataset,
+                         NNFeedForward<>* NNFF,
                          QWidget* parent = 0);
   ~DatasetViewer();
  private slots:
@@ -24,6 +26,7 @@ class DatasetViewer : public QDialog {
   void lastImage();
   void applyFilter();
   void clearFilter();
+  void updateStats();
 
  protected:
   void closeEvent(QCloseEvent* event);
@@ -34,6 +37,8 @@ class DatasetViewer : public QDialog {
   Ui::DatasetViewer* ui;
   std::string Name;
   NNDataset1<>* Dataset;
+  NNFeedForward<>* NNFF;
+  NNStatistics<> Stat;
 };
 
 #endif  // DATASETVIEWER_H

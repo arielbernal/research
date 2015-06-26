@@ -1151,6 +1151,7 @@ moc_datasetviewer.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWid
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		../common/nndataset.h \
 		../common/datasetviewer.h
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgNN -I/home/ajbernal/dev/bat/research/rgNN/rgNN/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtPrintSupport -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../common/datasetviewer.h -o moc_datasetviewer.cpp
 
@@ -2628,7 +2629,9 @@ mainwindow.o: ../rgNN/mainwindow.cpp ../rgNN/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmessagebox.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
+		../common/datasetviewer.h \
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../rgNN/mainwindow.cpp
 
 imageglwidget.o: ../common/ocvTools/imageglwidget.cpp ../common/ocvTools/imageglwidget.h \
@@ -3687,6 +3690,7 @@ datasetviewer.o: ../common/datasetviewer.cpp ../common/datasetviewer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
+		../common/nndataset.h \
 		ui_datasetviewer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o datasetviewer.o ../common/datasetviewer.cpp
 

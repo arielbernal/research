@@ -13,7 +13,7 @@
 #include <../common/rapidjson/stringbuffer.h>
 #include <../common/utilities/rgScopedTimer.h>
 
-template <typename T>
+template <typename T = double>
 struct NNStatistics {
   NNStatistics() : MSE(1.0), Errors(1), N(1) {}
   T MSE;
@@ -29,7 +29,7 @@ const size_t NNFFMaxEpochs = 4500;
 const size_t NNFFEpochStat = 100;
 const double NNFFTrainingAccuracy = 0.9;
 
-template <typename T>
+template <typename T = double>
 class NNFeedForward {
  public:
   NNFeedForward(size_t NInput,
@@ -132,11 +132,12 @@ class NNFeedForward {
           }
         }
       }
-//      std::cout << "TotalTime = " << TTotal
-//                << " Randomize = " << TRandomizeOrder
-//                << "  Stat = " << Tstatistics << std::endl;
-//      std::cout << " FF = " << TfeedForward << " isSame = " << TisSameOutput
-//                << " backP = " << TbackPropagate << std::endl;
+      //      std::cout << "TotalTime = " << TTotal
+      //                << " Randomize = " << TRandomizeOrder
+      //                << "  Stat = " << Tstatistics << std::endl;
+      //      std::cout << " FF = " << TfeedForward << " isSame = " <<
+      //      TisSameOutput
+      //                << " backP = " << TbackPropagate << std::endl;
 
       epoch++;
     }
@@ -156,7 +157,6 @@ class NNFeedForward {
     return imax;
   }
 
-
   template <typename S>
   void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
     Stat.ErrorIds.clear();
@@ -166,10 +166,29 @@ class NNFeedForward {
     for (size_t i = 0; i < Dataset->getN(); ++i) {
       feedForward(Dataset->getInput(i), Result.data());
       mse += MSE(Result.data(), Dataset->getOutput(i));
-     // if (!isSameOutput(Result.data(), Dataset->getOutput(i))) {
-      if (getLabel(Result) !=  Dataset->getLabel(i)) {
+      // if (!isSameOutput(Result.data(), Dataset->getOutput(i))) {
+      if (getLabel(Result) != Dataset->getLabel(i)) {
         errors++;
         Stat.ErrorIds.push_back(i);
+      }
+    }
+    Stat.N = Dataset->getN();
+    Stat.MSE = mse / Dataset->getN();
+    Stat.Errors = errors;
+  }
+
+  template <typename S>
+  void statistics(NNDataset1<T, S>* Dataset, NNStatistics<T>& Stat) {
+    Stat.ErrorIds.clear();
+    std::vector<T> Result(OutputSize);
+    T mse = 0;
+    size_t errors = 0;
+    for (auto I = Dataset->begin(), E = Dataset->end(); I != E; ++I) {
+      feedForward(Dataset->getInput(), Result.data());
+      mse += MSE(Result.data(), Dataset->getOutput());
+      if (getLabel(Result) != Dataset->getLabel()) {
+        errors++;
+        Stat.ErrorIds.push_back(Dataset->getCurrentId());
       }
     }
     Stat.N = Dataset->getN();

@@ -305,6 +305,10 @@ public:
         edErrors->setObjectName(QStringLiteral("edErrors"));
         sizePolicy1.setHeightForWidth(edErrors->sizePolicy().hasHeightForWidth());
         edErrors->setSizePolicy(sizePolicy1);
+        edErrors->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         edErrors->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edErrors->setReadOnly(true);
 
@@ -330,6 +334,10 @@ public:
         edAccuracy->setObjectName(QStringLiteral("edAccuracy"));
         sizePolicy1.setHeightForWidth(edAccuracy->sizePolicy().hasHeightForWidth());
         edAccuracy->setSizePolicy(sizePolicy1);
+        edAccuracy->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         edAccuracy->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edAccuracy->setReadOnly(true);
 
@@ -355,6 +363,10 @@ public:
         edMSE->setObjectName(QStringLiteral("edMSE"));
         sizePolicy1.setHeightForWidth(edMSE->sizePolicy().hasHeightForWidth());
         edMSE->setSizePolicy(sizePolicy1);
+        edMSE->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         edMSE->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edMSE->setReadOnly(true);
 
@@ -380,6 +392,10 @@ public:
         edErrorRate->setObjectName(QStringLiteral("edErrorRate"));
         sizePolicy1.setHeightForWidth(edErrorRate->sizePolicy().hasHeightForWidth());
         edErrorRate->setSizePolicy(sizePolicy1);
+        edErrorRate->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         edErrorRate->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         edErrorRate->setReadOnly(true);
 
@@ -489,6 +505,10 @@ public:
         ed0->setSizePolicy(sizePolicy3);
         ed0->setMinimumSize(QSize(80, 25));
         ed0->setMaximumSize(QSize(80, 25));
+        ed0->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed0->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed0->setReadOnly(true);
 
@@ -510,6 +530,10 @@ public:
         ed1->setSizePolicy(sizePolicy3);
         ed1->setMinimumSize(QSize(80, 25));
         ed1->setMaximumSize(QSize(80, 25));
+        ed1->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed1->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed1->setReadOnly(true);
 
@@ -531,6 +555,10 @@ public:
         ed2->setSizePolicy(sizePolicy3);
         ed2->setMinimumSize(QSize(80, 25));
         ed2->setMaximumSize(QSize(80, 25));
+        ed2->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed2->setReadOnly(true);
 
@@ -552,6 +580,10 @@ public:
         ed3->setSizePolicy(sizePolicy3);
         ed3->setMinimumSize(QSize(80, 25));
         ed3->setMaximumSize(QSize(80, 25));
+        ed3->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed3->setReadOnly(true);
 
@@ -573,6 +605,10 @@ public:
         ed4->setSizePolicy(sizePolicy3);
         ed4->setMinimumSize(QSize(80, 25));
         ed4->setMaximumSize(QSize(80, 25));
+        ed4->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed4->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed4->setReadOnly(true);
 
@@ -599,6 +635,10 @@ public:
         ed5->setSizePolicy(sizePolicy3);
         ed5->setMinimumSize(QSize(80, 25));
         ed5->setMaximumSize(QSize(80, 25));
+        ed5->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed5->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed5->setReadOnly(true);
 
@@ -620,6 +660,10 @@ public:
         ed6->setSizePolicy(sizePolicy3);
         ed6->setMinimumSize(QSize(80, 25));
         ed6->setMaximumSize(QSize(80, 25));
+        ed6->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed6->setReadOnly(true);
 
@@ -641,6 +685,10 @@ public:
         ed7->setSizePolicy(sizePolicy3);
         ed7->setMinimumSize(QSize(80, 25));
         ed7->setMaximumSize(QSize(80, 25));
+        ed7->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed7->setReadOnly(true);
 
@@ -662,6 +710,10 @@ public:
         ed8->setSizePolicy(sizePolicy3);
         ed8->setMinimumSize(QSize(80, 25));
         ed8->setMaximumSize(QSize(80, 25));
+        ed8->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed8->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed8->setReadOnly(true);
 
@@ -683,6 +735,10 @@ public:
         ed9->setSizePolicy(sizePolicy3);
         ed9->setMinimumSize(QSize(80, 25));
         ed9->setMaximumSize(QSize(80, 25));
+        ed9->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
         ed9->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         ed9->setReadOnly(true);
 
@@ -720,47 +776,19 @@ public:
         verticalLayout_6 = new QVBoxLayout();
         verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         listFilter = new QListWidget(tab_2);
-        QListWidgetItem *__qlistwidgetitem = new QListWidgetItem(listFilter);
-        __qlistwidgetitem->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem1 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem1->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem1->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem2 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem2->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem2->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem3 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem3->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem3->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem4 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem4->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem4->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem5 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem5->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem5->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem6 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem6->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem6->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem7 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem7->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem7->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem8 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem8->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem8->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem9 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem9->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem9->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem10 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem10->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem10->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem11 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem11->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem11->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-        QListWidgetItem *__qlistwidgetitem12 = new QListWidgetItem(listFilter);
-        __qlistwidgetitem12->setCheckState(Qt::Unchecked);
-        __qlistwidgetitem12->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
+        new QListWidgetItem(listFilter);
         listFilter->setObjectName(QStringLiteral("listFilter"));
-        listFilter->setMinimumSize(QSize(0, 300));
+        listFilter->setMinimumSize(QSize(0, 260));
 
         verticalLayout_6->addWidget(listFilter);
 
@@ -820,8 +848,7 @@ public:
 
         retranslateUi(DatasetViewer);
 
-        tabWidget->setCurrentIndex(1);
-        listFilter->setCurrentRow(-1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(DatasetViewer);
@@ -864,9 +891,9 @@ public:
         QListWidgetItem *___qlistwidgetitem = listFilter->item(0);
         ___qlistwidgetitem->setText(QApplication::translate("DatasetViewer", "0", 0));
         QListWidgetItem *___qlistwidgetitem1 = listFilter->item(1);
-        ___qlistwidgetitem1->setText(QApplication::translate("DatasetViewer", "1", "1"));
+        ___qlistwidgetitem1->setText(QApplication::translate("DatasetViewer", "1", 0));
         QListWidgetItem *___qlistwidgetitem2 = listFilter->item(2);
-        ___qlistwidgetitem2->setText(QApplication::translate("DatasetViewer", "2", "2"));
+        ___qlistwidgetitem2->setText(QApplication::translate("DatasetViewer", "2", 0));
         QListWidgetItem *___qlistwidgetitem3 = listFilter->item(3);
         ___qlistwidgetitem3->setText(QApplication::translate("DatasetViewer", "3", 0));
         QListWidgetItem *___qlistwidgetitem4 = listFilter->item(4);
@@ -882,11 +909,7 @@ public:
         QListWidgetItem *___qlistwidgetitem9 = listFilter->item(9);
         ___qlistwidgetitem9->setText(QApplication::translate("DatasetViewer", "9", 0));
         QListWidgetItem *___qlistwidgetitem10 = listFilter->item(10);
-        ___qlistwidgetitem10->setText(QApplication::translate("DatasetViewer", "Errors", "Err"));
-        QListWidgetItem *___qlistwidgetitem11 = listFilter->item(11);
-        ___qlistwidgetitem11->setText(QApplication::translate("DatasetViewer", "Sort by Accuracy", "Acc"));
-        QListWidgetItem *___qlistwidgetitem12 = listFilter->item(12);
-        ___qlistwidgetitem12->setText(QApplication::translate("DatasetViewer", "External Filter", 0));
+        ___qlistwidgetitem10->setText(QApplication::translate("DatasetViewer", "Errors", 0));
         listFilter->setSortingEnabled(__sortingEnabled);
 
         label_12->setText(QApplication::translate("DatasetViewer", "Active Filter:", 0));

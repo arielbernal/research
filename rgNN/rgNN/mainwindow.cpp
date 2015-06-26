@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget* parent)
                    "../data/t10k-labels.idx1-ubyte",
                    16,
                    8);
-  DatasetViewer* pDialog = new DatasetViewer("NewViewer", NewDataset);
+  DatasetViewer* pDialog = new DatasetViewer("Testing Dataset", NewDataset, nnff);
   pDialog->show();
 }
 
@@ -111,56 +111,14 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateControls() {
-  ui->lbLabel->setText(QString::number(Dataset->getLabel()));
-  ui->edId->setText(QString::number(Dataset->getCurrentId()));
-  ui->glDigit->update();
 }
-
 void MainWindow::currentImage() {
-  Dataset->setCurrentId(ui->edId->text().toLong());
-  updateControls();
 }
-
 void MainWindow::prevImage() {
-  Dataset->prev();
-  updateControls();
 }
-
 void MainWindow::nextImage() {
-  Dataset->next();
-  updateControls();
 }
-
 void MainWindow::DigitRenderer() {
-  float dx = ui->glDigit->width() / 28.05f;
-  float dy = ui->glDigit->height() / 28.05f;
-  glTranslatef(0.1f, 0.1f, 0);
-  glColor3f(1, 0, 0);
-  glBegin(GL_LINES);
-  for (size_t x = 0; x <= 28; ++x) {
-    glVertex2f(x * dx, 0);
-    glVertex2f(x * dx, 28 * dy);
-  }
-  for (size_t y = 0; y <= 28; ++y) {
-    glVertex2f(0, (28 - y) * dy);
-    glVertex2f(28 * dx, (28 - y) * dy);
-  }
-  glEnd();
-  glColor3f(1, 1, 1);
-  if (Dataset->getN() > 0) {
-    glBegin(GL_QUADS);
-    for (size_t y = 0; y < 28; ++y) {
-      for (size_t x = 0; x < 28; ++x) {
-        float pixelColor = Dataset->getXYValue(x, y) / 255.0f;
-        glColor3f(pixelColor, pixelColor, pixelColor);
-        glVertex2f(x * dx, (28 - y) * dy);
-        glVertex2f((x + 1) * dx, (28 - y) * dy);
-        glVertex2f((x + 1) * dx, (28 - y + 1) * dy);
-        glVertex2f(x * dx, (28 - y + 1) * dy);
-      }
-    }
-    glEnd();
-  }
 }
 
 void MainWindow::errPrev() {

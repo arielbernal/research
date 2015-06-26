@@ -4,8 +4,13 @@
 
 DatasetViewer::DatasetViewer(const std::string& Name,
                              NNDataset1<>* Dataset,
+                             NNFeedForward<>* NNFF,
                              QWidget* parent)
-    : QDialog(parent), ui(new Ui::DatasetViewer), Name(Name), Dataset(Dataset) {
+    : QDialog(parent),
+      ui(new Ui::DatasetViewer),
+      Name(Name),
+      Dataset(Dataset),
+      NNFF(NNFF) {
   ui->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
   setModal(false);
@@ -17,6 +22,7 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   connect(ui->btnLast, SIGNAL(clicked()), this, SLOT(lastImage()));
   connect(ui->btnApplyFilter, SIGNAL(clicked()), this, SLOT(applyFilter()));
   connect(ui->btnClearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
+  connect(ui->btnUpdateStats, SIGNAL(clicked()), this, SLOT(updateStats()));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
@@ -64,41 +70,68 @@ void DatasetViewer::DigitRenderer() {
 
 void DatasetViewer::updateControls() {
   ui->edIndex->setText(QString::number(Dataset->getCurrentId()));
-  ui->edN->setText(QString::number(Dataset->getN() - 1));
+  ui->edN->setText(QString::number(Dataset->getN()));
   ui->edSampleId->setText(QString::number(Dataset->getCurrentSampleId()));
-  ui->edSamplesN->setText(QString::number(Dataset->getNSamples() - 1));
+  ui->edSamplesN->setText(QString::number(Dataset->getNSamples()));
   ui->lbLabel->setText(QString::number(Dataset->getLabel()));
   ui->glDigit->update();
 }
 
 void DatasetViewer::nextImage() {
-  Dataset->next();
-  updateControls();
+  if (Dataset->getN() > 0) {
+    Dataset->next();
+    updateControls();
+  }
 }
 
 void DatasetViewer::prevImage() {
-  Dataset->prev();
-  updateControls();
+  if (Dataset->getN() > 0) {
+    Dataset->prev();
+    updateControls();
+  }
 }
 
 void DatasetViewer::firstImage() {
-  Dataset->first();
-  updateControls();
+  if (Dataset->getN() > 0) {
+    Dataset->first();
+    updateControls();
+  }
 }
 
 void DatasetViewer::lastImage() {
-  Dataset->last();
-  updateControls();
+  if (Dataset->getN() > 0) {
+    Dataset->last();
+    updateControls();
+  }
 }
 
 void DatasetViewer::applyFilter() {
-  if (ui->listFilter->currentItem()->text() == "Number 1") {
-    Dataset->applyFilterByLabel(1);
+  char A[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+  for (size_t i = 0; i < 10; ++i) {
+    std::string a(1, A[i]);
+    if (ui->listFilter->currentItem()->text() == QString::fromStdString(a)) {
+      Dataset->addFilterByLabel(i);
+    }
   }
+  if (ui->listFilter->currentItem()->text() == QString("Errors")) {
+    Dataset->addFilterByError();
+  }
+  ui->lbAppliedFilter->setText("Active");
+
   updateControls();
 }
 
 void DatasetViewer::clearFilter() {
   Dataset->clearFilter();
+  ui->lbAppliedFilter->setText("None");
+  updateControls();
+}
+
+void DatasetViewer::updateStats() {
+  NNFF->statistics(Dataset, Stat);
+  std::cout << "Test statistics  Errors = " << Stat.Errors
+            << " MSE = " << Stat.MSE << " Accuracy = " << Stat.getAccuracy()
+            << " Error = " << (1 - Stat.getAccuracy()) * 100 << "%"
+            << std::endl;
   updateControls();
 }
