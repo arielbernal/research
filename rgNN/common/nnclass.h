@@ -183,12 +183,13 @@ class NNFeedForward {
     std::vector<T> Result(OutputSize);
     T mse = 0;
     size_t errors = 0;
-    for (auto I = Dataset->begin(), E = Dataset->end(); I != E; ++I) {
-      feedForward(Dataset->getInput(), Result.data());
-      mse += MSE(Result.data(), Dataset->getOutput());
-      if (getLabel(Result) != Dataset->getLabel()) {
+    //for (auto& I = Dataset->begin(), E = Dataset->end(); I != E; ++I) {
+    for (auto& e  : *Dataset) {
+      feedForward(e->Input, Result.data());
+      mse += MSE(Result.data(), e->Output);
+      if (getLabel(Result) != e->Label) {
         errors++;
-        Stat.ErrorIds.push_back(Dataset->getCurrentId());
+        Stat.ErrorIds.push_back(e->Id);
       }
     }
     Stat.N = Dataset->getN();

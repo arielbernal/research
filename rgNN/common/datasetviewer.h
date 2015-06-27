@@ -27,6 +27,7 @@ class DatasetViewer : public QDialog {
   void applyFilter();
   void clearFilter();
   void updateStats();
+  void editIndex(QString text);
 
  protected:
   void closeEvent(QCloseEvent* event);
@@ -37,6 +38,7 @@ class DatasetViewer : public QDialog {
   Ui::DatasetViewer* ui;
   std::string Name;
   NNDataset1<>* Dataset;
+  NNDataset1<>::Iterator Iterator;
   NNFeedForward<>* NNFF;
   NNStatistics<> Stat;
 };

@@ -23,9 +23,15 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   connect(ui->btnApplyFilter, SIGNAL(clicked()), this, SLOT(applyFilter()));
   connect(ui->btnClearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
   connect(ui->btnUpdateStats, SIGNAL(clicked()), this, SLOT(updateStats()));
+  connect(ui->edIndex,
+          SIGNAL(textChanged(QString)),
+          this,
+          SLOT(editIndex(QString)));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
+
+  Iterator = Dataset->begin();
   updateControls();
 }
 
@@ -37,6 +43,8 @@ void DatasetViewer::closeEvent(QCloseEvent* event) {
 }
 
 void DatasetViewer::DigitRenderer() {
+  if (Iterator == Dataset->end())
+    return;
   float dx = ui->glDigit->width() / 28.05f;
   float dy = ui->glDigit->height() / 28.05f;
   glTranslatef(0.1f, 0.1f, 0);
@@ -56,7 +64,7 @@ void DatasetViewer::DigitRenderer() {
     glBegin(GL_QUADS);
     for (size_t y = 0; y < 28; ++y) {
       for (size_t x = 0; x < 28; ++x) {
-        float pixelColor = Dataset->getXYValue(x, y) / 255.0f;
+        float pixelColor = (*Iterator)->Data[x + y * 28] / 255.0f;
         glColor3f(pixelColor, pixelColor, pixelColor);
         glVertex2f(x * dx, (28 - y) * dy);
         glVertex2f((x + 1) * dx, (28 - y) * dy);
@@ -69,40 +77,53 @@ void DatasetViewer::DigitRenderer() {
 }
 
 void DatasetViewer::updateControls() {
-  ui->edIndex->setText(QString::number(Dataset->getCurrentId()));
+  if (Iterator == Dataset->end())
+    return;
+
+  ui->edIndex->setText(QString::number((Iterator - Dataset->begin())));
   ui->edN->setText(QString::number(Dataset->getN()));
-  ui->edSampleId->setText(QString::number(Dataset->getCurrentSampleId()));
+  ui->edSampleId->setText(QString::number(((*Iterator)->Id)));
   ui->edSamplesN->setText(QString::number(Dataset->getNSamples()));
-  ui->lbLabel->setText(QString::number(Dataset->getLabel()));
+  ui->lbLabel->setText(QString::number((*Iterator)->Label));
   ui->glDigit->update();
 }
 
 void DatasetViewer::nextImage() {
   if (Dataset->getN() > 0) {
-    Dataset->next();
-    updateControls();
+    Iterator++;
+    if (Iterator == Dataset->end())
+      --Iterator;
   }
+  updateControls();
 }
 
 void DatasetViewer::prevImage() {
-  if (Dataset->getN() > 0) {
-    Dataset->prev();
+  if (Dataset->getN() > 0 && Iterator != Dataset->begin()) {
+    Iterator--;
     updateControls();
   }
 }
 
 void DatasetViewer::firstImage() {
   if (Dataset->getN() > 0) {
-    Dataset->first();
+    Iterator = Dataset->begin();
     updateControls();
   }
 }
 
 void DatasetViewer::lastImage() {
   if (Dataset->getN() > 0) {
-    Dataset->last();
+    Iterator = Dataset->end() - 1;
     updateControls();
   }
+}
+
+void DatasetViewer::editIndex(QString text) {
+  int i = text.toInt();
+  if (i >= 0 && i < Dataset->getN()) {
+    Iterator = Dataset->begin() + i;
+  }
+  updateControls();
 }
 
 void DatasetViewer::applyFilter() {
@@ -117,13 +138,14 @@ void DatasetViewer::applyFilter() {
     Dataset->addFilterByError();
   }
   ui->lbAppliedFilter->setText("Active");
-
+  Iterator = Dataset->begin();
   updateControls();
 }
 
 void DatasetViewer::clearFilter() {
   Dataset->clearFilter();
   ui->lbAppliedFilter->setText("None");
+  Iterator = Dataset->begin();
   updateControls();
 }
 

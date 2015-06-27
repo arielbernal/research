@@ -95,15 +95,32 @@ MainWindow::MainWindow(QWidget* parent)
   statId = 0;
   isGraphUpdated = false;
 
-  NNDataset1<>* NewDataset = new NNDataset1<>(28, 28, 10);
-  NewDataset->load(0,
+  NNDataset1<>* Training1 = new NNDataset1<>(28, 28, 10);
+  Training1->load(0,
+                   60000,
+                   "../data/train-images.idx3-ubyte",
+                   "../data/train-labels.idx1-ubyte",
+                   16,
+                   8);
+
+  NNDataset1<>* Test1 = new NNDataset1<>(28, 28, 10);
+  Test1->load(0,
                    10000,
                    "../data/t10k-images.idx3-ubyte",
                    "../data/t10k-labels.idx1-ubyte",
                    16,
                    8);
-  DatasetViewer* pDialog = new DatasetViewer("Testing Dataset", NewDataset, nnff);
+
+  Test1->setMeanSample(Training1->getMeanSample());
+  Test1->normalizeInputs();
+  //Test1->processInputs();
+
+  DatasetViewer* pDialog =
+      new DatasetViewer("Testing Dataset", Test1, nnff);
   pDialog->show();
+  DatasetViewer* pDialog1 =
+      new DatasetViewer("Training Dataset", Training1, nnff);
+  pDialog1->show();
 }
 
 MainWindow::~MainWindow() {
@@ -142,7 +159,7 @@ void MainWindow::errNext() {
 void MainWindow::statTraining() {
   Dataset = Training;
   nnff->statistics(Training, stat);
-  std::cout << "Training statistics  Errors = " << stat.Errors
+  std::cout << "Training statistics Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
             << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;

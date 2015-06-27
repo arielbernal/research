@@ -211,10 +211,15 @@ struct NNSample {
     Data = new FileDataType[DataSize];
     Input = new DataType[DataSize];
     Output = new DataType[OutputSize];
-    Id = id;
-    Label = label;
     for (size_t j = 0; j < DataSize; ++j)
       Data[j] = data[j];
+  }
+
+  NNSample(size_t DataSize, size_t OutputSize)
+      : Id(0), Label(0), MSE(0), Error(false) {
+    Data = new FileDataType[DataSize];
+    Input = new DataType[DataSize];
+    Output = new DataType[OutputSize];
   }
 
   ~NNSample() {
@@ -237,10 +242,13 @@ template <typename DataType = double,
           typename LabelType = uint8_t>
 class NNDataset1 {
  public:
-  typedef std::vector<size_t>::iterator IteratorType;
+  typedef NNSample<DataType, FileDataType, LabelType> SampleType;
+  typedef typename std::vector<
+      NNSample<DataType, FileDataType, LabelType>*>::iterator Iterator;
 
   NNDataset1(size_t Rows, size_t Cols, size_t OutputSize)
-      : N(0),
+      : MeanSample(0),
+        N(0),
         Size(Rows * Cols),
         Cols(Cols),
         Rows(Rows),
@@ -248,56 +256,23 @@ class NNDataset1 {
         CurrentId(0) {}
 
   NNDataset1(size_t Size, size_t OutputSize)
-      : N(0),
+      : MeanSample(0),
+        N(0),
         Size(Size),
         Cols(Size),
         Rows(1),
         OutputSize(OutputSize),
         CurrentId(0) {}
 
-  size_t getN() { return Indices.size(); }
+  size_t getN() { return Filter.size(); }
   size_t getSize() { return Size; }
   size_t getRows() { return Rows; }
   size_t getCols() { return Cols; }
   size_t getOutputSize() { return OutputSize; }
   size_t getNSamples() { return N; }
 
-  void setCurrentId(size_t id) {
-    if (id < Indices.size())
-      Iterator = Indices.begin() + id;
-  }
-
-  size_t getCurrentId() { return Iterator - Indices.begin(); }
-  size_t getCurrentSampleId() { return *Iterator; }
-  void next() {
-    Iterator++;
-    if (Iterator == Indices.end())
-      Iterator = std::prev(Indices.end());
-  }
-  void prev() {
-    if (Iterator != Indices.begin())
-      Iterator--;
-  }
-  void last() { Iterator = std::prev(Indices.end()); }
-  void first() { Iterator = Indices.begin(); }
-  IteratorType begin() { return Indices.begin(); }
-  IteratorType end() { return Indices.end(); }
-
-  FileDataType* getDataById(size_t id) { return Samples[id]->Data; }
-  LabelType getLabelById(size_t id) { return Samples[id]->Label; }
-  DataType* getInputById(size_t id) { return Samples[id]->Input; }
-  DataType* getOutputById(size_t id) { return Samples[id]->Output; }
-  FileDataType getXYValueById(size_t id, size_t x, size_t y) {
-    return Samples[id]->Data[y * Cols + x];
-  }
-
-  FileDataType* getData() { return Samples[*Iterator]->Data; }
-  LabelType getLabel() { return Samples[*Iterator]->Label; }
-  DataType* getInput() { return Samples[*Iterator]->Input; }
-  DataType* getOutput() { return Samples[*Iterator]->Output; }
-  FileDataType getXYValue(size_t x, size_t y) {
-    return Samples[*Iterator]->Data[y * Cols + x];
-  }
+  Iterator begin() { return Filter.begin(); }
+  Iterator end() { return Filter.end(); }
 
   bool load(size_t x0,
             size_t n,
@@ -331,33 +306,38 @@ class NNDataset1 {
     N = n;
 
     Samples.resize(N);
-    Indices.resize(N);
-    MeanSample.resize(N);
+    Filter.resize(N);
 
     for (size_t i = 0; i < N; ++i) {
-      Indices[i] = i;
       SampleType* S = new SampleType(
           Size, OutputSize, i, Labels[i], (uint8_t*)&Data[i * Size]);
       Samples[i] = S;
+      Filter[i] = S;
     }
-    Iterator = Indices.begin();
+
+    generateOutputs();
+    normalizeInputs();
+    computeMeanVector();
+    processInputs();
 
     return true;
   }
 
   void computeMeanVector() {
-    std::fill(MeanSample.begin(), MeanSample.end(), 0);
+    if (MeanSample)
+      delete MeanSample;
+    MeanSample = new SampleType(Size, OutputSize);
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
-        MeanSample[j] += Samples[i]->Input[j];
+        MeanSample->Input[j] += Samples[i]->Input[j];
     for (size_t j = 0; j < Size; ++j)
-      MeanSample[j] /= N;
+      MeanSample->Input[j] /= N;
   }
 
   void generateOutputs() {
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < OutputSize; ++j)
-        Samples[i]->Output[j] = Labels[i] == j ? 1 : -1;
+        Samples[i]->Output[j] = Samples[i]->Label == j ? 1 : -1;
   }
 
   void normalizeInputs() {
@@ -368,52 +348,43 @@ class NNDataset1 {
 
   void processInputs() {
     for (size_t i = 0; i < N; ++i)
-      for (size_t j = 0; j < Size; ++j) {
-        Samples[i]->Input[j] -= MeanSample[j];
-      }
-  }
-
-
-  void filterByIndex(std::vector<size_t> filter) {
-    Indices.clear();
-    for (auto& e : filter)
-      Indices.push_back(e);
-    Iterator = Indices.begin();
+      for (size_t j = 0; j < Size; ++j)
+        Samples[i]->Input[j] -= MeanSample->Input[j];
   }
 
   void addFilterByLabel(LabelType Label) {
-    std::cout << "Size = " << Indices.size() << std::endl;
-    std::vector<size_t> Filter = Indices;
-    Indices.clear();
-    for (auto& e : Filter)
-      if (Samples[e]->Label == Label)
-        Indices.push_back(e);
-    Iterator = Indices.begin();
-    std::cout << "Size = " << Indices.size() << std::endl;
+    std::vector<SampleType*> FilterTemp = Filter;
+    Filter.clear();
+    for (auto& e : FilterTemp)
+      if (e->Label == Label)
+        Filter.push_back(e);
   }
 
   void addFilterByError() {
-    std::vector<size_t> Filter = Indices;
-    Indices.clear();
-    for (auto& e : Filter)
-      if (Samples[e]->Error)
-        Indices.push_back(e);
-    Iterator = Indices.begin();
+    std::vector<SampleType*> FilterTemp = Filter;
+    Filter.clear();
+    for (auto& e : FilterTemp)
+      if (e->Error)
+        Filter.push_back(e);
   }
 
   void clearFilter() {
-    Indices.clear();
+    Filter.clear();
     for (auto& e : Samples)
-      Indices.push_back(e->Id);
-    Iterator = Indices.begin();
+      Filter.push_back(e);
+  }
+
+  SampleType* getMeanSample() { return MeanSample; }
+  void setMeanSample(const SampleType* Sample) {
+    for (size_t i = 0; i < OutputSize; ++i)
+      MeanSample->Input[i] = Sample->Input[i];
   }
 
  private:
-  typedef NNSample<DataType, FileDataType, LabelType> SampleType;
   std::vector<SampleType*> Samples;
-  std::vector<size_t> Indices;
-  std::vector<DataType> MeanSample;
-  IteratorType Iterator;
+  std::vector<SampleType*> Filter;
+  SampleType* MeanSample;
+
   size_t N;
   size_t Size;
   size_t Cols;
