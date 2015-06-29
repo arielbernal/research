@@ -85,7 +85,7 @@ class NNFeedForward {
   void stopTraining() { StopTraining = true; }
 
   template <typename S>
-  void train(NNDataset<T, S>* Training) {
+  void train(NNDataset1<T, S>* Training) {
     StopTraining = false;
     std::vector<T> Result(OutputSize);
     size_t epoch = 0;
@@ -145,8 +145,8 @@ class NNFeedForward {
       CallbackProgress(epoch, TrainingStat);
   }
 
-  size_t getLabel(std::vector<double>& Result) {
-    double vmax = Result[0];
+  static size_t getLabel(std::vector<T>& Result) {
+    T vmax = Result[0];
     size_t imax = 0;
     for (size_t i = 0; i < Result.size(); ++i) {
       if (Result[i] > vmax) {
@@ -158,7 +158,7 @@ class NNFeedForward {
   }
 
   template <typename S>
-  void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
+  void statistics(NNDataset1<T, S>* Dataset, NNStatistics<T>& Stat) {
     Stat.ErrorIds.clear();
     std::vector<T> Result(OutputSize);
     T mse = 0;
@@ -178,18 +178,19 @@ class NNFeedForward {
   }
 
   template <typename S>
-  void statistics(NNDataset1<T, S>* Dataset, NNStatistics<T>& Stat) {
+  void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
     Stat.ErrorIds.clear();
     std::vector<T> Result(OutputSize);
     T mse = 0;
     size_t errors = 0;
-    //for (auto& I = Dataset->begin(), E = Dataset->end(); I != E; ++I) {
-    for (auto& e  : *Dataset) {
+    for (auto& e : *Dataset) {
       feedForward(e->Input, Result.data());
       mse += MSE(Result.data(), e->Output);
+      e->Error = false;
       if (getLabel(Result) != e->Label) {
         errors++;
         Stat.ErrorIds.push_back(e->Id);
+        e->Error = true;
       }
     }
     Stat.N = Dataset->getN();

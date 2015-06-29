@@ -1140,7 +1140,7 @@
         </layout>
        </item>
        <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="chkDigitGrid">
          <property name="text">
           <string>Digit Grid</string>
          </property>

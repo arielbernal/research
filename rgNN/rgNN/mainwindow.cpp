@@ -16,13 +16,6 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
-  connect(ui->btnNext, SIGNAL(clicked()), this, SLOT(nextImage()));
-  connect(ui->btnErrPrev, SIGNAL(clicked()), this, SLOT(errPrev()));
-  connect(ui->btnErrNext, SIGNAL(clicked()), this, SLOT(errNext()));
-
-  connect(ui->edId, SIGNAL(textEdited(QString)), this, SLOT(currentImage()));
-  connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(testSampleNN()));
   connect(ui->btnStatTraining, SIGNAL(clicked()), this, SLOT(statTraining()));
   connect(ui->btnStatTest, SIGNAL(clicked()), this, SLOT(statTest()));
   connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadNN()));
@@ -40,11 +33,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(timer, SIGNAL(timeout()), this, SLOT(updateGraphs()));
   timer->start(50);
 
-  auto fp = std::bind(&MainWindow::DigitRenderer, this);
-  ui->glDigit->setCallbackRenderer(fp);
-
-  Training = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
-  Test = new NNDataset<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
+  Training = new NNDataset1<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
+  Test = new NNDataset1<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
   Dataset = Training;
 
   Training->load(0,
@@ -64,8 +54,6 @@ MainWindow::MainWindow(QWidget* parent)
   Test->setMeanVector(Training->getMeanVector());
   Test->normalizeInputs();
   Test->processInputs();
-
-  updateControls();
 
   nnff = new NNFeedForward<double>(28 * 28, 150, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
@@ -95,7 +83,7 @@ MainWindow::MainWindow(QWidget* parent)
   statId = 0;
   isGraphUpdated = false;
 
-  NNDataset1<>* Training1 = new NNDataset1<>(28, 28, 10);
+  NNDataset<>* Training1 = new NNDataset<>(28, 28, 10);
   Training1->load(0,
                    60000,
                    "../data/train-images.idx3-ubyte",
@@ -103,7 +91,7 @@ MainWindow::MainWindow(QWidget* parent)
                    16,
                    8);
 
-  NNDataset1<>* Test1 = new NNDataset1<>(28, 28, 10);
+  NNDataset<>* Test1 = new NNDataset<>(28, 28, 10);
   Test1->load(0,
                    10000,
                    "../data/t10k-images.idx3-ubyte",
@@ -113,7 +101,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   Test1->setMeanSample(Training1->getMeanSample());
   Test1->normalizeInputs();
-  //Test1->processInputs();
+  Test1->processInputs();
 
   DatasetViewer* pDialog =
       new DatasetViewer("Testing Dataset", Test1, nnff);
@@ -127,34 +115,6 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-void MainWindow::updateControls() {
-}
-void MainWindow::currentImage() {
-}
-void MainWindow::prevImage() {
-}
-void MainWindow::nextImage() {
-}
-void MainWindow::DigitRenderer() {
-}
-
-void MainWindow::errPrev() {
-  if (!stat.ErrorIds.empty()) {
-    if (statId > 0)
-      statId--;
-    Dataset->setCurrentId(stat.ErrorIds[statId]);
-  }
-  updateControls();
-}
-
-void MainWindow::errNext() {
-  if (!stat.ErrorIds.empty()) {
-    if (statId < stat.ErrorIds.size() - 1)
-      statId++;
-    Dataset->setCurrentId(stat.ErrorIds[statId]);
-  }
-  updateControls();
-}
 
 void MainWindow::statTraining() {
   Dataset = Training;
@@ -163,10 +123,6 @@ void MainWindow::statTraining() {
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
             << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
-  if (!stat.ErrorIds.empty()) {
-    Dataset->setCurrentId(stat.ErrorIds[0]);
-    updateControls();
-  }
 }
 
 void MainWindow::statTest() {
@@ -176,10 +132,6 @@ void MainWindow::statTest() {
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
             << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
             << std::endl;
-  if (!stat.ErrorIds.empty()) {
-    Dataset->setCurrentId(stat.ErrorIds[0]);
-    updateControls();
-  }
 }
 
 void MainWindow::loadNN() {
@@ -238,15 +190,6 @@ size_t getLabel(std::vector<double>& Result) {
     }
   }
   return imax;
-}
-
-void MainWindow::testSampleNN() {
-  std::vector<double> Result(10);
-  nnff->feedForward(Dataset->getInput(), Result.data());
-  std::cout << "FF = " << getLabel(Result) << "  -- ";
-  for (size_t i = 0; i < Result.size(); ++i)
-    printf("%6.4f ", Result[i]);
-  std::cout << std::endl;
 }
 
 void MainWindow::NNProgress(size_t i, NNStatistics<double>& Stat) {

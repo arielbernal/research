@@ -3,7 +3,7 @@
 #include <iostream>
 
 DatasetViewer::DatasetViewer(const std::string& Name,
-                             NNDataset1<>* Dataset,
+                             NNDataset<>* Dataset,
                              NNFeedForward<>* NNFF,
                              QWidget* parent)
     : QDialog(parent),
@@ -23,6 +23,15 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   connect(ui->btnApplyFilter, SIGNAL(clicked()), this, SLOT(applyFilter()));
   connect(ui->btnClearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
   connect(ui->btnUpdateStats, SIGNAL(clicked()), this, SLOT(updateStats()));
+  connect(ui->btnUpdateTest, SIGNAL(clicked()), this, SLOT(updateTestSample()));
+  connect(ui->chkDigitGrid,
+          SIGNAL(stateChanged(int)),
+          this,
+          SLOT(enableDigitGrid(int)));
+  connect(ui->chkAutoTest,
+          SIGNAL(stateChanged(int)),
+          this,
+          SLOT(enableAutoTest(int)));
   connect(ui->edIndex,
           SIGNAL(textChanged(QString)),
           this,
@@ -42,23 +51,34 @@ DatasetViewer::~DatasetViewer() {
 void DatasetViewer::closeEvent(QCloseEvent* event) {
 }
 
+void DatasetViewer::enableAutoTest(int val) {
+  if (val)
+    updateTestSample();
+}
+
+void DatasetViewer::enableDigitGrid(int val) {
+  updateControls();
+}
+
 void DatasetViewer::DigitRenderer() {
   if (Iterator == Dataset->end())
     return;
   float dx = ui->glDigit->width() / 28.05f;
   float dy = ui->glDigit->height() / 28.05f;
   glTranslatef(0.1f, 0.1f, 0);
-  glColor3f(1, 0, 0);
-  glBegin(GL_LINES);
-  for (size_t x = 0; x <= 28; ++x) {
-    glVertex2f(x * dx, 0);
-    glVertex2f(x * dx, 28 * dy);
+  if (ui->chkDigitGrid->isChecked()) {
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINES);
+    for (size_t x = 0; x <= 28; ++x) {
+      glVertex2f(x * dx, 0);
+      glVertex2f(x * dx, 28 * dy);
+    }
+    for (size_t y = 0; y <= 28; ++y) {
+      glVertex2f(0, (28 - y) * dy);
+      glVertex2f(28 * dx, (28 - y) * dy);
+    }
+    glEnd();
   }
-  for (size_t y = 0; y <= 28; ++y) {
-    glVertex2f(0, (28 - y) * dy);
-    glVertex2f(28 * dx, (28 - y) * dy);
-  }
-  glEnd();
   glColor3f(1, 1, 1);
   if (Dataset->getN() > 0) {
     glBegin(GL_QUADS);
@@ -85,6 +105,14 @@ void DatasetViewer::updateControls() {
   ui->edSampleId->setText(QString::number(((*Iterator)->Id)));
   ui->edSamplesN->setText(QString::number(Dataset->getNSamples()));
   ui->lbLabel->setText(QString::number((*Iterator)->Label));
+
+  ui->edErrors->setText(QString::number(Stat.Errors));
+  ui->edAccuracy->setText(QString::number(Stat.getAccuracy()));
+  ui->edMSE->setText(QString::number(Stat.MSE));
+  ui->edErrorRate->setText(QString::number((1 - Stat.getAccuracy()) * 100));
+  if (ui->chkAutoTest->isChecked()) {
+    updateTestSample();
+  }
   ui->glDigit->update();
 }
 
@@ -151,9 +179,21 @@ void DatasetViewer::clearFilter() {
 
 void DatasetViewer::updateStats() {
   NNFF->statistics(Dataset, Stat);
-  std::cout << "Test statistics  Errors = " << Stat.Errors
-            << " MSE = " << Stat.MSE << " Accuracy = " << Stat.getAccuracy()
-            << " Error = " << (1 - Stat.getAccuracy()) * 100 << "%"
-            << std::endl;
   updateControls();
+}
+
+void DatasetViewer::updateTestSample() {
+  std::vector<double> Result(10);
+  NNFF->feedForward((*Iterator)->Input, Result.data());
+  ui->lbResult->setText(QString::number(NNFeedForward<>::getLabel(Result)));
+  ui->ed0->setText(QString().sprintf("%6.4f", Result[0]));
+  ui->ed1->setText(QString().sprintf("%6.4f", Result[1]));
+  ui->ed2->setText(QString().sprintf("%6.4f", Result[2]));
+  ui->ed3->setText(QString().sprintf("%6.4f", Result[3]));
+  ui->ed4->setText(QString().sprintf("%6.4f", Result[4]));
+  ui->ed5->setText(QString().sprintf("%6.4f", Result[5]));
+  ui->ed6->setText(QString().sprintf("%6.4f", Result[6]));
+  ui->ed7->setText(QString().sprintf("%6.4f", Result[7]));
+  ui->ed8->setText(QString().sprintf("%6.4f", Result[8]));
+  ui->ed9->setText(QString().sprintf("%6.4f", Result[9]));
 }

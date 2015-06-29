@@ -18,32 +18,23 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 private slots:
-  void prevImage();
-  void nextImage();
-  void currentImage();
   void startTraining();
   void stopTraining();
   void saveNN();
   void loadNN();
-  void testSampleNN();
   void statTraining();
   void statTest();
-  void errPrev();
-  void errNext();
   void updateGraphs();
 
 protected:
-  void DigitRenderer();
-  void updateControls();
   void NNProgress(size_t i, NNStatistics<double> &stat);
-
   void trainNN();
 
 private:
   Ui::MainWindow *ui;
-  NNDataset<double, uint8_t> *Training;
-  NNDataset<double, uint8_t> *Test;
-  NNDataset<double, uint8_t> *Dataset;
+  NNDataset1<double, uint8_t> *Training;
+  NNDataset1<double, uint8_t> *Test;
+  NNDataset1<double, uint8_t> *Dataset;
   NNStatistics<double> stat;
   NNFeedForward<double> *nnff;
   TrainingThread<double, uint8_t>* TTrhead;

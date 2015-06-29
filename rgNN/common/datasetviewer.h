@@ -15,7 +15,7 @@ class DatasetViewer : public QDialog {
 
  public:
   explicit DatasetViewer(const std::string& Name,
-                         NNDataset1<>* Dataset,
+                         NNDataset<>* Dataset,
                          NNFeedForward<>* NNFF,
                          QWidget* parent = 0);
   ~DatasetViewer();
@@ -27,6 +27,9 @@ class DatasetViewer : public QDialog {
   void applyFilter();
   void clearFilter();
   void updateStats();
+  void updateTestSample();
+  void enableDigitGrid(int);
+  void enableAutoTest(int);
   void editIndex(QString text);
 
  protected:
@@ -37,8 +40,8 @@ class DatasetViewer : public QDialog {
  private:
   Ui::DatasetViewer* ui;
   std::string Name;
-  NNDataset1<>* Dataset;
-  NNDataset1<>::Iterator Iterator;
+  NNDataset<>* Dataset;
+  NNDataset<>::Iterator Iterator;
   NNFeedForward<>* NNFF;
   NNStatistics<> Stat;
 };
