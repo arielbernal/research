@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>724</width>
+    <width>732</width>
     <height>518</height>
    </rect>
   </property>
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QFormLayout" name="formLayout_2">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_8">
      <item>
@@ -244,14 +244,14 @@
    <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
        <string>Testing</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0" colspan="2">
+       <item row="0" column="0">
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -525,7 +525,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
           <widget class="QLabel" name="lbLabel_3">
@@ -571,7 +571,7 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_20">
          <item>
           <widget class="QLabel" name="label_11">
@@ -638,7 +638,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item row="3" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_17">
          <item>
           <widget class="QLabel" name="lbResult">
@@ -1140,22 +1140,12 @@
         </layout>
        </item>
        <item row="4" column="0">
-        <widget class="QCheckBox" name="chkDigitGrid">
-         <property name="text">
-          <string>Digit Grid</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
         <widget class="QCheckBox" name="chkAutoTest">
          <property name="text">
           <string>AutoTest</string>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -1313,6 +1303,27 @@
         </layout>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Digit</string>
+      </attribute>
+      <widget class="QCheckBox" name="chkDigitGrid">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>135</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Digit Grid</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

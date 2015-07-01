@@ -9,7 +9,7 @@ class TrainingThread : public QThread {
  public:
   enum { STOPPED, RUNNING };
   TrainingThread(NNFeedForward<T>* nnff,
-                                 NNDataset1<T, K>* Training)
+                                 NNDataset<T, K>* Training)
       : nnff(nnff), Training(Training), Status(STOPPED) {
   }
 
@@ -25,7 +25,7 @@ class TrainingThread : public QThread {
   }
 
   NNFeedForward<T>* nnff;
-  NNDataset1<T, K>* Training;
+  NNDataset<T, K>* Training;
   size_t Status;
 };
 

@@ -15,6 +15,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -34,7 +35,7 @@ QT_BEGIN_NAMESPACE
 class Ui_DatasetViewer
 {
 public:
-    QGridLayout *gridLayout_2;
+    QFormLayout *formLayout_2;
     QVBoxLayout *verticalLayout_8;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
@@ -114,7 +115,6 @@ public:
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_8;
     QLineEdit *ed9;
-    QCheckBox *checkBox;
     QCheckBox *chkAutoTest;
     QWidget *tab_2;
     QGridLayout *gridLayout_3;
@@ -127,20 +127,22 @@ public:
     QPushButton *btnApplyFilter;
     QPushButton *btnClearFilter;
     QSpacerItem *verticalSpacer;
+    QWidget *tab_3;
+    QCheckBox *chkDigitGrid;
 
     void setupUi(QDialog *DatasetViewer)
     {
         if (DatasetViewer->objectName().isEmpty())
             DatasetViewer->setObjectName(QStringLiteral("DatasetViewer"));
-        DatasetViewer->resize(724, 518);
+        DatasetViewer->resize(732, 518);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(DatasetViewer->sizePolicy().hasHeightForWidth());
         DatasetViewer->setSizePolicy(sizePolicy);
         DatasetViewer->setMaximumSize(QSize(200000, 20000));
-        gridLayout_2 = new QGridLayout(DatasetViewer);
-        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        formLayout_2 = new QFormLayout(DatasetViewer);
+        formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         verticalLayout = new QVBoxLayout();
@@ -249,7 +251,7 @@ public:
         verticalLayout_8->addLayout(horizontalLayout_19);
 
 
-        gridLayout_2->addLayout(verticalLayout_8, 0, 0, 1, 1);
+        formLayout_2->setLayout(0, QFormLayout::LabelRole, verticalLayout_8);
 
         tabWidget = new QTabWidget(DatasetViewer);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
@@ -408,7 +410,7 @@ public:
         verticalLayout_3->addLayout(verticalLayout_2);
 
 
-        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 2);
+        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 1);
 
         horizontalLayout_18 = new QHBoxLayout();
         horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
@@ -432,7 +434,7 @@ public:
         horizontalLayout_18->addWidget(btnUpdateTest);
 
 
-        gridLayout->addLayout(horizontalLayout_18, 1, 0, 1, 2);
+        gridLayout->addLayout(horizontalLayout_18, 1, 0, 1, 1);
 
         horizontalLayout_20 = new QHBoxLayout();
         horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
@@ -468,7 +470,7 @@ public:
         horizontalLayout_20->addWidget(edSamplesN);
 
 
-        gridLayout->addLayout(horizontalLayout_20, 2, 0, 1, 2);
+        gridLayout->addLayout(horizontalLayout_20, 2, 0, 1, 1);
 
         horizontalLayout_17 = new QHBoxLayout();
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
@@ -754,19 +756,13 @@ public:
         horizontalLayout_17->addLayout(horizontalLayout_16);
 
 
-        gridLayout->addLayout(horizontalLayout_17, 3, 0, 1, 2);
-
-        checkBox = new QCheckBox(tab);
-        checkBox->setObjectName(QStringLiteral("checkBox"));
-        checkBox->setChecked(true);
-
-        gridLayout->addWidget(checkBox, 4, 0, 1, 1);
+        gridLayout->addLayout(horizontalLayout_17, 3, 0, 1, 1);
 
         chkAutoTest = new QCheckBox(tab);
         chkAutoTest->setObjectName(QStringLiteral("chkAutoTest"));
-        chkAutoTest->setChecked(false);
+        chkAutoTest->setChecked(true);
 
-        gridLayout->addWidget(chkAutoTest, 4, 1, 1, 1);
+        gridLayout->addWidget(chkAutoTest, 4, 0, 1, 1);
 
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
@@ -842,13 +838,20 @@ public:
         gridLayout_3->addLayout(verticalLayout_6, 0, 0, 1, 1);
 
         tabWidget->addTab(tab_2, QString());
+        tab_3 = new QWidget();
+        tab_3->setObjectName(QStringLiteral("tab_3"));
+        chkDigitGrid = new QCheckBox(tab_3);
+        chkDigitGrid->setObjectName(QStringLiteral("chkDigitGrid"));
+        chkDigitGrid->setGeometry(QRect(10, 20, 135, 22));
+        chkDigitGrid->setChecked(true);
+        tabWidget->addTab(tab_3, QString());
 
-        gridLayout_2->addWidget(tabWidget, 0, 1, 1, 1);
+        formLayout_2->setWidget(0, QFormLayout::FieldRole, tabWidget);
 
 
         retranslateUi(DatasetViewer);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(DatasetViewer);
@@ -882,7 +885,6 @@ public:
         label_10->setText(QApplication::translate("DatasetViewer", "7", 0));
         label_9->setText(QApplication::translate("DatasetViewer", "8", 0));
         label_8->setText(QApplication::translate("DatasetViewer", "9", 0));
-        checkBox->setText(QApplication::translate("DatasetViewer", "Digit Grid", 0));
         chkAutoTest->setText(QApplication::translate("DatasetViewer", "AutoTest", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("DatasetViewer", "Testing", 0));
 
@@ -917,6 +919,8 @@ public:
         btnApplyFilter->setText(QApplication::translate("DatasetViewer", "Apply", 0));
         btnClearFilter->setText(QApplication::translate("DatasetViewer", "Clear", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("DatasetViewer", "Filter", 0));
+        chkDigitGrid->setText(QApplication::translate("DatasetViewer", "Digit Grid", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("DatasetViewer", "Digit", 0));
     } // retranslateUi
 
 };
