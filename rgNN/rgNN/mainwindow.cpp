@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent)
   Test->normalizeInputs();
   Test->processInputs();
 
-  nnff = new NNFeedForward<double>(28 * 28, 150, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
                        this,
                        std::placeholders::_1,

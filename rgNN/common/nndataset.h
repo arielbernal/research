@@ -125,7 +125,7 @@ class NNDataset {
     }
 
     generateOutputs();
-   // addNoise();
+    //blurXY();
     normalizeInputs();
     computeMeanVector();
     processInputs();
@@ -168,15 +168,55 @@ class NNDataset {
       MeanSample->Input[i] = Sample->Input[i];
   }
 
-  void addNoise(double sigma = 112) {
+  void addNoiseNormal(double sigma = 64) {
     std::default_random_engine generator;
     std::normal_distribution<double> normal(0, sigma);
-    for (size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j) {
         int v = Samples[i]->Data[j] + int(normal(generator));
-        if (v < 0) v = 0;
-        else if (v > 255) v = 255;
+        if (v < 0)
+          v = 0;
+        else if (v > 255)
+          v = 255;
         Samples[i]->Data[j] = v;
+      }
+  }
+
+  void addNoiseSaltPepper(double P = 0.1) {
+    std::default_random_engine generator;
+    std::uniform_int_distribution<size_t> d1(0, Size);
+    std::uniform_int_distribution<size_t> d2(0, 1);
+    for (size_t i = 0; i < N; ++i)
+      for (size_t j = 0; j < Size; ++j)
+        if (d1(generator) < Size * P) {
+          if (d2(generator) > 0)
+            Samples[i]->Data[j] = 255;
+          else
+            Samples[i]->Data[j] = 0;
+        }
+  }
+
+  void blurXY() {
+    int radius = 1;
+    int st = (2 * radius + 1) * (2 * radius + 1);
+    for (size_t i = 0; i < N; ++i) {
+      for (size_t y = 0; y < Rows; ++y) {
+        for (size_t x = 0; x < Cols; ++x) {
+          int y0 = y >= radius ? y - radius : 0;
+          int y1 = y + radius < Rows ? y + radius + 1 : Rows;
+          int x0 = x >= radius ? x - radius : 0;
+          int x1 = x + radius < Cols ? x + radius + 1: Cols;
+          float s = 0;
+          int nn = 0;
+          for (int yr = y0; yr < y1; ++yr)
+            for (int xr = x0; xr < x1; ++xr) {
+              s += Samples[i]->Data[yr * Cols + xr];
+              nn++;
+            }
+          if (nn < 4) std::cout << "Errrprrrrrrr " << y0 << " " << y1 << " " << x0 << " " << x1 << std::endl;
+          s /= nn;
+          Samples[i]->Data[y * Cols + x] = s;
+        }
       }
     }
   }
