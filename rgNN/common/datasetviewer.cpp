@@ -36,12 +36,14 @@ DatasetViewer::DatasetViewer(const std::string& Name,
           SIGNAL(textChanged(QString)),
           this,
           SLOT(editIndex(QString)));
+  connect(ui->listDigitFormat, SIGNAL(itemSelectionChanged()), this, SLOT(listDigitFormat()));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
   Iterator = Dataset->begin();
   updateControls();
+  DigitFormat = 0;
 }
 
 DatasetViewer::~DatasetViewer() {
@@ -196,4 +198,13 @@ void DatasetViewer::updateTestSample() {
   ui->ed7->setText(QString().sprintf("%6.4f", Result[7]));
   ui->ed8->setText(QString().sprintf("%6.4f", Result[8]));
   ui->ed9->setText(QString().sprintf("%6.4f", Result[9]));
+}
+
+void DatasetViewer::listDigitFormat() {
+    QString QItem = ui->listDigitFormat->selectedItems()[0]->text();
+    std::cout << "QITEM = " << QItem.toStdString() << std::endl;
+    if (QItem == "Single") DigitFormat = 0;
+    if (QItem == "2x2") DigitFormat = 1;
+    std::cout << "DIGIT = " << DigitFormat <<  std::endl;
+
 }

@@ -1324,6 +1324,44 @@
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QListWidget" name="listDigitFormat">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>271</width>
+         <height>241</height>
+        </rect>
+       </property>
+       <property name="currentRow">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Single</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2x2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3x3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4x4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5x5</string>
+        </property>
+       </item>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -1339,4 +1377,7 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

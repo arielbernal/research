@@ -129,6 +129,8 @@ public:
     QSpacerItem *verticalSpacer;
     QWidget *tab_3;
     QCheckBox *chkDigitGrid;
+    QListWidget *listDigitFormat;
+    QButtonGroup *buttonGroup;
 
     void setupUi(QDialog *DatasetViewer)
     {
@@ -844,6 +846,14 @@ public:
         chkDigitGrid->setObjectName(QStringLiteral("chkDigitGrid"));
         chkDigitGrid->setGeometry(QRect(10, 20, 135, 22));
         chkDigitGrid->setChecked(true);
+        listDigitFormat = new QListWidget(tab_3);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        listDigitFormat->setObjectName(QStringLiteral("listDigitFormat"));
+        listDigitFormat->setGeometry(QRect(10, 60, 271, 241));
         tabWidget->addTab(tab_3, QString());
 
         formLayout_2->setWidget(0, QFormLayout::FieldRole, tabWidget);
@@ -852,6 +862,7 @@ public:
         retranslateUi(DatasetViewer);
 
         tabWidget->setCurrentIndex(2);
+        listDigitFormat->setCurrentRow(0);
 
 
         QMetaObject::connectSlotsByName(DatasetViewer);
@@ -920,6 +931,21 @@ public:
         btnClearFilter->setText(QApplication::translate("DatasetViewer", "Clear", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("DatasetViewer", "Filter", 0));
         chkDigitGrid->setText(QApplication::translate("DatasetViewer", "Digit Grid", 0));
+
+        const bool __sortingEnabled1 = listDigitFormat->isSortingEnabled();
+        listDigitFormat->setSortingEnabled(false);
+        QListWidgetItem *___qlistwidgetitem11 = listDigitFormat->item(0);
+        ___qlistwidgetitem11->setText(QApplication::translate("DatasetViewer", "Single", 0));
+        QListWidgetItem *___qlistwidgetitem12 = listDigitFormat->item(1);
+        ___qlistwidgetitem12->setText(QApplication::translate("DatasetViewer", "2x2", 0));
+        QListWidgetItem *___qlistwidgetitem13 = listDigitFormat->item(2);
+        ___qlistwidgetitem13->setText(QApplication::translate("DatasetViewer", "3x3", 0));
+        QListWidgetItem *___qlistwidgetitem14 = listDigitFormat->item(3);
+        ___qlistwidgetitem14->setText(QApplication::translate("DatasetViewer", "4x4", 0));
+        QListWidgetItem *___qlistwidgetitem15 = listDigitFormat->item(4);
+        ___qlistwidgetitem15->setText(QApplication::translate("DatasetViewer", "5x5", 0));
+        listDigitFormat->setSortingEnabled(__sortingEnabled1);
+
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("DatasetViewer", "Digit", 0));
     } // retranslateUi
 
