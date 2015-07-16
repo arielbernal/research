@@ -126,12 +126,26 @@ class NNDataset {
     }
 
     generateOutputs();
-    // blurXY();
-    normalizeInputs();
-    computeMeanVector();
-    processInputs();
-
     return true;
+  }
+
+  void preProcessingInputs(const SampleType* Sample = 0) {
+    normalizeInputs();
+    if (!Sample)
+      computeMeanVector();
+    else
+      setMeanSample(Sample);
+    subtractMeanInput();
+  }
+
+  SampleType* getMeanSample() { return MeanSample; }
+
+  void setMeanSample(const SampleType* Sample) {
+    if (MeanSample)
+      delete MeanSample;
+    MeanSample = new SampleType(Size, OutputSize);
+    for (size_t i = 0; i < Size; ++i)
+      MeanSample->Input[i] = Sample->Input[i];
   }
 
   void computeMeanVector() {
@@ -157,16 +171,10 @@ class NNDataset {
         Samples[i]->Input[j] = DataType(Samples[i]->Data[j]) / 256.0f;
   }
 
-  void processInputs() {
+  void subtractMeanInput() {
     for (size_t i = 0; i < N; ++i)
       for (size_t j = 0; j < Size; ++j)
         Samples[i]->Input[j] -= MeanSample->Input[j];
-  }
-
-  SampleType* getMeanSample() { return MeanSample; }
-  void setMeanSample(const SampleType* Sample) {
-    for (size_t i = 0; i < Size; ++i)
-      MeanSample->Input[i] = Sample->Input[i];
   }
 
   void addNoiseNormal(double sigma = 64) {
@@ -253,9 +261,9 @@ class NNDataset {
                   -> bool { return a->MSE > b->MSE; });
   }
 
-  void RandomizeOrder() {
+  void randomizeOrder() {
     std::default_random_engine generator;
-    std::uniform_int_distribution<size_t> d(0, Filter.Size()-1);
+    std::uniform_int_distribution<size_t> d(0, Filter.size() - 1);
     for (size_t i = 0; i < Filter.size(); ++i) {
       size_t iRand = d(generator);
       std::swap(Filter[i], Filter[iRand]);

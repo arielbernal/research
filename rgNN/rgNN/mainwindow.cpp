@@ -39,16 +39,17 @@ MainWindow::MainWindow(QWidget* parent)
                  "../data/train-labels.idx1-ubyte",
                  16,
                  8);
-
+  Training->preProcessingInputs();
   Test->load(0,
              10000,
              "../data/t10k-images.idx3-ubyte",
              "../data/t10k-labels.idx1-ubyte",
              16,
              8);
-  Test->setMeanSample(Training->getMeanSample());
-  Test->normalizeInputs();
-  Test->processInputs();
+  Test->preProcessingInputs(Training->getMeanSample());
+
+  //Training->addNoiseSaltPepper();
+  Training->preProcessingInputs(Training->getMeanSample());
 
   nnff = new NNFeedForward<double>(28 * 28, 300, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
@@ -78,9 +79,9 @@ MainWindow::MainWindow(QWidget* parent)
   statId = 0;
   isGraphUpdated = false;
 
-  pDialogTesting = new DatasetViewer("Testing Dataset", Test, nnff);
+  pDialogTesting = new DatasetViewer("Testing Dataset", Test, nnff, this);
   pDialogTesting->show();
-  pDialogTraining = new DatasetViewer("Training Dataset", Training, nnff);
+  pDialogTraining = new DatasetViewer("Training Dataset", Training, nnff, this);
   pDialogTraining->show();
 }
 
@@ -89,10 +90,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::closeEvent(QCloseEvent*) {
-  if (pDialogTesting)
-    pDialogTesting->close();
-  if (pDialogTraining)
-    pDialogTraining->close();
 }
 
 void MainWindow::loadNN() {

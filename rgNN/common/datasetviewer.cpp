@@ -14,6 +14,7 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   ui->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
   setModal(false);
+  //setWindowFlags(windowFlags() & !Qt::WindowStaysOnTopHint);
   setWindowTitle(Name.c_str());
 
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));

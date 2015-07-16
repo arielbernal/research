@@ -91,7 +91,8 @@ class NNFeedForward {
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy) && !StopTraining) {
-      Training->sortByMSE();
+      //Training->sortByMSE();
+      Training->randomizeOrder();
       for (auto& e : *Training) {
         if (StopTraining)
           break;
