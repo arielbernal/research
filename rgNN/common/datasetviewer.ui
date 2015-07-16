@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QFormLayout" name="formLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_8">
      <item>
@@ -244,14 +244,14 @@
    <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
        <string>Testing</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -525,7 +525,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
           <widget class="QLabel" name="lbLabel_3">
@@ -571,7 +571,7 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_20">
          <item>
           <widget class="QLabel" name="label_11">
@@ -638,7 +638,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_17">
          <item>
           <widget class="QLabel" name="lbResult">
@@ -1139,15 +1139,77 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="chkAutoTest">
-         <property name="text">
-          <string>AutoTest</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_24">
+         <item>
+          <widget class="QCheckBox" name="chkAutoTest">
+           <property name="text">
+            <string>AutoTest</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_23">
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="maximumSize">
+              <size>
+               <width>40</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>MSE:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="edSampleMSE">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">border: 2px solid green;
+     border-radius: 4px;
+     padding: 2px;
+ background-color: #E0E0E0;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1219,6 +1281,11 @@
            <item>
             <property name="text">
              <string>Errors</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sort MSE</string>
             </property>
            </item>
           </widget>
@@ -1334,7 +1401,7 @@
         </rect>
        </property>
        <property name="currentRow">
-        <number>0</number>
+        <number>-1</number>
        </property>
        <item>
         <property name="text">
@@ -1359,6 +1426,21 @@
        <item>
         <property name="text">
          <string>5x5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10x10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>15x15</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>20x20</string>
         </property>
        </item>
       </widget>

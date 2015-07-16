@@ -6,6 +6,7 @@
 #include <fstream>
 #include <stdint.h>
 #include <random>
+#include <algorithm>
 
 template <typename DataType = double,
           typename FileDataType = uint8_t,
@@ -125,7 +126,7 @@ class NNDataset {
     }
 
     generateOutputs();
-    //blurXY();
+    // blurXY();
     normalizeInputs();
     computeMeanVector();
     processInputs();
@@ -205,7 +206,7 @@ class NNDataset {
           int y0 = y >= radius ? y - radius : 0;
           int y1 = y + radius < Rows ? y + radius + 1 : Rows;
           int x0 = x >= radius ? x - radius : 0;
-          int x1 = x + radius < Cols ? x + radius + 1: Cols;
+          int x1 = x + radius < Cols ? x + radius + 1 : Cols;
           float s = 0;
           int nn = 0;
           for (int yr = y0; yr < y1; ++yr)
@@ -213,7 +214,9 @@ class NNDataset {
               s += Samples[i]->Data[yr * Cols + xr];
               nn++;
             }
-          if (nn < 4) std::cout << "Errrprrrrrrr " << y0 << " " << y1 << " " << x0 << " " << x1 << std::endl;
+          if (nn < 4)
+            std::cout << "Errrprrrrrrr " << y0 << " " << y1 << " " << x0 << " "
+                      << x1 << std::endl;
           s /= nn;
           Samples[i]->Data[y * Cols + x] = s;
         }
@@ -241,6 +244,22 @@ class NNDataset {
     Filter.clear();
     for (auto& e : Samples)
       Filter.push_back(e);
+  }
+
+  void sortByMSE() {
+    std::sort(Filter.begin(),
+              Filter.end(),
+              [](const SampleType* a, const SampleType* b)
+                  -> bool { return a->MSE > b->MSE; });
+  }
+
+  void RandomizeOrder() {
+    std::default_random_engine generator;
+    std::uniform_int_distribution<size_t> d(0, Filter.Size()-1);
+    for (size_t i = 0; i < Filter.size(); ++i) {
+      size_t iRand = d(generator);
+      std::swap(Filter[i], Filter[iRand]);
+    }
   }
 
  private:

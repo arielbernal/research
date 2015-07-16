@@ -78,15 +78,21 @@ MainWindow::MainWindow(QWidget* parent)
   statId = 0;
   isGraphUpdated = false;
 
-  DatasetViewer* pDialog = new DatasetViewer("Testing Dataset", Test, nnff);
-  pDialog->show();
-  DatasetViewer* pDialog1 =
-      new DatasetViewer("Training Dataset", Training, nnff);
-  pDialog1->show();
+  pDialogTesting = new DatasetViewer("Testing Dataset", Test, nnff);
+  pDialogTesting->show();
+  pDialogTraining = new DatasetViewer("Training Dataset", Training, nnff);
+  pDialogTraining->show();
 }
 
 MainWindow::~MainWindow() {
   delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent*) {
+  if (pDialogTesting)
+    pDialogTesting->close();
+  if (pDialogTraining)
+    pDialogTraining->close();
 }
 
 void MainWindow::loadNN() {

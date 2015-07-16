@@ -6,6 +6,7 @@
 #include <../common/nnclass.h>
 #include <stdint.h>
 #include <../common/trainingthread.h>
+#include <../common/datasetviewer.h>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,7 @@ private slots:
 protected:
   void NNProgress(size_t i, NNStatistics<double> &stat);
   void trainNN();
+  void closeEvent(QCloseEvent*);
 
 private:
   Ui::MainWindow *ui;
@@ -37,5 +39,7 @@ private:
   TrainingThread<double, uint8_t>* TTrhead;
   size_t statId;
   bool isGraphUpdated;
+  DatasetViewer* pDialogTesting;
+  DatasetViewer* pDialogTraining;
 };
 #endif // MAINWINDOW_H

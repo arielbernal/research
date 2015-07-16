@@ -15,7 +15,6 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDialog>
-#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -35,7 +34,7 @@ QT_BEGIN_NAMESPACE
 class Ui_DatasetViewer
 {
 public:
-    QFormLayout *formLayout_2;
+    QGridLayout *gridLayout;
     QVBoxLayout *verticalLayout_8;
     QVBoxLayout *verticalLayout;
     QLabel *lbLabel;
@@ -51,7 +50,7 @@ public:
     QPushButton *btnLast;
     QTabWidget *tabWidget;
     QWidget *tab;
-    QGridLayout *gridLayout;
+    QVBoxLayout *verticalLayout_7;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_5;
     QLabel *lbLabel_2;
@@ -115,7 +114,12 @@ public:
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_8;
     QLineEdit *ed9;
+    QHBoxLayout *horizontalLayout_24;
     QCheckBox *chkAutoTest;
+    QSpacerItem *horizontalSpacer_5;
+    QHBoxLayout *horizontalLayout_23;
+    QLabel *label_13;
+    QLineEdit *edSampleMSE;
     QWidget *tab_2;
     QGridLayout *gridLayout_3;
     QVBoxLayout *verticalLayout_6;
@@ -143,8 +147,8 @@ public:
         sizePolicy.setHeightForWidth(DatasetViewer->sizePolicy().hasHeightForWidth());
         DatasetViewer->setSizePolicy(sizePolicy);
         DatasetViewer->setMaximumSize(QSize(200000, 20000));
-        formLayout_2 = new QFormLayout(DatasetViewer);
-        formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
+        gridLayout = new QGridLayout(DatasetViewer);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         verticalLayout = new QVBoxLayout();
@@ -253,14 +257,14 @@ public:
         verticalLayout_8->addLayout(horizontalLayout_19);
 
 
-        formLayout_2->setLayout(0, QFormLayout::LabelRole, verticalLayout_8);
+        gridLayout->addLayout(verticalLayout_8, 0, 0, 1, 1);
 
         tabWidget = new QTabWidget(DatasetViewer);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
-        gridLayout = new QGridLayout(tab);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        verticalLayout_7 = new QVBoxLayout(tab);
+        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         horizontalLayout_5 = new QHBoxLayout();
@@ -412,7 +416,7 @@ public:
         verticalLayout_3->addLayout(verticalLayout_2);
 
 
-        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 1);
+        verticalLayout_7->addLayout(verticalLayout_3);
 
         horizontalLayout_18 = new QHBoxLayout();
         horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
@@ -436,7 +440,7 @@ public:
         horizontalLayout_18->addWidget(btnUpdateTest);
 
 
-        gridLayout->addLayout(horizontalLayout_18, 1, 0, 1, 1);
+        verticalLayout_7->addLayout(horizontalLayout_18);
 
         horizontalLayout_20 = new QHBoxLayout();
         horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
@@ -472,7 +476,7 @@ public:
         horizontalLayout_20->addWidget(edSamplesN);
 
 
-        gridLayout->addLayout(horizontalLayout_20, 2, 0, 1, 1);
+        verticalLayout_7->addLayout(horizontalLayout_20);
 
         horizontalLayout_17 = new QHBoxLayout();
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
@@ -758,13 +762,46 @@ public:
         horizontalLayout_17->addLayout(horizontalLayout_16);
 
 
-        gridLayout->addLayout(horizontalLayout_17, 3, 0, 1, 1);
+        verticalLayout_7->addLayout(horizontalLayout_17);
 
+        horizontalLayout_24 = new QHBoxLayout();
+        horizontalLayout_24->setObjectName(QStringLiteral("horizontalLayout_24"));
         chkAutoTest = new QCheckBox(tab);
         chkAutoTest->setObjectName(QStringLiteral("chkAutoTest"));
         chkAutoTest->setChecked(true);
 
-        gridLayout->addWidget(chkAutoTest, 4, 0, 1, 1);
+        horizontalLayout_24->addWidget(chkAutoTest);
+
+        horizontalSpacer_5 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_24->addItem(horizontalSpacer_5);
+
+        horizontalLayout_23 = new QHBoxLayout();
+        horizontalLayout_23->setObjectName(QStringLiteral("horizontalLayout_23"));
+        label_13 = new QLabel(tab);
+        label_13->setObjectName(QStringLiteral("label_13"));
+        label_13->setMaximumSize(QSize(40, 16777215));
+
+        horizontalLayout_23->addWidget(label_13);
+
+        edSampleMSE = new QLineEdit(tab);
+        edSampleMSE->setObjectName(QStringLiteral("edSampleMSE"));
+        edSampleMSE->setMinimumSize(QSize(120, 0));
+        edSampleMSE->setMaximumSize(QSize(80, 16777215));
+        edSampleMSE->setStyleSheet(QLatin1String("border: 2px solid green;\n"
+"     border-radius: 4px;\n"
+"     padding: 2px;\n"
+" background-color: #E0E0E0;"));
+        edSampleMSE->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        edSampleMSE->setReadOnly(true);
+
+        horizontalLayout_23->addWidget(edSampleMSE);
+
+
+        horizontalLayout_24->addLayout(horizontalLayout_23);
+
+
+        verticalLayout_7->addLayout(horizontalLayout_24);
 
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
@@ -774,6 +811,7 @@ public:
         verticalLayout_6 = new QVBoxLayout();
         verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         listFilter = new QListWidget(tab_2);
+        new QListWidgetItem(listFilter);
         new QListWidgetItem(listFilter);
         new QListWidgetItem(listFilter);
         new QListWidgetItem(listFilter);
@@ -852,17 +890,20 @@ public:
         new QListWidgetItem(listDigitFormat);
         new QListWidgetItem(listDigitFormat);
         new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
+        new QListWidgetItem(listDigitFormat);
         listDigitFormat->setObjectName(QStringLiteral("listDigitFormat"));
         listDigitFormat->setGeometry(QRect(10, 60, 271, 241));
         tabWidget->addTab(tab_3, QString());
 
-        formLayout_2->setWidget(0, QFormLayout::FieldRole, tabWidget);
+        gridLayout->addWidget(tabWidget, 0, 1, 1, 1);
 
 
         retranslateUi(DatasetViewer);
 
-        tabWidget->setCurrentIndex(2);
-        listDigitFormat->setCurrentRow(0);
+        tabWidget->setCurrentIndex(0);
+        listDigitFormat->setCurrentRow(-1);
 
 
         QMetaObject::connectSlotsByName(DatasetViewer);
@@ -897,6 +938,7 @@ public:
         label_9->setText(QApplication::translate("DatasetViewer", "8", 0));
         label_8->setText(QApplication::translate("DatasetViewer", "9", 0));
         chkAutoTest->setText(QApplication::translate("DatasetViewer", "AutoTest", 0));
+        label_13->setText(QApplication::translate("DatasetViewer", "MSE:", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("DatasetViewer", "Testing", 0));
 
         const bool __sortingEnabled = listFilter->isSortingEnabled();
@@ -923,6 +965,8 @@ public:
         ___qlistwidgetitem9->setText(QApplication::translate("DatasetViewer", "9", 0));
         QListWidgetItem *___qlistwidgetitem10 = listFilter->item(10);
         ___qlistwidgetitem10->setText(QApplication::translate("DatasetViewer", "Errors", 0));
+        QListWidgetItem *___qlistwidgetitem11 = listFilter->item(11);
+        ___qlistwidgetitem11->setText(QApplication::translate("DatasetViewer", "Sort MSE", 0));
         listFilter->setSortingEnabled(__sortingEnabled);
 
         label_12->setText(QApplication::translate("DatasetViewer", "Active Filter:", 0));
@@ -934,16 +978,22 @@ public:
 
         const bool __sortingEnabled1 = listDigitFormat->isSortingEnabled();
         listDigitFormat->setSortingEnabled(false);
-        QListWidgetItem *___qlistwidgetitem11 = listDigitFormat->item(0);
-        ___qlistwidgetitem11->setText(QApplication::translate("DatasetViewer", "Single", 0));
-        QListWidgetItem *___qlistwidgetitem12 = listDigitFormat->item(1);
-        ___qlistwidgetitem12->setText(QApplication::translate("DatasetViewer", "2x2", 0));
-        QListWidgetItem *___qlistwidgetitem13 = listDigitFormat->item(2);
-        ___qlistwidgetitem13->setText(QApplication::translate("DatasetViewer", "3x3", 0));
-        QListWidgetItem *___qlistwidgetitem14 = listDigitFormat->item(3);
-        ___qlistwidgetitem14->setText(QApplication::translate("DatasetViewer", "4x4", 0));
-        QListWidgetItem *___qlistwidgetitem15 = listDigitFormat->item(4);
-        ___qlistwidgetitem15->setText(QApplication::translate("DatasetViewer", "5x5", 0));
+        QListWidgetItem *___qlistwidgetitem12 = listDigitFormat->item(0);
+        ___qlistwidgetitem12->setText(QApplication::translate("DatasetViewer", "Single", 0));
+        QListWidgetItem *___qlistwidgetitem13 = listDigitFormat->item(1);
+        ___qlistwidgetitem13->setText(QApplication::translate("DatasetViewer", "2x2", 0));
+        QListWidgetItem *___qlistwidgetitem14 = listDigitFormat->item(2);
+        ___qlistwidgetitem14->setText(QApplication::translate("DatasetViewer", "3x3", 0));
+        QListWidgetItem *___qlistwidgetitem15 = listDigitFormat->item(3);
+        ___qlistwidgetitem15->setText(QApplication::translate("DatasetViewer", "4x4", 0));
+        QListWidgetItem *___qlistwidgetitem16 = listDigitFormat->item(4);
+        ___qlistwidgetitem16->setText(QApplication::translate("DatasetViewer", "5x5", 0));
+        QListWidgetItem *___qlistwidgetitem17 = listDigitFormat->item(5);
+        ___qlistwidgetitem17->setText(QApplication::translate("DatasetViewer", "10x10", 0));
+        QListWidgetItem *___qlistwidgetitem18 = listDigitFormat->item(6);
+        ___qlistwidgetitem18->setText(QApplication::translate("DatasetViewer", "15x15", 0));
+        QListWidgetItem *___qlistwidgetitem19 = listDigitFormat->item(7);
+        ___qlistwidgetitem19->setText(QApplication::translate("DatasetViewer", "20x20", 0));
         listDigitFormat->setSortingEnabled(__sortingEnabled1);
 
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("DatasetViewer", "Digit", 0));

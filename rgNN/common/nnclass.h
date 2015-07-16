@@ -91,21 +91,19 @@ class NNFeedForward {
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy) && !StopTraining) {
-      // Training->randomizeOrder();
-
+      Training->sortByMSE();
       for (auto& e : *Training) {
         if (StopTraining)
           break;
         feedForward(e->Input, Result.data());
+        e->MSE = MSE(Result.data(), e->Output);
         backPropagate(e->Output);
       }
 
       if (epoch % EpochStat == 0) {
-        {
-          statistics(Training, TrainingStat);
-          if (CallbackProgress)
-            CallbackProgress(epoch, TrainingStat);
-        }
+        statistics(Training, TrainingStat);
+        if (CallbackProgress)
+          CallbackProgress(epoch, TrainingStat);
       }
 
       epoch++;
@@ -134,7 +132,8 @@ class NNFeedForward {
     size_t errors = 0;
     for (auto& e : *Dataset) {
       feedForward(e->Input, Result.data());
-      mse += MSE(Result.data(), e->Output);
+      e->MSE = MSE(Result.data(), e->Output);
+      mse += e->MSE;
       e->Error = false;
       if (getLabel(Result) != e->Label) {
         errors++;
