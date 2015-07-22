@@ -30,6 +30,7 @@ private slots:
   void cameraOn();
   void cameraOff();
   void openNewImage();
+  void checkKeyPressed();
 
 protected:
   void closeEvent(QCloseEvent *event);
@@ -46,5 +47,7 @@ private:
   char data[2000];
   int bytesRead;
   int bytesTotalRead;
+
+  float vMotors[2];
 };
 #endif // MAINWINDOW_H

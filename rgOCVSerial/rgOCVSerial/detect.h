@@ -58,7 +58,8 @@ public:
   }
 
   bool turnCameraOn() {
-    cap.open(0);
+    //cap.open(0);
+    cap.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
     if (!cap.isOpened()) {
       return false;
     } else {
@@ -88,47 +89,47 @@ protected:
   void detect() {
 
     cap >> Frame;
-    cv::cvtColor(Frame, HSV, cv::COLOR_BGR2HSV);
-    cv::inRange(HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255),
-                YellowMask);
-    cv::inRange(HSV, cv::Scalar(0, 120, 180), cv::Scalar(15, 255, 255),
-                RedMask);
-    cv::inRange(HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255),
-                RedMask1);
-    cv::add(RedMask, RedMask1, RedMask);
+//    cv::cvtColor(Frame, HSV, cv::COLOR_BGR2HSV);
+//    cv::inRange(HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255),
+//                YellowMask);
+//    cv::inRange(HSV, cv::Scalar(0, 120, 180), cv::Scalar(15, 255, 255),
+//                RedMask);
+//    cv::inRange(HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255),
+//                RedMask1);
+//    cv::add(RedMask, RedMask1, RedMask);
 
-    cv::dilate(RedMask, RedMask, cv::Mat());
-    cv::dilate(YellowMask, YellowMask, cv::Mat());
+//    cv::dilate(RedMask, RedMask, cv::Mat());
+//    cv::dilate(YellowMask, YellowMask, cv::Mat());
 
-    cv::blur(YellowMask, YellowMask, cv::Size(15, 15));
-    cv::threshold(YellowMask, YellowMask, 100, 255, cv::THRESH_BINARY);
-    cv::blur(RedMask, RedMask, cv::Size(15, 15));
-    cv::threshold(RedMask, RedMask, 100, 255, cv::THRESH_BINARY);
-    cv::add(RedMask, YellowMask, ThresholdMask);
+//    cv::blur(YellowMask, YellowMask, cv::Size(15, 15));
+//    cv::threshold(YellowMask, YellowMask, 100, 255, cv::THRESH_BINARY);
+//    cv::blur(RedMask, RedMask, cv::Size(15, 15));
+//    cv::threshold(RedMask, RedMask, 100, 255, cv::THRESH_BINARY);
+//    cv::add(RedMask, YellowMask, ThresholdMask);
 
-    cv::Moments m1 = cv::moments(YellowMask);
-    cv::Point p1(m1.m10 / m1.m00, m1.m01 / m1.m00);
-    cv::Moments m2 = cv::moments(RedMask);
-    cv::Point p2(m2.m10 / m2.m00, m2.m01 / m2.m00);
-    if (p1.x > 0 && p1.y > 0 && p2.x > 0 && p2.y > 0) {
-      CenterRight.push_back(p1);
-      CenterLeft.push_back(p2);
-      if (CenterLeft.size() > 10) {
-        CenterRight.pop_front();
-        CenterLeft.pop_front();
-      }
-      cv::Point PLeft(0, 0);
-      for (auto &e : CenterLeft)
-        PLeft += e;
-      PLeft = PLeft / float(CenterLeft.size());
-      cv::Point PRight(0, 0);
-      for (auto &e : CenterRight)
-        PRight += e;
-      PRight = PRight / float(CenterRight.size());
-      Robot.CenterLeft = PLeft;
-      Robot.CenterRight = PRight;
-    }
-    glp::ShowImage("Threshold", ThresholdMask);
+//    cv::Moments m1 = cv::moments(YellowMask);
+//    cv::Point p1(m1.m10 / m1.m00, m1.m01 / m1.m00);
+//    cv::Moments m2 = cv::moments(RedMask);
+//    cv::Point p2(m2.m10 / m2.m00, m2.m01 / m2.m00);
+//    if (p1.x > 0 && p1.y > 0 && p2.x > 0 && p2.y > 0) {
+//      CenterRight.push_back(p1);
+//      CenterLeft.push_back(p2);
+//      if (CenterLeft.size() > 10) {
+//        CenterRight.pop_front();
+//        CenterLeft.pop_front();
+//      }
+//      cv::Point PLeft(0, 0);
+//      for (auto &e : CenterLeft)
+//        PLeft += e;
+//      PLeft = PLeft / float(CenterLeft.size());
+//      cv::Point PRight(0, 0);
+//      for (auto &e : CenterRight)
+//        PRight += e;
+//      PRight = PRight / float(CenterRight.size());
+//      Robot.CenterLeft = PLeft;
+//      Robot.CenterRight = PRight;
+//    }
+//    glp::ShowImage("Threshold", ThresholdMask);
     auto fp = std::bind(&RobotDetect::FrameRenderer, this);
     glp::ShowImage("Frame", Frame, fp);
     glp::EnableImageFPS("Frame", true);

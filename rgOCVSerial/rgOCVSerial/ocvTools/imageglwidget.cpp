@@ -43,7 +43,7 @@ void ImageGLWidget::paintGL() {
     float fpsVal = fps.update();
     char str[20];
     sprintf_s(str, "FPS = %5.2f", fpsVal);
-    cv::putText(Image, str, cv::Point(600, 25), CV_FONT_HERSHEY_SIMPLEX, 1,
+    cv::putText(Image, str, cv::Point(width()/2, 25), CV_FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar::all(255));
   }
 

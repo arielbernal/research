@@ -17,6 +17,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
@@ -42,6 +43,8 @@ public:
     QPushButton *btnRead;
     QPushButton *pushButton_2;
     QPushButton *pushButton_3;
+    QProgressBar *motorLeft;
+    QProgressBar *motorRight;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -116,6 +119,20 @@ public:
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setGeometry(QRect(80, 150, 99, 27));
+        motorLeft = new QProgressBar(centralWidget);
+        motorLeft->setObjectName(QStringLiteral("motorLeft"));
+        motorLeft->setGeometry(QRect(120, 360, 31, 211));
+        motorLeft->setValue(24);
+        motorLeft->setOrientation(Qt::Vertical);
+        motorLeft->setInvertedAppearance(false);
+        motorLeft->setTextDirection(QProgressBar::TopToBottom);
+        motorRight = new QProgressBar(centralWidget);
+        motorRight->setObjectName(QStringLiteral("motorRight"));
+        motorRight->setGeometry(QRect(290, 360, 31, 211));
+        motorRight->setValue(24);
+        motorRight->setOrientation(Qt::Vertical);
+        motorRight->setInvertedAppearance(false);
+        motorRight->setTextDirection(QProgressBar::TopToBottom);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
