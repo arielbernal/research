@@ -31,6 +31,7 @@ class DatasetViewer : public QDialog {
   void enableDigitGrid(int);
   void enableAutoTest(int);
   void editIndex(QString text);
+  void listDigitFormat();
 
  protected:
   void closeEvent(QCloseEvent* event);
@@ -44,6 +45,7 @@ class DatasetViewer : public QDialog {
   NNDataset<>::Iterator Iterator;
   NNFeedForward<>* NNFF;
   NNStatistics<> Stat;
+  size_t DigitFormat;
 };
 
 #endif  // DATASETVIEWER_H

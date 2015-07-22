@@ -85,59 +85,27 @@ class NNFeedForward {
   void stopTraining() { StopTraining = true; }
 
   template <typename S>
-  void train(NNDataset1<T, S>* Training) {
+  void train(NNDataset<T, S>* Training) {
     StopTraining = false;
     std::vector<T> Result(OutputSize);
     size_t epoch = 0;
     while (epoch < MaxEpochs &&
            (TrainingStat.getAccuracy() < TrainingAccuracy) && !StopTraining) {
-      double TRandomizeOrder = 0;
-      double TfeedForward = 0;
-      double TisSameOutput = 0;
-      double TbackPropagate = 0;
-      double Tstatistics = 0;
-      double TTotal = 0;
-      {
-        //  rg::scoped_timer totalTimer(TTotal);
-        {
-          //     rg::scoped_timer timer(TRandomizeOrder);
-          Training->randomizeOrder();
-        }
-        for (size_t i = 0; i < Training->getN(); ++i) {
-          if (StopTraining)
-            break;
-          {
-            //        rg::scoped_timer timer(TfeedForward, true);
-            feedForward(Training->getInput(i), Result.data());
-          }
-          bool isSame = false;
-          {
-            //       rg::scoped_timer timer(TisSameOutput, true);
-            // isSame = isSameOutput(Result.data(), Training->getOutput(i));
-          }
-          if (isSame)
-            continue;
-          {
-            //     rg::scoped_timer timer(TbackPropagate, true);
-            backPropagate(Training->getOutput(i));
-          }
-        }
-
-        if (epoch % EpochStat == 0) {
-          {
-            //       rg::scoped_timer timer(Tstatistics, true);
-            statistics(Training, TrainingStat);
-            if (CallbackProgress)
-              CallbackProgress(epoch, TrainingStat);
-          }
-        }
+      //Training->sortByMSE();
+      Training->randomizeOrder();
+      for (auto& e : *Training) {
+        if (StopTraining)
+          break;
+        feedForward(e->Input, Result.data());
+        e->MSE = MSE(Result.data(), e->Output);
+        backPropagate(e->Output);
       }
-      //      std::cout << "TotalTime = " << TTotal
-      //                << " Randomize = " << TRandomizeOrder
-      //                << "  Stat = " << Tstatistics << std::endl;
-      //      std::cout << " FF = " << TfeedForward << " isSame = " <<
-      //      TisSameOutput
-      //                << " backP = " << TbackPropagate << std::endl;
+
+      if (epoch % EpochStat == 0) {
+        statistics(Training, TrainingStat);
+        if (CallbackProgress)
+          CallbackProgress(epoch, TrainingStat);
+      }
 
       epoch++;
     }
@@ -158,26 +126,6 @@ class NNFeedForward {
   }
 
   template <typename S>
-  void statistics(NNDataset1<T, S>* Dataset, NNStatistics<T>& Stat) {
-    Stat.ErrorIds.clear();
-    std::vector<T> Result(OutputSize);
-    T mse = 0;
-    size_t errors = 0;
-    for (size_t i = 0; i < Dataset->getN(); ++i) {
-      feedForward(Dataset->getInput(i), Result.data());
-      mse += MSE(Result.data(), Dataset->getOutput(i));
-      // if (!isSameOutput(Result.data(), Dataset->getOutput(i))) {
-      if (getLabel(Result) != Dataset->getLabel(i)) {
-        errors++;
-        Stat.ErrorIds.push_back(i);
-      }
-    }
-    Stat.N = Dataset->getN();
-    Stat.MSE = mse / Dataset->getN();
-    Stat.Errors = errors;
-  }
-
-  template <typename S>
   void statistics(NNDataset<T, S>* Dataset, NNStatistics<T>& Stat) {
     Stat.ErrorIds.clear();
     std::vector<T> Result(OutputSize);
@@ -185,7 +133,8 @@ class NNFeedForward {
     size_t errors = 0;
     for (auto& e : *Dataset) {
       feedForward(e->Input, Result.data());
-      mse += MSE(Result.data(), e->Output);
+      e->MSE = MSE(Result.data(), e->Output);
+      mse += e->MSE;
       e->Error = false;
       if (getLabel(Result) != e->Label) {
         errors++;

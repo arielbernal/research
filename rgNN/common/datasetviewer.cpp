@@ -14,6 +14,7 @@ DatasetViewer::DatasetViewer(const std::string& Name,
   ui->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
   setModal(false);
+  //setWindowFlags(windowFlags() & !Qt::WindowStaysOnTopHint);
   setWindowTitle(Name.c_str());
 
   connect(ui->btnPrev, SIGNAL(clicked()), this, SLOT(prevImage()));
@@ -36,12 +37,17 @@ DatasetViewer::DatasetViewer(const std::string& Name,
           SIGNAL(textChanged(QString)),
           this,
           SLOT(editIndex(QString)));
+  connect(ui->listDigitFormat,
+          SIGNAL(itemSelectionChanged()),
+          this,
+          SLOT(listDigitFormat()));
 
   auto fp = std::bind(&DatasetViewer::DigitRenderer, this);
   ui->glDigit->setCallbackRenderer(fp);
 
   Iterator = Dataset->begin();
   updateControls();
+  DigitFormat = 1;
 }
 
 DatasetViewer::~DatasetViewer() {
@@ -60,39 +66,92 @@ void DatasetViewer::enableDigitGrid(int val) {
   updateControls();
 }
 
+void DatasetViewer::listDigitFormat() {
+  QString QItem = ui->listDigitFormat->selectedItems()[0]->text();
+  if (QItem == "Single")
+    DigitFormat = 1;
+  if (QItem == "2x2")
+    DigitFormat = 2;
+  if (QItem == "3x3")
+    DigitFormat = 3;
+  if (QItem == "4x4")
+    DigitFormat = 4;
+  if (QItem == "5x5")
+    DigitFormat = 5;
+  if (QItem == "10x10")
+    DigitFormat = 10;
+  if (QItem == "15x15")
+    DigitFormat = 15;
+  if (QItem == "20x20")
+    DigitFormat = 20;
+
+  updateControls();
+}
+
 void DatasetViewer::DigitRenderer() {
   if (Iterator == Dataset->end())
     return;
-  float dx = ui->glDigit->width() / 28.05f;
-  float dy = ui->glDigit->height() / 28.05f;
+
+  size_t dd = DigitFormat;
+
+  float dx = ui->glDigit->width() / 28.05f / dd;
+  float dy = ui->glDigit->height() / 28.05f / dd;
   glTranslatef(0.1f, 0.1f, 0);
-  if (ui->chkDigitGrid->isChecked()) {
+  NNDataset<>::Iterator Iter = Iterator;
+
+  // digits grid
+  glColor3f(0, 1, 0);
+  glBegin(GL_LINES);
+  for (size_t xx = 0; xx <= dd; ++xx) {
+    glVertex2f(xx * 28 * dx, 0);
+    glVertex2f(xx * 28 * dx, dd * 28 * dy);
+  }
+  for (size_t yy = 0; yy <= dd; ++yy) {
+    glVertex2f(0, (dd - yy) * 28 * dy);
+    glVertex2f(dd * 28 * dx, (dd - yy) * 28 * dy);
+  }
+  glEnd();
+
+  // digit grid
+  if (ui->chkDigitGrid->isChecked() && dd < 3) {
     glColor3f(1, 0, 0);
     glBegin(GL_LINES);
-    for (size_t x = 0; x <= 28; ++x) {
-      glVertex2f(x * dx, 0);
-      glVertex2f(x * dx, 28 * dy);
-    }
-    for (size_t y = 0; y <= 28; ++y) {
-      glVertex2f(0, (28 - y) * dy);
-      glVertex2f(28 * dx, (28 - y) * dy);
-    }
+    for (size_t xx = 0; xx <= dd; ++xx)
+      for (size_t x = 0; x < 28; ++x) {
+        glVertex2f((xx * 28 + x) * dx, 0);
+        glVertex2f((xx * 28 + x) * dx, dd * 28 * dy);
+      }
+    for (size_t yy = 0; yy <= dd; ++yy)
+      for (size_t y = 0; y < 28; ++y) {
+        glVertex2f(0, (28 - y + (dd - yy) * 28) * dy);
+        glVertex2f(dd * 28 * dx, (28 - y + (dd - yy) * 28) * dy);
+      }
     glEnd();
   }
+
+  // digit
   glColor3f(1, 1, 1);
-  if (Dataset->getN() > 0) {
-    glBegin(GL_QUADS);
-    for (size_t y = 0; y < 28; ++y) {
-      for (size_t x = 0; x < 28; ++x) {
-        float pixelColor = (*Iterator)->Data[x + y * 28] / 255.0f;
-        glColor3f(pixelColor, pixelColor, pixelColor);
-        glVertex2f(x * dx, (28 - y) * dy);
-        glVertex2f((x + 1) * dx, (28 - y) * dy);
-        glVertex2f((x + 1) * dx, (28 - y + 1) * dy);
-        glVertex2f(x * dx, (28 - y + 1) * dy);
+  for (size_t yy = 0; yy < dd; ++yy) {
+    for (size_t xx = 0; xx < dd; ++xx) {
+      glBegin(GL_QUADS);
+      for (size_t y = 0; y < 28; ++y) {
+        for (size_t x = 0; x < 28; ++x) {
+          float pixelColor = (*Iter)->Data[x + y * 28] / 255.0f;
+          glColor3f(pixelColor, pixelColor, pixelColor);
+          glVertex2f((xx * 28 + x) * dx, (28 - y + (dd - yy - 1) * 28) * dy);
+          glVertex2f((xx * 28 + x + 1) * dx,
+                     (28 - y + (dd - yy - 1) * 28) * dy);
+          glVertex2f((xx * 28 + x + 1) * dx,
+                     (28 - y + (dd - yy - 1) * 28 + 1) * dy);
+          glVertex2f((xx * 28 + x) * dx,
+                     (28 - y + (dd - yy - 1) * 28 + 1) * dy);
+        }
       }
+      glEnd();
+      Iter++;
+      if (Iter == Dataset->end())
+        return;
     }
-    glEnd();
   }
 }
 
@@ -110,6 +169,7 @@ void DatasetViewer::updateControls() {
   ui->edAccuracy->setText(QString::number(Stat.getAccuracy()));
   ui->edMSE->setText(QString::number(Stat.MSE));
   ui->edErrorRate->setText(QString::number((1 - Stat.getAccuracy()) * 100));
+  ui->edSampleMSE->setText(QString::number((*Iterator)->MSE));
   if (ui->chkAutoTest->isChecked()) {
     updateTestSample();
   }
@@ -165,6 +225,9 @@ void DatasetViewer::applyFilter() {
   if (ui->listFilter->currentItem()->text() == QString("Errors")) {
     Dataset->addFilterByError();
   }
+  if (ui->listFilter->currentItem()->text() == QString("Sort MSE")) {
+    Dataset->sortByMSE();
+  }
   ui->lbAppliedFilter->setText("Active");
   Iterator = Dataset->begin();
   updateControls();
@@ -185,7 +248,16 @@ void DatasetViewer::updateStats() {
 void DatasetViewer::updateTestSample() {
   std::vector<double> Result(10);
   NNFF->feedForward((*Iterator)->Input, Result.data());
-  ui->lbResult->setText(QString::number(NNFeedForward<>::getLabel(Result)));
+  int v = NNFeedForward<>::getLabel(Result);
+  ui->lbResult->setText(QString::number(v));
+  if (v != (*Iterator)->Label)
+    ui->lbResult->setStyleSheet(
+        "border: 2px solid green; border-radius : 4px; padding : 2px; "
+        "background-color : #F01010;");
+  else
+    ui->lbResult->setStyleSheet(
+        "border: 2px solid green; border-radius : 4px; padding : 2px; "
+        "background-color : #F0F010;");
   ui->ed0->setText(QString().sprintf("%6.4f", Result[0]));
   ui->ed1->setText(QString().sprintf("%6.4f", Result[1]));
   ui->ed2->setText(QString().sprintf("%6.4f", Result[2]));

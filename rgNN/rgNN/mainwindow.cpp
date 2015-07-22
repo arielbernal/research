@@ -16,8 +16,6 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  connect(ui->btnStatTraining, SIGNAL(clicked()), this, SLOT(statTraining()));
-  connect(ui->btnStatTest, SIGNAL(clicked()), this, SLOT(statTest()));
   connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadNN()));
   connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveNN()));
   connect(ui->actionStartTraining,
@@ -33,29 +31,27 @@ MainWindow::MainWindow(QWidget* parent)
   connect(timer, SIGNAL(timeout()), this, SLOT(updateGraphs()));
   timer->start(50);
 
-  Training = new NNDataset1<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
-  Test = new NNDataset1<double, uint8_t>(SAMPLE_COLS, SAMPLE_ROWS, 10);
-  Dataset = Training;
-
+  Training = new NNDataset<double, uint8_t>(28, 28, 10);
+  Test = new NNDataset<double, uint8_t>(28, 28, 10);
   Training->load(0,
                  60000,
                  "../data/train-images.idx3-ubyte",
                  "../data/train-labels.idx1-ubyte",
                  16,
                  8);
-
+  Training->preProcessingInputs();
   Test->load(0,
              10000,
              "../data/t10k-images.idx3-ubyte",
              "../data/t10k-labels.idx1-ubyte",
              16,
              8);
+  Test->preProcessingInputs(Training->getMeanSample());
 
-  Test->setMeanVector(Training->getMeanVector());
-  Test->normalizeInputs();
-  Test->processInputs();
+  //Training->addNoiseSaltPepper();
+  Training->preProcessingInputs(Training->getMeanSample());
 
-  nnff = new NNFeedForward<double>(28 * 28, 150, 10);
+  nnff = new NNFeedForward<double>(28 * 28, 300, 10);
   auto fp1 = std::bind(&MainWindow::NNProgress,
                        this,
                        std::placeholders::_1,
@@ -83,60 +79,21 @@ MainWindow::MainWindow(QWidget* parent)
   statId = 0;
   isGraphUpdated = false;
 
-  NNDataset<>* Training1 = new NNDataset<>(28, 28, 10);
-  Training1->load(0,
-                   60000,
-                   "../data/train-images.idx3-ubyte",
-                   "../data/train-labels.idx1-ubyte",
-                   16,
-                   8);
-
-  NNDataset<>* Test1 = new NNDataset<>(28, 28, 10);
-  Test1->load(0,
-                   10000,
-                   "../data/t10k-images.idx3-ubyte",
-                   "../data/t10k-labels.idx1-ubyte",
-                   16,
-                   8);
-
-  Test1->setMeanSample(Training1->getMeanSample());
-  Test1->normalizeInputs();
-  Test1->processInputs();
-
-  DatasetViewer* pDialog =
-      new DatasetViewer("Testing Dataset", Test1, nnff);
-  pDialog->show();
-  DatasetViewer* pDialog1 =
-      new DatasetViewer("Training Dataset", Training1, nnff);
-  pDialog1->show();
+  pDialogTesting = new DatasetViewer("Testing Dataset", Test, nnff, this);
+  pDialogTesting->show();
+  pDialogTraining = new DatasetViewer("Training Dataset", Training, nnff, this);
+  pDialogTraining->show();
 }
 
 MainWindow::~MainWindow() {
   delete ui;
 }
 
-
-void MainWindow::statTraining() {
-  Dataset = Training;
-  nnff->statistics(Training, stat);
-  std::cout << "Training statistics Errors = " << stat.Errors
-            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
-            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
-            << std::endl;
-}
-
-void MainWindow::statTest() {
-  Dataset = Test;
-  nnff->statistics(Test, stat);
-  std::cout << "Test statistics  Errors = " << stat.Errors
-            << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
-            << " Error = " << (1 - stat.getAccuracy()) * 100 << "%"
-            << std::endl;
+void MainWindow::closeEvent(QCloseEvent*) {
 }
 
 void MainWindow::loadNN() {
-  nnff->load("../data/MNIST/NN150-LR0.00001-TR0.0083-T2.14.json");
-  NNStatistics<double> stat;
+  nnff->load("../data/MNIST/NN.json");
   nnff->statistics(Test, stat);
   std::cout << "Loaded statistics  Errors = " << stat.Errors
             << " MSE = " << stat.MSE << " Accuracy = " << stat.getAccuracy()
@@ -178,18 +135,6 @@ void MainWindow::stopTraining() {
   }
   ui->actionStartTraining->setDisabled(false);
   ui->actionStopTraining->setDisabled(true);
-}
-
-size_t getLabel(std::vector<double>& Result) {
-  double vmax = Result[0];
-  size_t imax = 0;
-  for (size_t i = 0; i < Result.size(); ++i) {
-    if (Result[i] > vmax) {
-      vmax = Result[i];
-      imax = i;
-    }
-  }
-  return imax;
 }
 
 void MainWindow::NNProgress(size_t i, NNStatistics<double>& Stat) {
