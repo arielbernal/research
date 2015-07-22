@@ -13,6 +13,8 @@
 
 #if WIN32
 #include <windows.h>
+#else
+#include <keyboard_linux.h>
 #endif
 
 MainWindow::MainWindow(QWidget* parent)
@@ -72,10 +74,19 @@ MainWindow::~MainWindow() {
 
 void MainWindow::checkKeyPressed() {
   unsigned char pressed = 0;
+#if WIN32
   if (GetAsyncKeyState(int('A')) && 0x8000)
     pressed = 0x1;
   if (GetAsyncKeyState(int('S')) && 0x8000)
     pressed = pressed | 0x2;
+#else
+  if (kb.getKeyState(int('A')) && 0x8000)
+    pressed = 0x1;
+  if (kb.getKeyState(int('S')) && 0x8000)
+    pressed = pressed | 0x2;
+
+#endif
+
   if ((pressed & 0x01) != 0)
     vMotors[0] += 4;
   else
@@ -85,25 +96,24 @@ void MainWindow::checkKeyPressed() {
   else
     vMotors[1] -= 4;
   if (vMotors[0] < 0)
-   vMotors[0] = 0;
+    vMotors[0] = 0;
   if (vMotors[1] < 0)
-   vMotors[1] = 0;
+    vMotors[1] = 0;
 
-//  if (pressed != 0) {
-    if (vMotors[0] > 100)
-      vMotors[0] = 100;
-    if (vMotors[1] > 100)
-      vMotors[1] = 100;
-    if (vMotors[0] >= 0)
-      ui->motorLeft->setValue(vMotors[0]);
-    else
-      ui->motorLeft->setValue(0);
-    if (vMotors[1] >= 0)
-      ui->motorRight->setValue(vMotors[1]);
-    else
-      ui->motorRight->setValue(0);
-//  }
-
+  //  if (pressed != 0) {
+  if (vMotors[0] > 100)
+    vMotors[0] = 100;
+  if (vMotors[1] > 100)
+    vMotors[1] = 100;
+  if (vMotors[0] >= 0)
+    ui->motorLeft->setValue(vMotors[0]);
+  else
+    ui->motorLeft->setValue(0);
+  if (vMotors[1] >= 0)
+    ui->motorRight->setValue(vMotors[1]);
+  else
+    ui->motorRight->setValue(0);
+  //  }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

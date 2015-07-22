@@ -31,20 +31,20 @@ public:
 
 
   void render() {
-    Center = (CenterLeft + CenterRight) / 2.0f;
-    glPushMatrix();
-    glTranslatef(Center.x, WHeight - Center.y, 0.0f);
-    glRotatef(getAngle(), 0, 0, 1);
-    glColor3f(1, 0, 0);
-    glBegin(GL_LINES);
-    glVertex2f(0, 0);
-    glVertex2f(50, 0);
-    glEnd();
-    glColor3f(0, 0, 0);
-    glp::disk(5);
-    glColor3f(1, 1, 1);
+//    Center = (CenterLeft + CenterRight) / 2 ;
+//    glPushMatrix();
+//    glTranslatef(Center.x, WHeight - Center.y, 0.0f);
+//    glRotatef(getAngle(), 0, 0, 1);
+//    glColor3f(1, 0, 0);
+//    glBegin(GL_LINES);
+//    glVertex2f(0, 0);
+//    glVertex2f(50, 0);
+//    glEnd();
+//    glColor3f(0, 0, 0);
+//    glp::disk(5);
+//    glColor3f(1, 1, 1);
 
-    glPopMatrix();
+//    glPopMatrix();
   }
 };
 
