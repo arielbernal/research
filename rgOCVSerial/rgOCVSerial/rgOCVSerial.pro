@@ -28,7 +28,8 @@ HEADERS  += mainwindow.h \
     ocvTools/imageglwidget.h \
     oglTools/glprimitivies.h \
     detect.h \
-    oglTools/fps.h
+    oglTools/fps.h \
+    keyboard_linux.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

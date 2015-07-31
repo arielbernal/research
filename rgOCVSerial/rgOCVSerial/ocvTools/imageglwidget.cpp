@@ -42,9 +42,15 @@ void ImageGLWidget::paintGL() {
   if (FPSEnable) {
     float fpsVal = fps.update();
     char str[20];
+#if WIN32
     sprintf_s(str, "FPS = %5.2f", fpsVal);
     cv::putText(Image, str, cv::Point(width()/2, 25), CV_FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar::all(255));
+#else
+    snprintf(str, 20, "FPS = %5.2f", fpsVal);
+    cv::putText(Image, str, cv::Point(width()/2, 25), cv::FONT_HERSHEY_SIMPLEX, 1,
+                cv::Scalar::all(255));
+#endif
   }
 
   if (CallbackRenderer) {

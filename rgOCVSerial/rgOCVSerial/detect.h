@@ -7,6 +7,50 @@
 #include <ocvTools/imageshow.h>
 #include <oglTools/fps.h>
 
+<<<<<<< HEAD
+=======
+class RobotCV {
+public:
+  RobotCV() : WWidth(0), WHeight(0) {}
+
+  cv::Point Center;
+  cv::Point CenterLeft;
+  cv::Point CenterRight;
+  size_t WWidth;
+  size_t WHeight;
+
+  void init(size_t W, size_t H) {
+    WWidth = W;
+    WHeight = H;
+  }
+
+  float getAngle() {
+    float dx = CenterRight.x - CenterLeft.x;
+    float dy = CenterRight.y - CenterLeft.y;
+    float ap = atan2(dx, dy) + 3.14159265;
+    return ap / 3.14159265358f * 180;
+  }
+
+
+  void render() {
+//    Center = (CenterLeft + CenterRight) / 2 ;
+//    glPushMatrix();
+//    glTranslatef(Center.x, WHeight - Center.y, 0.0f);
+//    glRotatef(getAngle(), 0, 0, 1);
+//    glColor3f(1, 0, 0);
+//    glBegin(GL_LINES);
+//    glVertex2f(0, 0);
+//    glVertex2f(50, 0);
+//    glEnd();
+//    glColor3f(0, 0, 0);
+//    glp::disk(5);
+//    glColor3f(1, 1, 1);
+
+//    glPopMatrix();
+  }
+};
+
+>>>>>>> 2a016ff8f3049abc75a66feadd4b5cab4e94226b
 class RobotDetect : public QObject {
   Q_OBJECT
 public:
