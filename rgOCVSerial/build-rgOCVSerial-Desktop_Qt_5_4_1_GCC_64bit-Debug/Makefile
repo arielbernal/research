@@ -195,8 +195,7 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		../rgOCVSerial/ocvTools/imageglwidget.h \
 		../rgOCVSerial/oglTools/glprimitivies.h \
 		../rgOCVSerial/detect.h \
-		../rgOCVSerial/oglTools/fps.h \
-		../rgOCVSerial/keyboard_linux.h ../rgOCVSerial/main.cpp \
+		../rgOCVSerial/oglTools/fps.h ../rgOCVSerial/main.cpp \
 		../rgOCVSerial/mainwindow.cpp \
 		../rgOCVSerial/settingsdialog.cpp \
 		../rgOCVSerial/ocvTools/imageglwidget.cpp \
@@ -491,7 +490,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgOCVSerial/icons.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.h ../rgOCVSerial/settingsdialog.h ../rgOCVSerial/robot.h ../rgOCVSerial/ocvTools/imageshow.h ../rgOCVSerial/ocvTools/imagedialog.h ../rgOCVSerial/ocvTools/imageglwidget.h ../rgOCVSerial/oglTools/glprimitivies.h ../rgOCVSerial/detect.h ../rgOCVSerial/oglTools/fps.h ../rgOCVSerial/keyboard_linux.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.h ../rgOCVSerial/settingsdialog.h ../rgOCVSerial/robot.h ../rgOCVSerial/ocvTools/imageshow.h ../rgOCVSerial/ocvTools/imagedialog.h ../rgOCVSerial/ocvTools/imageglwidget.h ../rgOCVSerial/oglTools/glprimitivies.h ../rgOCVSerial/detect.h ../rgOCVSerial/oglTools/fps.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgOCVSerial/main.cpp ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/settingsdialog.cpp ../rgOCVSerial/ocvTools/imageglwidget.cpp ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/oglTools/glprimitives.cpp ../rgOCVSerial/detect.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.ui ../rgOCVSerial/settingsdialog.ui ../rgOCVSerial/imagedialog.ui $(DISTDIR)/
 
@@ -1509,8 +1508,7 @@ mainwindow.o: ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QVBoxLayout \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportinfo.h \
-		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QKeyEvent \
-		../rgOCVSerial/keyboard_linux.h
+		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/QKeyEvent
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../rgOCVSerial/mainwindow.cpp
 
 settingsdialog.o: ../rgOCVSerial/settingsdialog.cpp ../rgOCVSerial/settingsdialog.h \

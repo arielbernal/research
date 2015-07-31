@@ -14,7 +14,13 @@
 #if WIN32
 #include <windows.h>
 #else
-#include <keyboard_linux.h>
+int GetAsyncKeyState(int k) {
+  return 0;
+}
+#define VK_NUMPAD7 7
+#define VK_NUMPAD4 4
+#define VK_NUMPAD9 9
+#define VK_NUMPAD6 6
 #endif
 
 MainWindow::MainWindow(QWidget* parent)
@@ -78,7 +84,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::checkKeyPressed() {
-<<<<<<< HEAD
   int vstop = 15;
   int vmove = 10;
   if (GetAsyncKeyState(VK_NUMPAD7)) {
@@ -88,11 +93,13 @@ void MainWindow::checkKeyPressed() {
   } else {
     if (vMotors[0] > 0) {
       vMotors[0] -= vstop;
-      if (vMotors[0] < 0) vMotors[0] = 0;
+      if (vMotors[0] < 0)
+        vMotors[0] = 0;
     }
     if (vMotors[0] < 0) {
       vMotors[0] += vstop;
-      if (vMotors[0] > 0) vMotors[0] = 0;
+      if (vMotors[0] > 0)
+        vMotors[0] = 0;
     }
   }
   if (vMotors[0] > 100)
@@ -107,11 +114,13 @@ void MainWindow::checkKeyPressed() {
   } else {
     if (vMotors[1] > 0) {
       vMotors[1] -= vstop;
-      if (vMotors[1] < 0) vMotors[1] = 0;
+      if (vMotors[1] < 0)
+        vMotors[1] = 0;
     }
     if (vMotors[1] < 0) {
       vMotors[1] += vstop;
-      if (vMotors[1] > 0) vMotors[1] = 0;
+      if (vMotors[1] > 0)
+        vMotors[1] = 0;
     }
   }
 
@@ -136,95 +145,7 @@ void MainWindow::checkKeyPressed() {
     ui->motorRightF->setValue(0);
   }
   writeSomedata();
-=======
-  unsigned char pressed = 0;
-#if WIN32
-  if (GetAsyncKeyState(int('A')) && 0x8000)
-    pressed = 0x1;
-  if (GetAsyncKeyState(int('S')) && 0x8000)
-    pressed = pressed | 0x2;
-#else
-  if (kb.getKeyState(int('A')) && 0x8000)
-    pressed = 0x1;
-  if (kb.getKeyState(int('S')) && 0x8000)
-    pressed = pressed | 0x2;
-
-#endif
-
-  if ((pressed & 0x01) != 0)
-    vMotors[0] += 4;
-  else
-    vMotors[0] -= 4;
-  if ((pressed & 0x02) != 0)
-    vMotors[1] += 4;
-  else
-    vMotors[1] -= 4;
-  if (vMotors[0] < 0)
-    vMotors[0] = 0;
-  if (vMotors[1] < 0)
-    vMotors[1] = 0;
-
-  //  if (pressed != 0) {
-  if (vMotors[0] > 100)
-    vMotors[0] = 100;
-  if (vMotors[1] > 100)
-    vMotors[1] = 100;
-  if (vMotors[0] >= 0)
-    ui->motorLeft->setValue(vMotors[0]);
-  else
-    ui->motorLeft->setValue(0);
-  if (vMotors[1] >= 0)
-    ui->motorRight->setValue(vMotors[1]);
-  else
-    ui->motorRight->setValue(0);
-  //  }
->>>>>>> 2a016ff8f3049abc75a66feadd4b5cab4e94226b
 }
-
-// void MainWindow::checkKeyPressed() {
-//  int vr = 2;
-//  int vf = 10;
-
-//  if (GetAsyncKeyState(VK_UP)) {
-//    v += vf;
-//  } else if ((GetAsyncKeyState(VK_DOWN))) {
-//    v -= vf;
-//  }
-//  v = v < 0 ? 0 : v > 100 ? 100 : v;
-
-//  if (GetAsyncKeyState(VK_LEFT)) {
-//    w += vr;
-//  } else if ((GetAsyncKeyState(VK_RIGHT))) {
-//    w -= vr;
-//  }
-//  w = w < -100 ? -100 : w > 100 ? 100 : w;
-//  vMotors[0] = v - w;
-//  vMotors[1] = v + w;
-
-//  if (vMotors[0] > 100)    vMotors[0] = 100;
-//  else if (vMotors[0] < -100)   vMotors[0] = -100;
-
-//  if (vMotors[1] > 100)   vMotors[1] = 100;
-//  else if (vMotors[1] < -100)  vMotors[1] = -100;
-
-//  if (vMotors[0] >= 0) {
-//    ui->motorLeftF->setValue(vMotors[0]);
-//    ui->motorLeftB->setValue(0);
-//  } else {
-//    ui->motorLeftB->setValue(-vMotors[0]);
-//    ui->motorLeftF->setValue(0);
-//  }
-
-//  if (vMotors[1] >= 0) {
-//    ui->motorRightF->setValue(vMotors[1]);
-//    ui->motorRightB->setValue(0);
-//  } else {
-//    ui->motorRightB->setValue(-vMotors[1]);
-//    ui->motorRightF->setValue(0);
-//  }
-
-//  writeSomedata();
-//}
 
 void MainWindow::closeEvent(QCloseEvent* event) {
   glp::CloseAllImages();
