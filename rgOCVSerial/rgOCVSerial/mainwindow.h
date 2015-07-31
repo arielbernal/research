@@ -49,5 +49,6 @@ private:
   int bytesTotalRead;
 
   float vMotors[2];
+  float v,w;
 };
 #endif // MAINWINDOW_H

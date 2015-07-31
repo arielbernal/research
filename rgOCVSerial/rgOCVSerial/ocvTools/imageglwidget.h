@@ -24,10 +24,8 @@ public:
 
   void setCallbackRenderer(std::function<void()> Func) {
     CallbackRenderer = Func;
-    isCallbackEnabled = true;
   }
 
-  void disableCallbackRenderer() { isCallbackEnabled = false; }
 
 protected:
   void mousePressEvent(QMouseEvent *event);
@@ -46,7 +44,6 @@ private:
   bool FPSEnable;
   uchar FPSPos;
 
-  bool isCallbackEnabled;
   std::function<void()> CallbackRenderer;
 };
 

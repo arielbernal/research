@@ -47,9 +47,10 @@ void ImageGLWidget::paintGL() {
                 cv::Scalar::all(255));
   }
 
-  if (isCallbackEnabled) {
+  if (CallbackRenderer) {
     CallbackRenderer();
   }
+
   glp::setTexture(TextureId, Image.cols, Image.rows, DataFormat, Image.ptr());
   glp::renderTexture(TextureId, 0, 0, width(), height());
 

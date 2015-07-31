@@ -55,14 +55,19 @@ MainWindow::MainWindow(QWidget* parent)
 
   detect = new RobotDetect();
   receiveData = false;
-  ui->motorLeft->setValue(0);
-  ui->motorRight->setValue(0);
+  ui->motorLeftF->setValue(0);
+  ui->motorLeftB->setValue(0);
+  ui->motorRightF->setValue(0);
+  ui->motorRightB->setValue(0);
 
   vMotors[0] = 0;
   vMotors[1] = 0;
+  v = 0;
+  w = 0;
+
   QTimer* mTimer = new QTimer();
   connect(mTimer, SIGNAL(timeout()), this, SLOT(checkKeyPressed()));
-  mTimer->start(20);
+  mTimer->start(50);
 }
 
 MainWindow::~MainWindow() {
@@ -71,40 +76,109 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::checkKeyPressed() {
-  unsigned char pressed = 0;
-  if (GetAsyncKeyState(int('A')) && 0x8000)
-    pressed = 0x1;
-  if (GetAsyncKeyState(int('S')) && 0x8000)
-    pressed = pressed | 0x2;
-  if ((pressed & 0x01) != 0)
-    vMotors[0] += 4;
-  else
-    vMotors[0] -= 4;
-  if ((pressed & 0x02) != 0)
-    vMotors[1] += 4;
-  else
-    vMotors[1] -= 4;
-  if (vMotors[0] < 0)
-   vMotors[0] = 0;
-  if (vMotors[1] < 0)
-   vMotors[1] = 0;
+  int vstop = 15;
+  int vmove = 10;
+  if (GetAsyncKeyState(VK_NUMPAD7)) {
+    vMotors[0] += vmove;
+  } else if ((GetAsyncKeyState(VK_NUMPAD4))) {
+    vMotors[0] -= vmove;
+  } else {
+    if (vMotors[0] > 0) {
+      vMotors[0] -= vstop;
+      if (vMotors[0] < 0) vMotors[0] = 0;
+    }
+    if (vMotors[0] < 0) {
+      vMotors[0] += vstop;
+      if (vMotors[0] > 0) vMotors[0] = 0;
+    }
+  }
+  if (vMotors[0] > 100)
+    vMotors[0] = 100;
+  else if (vMotors[0] < -100)
+    vMotors[0] = -100;
 
-//  if (pressed != 0) {
-    if (vMotors[0] > 100)
-      vMotors[0] = 100;
-    if (vMotors[1] > 100)
-      vMotors[1] = 100;
-    if (vMotors[0] >= 0)
-      ui->motorLeft->setValue(vMotors[0]);
-    else
-      ui->motorLeft->setValue(0);
-    if (vMotors[1] >= 0)
-      ui->motorRight->setValue(vMotors[1]);
-    else
-      ui->motorRight->setValue(0);
+  if (GetAsyncKeyState(VK_NUMPAD9)) {
+    vMotors[1] += vmove;
+  } else if ((GetAsyncKeyState(VK_NUMPAD6))) {
+    vMotors[1] -= vmove;
+  } else {
+    if (vMotors[1] > 0) {
+      vMotors[1] -= vstop;
+      if (vMotors[1] < 0) vMotors[1] = 0;
+    }
+    if (vMotors[1] < 0) {
+      vMotors[1] += vstop;
+      if (vMotors[1] > 0) vMotors[1] = 0;
+    }
+  }
+
+  if (vMotors[1] > 100)
+    vMotors[1] = 100;
+  else if (vMotors[1] < -100)
+    vMotors[1] = -100;
+
+  if (vMotors[0] >= 0) {
+    ui->motorLeftF->setValue(vMotors[0]);
+    ui->motorLeftB->setValue(0);
+  } else {
+    ui->motorLeftB->setValue(-vMotors[0]);
+    ui->motorLeftF->setValue(0);
+  }
+
+  if (vMotors[1] >= 0) {
+    ui->motorRightF->setValue(vMotors[1]);
+    ui->motorRightB->setValue(0);
+  } else {
+    ui->motorRightB->setValue(-vMotors[1]);
+    ui->motorRightF->setValue(0);
+  }
+  writeSomedata();
+}
+
+// void MainWindow::checkKeyPressed() {
+//  int vr = 2;
+//  int vf = 10;
+
+//  if (GetAsyncKeyState(VK_UP)) {
+//    v += vf;
+//  } else if ((GetAsyncKeyState(VK_DOWN))) {
+//    v -= vf;
+//  }
+//  v = v < 0 ? 0 : v > 100 ? 100 : v;
+
+//  if (GetAsyncKeyState(VK_LEFT)) {
+//    w += vr;
+//  } else if ((GetAsyncKeyState(VK_RIGHT))) {
+//    w -= vr;
+//  }
+//  w = w < -100 ? -100 : w > 100 ? 100 : w;
+//  vMotors[0] = v - w;
+//  vMotors[1] = v + w;
+
+//  if (vMotors[0] > 100)    vMotors[0] = 100;
+//  else if (vMotors[0] < -100)   vMotors[0] = -100;
+
+//  if (vMotors[1] > 100)   vMotors[1] = 100;
+//  else if (vMotors[1] < -100)  vMotors[1] = -100;
+
+//  if (vMotors[0] >= 0) {
+//    ui->motorLeftF->setValue(vMotors[0]);
+//    ui->motorLeftB->setValue(0);
+//  } else {
+//    ui->motorLeftB->setValue(-vMotors[0]);
+//    ui->motorLeftF->setValue(0);
 //  }
 
-}
+//  if (vMotors[1] >= 0) {
+//    ui->motorRightF->setValue(vMotors[1]);
+//    ui->motorRightB->setValue(0);
+//  } else {
+//    ui->motorRightB->setValue(-vMotors[1]);
+//    ui->motorRightF->setValue(0);
+//  }
+
+//  writeSomedata();
+//}
 
 void MainWindow::closeEvent(QCloseEvent* event) {
   glp::CloseAllImages();
@@ -179,9 +253,9 @@ void MainWindow::closeSerialPort() {
 }
 
 void MainWindow::writeSomedata() {
-  char v[2] = {0, 0};
+  char v[2] = {-int(vMotors[0]), -int(vMotors[1])};
   size_t bwrite = serial->write(v, 2);
-  std::cout << "Bytes written = " << bwrite << std::endl;
+  // std::cout << "Bytes written = " << bwrite << std::endl;
   bytesTotalRead = 0;
   bytesRead = 0;
   receiveData = true;
