@@ -26,6 +26,8 @@ class MainWindow : public QMainWindow {
   void cameraOn();
   void cameraOff();
   void checkKeyPressed();
+  void startCapture();
+  void stopCapture();
 
  protected:
   void closeEvent(QCloseEvent* event);

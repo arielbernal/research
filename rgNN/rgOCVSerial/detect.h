@@ -4,13 +4,14 @@
 #include <QObject>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
-#include <ocvTools/imageshow.h>
-#include <oglTools/fps.h>
+#include <../common/ocvTools/imageshow.h>
+#include <../common/oglTools/fps.h>
+#include <fstream>
 
 class RobotDetect : public QObject {
   Q_OBJECT
  public:
-  RobotDetect() : captureFrames(false) { timer = new QTimer(this); }
+  RobotDetect() : captureFrames(false), timer(new QTimer(this)) {}
   ~RobotDetect() {
     std::cout << "Camera Released" << std::endl;
     cap.release();
@@ -39,11 +40,17 @@ class RobotDetect : public QObject {
 
   void startCapture() {
     if (cap.isOpened()) {
-      captureFrames = true;
+      ofs.open("../data/video_capture/video.raw");
+      if (ofs.is_open()) {
+        captureFrames = true;
+      }
     }
   }
 
-  void stopCapture() { captureFrames = false; }
+  void stopCapture() {
+    captureFrames = false;
+    ofs.close();
+  }
 
   bool turnCameraOff() {
     cap.release();
@@ -58,11 +65,16 @@ class RobotDetect : public QObject {
       saveFrame(greyMat);
     }
     glp::ShowImage("Frame", greyMat);
-  //  glp::EnableImageFPS("Frame", true);
+    //  glp::EnableImageFPS("Frame", true);
   }
 
  protected:
-  void saveFrame(const cv::Mat& mat) {}
+  void saveFrame(const cv::Mat& mat) {
+    const uchar* p = mat.ptr();
+    for (int i = 0; i < CamWidth * CamHeight; ++i) {
+      ofs << p[i];
+    }
+  }
 
  private:
   size_t CamWidth;
@@ -72,6 +84,7 @@ class RobotDetect : public QObject {
   cv::Mat Frame, greyMat;
   QTimer* timer;
   bool captureFrames;
+  std::ofstream ofs;
 };
 
 #endif  // DETECT

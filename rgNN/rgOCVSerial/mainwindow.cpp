@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <ocvTools/imageshow.h>
+#include <../common/ocvTools/imageshow.h>
 #include <QKeyEvent>
 #include <QTimer>
 
@@ -52,6 +52,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionCameraOn, SIGNAL(triggered()), this, SLOT(cameraOn()));
   connect(ui->actionCameraOff, SIGNAL(triggered()), this, SLOT(cameraOff()));
+  connect(ui->btnStartCapture, SIGNAL(clicked()), this, SLOT(startCapture()));
+  connect(ui->btnStopCapture, SIGNAL(clicked()), this, SLOT(stopCapture()));
 
   detect = new RobotDetect();
   receiveData = false;
@@ -73,6 +75,15 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow() {
   delete detect;
   delete ui;
+}
+
+
+void MainWindow::startCapture() {
+   detect->startCapture();
+}
+
+void MainWindow::stopCapture() {
+  detect->stopCapture();
 }
 
 void MainWindow::checkKeyPressed() {

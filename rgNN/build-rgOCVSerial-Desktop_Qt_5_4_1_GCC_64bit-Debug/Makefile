@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = rgOCVSerial1.0.0
-DISTDIR = /home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/.tmp/rgOCVSerial1.0.0
+DISTDIR = /home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/.tmp/rgOCVSerial1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64 -Wl,-rpath,/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib
 LIBS          = $(SUBLIBS) -lGLEW -lGLU -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc -lopencv_videoio -L/home/ajbernal/ssd1/research/qt/5.4/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
@@ -51,9 +51,9 @@ OBJECTS_DIR   = ./
 SOURCES       = ../rgOCVSerial/main.cpp \
 		../rgOCVSerial/mainwindow.cpp \
 		../rgOCVSerial/settingsdialog.cpp \
-		../rgOCVSerial/ocvTools/imageglwidget.cpp \
-		../rgOCVSerial/ocvTools/imagedialog.cpp \
-		../rgOCVSerial/oglTools/glprimitives.cpp \
+		../common/ocvTools/imageglwidget.cpp \
+		../common/ocvTools/imagedialog.cpp \
+		../common/oglTools/glprimitives.cpp \
 		../rgOCVSerial/detect.cpp qrc_icons.cpp \
 		moc_mainwindow.cpp \
 		moc_settingsdialog.cpp \
@@ -189,17 +189,17 @@ DIST          = /media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/spe
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/mkspecs/features/lex.prf \
 		../rgOCVSerial/rgOCVSerial.pro ../rgOCVSerial/mainwindow.h \
 		../rgOCVSerial/settingsdialog.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
-		../rgOCVSerial/detect.h \
-		../rgOCVSerial/oglTools/fps.h ../rgOCVSerial/main.cpp \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
+		../common/ocvTools/imageglwidget.h \
+		../common/oglTools/glprimitivies.h \
+		../common/oglTools/fps.h \
+		../rgOCVSerial/detect.h ../rgOCVSerial/main.cpp \
 		../rgOCVSerial/mainwindow.cpp \
 		../rgOCVSerial/settingsdialog.cpp \
-		../rgOCVSerial/ocvTools/imageglwidget.cpp \
-		../rgOCVSerial/ocvTools/imagedialog.cpp \
-		../rgOCVSerial/oglTools/glprimitives.cpp \
+		../common/ocvTools/imageglwidget.cpp \
+		../common/ocvTools/imagedialog.cpp \
+		../common/oglTools/glprimitives.cpp \
 		../rgOCVSerial/detect.cpp
 QMAKE_TARGET  = rgOCVSerial
 DESTDIR       = #avoid trailing-slash linebreak
@@ -489,9 +489,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../rgOCVSerial/icons.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.h ../rgOCVSerial/settingsdialog.h ../rgOCVSerial/ocvTools/imageshow.h ../rgOCVSerial/ocvTools/imagedialog.h ../rgOCVSerial/ocvTools/imageglwidget.h ../rgOCVSerial/oglTools/glprimitivies.h ../rgOCVSerial/detect.h ../rgOCVSerial/oglTools/fps.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgOCVSerial/main.cpp ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/settingsdialog.cpp ../rgOCVSerial/ocvTools/imageglwidget.cpp ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/oglTools/glprimitives.cpp ../rgOCVSerial/detect.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.ui ../rgOCVSerial/settingsdialog.ui ../rgOCVSerial/imagedialog.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.h ../rgOCVSerial/settingsdialog.h ../common/ocvTools/imageshow.h ../common/ocvTools/imagedialog.h ../common/ocvTools/imageglwidget.h ../common/oglTools/glprimitivies.h ../common/oglTools/fps.h ../rgOCVSerial/detect.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgOCVSerial/main.cpp ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/settingsdialog.cpp ../common/ocvTools/imageglwidget.cpp ../common/ocvTools/imagedialog.cpp ../common/oglTools/glprimitives.cpp ../rgOCVSerial/detect.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../rgOCVSerial/mainwindow.ui ../rgOCVSerial/settingsdialog.ui ../common/imagedialog.ui $(DISTDIR)/
 
 
 clean:compiler_clean 
@@ -657,9 +657,9 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -669,12 +669,12 @@ moc_mainwindow.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidget
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		../rgOCVSerial/mainwindow.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/mainwindow.h -o moc_mainwindow.cpp
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/mainwindow.h -o moc_mainwindow.cpp
 
 moc_settingsdialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
@@ -783,7 +783,7 @@ moc_settingsdialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWi
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialport.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtSerialPort/qserialportglobal.h \
 		../rgOCVSerial/settingsdialog.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/settingsdialog.h -o moc_settingsdialog.cpp
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/settingsdialog.h -o moc_settingsdialog.cpp
 
 moc_imagedialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
@@ -888,7 +888,7 @@ moc_imagedialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidge
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -898,12 +898,12 @@ moc_imagedialog.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidge
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
-		../rgOCVSerial/ocvTools/imagedialog.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/ocvTools/imagedialog.h -o moc_imagedialog.cpp
+		../common/oglTools/fps.h \
+		../common/ocvTools/imagedialog.h
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../common/ocvTools/imagedialog.h -o moc_imagedialog.cpp
 
 moc_imageglwidget.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
@@ -1015,12 +1015,12 @@ moc_imageglwidget.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWid
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/ocvTools/imageglwidget.h -o moc_imageglwidget.cpp
+		../common/oglTools/fps.h \
+		../common/ocvTools/imageglwidget.h
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../common/ocvTools/imageglwidget.h -o moc_imageglwidget.cpp
 
 moc_detect.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qmessagebox.h \
@@ -1130,10 +1130,10 @@ moc_detect.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QM
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -1143,12 +1143,12 @@ moc_detect.cpp: /media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QM
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		../rgOCVSerial/detect.h
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgOCVSerial/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/detect.h -o moc_detect.cpp
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/moc $(DEFINES) -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial -I/home/ajbernal/dev/bat/research/rgNN/rgOCVSerial/-I/usr/local/include/opencv -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtOpenGL -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtWidgets -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtGui -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtSerialPort -I/home/ajbernal/ssd1/research/qt/5.4/gcc_64/include/QtCore -I. ../rgOCVSerial/detect.h -o moc_detect.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1161,8 +1161,8 @@ ui_mainwindow.h: ../rgOCVSerial/mainwindow.ui
 ui_settingsdialog.h: ../rgOCVSerial/settingsdialog.ui
 	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/uic ../rgOCVSerial/settingsdialog.ui -o ui_settingsdialog.h
 
-ui_imagedialog.h: ../rgOCVSerial/imagedialog.ui
-	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/uic ../rgOCVSerial/imagedialog.ui -o ui_imagedialog.h
+ui_imagedialog.h: ../common/imagedialog.ui
+	/home/ajbernal/ssd1/research/qt/5.4/gcc_64/bin/uic ../common/imagedialog.ui -o ui_imagedialog.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -1293,9 +1293,9 @@ main.o: ../rgOCVSerial/main.cpp ../rgOCVSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -1305,10 +1305,10 @@ main.o: ../rgOCVSerial/main.cpp ../rgOCVSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QApplication \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qapplication.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1437,9 +1437,9 @@ mainwindow.o: ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -1449,10 +1449,10 @@ mainwindow.o: ../rgOCVSerial/mainwindow.cpp ../rgOCVSerial/mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		ui_mainwindow.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
@@ -1669,7 +1669,7 @@ settingsdialog.o: ../rgOCVSerial/settingsdialog.cpp ../rgOCVSerial/settingsdialo
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o settingsdialog.o ../rgOCVSerial/settingsdialog.cpp
 
-imageglwidget.o: ../rgOCVSerial/ocvTools/imageglwidget.cpp ../rgOCVSerial/ocvTools/imageglwidget.h \
+imageglwidget.o: ../common/ocvTools/imageglwidget.cpp ../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
@@ -1780,16 +1780,16 @@ imageglwidget.o: ../rgOCVSerial/ocvTools/imageglwidget.cpp ../rgOCVSerial/ocvToo
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imageglwidget.o ../rgOCVSerial/ocvTools/imageglwidget.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imageglwidget.o ../common/ocvTools/imageglwidget.cpp
 
-imagedialog.o: ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/ocvTools/imagedialog.h \
+imagedialog.o: ../common/ocvTools/imagedialog.cpp ../common/ocvTools/imagedialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qdialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qwidget.h \
@@ -1893,7 +1893,7 @@ imagedialog.o: ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/ocvTools/i
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qfiledevice.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qvector2d.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qtouchdevice.h \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -1903,10 +1903,10 @@ imagedialog.o: ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/ocvTools/i
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h \
+		../common/oglTools/fps.h \
 		ui_imagedialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QVariant \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QAction \
@@ -1945,10 +1945,10 @@ imagedialog.o: ../rgOCVSerial/ocvTools/imagedialog.cpp ../rgOCVSerial/ocvTools/i
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayout.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qlayoutitem.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qgridlayout.h \
-		../rgOCVSerial/ocvTools/imageshow.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagedialog.o ../rgOCVSerial/ocvTools/imagedialog.cpp
+		../common/ocvTools/imageshow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagedialog.o ../common/ocvTools/imagedialog.cpp
 
-glprimitives.o: ../rgOCVSerial/oglTools/glprimitives.cpp ../rgOCVSerial/oglTools/glprimitivies.h \
+glprimitives.o: ../common/oglTools/glprimitives.cpp ../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qglobal.h \
@@ -2059,7 +2059,7 @@ glprimitives.o: ../rgOCVSerial/oglTools/glprimitives.cpp ../rgOCVSerial/oglTools
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glprimitives.o ../rgOCVSerial/oglTools/glprimitives.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glprimitives.o ../common/oglTools/glprimitives.cpp
 
 detect.o: ../rgOCVSerial/detect.cpp ../rgOCVSerial/detect.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QMessageBox \
@@ -2170,10 +2170,10 @@ detect.o: ../rgOCVSerial/detect.cpp ../rgOCVSerial/detect.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTimer \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qtimer.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qbasictimer.h \
-		../rgOCVSerial/ocvTools/imageshow.h \
-		../rgOCVSerial/ocvTools/imagedialog.h \
+		../common/ocvTools/imageshow.h \
+		../common/ocvTools/imagedialog.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QDialog \
-		../rgOCVSerial/ocvTools/imageglwidget.h \
+		../common/ocvTools/imageglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtWidgets/QWidget \
@@ -2183,10 +2183,10 @@ detect.o: ../rgOCVSerial/detect.cpp ../rgOCVSerial/detect.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qt_windows.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopengles2ext.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtGui/qopenglext.h \
-		../rgOCVSerial/oglTools/glprimitivies.h \
+		../common/oglTools/glprimitivies.h \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/QTime \
 		/media/ajbernal/SSD1/research/qt/5.4/gcc_64/include/QtCore/qdatetime.h \
-		../rgOCVSerial/oglTools/fps.h
+		../common/oglTools/fps.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o detect.o ../rgOCVSerial/detect.cpp
 
 qrc_icons.o: qrc_icons.cpp 

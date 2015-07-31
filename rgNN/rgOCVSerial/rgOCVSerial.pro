@@ -15,26 +15,28 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
-    ocvTools/imageglwidget.cpp \
-    ocvTools/imagedialog.cpp \
-    oglTools/glprimitives.cpp \
+    ../common/ocvTools/imageglwidget.cpp \
+    ../common/ocvTools/imagedialog.cpp \
+    ../common/oglTools/glprimitives.cpp \
     detect.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
-    ocvTools/imageshow.h \
-    ocvTools/imagedialog.h \
-    ocvTools/imageglwidget.h \
-    oglTools/glprimitivies.h \
+    ../common/ocvTools/imageshow.h \
+    ../common/ocvTools/imagedialog.h \
+    ../common/ocvTools/imageglwidget.h \
+    ../common/oglTools/glprimitivies.h \
+    ../common/oglTools/fps.h \
     detect.h \
-    oglTools/fps.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
-    imagedialog.ui
+    ../common/imagedialog.ui
+
+DEPENDPATH *= $
+DEPENDPATH += ../common
 
 CONFIG += c++11
-
 
 win32 {
   INCLUDEPATH += C:\dev\research\external\vs\glew-1.12.0\include

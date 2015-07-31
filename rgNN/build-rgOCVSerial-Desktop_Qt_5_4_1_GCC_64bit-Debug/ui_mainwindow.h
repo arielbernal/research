@@ -17,6 +17,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QProgressBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -37,6 +38,8 @@ public:
     QProgressBar *motorRightF;
     QProgressBar *motorRightB;
     QProgressBar *motorLeftB;
+    QPushButton *btnStartCapture;
+    QPushButton *btnStopCapture;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
@@ -107,6 +110,12 @@ public:
         motorLeftB->setOrientation(Qt::Vertical);
         motorLeftB->setInvertedAppearance(true);
         motorLeftB->setTextDirection(QProgressBar::TopToBottom);
+        btnStartCapture = new QPushButton(centralWidget);
+        btnStartCapture->setObjectName(QStringLiteral("btnStartCapture"));
+        btnStartCapture->setGeometry(QRect(408, 250, 131, 27));
+        btnStopCapture = new QPushButton(centralWidget);
+        btnStopCapture->setObjectName(QStringLiteral("btnStopCapture"));
+        btnStopCapture->setGeometry(QRect(560, 250, 131, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -161,6 +170,8 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionCameraOff->setToolTip(QApplication::translate("MainWindow", "Turn Camera Off", 0));
 #endif // QT_NO_TOOLTIP
+        btnStartCapture->setText(QApplication::translate("MainWindow", "Start Capture", 0));
+        btnStopCapture->setText(QApplication::translate("MainWindow", "Stop Capture", 0));
         toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
