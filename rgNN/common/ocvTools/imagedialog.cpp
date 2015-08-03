@@ -21,6 +21,12 @@ ImageDialog::ImageDialog(const std::string &Name, cv::Mat &Image,
   std::cout << "Created ImageDialog " << Name << std::endl;
 }
 
+void ImageDialog::setSize(size_t Width, size_t Height) {
+  imageWidget->setFixedSize(Width, Height);
+  adjustSize();
+  setFixedSize(width(), height());
+}
+
 ImageDialog::~ImageDialog() {
   glp::RemoveImage(Name);
   std::cout << "Deleted ImageDialog " << Name << std::endl;

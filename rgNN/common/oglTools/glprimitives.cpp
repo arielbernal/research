@@ -1,6 +1,8 @@
 #include "glprimitivies.h"
 #define M_PI 3.14159265358
 
+#include <iostream>
+
 namespace glp {
 
 void circle(float radius, float segments) {

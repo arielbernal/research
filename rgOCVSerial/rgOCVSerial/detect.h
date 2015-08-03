@@ -17,11 +17,8 @@ class RobotDetect : public QObject {
   }
 
   bool turnCameraOn() {
-#if WIN32
-    cap.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
-#else
+//    cap.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
     cap.open(0);
-#endif
     if (!cap.isOpened()) {
       return false;
     } else {

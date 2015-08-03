@@ -18,11 +18,8 @@ class RobotDetect : public QObject {
   }
 
   bool turnCameraOn() {
-#if WIN32
-    cap.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
-#else
+//  cap.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
     cap.open(0);
-#endif
     if (!cap.isOpened()) {
       return false;
     } else {
@@ -40,7 +37,7 @@ class RobotDetect : public QObject {
 
   void startCapture() {
     if (cap.isOpened()) {
-      ofs.open("../data/video_capture/video.raw");
+      ofs.open("E:/DataNN/video.raw");
       if (ofs.is_open()) {
         captureFrames = true;
       }
@@ -57,18 +54,21 @@ class RobotDetect : public QObject {
     timer->stop();
     return true;
   }
+
  private slots:
+
   void update() {
     cap >> Frame;
     cv::cvtColor(Frame, greyMat, cv::COLOR_BGR2GRAY);
     if (captureFrames) {
       saveFrame(greyMat);
     }
-    glp::ShowImage("Frame", greyMat);
-    //  glp::EnableImageFPS("Frame", true);
+    glp::ShowImage("Frame", greyMat, 640*2, 480*2);
+    glp::EnableImageFPS("Frame", true);
   }
 
  protected:
+
   void saveFrame(const cv::Mat& mat) {
     const uchar* p = mat.ptr();
     for (int i = 0; i < CamWidth * CamHeight; ++i) {

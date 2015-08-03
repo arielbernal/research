@@ -22,6 +22,8 @@ class ImageDialog : public QDialog {
     imageWidget->setCallbackRenderer(Func);
   }
 
+  void setSize(size_t Width, size_t Height);
+
  protected:
   void closeEvent(QCloseEvent* event);
 

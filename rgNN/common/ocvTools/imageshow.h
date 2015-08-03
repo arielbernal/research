@@ -24,6 +24,13 @@ public:
     }
   }
 
+  void setSize(const std::string& Name, size_t width, size_t height) {
+      Iterator I = Dialogs.find(Name);
+      if (I != Dialogs.end()) {
+          (*I).second->setSize(width, height);
+      }
+  }
+
   void show(const std::string &Name, cv::Mat &Image,
             std::function<void()> Func) {
     Iterator I = Dialogs.find(Name);
@@ -68,10 +75,17 @@ inline void ShowImage(const std::string &Name, cv::Mat &Image) {
   ImageShow::getInstance().show(Name, Image);
 }
 
+inline void ShowImage(const std::string &Name, cv::Mat &Image, size_t width, size_t height) {
+  ImageShow::getInstance().show(Name, Image);
+  ImageShow::getInstance().setSize(Name, width, height);
+}
+
+
 inline void ShowImage(const std::string &Name, cv::Mat &Image,
                       std::function<void()> Func) {
   ImageShow::getInstance().show(Name, Image, Func);
 }
+
 
 inline void RemoveImage(const std::string &Name) {
   ImageShow::getInstance().remove(Name);
