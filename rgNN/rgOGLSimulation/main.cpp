@@ -1,9 +1,16 @@
-#include "mainwindow.h"
 #include <QApplication>
 
 #include <../common/ocvTools/imagedialog.h>
 #include <opencv2/opencv.hpp>
-//#include <oglTools/fps.h>
+
+#include "openglwindow.h"
+#include "GL/glu.h"
+#include <QtGui/QGuiApplication>
+#include <QtGui/QMatrix4x4>
+#include <QtGui/QOpenGLShaderProgram>
+#include <QtGui/QScreen>
+
+#include <QtCore/qmath.h>
 
 namespace ocv {
 using namespace cv;
@@ -22,11 +29,58 @@ void cross(const cv::Mat& image,
 }
 }
 
-int main(int argc, char* argv[]) {
+class TriangleWindow : public OpenGLWindow {
+ public:
+  TriangleWindow() : m_frame(0) {}
 
+  void initialize() Q_DECL_OVERRIDE {
+  }
+
+  void render() Q_DECL_OVERRIDE {
+    const qreal retinaScale = devicePixelRatio();
+    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_CULL_FACE);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, width(), 0, height());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_LINES);
+    glVertex2f(0, 0);
+    glVertex2f(50, 50);
+    glEnd();
+
+    ++m_frame;
+  }
+
+ private:
+  int m_frame;
+};
+
+int main(int argc, char* argv[]) {
+  QGuiApplication app(argc, argv);
+
+  QSurfaceFormat format;
+  format.setSamples(16);
+
+  TriangleWindow window;
+  window.setFormat(format);
+  window.resize(800, 800);
+  window.show();
+
+  window.setAnimating(true);
+
+  return app.exec();
 }
 
-//int main(int argc, char* argv[]) {
+// int main(int argc, char* argv[]) {
 //    QApplication a(argc, argv);
 //        MainWindow w;
 //        w.setGeometry(2400, 100, 800, 800);
@@ -55,7 +109,6 @@ int main(int argc, char* argv[]) {
 ////  glp::FPS fps;
 ////  for (;;) {
 
-
 ////    cv::Mat frame;
 ////    cap >> frame;
 ////    float fpsVal = fps.update();
@@ -63,11 +116,13 @@ int main(int argc, char* argv[]) {
 
 //////    cv::cvtColor(frame, HSV, cv::COLOR_BGR2HSV);
 //////    cv::inRange(
-//////        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255), YellowMask);
+//////        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255),
+/// YellowMask);
 //////    cv::inRange(
 //////        HSV, cv::Scalar(0, 120, 180), cv::Scalar(15, 255, 255), RedMask);
 //////    cv::inRange(
-//////        HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255), RedMask1);
+//////        HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255),
+/// RedMask1);
 //////    cv::add(RedMask, RedMask1, RedMask);
 
 //////    cv::dilate(RedMask, RedMask, cv::Mat());
@@ -110,11 +165,8 @@ int main(int argc, char* argv[]) {
 //////                  cv::Scalar::all(255));
 //////    }
 
-
 ////    cv::imshow("frame", frame);
 //////    cv::imshow("ThresholdMask", ThresholdMask);
-
-
 
 ////    if (cv::waitKey(30) >= 0)
 ////      break;
