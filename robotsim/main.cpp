@@ -129,7 +129,7 @@ class Robot {
     glVertex2f(r + dw2, rw);
     glEnd();
 
-    glColor3f(1, 0, 0);
+    glColor4f(1, 0, 0, 0.3);
     drawArrow(0, 0, 0, 0, arrowLength, 0, 0.5);
 
     glPopMatrix();
@@ -150,10 +150,28 @@ class Robot {
 class Path {
  public:
   Path() {
-    path.push_back(Point2d(0, 10));
-    path.push_back(Point2d(0, 40));
-    path.push_back(Point2d(40, 40));
-    path.push_back(Point2d(40, 80));
+    cpath.push_back(Point2d(0, 10));
+    cpath.push_back(Point2d(0, 40));
+    cpath.push_back(Point2d(40, 40));
+    cpath.push_back(Point2d(40, 80));
+    float dk = 5;
+    for (size_t i = 0; i < cpath.size() - 1; ++i) {
+      float x0 = cpath[i].x;
+      float x1 = cpath[i + 1].x;
+      float y0 = cpath[i].y;
+      float y1 = cpath[i + 1].y;
+      float dx = x1 - x0;
+      float dy = y1 - y0;
+      float nv = sqrt(dx * dx + dy * dy);
+      size_t kmax = nv / dk;
+      dx /= nv;
+      dy /= nv;
+      for (size_t k = 0; k < kmax; ++k) {
+        Point2d p(x0 + k * dk * dx, y0 + k * dk * dy);
+        path.push_back(p);
+      }
+    }
+    iSelected = 0;
   }
 
   float distToSegment(const Point2d &p, const Point2d &a, const Point2d &b) {
@@ -180,7 +198,7 @@ class Path {
     return xp;
   }
 
-  Point2d minDistPoint(const Point2d &p) {
+  Point2d minDistPointSegment(const Point2d &p) {
     float dmin = 10E20;
     Point2d pmin;
     for (size_t i = 0; i < path.size() - 1; ++i) {
@@ -194,22 +212,50 @@ class Path {
     return pmin;
   }
 
+  float selectMinPointDistance(const Point2d &p) {
+    float dmin = 10E20;
+    size_t iSelected = 0;
+    for (size_t i = 0; i < path.size(); ++i) {
+      float d = distance(p, path[i]);
+      if (d < dmin) {
+        dmin = d;
+        iSelected = i;
+      }
+    }
+    return dmin;
+  }
+
   void render() {
-    glColor3f(0, 1, 0);
+    glColor3f(0.8, 0.8, 0.8);
+    glLineWidth(2);
     glBegin(GL_LINES);
     for (size_t i = 0; i < path.size() - 1; ++i) {
       Point2d p0 = path[i];
       Point2d p1 = path[i + 1];
+
       glVertex2f(p0.x, p0.y);
       glVertex2f(p1.x, p1.y);
     }
     glEnd();
-    glColor3f(0, 0, 1);
+    glLineWidth(1.5);
+
     for (size_t i = 0; i < path.size(); ++i) {
-      drawDisk(path[i].x, path[i].y, 2, 10);
+      if (i == iSelected) {
+        glColor3f(0, 1, 0);
+        drawDisk(path[i].x, path[i].y, 1, 10);
+      } else {
+        glColor3f(1, 1, 0);
+        drawCircle(path[i].x, path[i].y, 1, 10);
+      }
     }
   }
+
+  Point2d getSelected() { return path[iSelected]; }
+
+ private:
+  std::vector<Point2d> cpath;
   std::vector<Point2d> path;
+  size_t iSelected;
 };
 
 namespace {
@@ -247,27 +293,26 @@ void display() {
   int height = viewport[3];
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  path.render();
+  path.selectMinPointDistance(robot.pos());
   robot.render();
-  Point2d p = path.minDistPoint(robot.pos());
-  glColor3f(0, 1, 0);
-  drawDisk(p.x, p.y, 1.5, 20);
+  path.render();
+
   glutSwapBuffers();
 }
 
 void init_display() {
+  glEnable(GL_LINE_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_POLYGON_SMOOTH);
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+  glLineWidth(1.5);
 }
 
 void reshape(int w, int h) {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+  init_display();
   display();
 }
 
