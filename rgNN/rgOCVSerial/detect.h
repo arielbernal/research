@@ -7,6 +7,7 @@
 #include <../common/ocvTools/imageshow.h>
 #include <../common/oglTools/fps.h>
 #include <fstream>
+#include <iostream>
 
 class RobotDetect : public QObject {
   Q_OBJECT
@@ -33,9 +34,9 @@ class RobotDetect : public QObject {
                 << " height = " << CamHeight << std::endl;
     }
 
-    capPhone.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
+    // capPhone.open("http://10.0.0.103:8080/videofeed?dummy=param.mjpg");
     if (!capPhone.isOpened()) {
-      return false;
+      //  return false;
     } else {
       capPhone.set(cv::CAP_PROP_FRAME_WIDTH, 320);
       capPhone.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
@@ -44,6 +45,14 @@ class RobotDetect : public QObject {
       std::cout << "Camera initialized width = " << CamWidthPhone
                 << " height = " << CamHeightPhone << std::endl;
     }
+
+    Pattern = cv::imread("../data/circle.png", CV_LOAD_IMAGE_GRAYSCALE);
+    if (!Pattern.data) {
+      std::cout << "Error Loading file" << std::endl;
+    }
+    std::cout << Pattern.rows << " " << Pattern.cols << std::endl;
+
+
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
     return true;
@@ -72,34 +81,47 @@ class RobotDetect : public QObject {
  private slots:
 
   void update() {
-    capPhone >> FramePhone;
-    cv::cvtColor(FramePhone, greyMat, cv::COLOR_BGR2GRAY);
-    glp::ShowImage("FramePhone", FramePhone, 640, 480);
-    //    if (captureFrames) {
-    //      saveFrame(greyMat);
-    //    }
+    if (capPhone.isOpened()) {
+      capPhone >> FramePhone;
+      cv::cvtColor(FramePhone, greyMat, cv::COLOR_BGR2GRAY);
+      glp::ShowImage("FramePhone", FramePhone, 640, 480);
+      //    if (captureFrames) {
+      //      saveFrame(greyMat);
+      //    }
+    }
 
     cap >> Frame;
 
-    cv::cvtColor(Frame, HSV, cv::COLOR_BGR2HSV);
-    cv::inRange(
-        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255), YellowMask);
-    cv::inRange(
-        HSV, cv::Scalar(0, 100, 100), cv::Scalar(15, 255, 255), RedMask);
-    cv::inRange(
-        HSV, cv::Scalar(170, 100, 100), cv::Scalar(180, 255, 255), RedMask1);
-    cv::add(RedMask, RedMask1, RedMask);
+    cv::cvtColor(Frame, greyMat, cv::COLOR_BGR2GRAY);
+    cv::Mat res(greyMat.rows-Pattern.rows+ 1, greyMat.cols-Pattern.cols + 1, CV_32FC1);
+    cv::matchTemplate(greyMat, Pattern, res, CV_TM_SQDIFF_NORMED);
+    cv::Mat res1;
+    res.convertTo(res1, CV_8UC1, 255.0, 0.0);
+    std::cout << greyMat.rows << " " << greyMat.cols << std::endl;
+    std::cout << res1.rows << " " << res1.cols << std::endl;
+    glp::ShowImage("Frame1", res1);
 
-    cv::dilate(RedMask, RedMask, cv::Mat());
-    cv::dilate(YellowMask, YellowMask, cv::Mat());
+    //    cv::cvtColor(Frame, HSV, cv::COLOR_BGR2HSV);
+    //    cv::inRange(
+    //        HSV, cv::Scalar(100, 100, 100), cv::Scalar(140, 140, 140),
+    //        YellowMask);
+    //    cv::inRange(
+    //        HSV, cv::Scalar(0, 120, 120), cv::Scalar(15, 255, 255), RedMask);
+    //    cv::inRange(
+    //        HSV, cv::Scalar(170, 120, 120), cv::Scalar(180, 255, 255),
+    //        RedMask1);
+    //    cv::add(RedMask, RedMask1, RedMask);
 
-    cv::blur(YellowMask, YellowMask, cv::Size(15, 15));
-    cv::threshold(YellowMask, YellowMask, 100, 255, cv::THRESH_BINARY);
-    cv::blur(RedMask, RedMask, cv::Size(15, 15));
-    cv::threshold(RedMask, RedMask, 100, 255, cv::THRESH_BINARY);
-    cv::add(RedMask, YellowMask, ThresholdMask);
+    //    cv::dilate(RedMask, RedMask, cv::Mat());
+    //    cv::dilate(YellowMask, YellowMask, cv::Mat());
 
-    glp::ShowImage("Threshold", ThresholdMask);
+    //    cv::blur(YellowMask, YellowMask, cv::Size(15, 15));
+    //    cv::threshold(YellowMask, YellowMask, 100, 255, cv::THRESH_BINARY);
+    //    cv::blur(RedMask, RedMask, cv::Size(15, 15));
+    //    cv::threshold(RedMask, RedMask, 150, 255, cv::THRESH_BINARY);
+    //    cv::add(RedMask, YellowMask, ThresholdMask);
+
+    //    glp::ShowImage("Threshold", ThresholdMask);
     glp::ShowImage("Frame", Frame);
     glp::EnableImageFPS("Frame", true);
   }
@@ -132,6 +154,7 @@ class RobotDetect : public QObject {
   QTimer* timer;
   bool captureFrames;
   std::ofstream ofs;
+  cv::Mat Pattern;
 };
 
 #endif  // DETECT

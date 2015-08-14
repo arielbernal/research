@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     ../common/ocvTools/imageglwidget.cpp \
     ../common/ocvTools/imagedialog.cpp \
     ../common/oglTools/glprimitives.cpp \
-    detect.cpp
+    detect.cpp \
+    serialcom.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -28,6 +29,7 @@ HEADERS  += mainwindow.h \
     ../common/oglTools/glprimitivies.h \
     ../common/oglTools/fps.h \
     detect.h \
+    serialcom.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
