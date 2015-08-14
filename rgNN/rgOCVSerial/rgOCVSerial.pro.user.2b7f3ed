@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD:rgNN/rgOCVSerial/rgOCVSerial.pro.user
 <!-- Written by QtCreator 3.3.1, 2015-08-12T21:02:53. -->
+=======
+<!-- Written by QtCreator 3.3.1, 2015-08-01T14:49:06. -->
+>>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f:rgNN/rgOCVSerial/rgOCVSerial.pro.user.2b7f3ed
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -39,7 +43,7 @@
    <value type="int" key="EditorConfiguration.PaddingMode">1</value>
    <value type="bool" key="EditorConfiguration.ScrollWheelZooming">true</value>
    <value type="bool" key="EditorConfiguration.ShowMargin">false</value>
-   <value type="int" key="EditorConfiguration.SmartBackspaceBehavior">1</value>
+   <value type="int" key="EditorConfiguration.SmartBackspaceBehavior">0</value>
    <value type="bool" key="EditorConfiguration.SpacesForTabs">true</value>
    <value type="int" key="EditorConfiguration.TabKeyBehavior">0</value>
    <value type="int" key="EditorConfiguration.TabSize">8</value>
@@ -53,7 +57,12 @@
  </data>
  <data>
   <variable>ProjectExplorer.Project.PluginSettings</variable>
-  <valuemap type="QVariantMap"/>
+  <valuemap type="QVariantMap">
+   <valuemap type="QVariantMap" key="ClangProjectSettings">
+    <value type="QString" key="CustomPchFile"></value>
+    <value type="int" key="PchUsage">1</value>
+   </valuemap>
+  </valuemap>
  </data>
  <data>
   <variable>ProjectExplorer.Project.Target.0</variable>
