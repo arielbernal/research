@@ -3,16 +3,22 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QTimer>
+#include <QSerialPort>
 #include <opencv2/opencv.hpp>
 #include <../common/ocvTools/imageshow.h>
 #include <../common/oglTools/fps.h>
 #include <fstream>
 #include <iostream>
 
+#ifndef M_PI
+#define M_PI 3.14159265358
+#endif
+
 class RobotDetect : public QObject {
   Q_OBJECT
  public:
   RobotDetect() : captureFrames(false), timer(new QTimer(this)) {}
+
   ~RobotDetect() {
     std::cout << "Camera Released" << std::endl;
     if (cap.isOpened())
@@ -46,17 +52,34 @@ class RobotDetect : public QObject {
                 << " height = " << CamHeightPhone << std::endl;
     }
 
-    Pattern = cv::imread("../data/circle.png", CV_LOAD_IMAGE_GRAYSCALE);
-    if (!Pattern.data) {
-      std::cout << "Error Loading file" << std::endl;
+    P1 = cv::Mat(30, 30, CV_8UC1);
+    P2 = cv::Mat(30, 30, CV_8UC1);
+    for (int y = 0; y < 30; ++y) {
+      for (int x = 0; x < 30; ++x) {
+        float r = sqrt((x - 15) * (x - 15) + (y - 15) * (y - 15));
+        if (15 < r) {
+          P1.at<uchar>(y, x) = 128;
+          P2.at<uchar>(y, x) = 128;
+        }
+        if (11 < r && r <= 15) {
+          P1.at<uchar>(y, x) = 0;
+          P2.at<uchar>(y, x) = 0;
+        }
+        if (r <= 11)
+          P1.at<uchar>(y, x) = 255;
+        if (7 < r && r <= 11)
+          P2.at<uchar>(y, x) = 255;
+        if (r <= 7)
+          P2.at<uchar>(y, x) = 0;
+      }
     }
-    std::cout << Pattern.rows << " " << Pattern.cols << std::endl;
-
 
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
     return true;
   }
+
+  void setSerialCom(QSerialPort* serialCom) { serial = serialCom; }
 
   void startCapture() {
     if (cap.isOpened()) {
@@ -78,55 +101,120 @@ class RobotDetect : public QObject {
     return true;
   }
 
+  void onMouse(int event, int x, int y, int status, void* ptr) {
+    if (event == cv::EVENT_LBUTTONDOWN) {
+      PMouse = cv::Point(x, y);
+      float gamma = atan2(-PMouse.y + PRobot.y, PMouse.x - PRobot.x);
+      if (gamma < 0)
+        gamma = 2 * M_PI + gamma;
+
+      if (beta < gamma) {
+        vMotors[0] = -50;
+        vMotors[1] = 50;
+      } else {
+        vMotors[0] = 50;
+        vMotors[1] = -50;
+      }
+      writeMotors();
+      return;
+    }
+    if (event == cv::EVENT_RBUTTONDOWN) {
+      PMouse = cv::Point(x, y);
+      vMotors[0] = 0;
+      vMotors[1] = 0;
+      writeMotors();
+      return;
+    }
+  }
+
+  void writeMotors() {
+    if (serial->isOpen()) {
+      char v[2] = {char(-vMotors[0]), char(-vMotors[1])};
+      serial->write(v, 2);
+    }
+  }
+
  private slots:
 
-  void update() {
-    if (capPhone.isOpened()) {
-      capPhone >> FramePhone;
-      cv::cvtColor(FramePhone, greyMat, cv::COLOR_BGR2GRAY);
-      glp::ShowImage("FramePhone", FramePhone, 640, 480);
-      //    if (captureFrames) {
-      //      saveFrame(greyMat);
-      //    }
-    }
+  float euclideanDist(const cv::Point& p, const cv::Point& q) {
+    cv::Point diff = p - q;
+    return sqrt(diff.x * diff.x + diff.y * diff.y);
+  }
 
+  void update() {
+    cv::Mat Frame;
     cap >> Frame;
 
+    cv::Mat greyMat;
     cv::cvtColor(Frame, greyMat, cv::COLOR_BGR2GRAY);
-    cv::Mat res(greyMat.rows-Pattern.rows+ 1, greyMat.cols-Pattern.cols + 1, CV_32FC1);
-    cv::matchTemplate(greyMat, Pattern, res, CV_TM_SQDIFF_NORMED);
-    cv::Mat res1;
-    res.convertTo(res1, CV_8UC1, 255.0, 0.0);
-    std::cout << greyMat.rows << " " << greyMat.cols << std::endl;
-    std::cout << res1.rows << " " << res1.cols << std::endl;
-    glp::ShowImage("Frame1", res1);
+    cv::Mat R1(
+        greyMat.rows - P1.rows + 1, greyMat.cols - P1.cols + 1, CV_32FC1);
+    cv::matchTemplate(greyMat, P1, R1, CV_TM_CCOEFF_NORMED);
+    cv::dilate(R1, R1, cv::Mat());
+    cv::Mat T1;
+    cv::threshold(R1, T1, 0.7, 1, CV_THRESH_BINARY);
 
-    //    cv::cvtColor(Frame, HSV, cv::COLOR_BGR2HSV);
-    //    cv::inRange(
-    //        HSV, cv::Scalar(100, 100, 100), cv::Scalar(140, 140, 140),
-    //        YellowMask);
-    //    cv::inRange(
-    //        HSV, cv::Scalar(0, 120, 120), cv::Scalar(15, 255, 255), RedMask);
-    //    cv::inRange(
-    //        HSV, cv::Scalar(170, 120, 120), cv::Scalar(180, 255, 255),
-    //        RedMask1);
-    //    cv::add(RedMask, RedMask1, RedMask);
+    cv::Mat R2(
+        greyMat.rows - P1.rows + 1, greyMat.cols - P1.cols + 1, CV_32FC1);
+    cv::matchTemplate(greyMat, P2, R2, CV_TM_CCOEFF_NORMED);
+    cv::dilate(R2, R2, cv::Mat());
 
-    //    cv::dilate(RedMask, RedMask, cv::Mat());
-    //    cv::dilate(YellowMask, YellowMask, cv::Mat());
+    cv::Mat T2;
+    cv::threshold(R2, T2, 0.6, 1, CV_THRESH_BINARY);
 
-    //    cv::blur(YellowMask, YellowMask, cv::Size(15, 15));
-    //    cv::threshold(YellowMask, YellowMask, 100, 255, cv::THRESH_BINARY);
-    //    cv::blur(RedMask, RedMask, cv::Size(15, 15));
-    //    cv::threshold(RedMask, RedMask, 150, 255, cv::THRESH_BINARY);
-    //    cv::add(RedMask, YellowMask, ThresholdMask);
+    cv::Moments m1 = cv::moments(T1);
+    cv::Point p1(m1.m10 / m1.m00 + 15, m1.m01 / m1.m00 + 15);
 
-    //    glp::ShowImage("Threshold", ThresholdMask);
-    glp::ShowImage("Frame", Frame);
-    glp::EnableImageFPS("Frame", true);
+    cv::Moments m2 = cv::moments(T2);
+    cv::Point p2(m2.m10 / m2.m00 + 15, m2.m01 / m2.m00 + 15);
+
+    cv::Point pm = (p2 + p1) / 2;
+    float dx = p2.x - p1.x;
+    float dy = p2.y - p1.y;
+    float angle = atan2(dy, dx);
+    PRobot = cv::Point(pm.x + 50 * sin(angle), pm.y - 50 * cos(angle));
+
+    cv::Point pf1(pm.x + 100 * sin(angle), pm.y - 100 * cos(angle));
+    cv::circle(Frame, PRobot, 30, cv::Scalar(0, 255, 255));
+    cv::arrowedLine(Frame, PRobot, pf1, cv::Scalar(0, 0, 255));
+
+    beta = M_PI / 2 - angle;
+    if (beta < 0)
+      beta = 2 * M_PI + beta;
+
+    float gamma = atan2(-PMouse.y + PRobot.y, PMouse.x - PRobot.x);
+    if (gamma < 0)
+      gamma = 2 * M_PI + gamma;
+
+    float eps = 6 / 180.0f * M_PI;
+
+    if (abs(beta - 50 / 180.0f * M_PI - gamma) < eps) {
+      vMotors[0] = 0;
+      vMotors[1] = 0;
+      writeMotors();
+    }
+
+    std::cout << beta * 180 / M_PI << " " << gamma * 180 / M_PI << std::endl;
+
+    cv::circle(Frame, PMouse, 5, cv::Scalar(0, 255, 255));
+
+    cv::Mat Threshold;
+    cv::add(T1, T2, Threshold);
+    cv::Mat Res;
+    cv::add(R1, R2, Res);
+
+    cv::imshow("frame", Frame);
+    cv::setMouseCallback("frame", onMouseStatic, this);
+    //        cv::imshow("greyMat", greyMat);
+    cv::imshow("Match", R2);
+    cv::imshow("Threshold", Threshold);
   }
 
  protected:
+  static void onMouseStatic(int event, int x, int y, int status, void* ptr) {
+    ((RobotDetect*)ptr)->onMouse(event, x, y, status, 0);
+  }
+
   void saveFrame(const cv::Mat& mat) {
     const uchar* p = mat.ptr();
     for (int i = 0; i < CamWidth * CamHeight; ++i) {
@@ -143,18 +231,21 @@ class RobotDetect : public QObject {
   cv::VideoCapture cap;
   cv::VideoCapture capPhone;
   cv::Mat FramePhone;
-  cv::Mat Frame, greyMat;
-
-  cv::Mat HSV;
-  cv::Mat RedMask;
-  cv::Mat RedMask1;
-  cv::Mat YellowMask;
-  cv::Mat ThresholdMask;
 
   QTimer* timer;
   bool captureFrames;
   std::ofstream ofs;
-  cv::Mat Pattern;
+  cv::Mat P1;
+  cv::Mat P2;
+
+  cv::Point PMouse;
+  cv::Point PRobot;
+
+  float vMotors[2];
+
+  QSerialPort* serial;
+
+  float beta;
 };
 
 #endif  // DETECT

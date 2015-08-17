@@ -1,7 +1,9 @@
+#define _USE_MATH_DEFINES
+
 #include <iostream>
-#include <glheaders.h>
+#include <include/glheaders.h>
 #include <cmath>
-#include <glprimitives.h>
+#include <include/glprimitives.h>
 #include <vector>
 
 struct Point2d {
@@ -364,7 +366,7 @@ void setWorld() {}
 void init_glut_window(int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
-  glutInitWindowPosition(2800, 100);
+  glutInitWindowPosition(1800, 100);
   glutInitWindowSize(m_window_width, m_window_height);
   glutCreateWindow(m_window_title.c_str());
 

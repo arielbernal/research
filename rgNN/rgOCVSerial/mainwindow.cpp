@@ -67,9 +67,9 @@ MainWindow::MainWindow(QWidget* parent)
   v = 0;
   w = 0;
 
-  QTimer* mTimer = new QTimer();
-  connect(mTimer, SIGNAL(timeout()), this, SLOT(checkKeyPressed()));
-  mTimer->start(50);
+//  QTimer* mTimer = new QTimer();
+//  connect(mTimer, SIGNAL(timeout()), this, SLOT(checkKeyPressed()));
+//  mTimer->start(50);
 }
 
 MainWindow::~MainWindow() {
@@ -178,6 +178,7 @@ void MainWindow::openSerialPort() {
     QMessageBox::critical(this, tr("Error"), serial->errorString());
     ui->statusBar->showMessage(tr("Open error"));
   }
+  detect->setSerialCom(serial);
 }
 
 void MainWindow::writeData(const QByteArray& data) {

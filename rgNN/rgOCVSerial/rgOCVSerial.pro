@@ -15,18 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
-<<<<<<< HEAD
     ../common/ocvTools/imageglwidget.cpp \
     ../common/ocvTools/imagedialog.cpp \
     ../common/oglTools/glprimitives.cpp \
     detect.cpp \
-    serialcom.cpp
-=======
+    serialcom.cpp \
     ocvTools/imageglwidget.cpp \
     ocvTools/imagedialog.cpp \
     oglTools/glprimitives.cpp \
     detect.cpp
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -35,11 +32,9 @@ HEADERS  += mainwindow.h \
     ocvTools/imageglwidget.h \
     oglTools/glprimitivies.h \
     detect.h \
-<<<<<<< HEAD
-    serialcom.h
-=======
-    oglTools/fps.h
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
+    serialcom.h \
+    oglTools/fps.h \
+    ffnn3l.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

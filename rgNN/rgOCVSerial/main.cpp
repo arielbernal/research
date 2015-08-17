@@ -23,8 +23,29 @@ void cross(const cv::Mat& image,
 }
 }
 
+#include "ffnn3l.h"
+
 int main(int argc, char* argv[]) {
-<<<<<<< HEAD
+  float alpha = M_PI / 2;
+  float dx = 10;
+  float dy = 10;
+
+  FFNN3L ffnn(3, 50, 3);
+  std::vector<double> input(3);
+  std::vector<double> output(3);
+  input[0] = alpha;
+  input[1] = dx;
+  input[2] = dy;
+  std::cout << "Alpha = " << alpha << " dx = " << dx << " dy = " << dy
+            << std::endl;
+
+  ffnn.feedForward(input);
+  ffnn.getOutput(output);
+  std::cout << "V1 = " << output[0] << " V2 = " << output[1]
+            << " t = " << output[2] << std::endl;
+}
+
+int main1(int argc, char* argv[]) {
   cv::VideoCapture cap;
   cap.open(0);
   size_t CamWidth = 960;
@@ -59,8 +80,8 @@ int main(int argc, char* argv[]) {
         P2.at<uchar>(y, x) = 0;
     }
   }
-  SerialCom SCom;
-  SCom.openSerialPort();
+  // SerialCom SCom;
+  // SCom.openSerialPort();
 
   for (;;) {
     cv::Mat Frame;
@@ -99,9 +120,9 @@ int main(int argc, char* argv[]) {
     cv::add(R1, R2, Res);
 
     cv::imshow("frame", Frame);
-    //    cv::imshow("greyMat", greyMat);
-    //    cv::imshow("Match", Res);
-    //    cv::imshow("Threshold", Threshold);
+    //        cv::imshow("greyMat", greyMat);
+    //        cv::imshow("Match", Res);
+    //        cv::imshow("Threshold", Threshold);
     int key = cv::waitKey(30);
     switch (key) {
       case 27:
@@ -114,18 +135,16 @@ int main(int argc, char* argv[]) {
 }
 
 // int main(int argc, char* argv[]) {
-=======
 
+//}
+
+int main2(int argc, char* argv[]) {
+  QApplication a(argc, argv);
+  MainWindow w;
+  w.setGeometry(2400, 100, 800, 800);
+  w.show();
+  return a.exec();
 }
-
-//int main(int argc, char* argv[]) {
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
-//    QApplication a(argc, argv);
-//        MainWindow w;
-//        w.setGeometry(2400, 100, 800, 800);
-//        w.show();
-//    return a.exec();
-
 ////  cv::Mat HSV;
 ////  cv::Mat RedMask;
 ////  cv::Mat RedMask1;
@@ -148,10 +167,6 @@ int main(int argc, char* argv[]) {
 ////  glp::FPS fps;
 ////  for (;;) {
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
 ////    cv::Mat frame;
 ////    cap >> frame;
 ////    float fpsVal = fps.update();
@@ -159,7 +174,6 @@ int main(int argc, char* argv[]) {
 
 //////    cv::cvtColor(frame, HSV, cv::COLOR_BGR2HSV);
 //////    cv::inRange(
-<<<<<<< HEAD
 //////        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255),
 /// YellowMask);
 //////    cv::inRange(
@@ -167,13 +181,13 @@ int main(int argc, char* argv[]) {
 //////    cv::inRange(
 //////        HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255),
 /// RedMask1);
-=======
-//////        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255), YellowMask);
+//////        HSV, cv::Scalar(25, 120, 210), cv::Scalar(40, 255, 255),
+/// YellowMask);
 //////    cv::inRange(
 //////        HSV, cv::Scalar(0, 120, 180), cv::Scalar(15, 255, 255), RedMask);
 //////    cv::inRange(
-//////        HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255), RedMask1);
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
+//////        HSV, cv::Scalar(170, 120, 180), cv::Scalar(180, 255, 255),
+/// RedMask1);
 //////    cv::add(RedMask, RedMask1, RedMask);
 
 //////    cv::dilate(RedMask, RedMask, cv::Mat());
@@ -216,18 +230,12 @@ int main(int argc, char* argv[]) {
 //////                  cv::Scalar::all(255));
 //////    }
 
-<<<<<<< HEAD
 ////    cv::imshow("frame", frame);
 //////    cv::imshow("ThresholdMask", ThresholdMask);
 
-=======
-
 ////    cv::imshow("frame", frame);
 //////    cv::imshow("ThresholdMask", ThresholdMask);
 
-
-
->>>>>>> 27fc075fcfbf130f20664441a393913c0dbf5d8f
 ////    if (cv::waitKey(30) >= 0)
 ////      break;
 ////  }
