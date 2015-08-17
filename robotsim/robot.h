@@ -8,10 +8,9 @@
 #include <vector>
 #include "point2d.h"
 
-
 class Robot {
  public:
-  Robot() : x(0), y(0), alpha(45), t(0) {
+  Robot() : x(0), y(0), theta(0), t(0) {
     r = 10;
     rw = 3;
     dt = 0.033f;
@@ -24,7 +23,7 @@ class Robot {
   void setPos(float posx, float posy, float angle) {
     x = posx;
     y = posy;
-    alpha = angle;
+    theta = angle;
   }
 
   void setMotors(float Left, float Right) {
@@ -38,7 +37,76 @@ class Robot {
 
   float getX() { return x; }
   float getY() { return y; }
-  float getAlpha() { return alpha; }
+  float gettheta() { return theta; }
+
+  void renderFrontPath() {
+    float dt = 1.0f;
+    float xp = x;
+    float yp = y;
+    float thetap = theta;
+    for (int Ml = 00; Ml <= 00; ++Ml) {
+      for (int Mr = 50; Mr <= 50; ++Mr) {
+        float Vl = Ml / 100.0f * k0 * 2 * M_PI * rw;
+        float Vr = Mr / 100.0f * k1 * 2 * M_PI * rw;
+        float d = 2 * r;
+        float w = 0;
+        float R = 0;
+        if (Vl != Vr) {
+          w = (Vr - Vl) / d;
+          R = r * (Vr + Vl) / (Vr - Vl);
+          Point2d ICC(x - R * sin(theta), y + R * cos(theta));
+          std::cout << " R = " << R  << " w = " << w << " ICC= "<< ICC.x << ", " << ICC.y << std::endl;
+          float dtheta = w * dt;
+          float cosw = cos(w * dt);
+          float sinw = sin(w * dt);
+          xp = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
+          yp = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
+          thetap = theta + dtheta;
+        } else {
+          xp += Vl * cos(theta) * dt;
+          yp += Vl * sin(theta) * dt;
+        }
+        std::cout << "xp = " << xp << " yp = " << yp << " Vl = " << Vl
+                  << " Vr = " << Vr << " Theta = " << thetap  * 180 / M_PI<< std::endl;
+        glLineWidth(2);
+        glPointSize(5);
+
+        glPushMatrix();
+        glTranslatef(x, y, 0);
+        glRotatef(90-theta / M_PI * 180, 0, 0, 1);
+        glColor3f(1, 1, 1);
+        glBegin(GL_LINES);
+        glVertex2f(-10, 0);
+        glVertex2f(10, 0);
+        glEnd();
+
+        
+        glBegin(GL_POINTS);
+          glColor3f(0, 1, 0);  glVertex2f(0, 0);
+          glColor3f(1, 0, 0);  glVertex2f(-10, 0);
+          glColor3f(1, 1, 0);  glVertex2f(10, 0);
+        glEnd();
+
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(xp, yp, 0);
+        glRotatef(90-thetap / M_PI * 180, 0, 0, 1);
+        glColor3f(1, 1, 1);
+        glBegin(GL_LINES);
+          glVertex2f(-10, 0);
+          glVertex2f(10, 0);
+        glEnd();
+
+        glBegin(GL_POINTS);
+          glColor3f(1, 1, 1);  glVertex2f(0, 0);
+          glColor3f(1, 0, 0);  glVertex2f(-10, 0);
+          glColor3f(1, 1, 0);  glVertex2f(10, 0);
+        glEnd();
+        glPopMatrix();
+      }
+    }
+  }
 
   void update() {
     t += dt;
@@ -50,7 +118,7 @@ class Robot {
 
     float v0 = Motors[0] / 100.0f * k0 * 2 * M_PI * rw;  // speed motor left
     float v1 = Motors[1] / 100.0f * k1 * 2 * M_PI * rw;  // speed motor right
-    float ar = alpha / 180.0f * M_PI;
+    float ar = theta / 180.0f * M_PI;
     float rx0 = x + r * cos(ar);
     float ry0 = y + r * sin(ar);
 
@@ -66,7 +134,7 @@ class Robot {
 
     x = (rx1 + lx1) / 2;
     y = (ry1 + ly1) / 2;
-    alpha = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
+    theta = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
   }
 
   void rotateLeft(float delay) {
@@ -86,10 +154,10 @@ class Robot {
   }
 
   void stimate(float m0, float m1, float dt, float &xe, float &ye,
-               float &alphae) {
+               float &thetae) {
     float v0 = m0 / 100.0f * k0 * 2 * M_PI * rw;  // speed motor left
     float v1 = m1 / 100.0f * k1 * 2 * M_PI * rw;  // speed motor right
-    float ar = alpha / 180.0f * M_PI;
+    float ar = theta / 180.0f * M_PI;
     float rx0 = x + r * cos(ar);
     float ry0 = y + r * sin(ar);
 
@@ -105,13 +173,13 @@ class Robot {
 
     xe = (rx1 + lx1) / 2;
     ye = (ry1 + ly1) / 2;
-    alphae = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
+    thetae = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
   }
 
   void render() {
     glPushMatrix();
     glTranslatef(x, y, 0);
-    glRotatef(alpha, 0, 0, 1);
+    glRotatef(theta, 0, 0, 1);
 
     float arrowLength = r + 5;
     float dw2 = 0.4;
@@ -133,9 +201,8 @@ class Robot {
     glVertex2f(r + dw2, rw);
     glEnd();
 
-    //glColor4f(1, 0, 0, 0.3);
-    //drawArrow(0, 0, 0, 0, arrowLength, 0, 0.5);
-
+    // glColor4f(1, 0, 0, 0.3);
+    // drawArrow(0, 0, 0, 0, arrowLength, 0, 0.5);
 
     glPopMatrix();
 
@@ -146,14 +213,14 @@ class Robot {
 
   Point2d pos() { return Point2d(x, y); }
   Point2d posFront() {
-    return Point2d(x + r * cos(alpha / 180.0f * M_PI + M_PI / 2),
-                   y + r * sin(alpha / 180.0f * M_PI + M_PI / 2));
+    return Point2d(x + r * cos(theta / 180.0f * M_PI + M_PI / 2),
+                   y + r * sin(theta / 180.0f * M_PI + M_PI / 2));
   }
 
   void saveStatus() {
     x0 = x;
     y0 = y;
-    alpha0 = alpha;
+    theta0 = theta;
     Motors0[0] = Motors[0];
     Motors0[1] = Motors[1];
     t0 = t;
@@ -162,14 +229,14 @@ class Robot {
   void restoreStatus() {
     x = x0;
     y = y0;
-    alpha = alpha0;
+    theta = theta0;
     Motors[0] = Motors0[0];
     Motors[1] = Motors0[1];
     t = t0;
   }
 
  private:
-  float x, y, alpha;
+  float x, y, theta;
   float r;   // wheel to center distance
   float rw;  // wheel radius
   float t;   // time
@@ -178,7 +245,7 @@ class Robot {
   float k1;  // max angular speed motor1 (Right)
   float Motors[2];
 
-  float x0, y0, alpha0;
+  float x0, y0, theta0;
   float Motors0[2];
   float t0;
 

@@ -1,9 +1,9 @@
 #define _USE_MATH_DEFINES
 
 #include <iostream>
-#include <include/glheaders.h>
+#include "include/glheaders.h"
 #include <cmath>
-#include <include/glprimitives.h>
+#include "include/glprimitives.h"
 #include <vector>
 #include "robot_path.h"
 #include "point2d.h"
@@ -45,9 +45,10 @@ void display() {
   set2DMode(300, 300);
   glTranslatef(150, 150, 0); 
   //path.selectMinPointDistance(robot.pos());
-  robot.update();
-  robot.render();
+  //robot.update();
+  //robot.render();
   //path.render();
+  robot.renderFrontPath();
   glColor3f(0, 1, 0);
   drawDisk(dst.x, dst.y, 2, 20);
   glutSwapBuffers();
