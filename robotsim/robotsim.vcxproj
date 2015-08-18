@@ -93,6 +93,9 @@
     <ClInclude Include="include\lodepng.h" />
     <ClInclude Include="include\scoped_timer.h" />
     <ClInclude Include="include\svector.h" />
+    <ClInclude Include="point2d.h" />
+    <ClInclude Include="robot.h" />
+    <ClInclude Include="robot_path.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
