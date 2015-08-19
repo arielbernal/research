@@ -11,8 +11,8 @@
 class Robot {
  public:
   Robot() : x(0), y(0), theta(0), t(0) {
-    r = 10;
-    rw = 3;
+    r = 14.5 /2.0f;
+    rw = 3.4; 
     dt = 0.033f;
     Motors[0] = 0;
     Motors[1] = 0;
@@ -41,12 +41,17 @@ class Robot {
 
   void renderFrontPath() {
     theta = M_PI/2.0f;
-    float dt = 8.0f;
+    float dt = 1.5f;
     float xp = x;
     float yp = y;
     float thetap = theta;
+
     for (int Ml = -100; Ml <= 100; ++Ml) {
       for (int Mr = -100; Mr <= 100; ++Mr) {
+        if (Ml < 0 && Mr < 0) continue;
+        if (Ml < 0 && abs(Ml) > Mr) continue;
+        if (Mr < 0 && abs(Mr) > Ml) continue;
+        if (abs(Mr) < 80 && abs(Ml) < 80) continue;
         float Vl = Ml / 100.0f * k0 * 2 * M_PI * rw;
         float Vr = Mr / 100.0f * k1 * 2 * M_PI * rw;
         float d = 2 * r;
@@ -56,61 +61,32 @@ class Robot {
           w = (Vr - Vl) / d;
           R = r * (Vr + Vl) / (Vr - Vl);
           Point2d ICC(x - R * sin(theta), y + R * cos(theta));
-          //std::cout << " R = " << R  << " w = " << w << " ICC= "<< ICC.x << ", " << ICC.y << std::endl;
           float dtheta = w * dt;
           float cosw = cos(w * dt);
           float sinw = sin(w * dt);
           xp = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
           yp = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
           thetap = theta + dtheta;
+          glBegin(GL_POINTS);
+          glColor3f(1, 1, 0);  glVertex2f(xp, yp);
+          glEnd();
+          continue;
         } else {
-          xp += Vl * cos(theta) * dt;
-          yp += Vl * sin(theta) * dt;
+          xp = x + Vl * cos(theta) * dt;
+          yp = y + Vl * sin(theta) * dt;
+          glBegin(GL_POINTS);
+          glColor3f(1, 0, 0);  glVertex2f(xp, yp);
+          glEnd();
+          continue;
         }
-        //std::cout << "xp = " << xp << " yp = " << yp << " Vl = " << Vl
-        //          << " Vr = " << Vr << " Theta = " << thetap  * 180 / M_PI<< std::endl;
-        glLineWidth(2);
-        glPointSize(1);
-
-        glPushMatrix();
-        glTranslatef(x, y, 0);
-        glRotatef(-90+theta / M_PI * 180, 0, 0, 1);
-        //glColor3f(1, 1, 1);
-        //glBegin(GL_LINES);
-        //glVertex2f(-10, 0);
-        //glVertex2f(10, 0);
-        //glVertex2f(0, 10);
-        //glVertex2f(0, 0);
-        //glEnd();
-
-        
-        glBegin(GL_POINTS);
-          glColor3f(0, 1, 0);  glVertex2f(0, 0);
-//          glColor3f(1, 0, 0);  glVertex2f(-10, 0);
-//          glColor3f(1, 1, 0);  glVertex2f(10, 0);
-        glEnd();
-
-        glPopMatrix();
-
-        glPushMatrix();
-        glTranslatef(xp, yp, 0);
-        glRotatef(-90+thetap / M_PI * 180, 0, 0, 1);
-        //glColor3f(1, 1, 1);
-        //glBegin(GL_LINES);
-        //  glVertex2f(-10, 0);
-        //  glVertex2f(10, 0);
-        //  glVertex2f(0, 10);
-        //  glVertex2f(0, 0);
-        //glEnd();
-
-        glBegin(GL_POINTS);
-          glColor3f(1, 1, 1);  glVertex2f(0, 0);
-//          glColor3f(1, 0, 0);  glVertex2f(-10, 0);
-//          glColor3f(1, 1, 0);  glVertex2f(10, 0);
-        glEnd();
-        glPopMatrix();
       }
     }
+    glPointSize(4);
+    glBegin(GL_POINTS);
+    glColor3f(1, 0, 0);  glVertex2f(x, y);
+    glEnd();
+    glPointSize(1);
+
   }
 
   void update() {
