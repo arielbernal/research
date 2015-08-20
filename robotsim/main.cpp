@@ -5,6 +5,8 @@
 #include <cmath>
 #include "include/glprimitives.h"
 #include <vector>
+#include <queue>
+
 #include "robot_path.h"
 #include "point2d.h"
 #include "robot.h"
@@ -16,6 +18,9 @@ std::string m_window_title = "RobotSim";
 Robot robot;
 Path path;
 Point2d dst(40, 40);
+std::queue<RobotEvent> events;
+float dt = 0.01f;
+float t = 0;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -37,17 +42,40 @@ void set3DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
+void checkEvents() {
+  if (!events.empty()) {
+    RobotEvent e = events.front();
+    if (t > e.time) {
+      events.pop();
+      switch (e.type) {
+      case RobotEvent::STOP : 
+          robot.stop(); 
+          break;
+      case RobotEvent::LEFT:
+          robot.rotateLeft();
+          break;
+      case RobotEvent::RIGHT:
+          robot.rotateRight();
+          break;
+      case RobotEvent::FORWARD:
+        robot.moveForward();
+        break;
+      }
+    }
+  }
+  t += dt;
+}
+
 void display() {
+  checkEvents();
+  robot.update(0.01f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  // path.selectMinPointDistance(robot.pos());
-  robot.followPath();
+
   robot.render();
   path.render();
-  // robot.renderFrontPath();
-  // glColor3f(0, 1, 0);
-  // drawDisk(dst.x, dst.y, 2, 20);
+
   glutSwapBuffers();
 }
 
@@ -97,7 +125,17 @@ void normal_keys(unsigned char key, int x, int y) {
     case 's':
       break;
     case 32:
-      robot.setPath(&path);
+      if (!path.isLast()) {
+        Point2d p = path.getNode();
+        events.push(RobotEvent(RobotEvent::LEFT, t));
+        events.push(RobotEvent(RobotEvent::STOP, t + 0.8f));
+        events.push(RobotEvent(RobotEvent::FORWARD, t+ 0.9f));
+        events.push(RobotEvent(RobotEvent::STOP, t + 1.8f));
+        events.push(RobotEvent(RobotEvent::RIGHT, t + 2.0));
+        events.push(RobotEvent(RobotEvent::STOP, t + 3.0f));
+        events.push(RobotEvent(RobotEvent::FORWARD, t + 3.2f));
+        events.push(RobotEvent(RobotEvent::STOP, t + 4.2f));
+      }
       glutPostRedisplay();
       break;
     case 27:

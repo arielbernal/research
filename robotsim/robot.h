@@ -11,18 +11,31 @@
 #define DEG(X) X / M_PI * 180.0
 #define RAD(X) X / 180.0 * M_PI
 
+
+struct RobotEvent {
+  int type;
+  float time;
+  float MotorLeft;
+  float MotorRight;
+  
+  enum {STOP, LEFT, RIGHT, FORWARD};
+
+  RobotEvent(int type, float time, float MotorLeft = 0, float MotorRight = 0) 
+    : type(type), 
+    time(time),
+    MotorLeft(MotorLeft), 
+    MotorRight(MotorRight) {}
+};
+
 class Robot {
  public:
-  Robot() : x(0), y(0), theta(M_PI / 4), t(0) {
+  Robot() : x(0), y(0), theta(M_PI / 4) {
     r = 14.5 / 2.0f;
     rw = 3.4;
-    dt = 0.010f;
     MotorLeft = 0;
     MotorRight = 0;
     k0 = 55.0f / 60.0f;
     k1 = 55.0f / 60.0f;
-    tUpdate = 0;
-    path = 0;
   }
 
   void setPos(float posx, float posy, float angle) {
@@ -40,15 +53,9 @@ class Robot {
 
   float getX() { return x; }
   float getY() { return y; }
-  float gettheta() { return theta; }
+  float getTheta() { return theta; }
 
-  void updateIdeal() {
-    t += dt;
-    tUpdate++;
-    if (tUpdate == 10) {
-      //std::cout << "T = " << t << std::endl;
-      tUpdate = 0;
-    }
+  void update(float dt) {
     float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
     float Vr = MotorRight / 100.0f * k1 * 2 * M_PI * rw;
     float d = 2 * r;
@@ -59,8 +66,8 @@ class Robot {
       R = r * (Vr + Vl) / (Vr - Vl);
       Point2d ICC(x - R * sin(theta), y + R * cos(theta));
       float dtheta = w * dt;
-      float cosw = cos(w * dt);
-      float sinw = sin(w * dt);
+      float cosw = cos(dtheta);
+      float sinw = sin(dtheta);
       x = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
       y = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
       theta = theta + dtheta;
@@ -79,6 +86,11 @@ class Robot {
   void rotateRight() {
     MotorLeft = 100;
     MotorRight = -100;
+  }
+
+  void moveForward() {
+    MotorLeft = 100;
+    MotorRight = 100;
   }
 
   void stop() {
@@ -125,23 +137,7 @@ class Robot {
   Point2d posFront() { return Point2d(x + r * cos(theta), y + r * sin(theta)); }
 
   void followPath() {
-    std::cout << "t = " << t << " tevent = " << tEvent << " theta = " << DEG(theta) << std::endl;
-    updateIdeal();
-    if (tEvent > t) return;
-    if (fabs(tEvent - t) < 2 * dt) {
-      stop();
-      return;
-    }
-    if (path) {
-      Point2d p = path->getNode();
-      if (distance(p, Point2d(x, y)) <= 1) {
-        if (!path->isLast()) {
-          path->nextNode();
-        } else {
-          stop();
-        }
-      } else {
-        float dx = p.x - x;
+   /*     float dx = p.x - x;
         float dy = p.y - y;
         float alpha = atan2(dy, dx);
         alpha = alpha - int(alpha / (2 * M_PI)) * 2 * M_PI;
@@ -158,28 +154,18 @@ class Robot {
           }
         }
       }
-    }
+    }*/
   }
 
-  void setPath(Path* p) {
-    path = p;
-    tEvent = 0;
-  }
 
  private:
   float x, y, theta;
   float r;   // wheel to center distance
   float rw;  // wheel radius
-  float t;   // time
-  float dt;
   float k0;  // max angular speed motor0 (Left)
   float k1;  // max angular speed motor1 (Right)
   float MotorLeft;
   float MotorRight;
-
-  unsigned int tUpdate;
-  Path* path;
-  float tEvent;
 };
 
 #endif
