@@ -1,7 +1,6 @@
 #ifndef ROBOT_PATH_H
 #define ROBOT_PATH_H
 
-
 #include <iostream>
 #include <glheaders.h>
 #include <cmath>
@@ -9,9 +8,47 @@
 #include <vector>
 #include "point2d.h"
 
-class Path {
+
+struct Path {
+  std::vector<Point2d> path;
+  Path() : iNode(0) {
+    path.push_back(Point2d(0, 20));
+    path.push_back(Point2d(0, 100));
+    path.push_back(Point2d(100, 100));
+  }
+
+  void render() {
+    glColor3f(0, 1, 0);
+    for (size_t i = 0; i < path.size(); ++i) {
+      drawDisk(path[i].x, path[i].y, 1, 20);
+    }
+    glColor3f(1, 1, 1);
+    glBegin(GL_LINES);
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+      glVertex2f(path[i].x, path[i].y);
+      glVertex2f(path[i + 1].x, path[i + 1].y);
+    }
+    glEnd();
+  }
+
+  bool isLast() {
+    return (path.size() == iNode);
+  }
+
+  Point2d getNode() {
+    return path[iNode];
+  }
+
+  void nextNode() {
+    iNode++;
+  }
+
+  int iNode;
+};
+
+class PathR {
  public:
-  Path() {
+  PathR() {
     cpath.push_back(Point2d(0, 20));
     cpath.push_back(Point2d(0, 40));
     cpath.push_back(Point2d(40, 40));

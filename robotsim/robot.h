@@ -8,16 +8,21 @@
 #include <vector>
 #include "point2d.h"
 
+#define DEG(X) X / M_PI * 180.0
+#define RAD(X) X / 180.0 * M_PI
+
 class Robot {
  public:
-  Robot() : x(0), y(0), theta(0), t(0) {
-    r = 14.5 /2.0f;
-    rw = 3.4; 
-    dt = 0.033f;
-    Motors[0] = 0;
-    Motors[1] = 0;
+  Robot() : x(0), y(0), theta(M_PI / 4), t(0) {
+    r = 14.5 / 2.0f;
+    rw = 3.4;
+    dt = 0.010f;
+    MotorLeft = 0;
+    MotorRight = 0;
     k0 = 55.0f / 60.0f;
     k1 = 55.0f / 60.0f;
+    tUpdate = 0;
+    path = 0;
   }
 
   void setPos(float posx, float posy, float angle) {
@@ -27,140 +32,64 @@ class Robot {
   }
 
   void setMotors(float Left, float Right) {
-    Motors[0] = Left;
-    Motors[1] = Right;
+    MotorLeft = Left;
+    MotorRight = Right;
   }
-
-  void setMotorLeft(float Left) { Motors[0] = Left; }
-
-  void setMotorRight(float Right) { Motors[1] = Right; }
+  void setMotorLeft(float Left) { MotorLeft = Left; }
+  void setMotorRight(float Right) { MotorRight = Right; }
 
   float getX() { return x; }
   float getY() { return y; }
   float gettheta() { return theta; }
 
-  void renderFrontPath() {
-    theta = M_PI/2.0f;
-    float dt = 1.5f;
-    float xp = x;
-    float yp = y;
-    float thetap = theta;
-
-    for (int Ml = -100; Ml <= 100; ++Ml) {
-      for (int Mr = -100; Mr <= 100; ++Mr) {
-        if (Ml < 0 && Mr < 0) continue;
-        if (Ml < 0 && abs(Ml) > Mr) continue;
-        if (Mr < 0 && abs(Mr) > Ml) continue;
-        if (abs(Mr) < 80 && abs(Ml) < 80) continue;
-        float Vl = Ml / 100.0f * k0 * 2 * M_PI * rw;
-        float Vr = Mr / 100.0f * k1 * 2 * M_PI * rw;
-        float d = 2 * r;
-        float w = 0;
-        float R = 0;
-        if (Vl != Vr) {
-          w = (Vr - Vl) / d;
-          R = r * (Vr + Vl) / (Vr - Vl);
-          Point2d ICC(x - R * sin(theta), y + R * cos(theta));
-          float dtheta = w * dt;
-          float cosw = cos(w * dt);
-          float sinw = sin(w * dt);
-          xp = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
-          yp = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
-          thetap = theta + dtheta;
-          glBegin(GL_POINTS);
-          glColor3f(1, 1, 0);  glVertex2f(xp, yp);
-          glEnd();
-          continue;
-        } else {
-          xp = x + Vl * cos(theta) * dt;
-          yp = y + Vl * sin(theta) * dt;
-          glBegin(GL_POINTS);
-          glColor3f(1, 0, 0);  glVertex2f(xp, yp);
-          glEnd();
-          continue;
-        }
-      }
-    }
-    glPointSize(4);
-    glBegin(GL_POINTS);
-    glColor3f(1, 0, 0);  glVertex2f(x, y);
-    glEnd();
-    glPointSize(1);
-
-  }
-
-  void update() {
+  void updateIdeal() {
     t += dt;
-    if (tEvent > 0 && t >= tEvent) {
-      Motors[0] = MotorsEnd[0];
-      Motors[1] = MotorsEnd[1];
-      tEvent = 0;
+    tUpdate++;
+    if (tUpdate == 10) {
+      //std::cout << "T = " << t << std::endl;
+      tUpdate = 0;
     }
-
-    float v0 = Motors[0] / 100.0f * k0 * 2 * M_PI * rw;  // speed motor left
-    float v1 = Motors[1] / 100.0f * k1 * 2 * M_PI * rw;  // speed motor right
-    float ar = theta / 180.0f * M_PI;
-    float rx0 = x + r * cos(ar);
-    float ry0 = y + r * sin(ar);
-
-    float da0 = -v0 / (2 * M_PI * r) * dt;
-    ar += da0;
-    float lx1 = rx0 - 2 * r * cos(ar);
-    float ly1 = ry0 - 2 * r * sin(ar);
-
-    float da1 = v1 / (2 * M_PI * r) * dt;
-    ar += da1;
-    float rx1 = lx1 + 2 * r * cos(ar);
-    float ry1 = ly1 + 2 * r * sin(ar);
-
-    x = (rx1 + lx1) / 2;
-    y = (ry1 + ly1) / 2;
-    theta = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
+    float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
+    float Vr = MotorRight / 100.0f * k1 * 2 * M_PI * rw;
+    float d = 2 * r;
+    float w = 0;
+    float R = 0;
+    if (Vl != Vr) {
+      w = (Vr - Vl) / d;
+      R = r * (Vr + Vl) / (Vr - Vl);
+      Point2d ICC(x - R * sin(theta), y + R * cos(theta));
+      float dtheta = w * dt;
+      float cosw = cos(w * dt);
+      float sinw = sin(w * dt);
+      x = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
+      y = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
+      theta = theta + dtheta;
+      theta = theta - int(theta / (2 * M_PI)) * 2 * M_PI;
+    } else {
+      x = x + Vl * cos(theta) * dt;
+      y = y + Vl * sin(theta) * dt;
+    }
   }
 
-  void rotateLeft(float delay) {
-    tEvent = t + delay;
-    Motors[0] = -100;
-    Motors[1] = 100;
-    MotorsEnd[0] = 0;
-    MotorsEnd[1] = 0;
+  void rotateLeft() {
+    MotorLeft = -100;
+    MotorRight = 100;
   }
 
-  void rotateRight(float delay) {
-    tEvent = t + delay;
-    Motors[0] = 100;
-    Motors[1] = -100;
-    MotorsEnd[0] = 0;
-    MotorsEnd[1] = 0;
+  void rotateRight() {
+    MotorLeft = 100;
+    MotorRight = -100;
   }
 
-  void stimate(float m0, float m1, float dt, float &xe, float &ye,
-               float &thetae) {
-    float v0 = m0 / 100.0f * k0 * 2 * M_PI * rw;  // speed motor left
-    float v1 = m1 / 100.0f * k1 * 2 * M_PI * rw;  // speed motor right
-    float ar = theta / 180.0f * M_PI;
-    float rx0 = x + r * cos(ar);
-    float ry0 = y + r * sin(ar);
-
-    float da0 = -v0 / (2 * M_PI * r) * dt;
-    ar += da0;
-    float lx1 = rx0 - 2 * r * cos(ar);
-    float ly1 = ry0 - 2 * r * sin(ar);
-
-    float da1 = v1 / (2 * M_PI * r) * dt;
-    ar += da1;
-    float rx1 = lx1 + 2 * r * cos(ar);
-    float ry1 = ly1 + 2 * r * sin(ar);
-
-    xe = (rx1 + lx1) / 2;
-    ye = (ry1 + ly1) / 2;
-    thetae = atan2(ry1 - ly1, rx1 - lx1) * 180 / M_PI;
+  void stop() {
+    MotorLeft = 0;
+    MotorRight = 0;
   }
 
   void render() {
     glPushMatrix();
     glTranslatef(x, y, 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(theta / M_PI * 180 - 90, 0, 0, 1);
 
     float arrowLength = r + 5;
     float dw2 = 0.4;
@@ -193,27 +122,48 @@ class Robot {
   }
 
   Point2d pos() { return Point2d(x, y); }
-  Point2d posFront() {
-    return Point2d(x + r * cos(theta / 180.0f * M_PI + M_PI / 2),
-                   y + r * sin(theta / 180.0f * M_PI + M_PI / 2));
+  Point2d posFront() { return Point2d(x + r * cos(theta), y + r * sin(theta)); }
+
+  void followPath() {
+    std::cout << "t = " << t << " tevent = " << tEvent << " theta = " << DEG(theta) << std::endl;
+    updateIdeal();
+    if (tEvent > t) return;
+    if (fabs(tEvent - t) < 2 * dt) {
+      stop();
+      return;
+    }
+    if (path) {
+      Point2d p = path->getNode();
+      if (distance(p, Point2d(x, y)) <= 1) {
+        if (!path->isLast()) {
+          path->nextNode();
+        } else {
+          stop();
+        }
+      } else {
+        float dx = p.x - x;
+        float dy = p.y - y;
+        float alpha = atan2(dy, dx);
+        alpha = alpha - int(alpha / (2 * M_PI)) * 2 * M_PI;
+        float dalpha = theta - alpha;
+        std::cout << DEG(theta) << " " << DEG(alpha) << " " << DEG(dalpha)
+                  << std::endl;
+        if (fabs(dalpha) > M_PI / 20) {
+          if (dalpha < 0) {
+            tEvent = t + 0.8f;
+            rotateLeft();
+          } else {
+            tEvent = t + 0.8f;
+            rotateRight();
+          }
+        }
+      }
+    }
   }
 
-  void saveStatus() {
-    x0 = x;
-    y0 = y;
-    theta0 = theta;
-    Motors0[0] = Motors[0];
-    Motors0[1] = Motors[1];
-    t0 = t;
-  }
-
-  void restoreStatus() {
-    x = x0;
-    y = y0;
-    theta = theta0;
-    Motors[0] = Motors0[0];
-    Motors[1] = Motors0[1];
-    t = t0;
+  void setPath(Path* p) {
+    path = p;
+    tEvent = 0;
   }
 
  private:
@@ -224,13 +174,11 @@ class Robot {
   float dt;
   float k0;  // max angular speed motor0 (Left)
   float k1;  // max angular speed motor1 (Right)
-  float Motors[2];
+  float MotorLeft;
+  float MotorRight;
 
-  float x0, y0, theta0;
-  float Motors0[2];
-  float t0;
-
-  float MotorsEnd[2];
+  unsigned int tUpdate;
+  Path* path;
   float tEvent;
 };
 

@@ -9,9 +9,6 @@
 #include "point2d.h"
 #include "robot.h"
 
-
-
-
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
@@ -43,14 +40,14 @@ void set3DMode(size_t Width, size_t Height) {
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
-  glTranslatef(150, 150, 0); 
-  //path.selectMinPointDistance(robot.pos());
-  //robot.update();
-  //robot.render();
-  //path.render();
-  robot.renderFrontPath();
-  glColor3f(0, 1, 0);
-  drawDisk(dst.x, dst.y, 2, 20);
+  glTranslatef(150, 150, 0);
+  // path.selectMinPointDistance(robot.pos());
+  robot.followPath();
+  robot.render();
+  path.render();
+  // robot.renderFrontPath();
+  // glColor3f(0, 1, 0);
+  // drawDisk(dst.x, dst.y, 2, 20);
   glutSwapBuffers();
 }
 
@@ -96,13 +93,11 @@ void special_keys(int key, int x, int y) {
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
     case 'a':
-      robot.rotateRight(5);
       break;
     case 's':
-      robot.setMotorRight(50);
       break;
     case 32:
-      robot.rotateLeft(5);
+      robot.setPath(&path);
       glutPostRedisplay();
       break;
     case 27:
