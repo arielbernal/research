@@ -6,123 +6,28 @@
 #include "include/glprimitives.h"
 #include <vector>
 #include <queue>
-#include <algorithm>
-#include <functional>
 
 #include "robot_path.h"
 #include "point2d.h"
 #include "robot.h"
-#include "robot_unit.h"
-#include "ffnn3l.h"
-
-
-class GA {
- public:
-  GA(size_t N) : N(N), Population(N), TMax(0), t(0) {
-    newRandomPopulation();
-    started = false;
-    generation = 0;
-  }
-
-  void print() {
-    for (size_t i = 0; i < N; ++i) Population[i].print();
-  }
-
-  int generation;
-
-  void update(float dt) {
-    if (started) {
-      if (t < TMax) {
-        for (size_t i = 0; i < N; ++i) Population[i].update(dt);
-        float vmax = 0;
-        for (size_t i = 0; i < N; ++i) {
-          float v = Population[i].getV();
-          if (v > vmax) vmax = v;
-        }
-        t += dt;
-      } else {
-        std::cout << generation++ << std::endl;
-        nextGeneration();
-        //started = false;
-        t = 0;
-      }
-    }
-  }
-
-  void sortPopulation() {
-    std::sort(Population.begin(), Population.end(),
-              [](const RobotUnit& a, const RobotUnit& b)
-                  -> bool { return (a.getDistance2() < b.getDistance2()); });
-  }
-
-  RobotUnit reproduce(RobotUnit& x, RobotUnit& y) {
-    RobotUnit child;
-    child.getParentsGenes(x.getBrain(), y.getBrain());
-    return child;
-  }
-
-  void nextGeneration() {
-    sortPopulation();
-    Population[0].setGlow();
-    std::vector<RobotUnit> NP(N);
-    static std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(0, Population.size() / 2 - 1);
-    for (size_t i = 0; i < Population.size() / 2; ++i) {
-      size_t i0 = distribution(generator);
-      size_t i1 = distribution(generator);
-      RobotUnit x = Population[i0];
-      RobotUnit y = Population[i1];
-      RobotUnit child1 = reproduce(x, y);
-      RobotUnit child2 = reproduce(x, y);
-      // random mutation here
-      NP[2 * i] = child1;
-      NP[2 * i + 1] = child2;
-    }
-    Population = NP;
-  }
-
-  void startSimulation(float T) {
-    TMax = T;
-    started = true;
-  }
-
-  void render() {
-    for (size_t i = 0; i < N; ++i) {
-      Population[i].render();
-      Point2d t = Population[i].getTarget();
-      glColor3f(0, 1, 0);
-      drawDisk(t.x, t.y, 0.5, 20);
-    }
-  }
-
- protected:
-  void newRandomPopulation() {
-    Population.clear();
-    Population.resize(N);
-    for (size_t i = 0; i < N; ++i) {
-      Population[i] = RobotUnit();
-    }
-  }
-
- private:
-  size_t N;
-  std::vector<RobotUnit> Population;
-  float TMax;
-  float t = 0;
-  bool started;
-};
 
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-GA ga(100);
+Robot robot;
+Path path;
+Point2d dst(40, 40);
+std::queue<RobotEvent> events;
+float dt = 0.01f;
+float t = 0;
 }
 
 void set2DMode(size_t Width, size_t Height) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluOrtho2D(0, Width, 0, Height);
+
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -137,12 +42,40 @@ void set3DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
+void checkEvents() {
+  if (!events.empty()) {
+    RobotEvent e = events.front();
+    if (t > e.time) {
+      events.pop();
+      switch (e.type) {
+      case RobotEvent::STOP : 
+          robot.stop(); 
+          break;
+      case RobotEvent::LEFT:
+          robot.rotateLeft();
+          break;
+      case RobotEvent::RIGHT:
+          robot.rotateRight();
+          break;
+      case RobotEvent::FORWARD:
+        robot.moveForward();
+        break;
+      }
+    }
+  }
+  t += dt;
+}
+
 void display() {
+  checkEvents();
+  robot.update(0.01f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  ga.update(0.03f);
-  ga.render();
+
+  robot.render();
+  path.render();
+
   glutSwapBuffers();
 }
 
@@ -192,7 +125,17 @@ void normal_keys(unsigned char key, int x, int y) {
     case 's':
       break;
     case 32:
-      ga.startSimulation(15);
+      if (!path.isLast()) {
+        Point2d p = path.getNode();
+        events.push(RobotEvent(RobotEvent::LEFT, t));
+        events.push(RobotEvent(RobotEvent::STOP, t + 0.8f));
+        events.push(RobotEvent(RobotEvent::FORWARD, t+ 0.9f));
+        events.push(RobotEvent(RobotEvent::STOP, t + 1.8f));
+        events.push(RobotEvent(RobotEvent::RIGHT, t + 2.0));
+        events.push(RobotEvent(RobotEvent::STOP, t + 3.0f));
+        events.push(RobotEvent(RobotEvent::FORWARD, t + 3.2f));
+        events.push(RobotEvent(RobotEvent::STOP, t + 4.2f));
+      }
       glutPostRedisplay();
       break;
     case 27:
@@ -203,7 +146,9 @@ void normal_keys(unsigned char key, int x, int y) {
   }
 }
 
-void init_glut_window(int argc, char* argv[]) {
+void setWorld() {}
+
+void init_glut_window(int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowPosition(1800, 100);
@@ -219,11 +164,12 @@ void init_glut_window(int argc, char* argv[]) {
   glutPassiveMotionFunc(mouse_passive_motion);
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
-
+  // glewInit();
+  setWorld();
   glutMainLoop();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }

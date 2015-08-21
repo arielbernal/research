@@ -11,25 +11,22 @@
 #define DEG(X) X / M_PI * 180.0
 #define RAD(X) X / 180.0 * M_PI
 
-
 struct RobotEvent {
   int type;
   float time;
   float MotorLeft;
   float MotorRight;
-  
-  enum {STOP, LEFT, RIGHT, FORWARD};
 
-  RobotEvent(int type, float time, float MotorLeft = 0, float MotorRight = 0) 
-    : type(type), 
-    time(time),
-    MotorLeft(MotorLeft), 
-    MotorRight(MotorRight) {}
+  enum { STOP, LEFT, RIGHT, FORWARD };
+
+  RobotEvent(int type, float time, float MotorLeft = 0, float MotorRight = 0)
+      : type(type), time(time), MotorLeft(MotorLeft), MotorRight(MotorRight) {}
 };
 
 class Robot {
  public:
-  Robot() : x(0), y(0), theta(M_PI / 4) {
+  Robot(float theta = M_PI / 2, float x = 0, float y = 0)
+      : x(x), y(y), theta(theta) {
     r = 14.5 / 2.0f;
     rw = 3.4;
     MotorLeft = 0;
@@ -43,17 +40,34 @@ class Robot {
     y = posy;
     theta = angle;
   }
+  void setAngle(float angle) { theta = angle; }
 
   void setMotors(float Left, float Right) {
+    setMotorLeft(Left);
+    setMotorRight(Right);
+  }
+
+  void setMotorLeft(float Left) {
+    if (Left > 100)
+      Left = 100;
+    else if (Left < -100)
+      Left = -100;
     MotorLeft = Left;
+  }
+
+  void setMotorRight(float Right) {
+    if (Right > 100)
+      Right = 100;
+    else if (Right < -100)
+      Right = -100;
     MotorRight = Right;
   }
-  void setMotorLeft(float Left) { MotorLeft = Left; }
-  void setMotorRight(float Right) { MotorRight = Right; }
 
-  float getX() { return x; }
-  float getY() { return y; }
-  float getTheta() { return theta; }
+  float getX() const { return x; }
+  float getY() const { return y; }
+  float getAngle() { return theta; }
+  float getMotorLeft() { return MotorLeft; }
+  float getMotorRight() { return MotorRight; }
 
   void update(float dt) {
     float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
@@ -98,7 +112,7 @@ class Robot {
     MotorRight = 0;
   }
 
-  void render() {
+  void render(bool glow = false) {
     glPushMatrix();
     glTranslatef(x, y, 0);
     glRotatef(theta / M_PI * 180 - 90, 0, 0, 1);
@@ -107,7 +121,12 @@ class Robot {
     float dw2 = 0.4;
 
     glColor3f(1, 1, 1);
+    if (glow) {
+      glLineWidth(4);
+      glColor3f(1, 0, 0);
+    }
     drawCircle(0, 0, r, 30);
+    if (glow) glLineWidth(1.5);
 
     glColor3f(1, 1, 0);
     glBegin(GL_LINE_LOOP);
@@ -123,40 +142,15 @@ class Robot {
     glVertex2f(r + dw2, rw);
     glEnd();
 
-    // glColor4f(1, 0, 0, 0.3);
-    // drawArrow(0, 0, 0, 0, arrowLength, 0, 0.5);
-
     glPopMatrix();
 
     Point2d p = posFront();
     glColor3f(1, 0, 0);
-    drawDisk(p.x, p.y, 2, 40);
+    drawDisk(p.x, p.y, 0.5, 20);
   }
 
   Point2d pos() { return Point2d(x, y); }
   Point2d posFront() { return Point2d(x + r * cos(theta), y + r * sin(theta)); }
-
-  void followPath() {
-   /*     float dx = p.x - x;
-        float dy = p.y - y;
-        float alpha = atan2(dy, dx);
-        alpha = alpha - int(alpha / (2 * M_PI)) * 2 * M_PI;
-        float dalpha = theta - alpha;
-        std::cout << DEG(theta) << " " << DEG(alpha) << " " << DEG(dalpha)
-                  << std::endl;
-        if (fabs(dalpha) > M_PI / 20) {
-          if (dalpha < 0) {
-            tEvent = t + 0.8f;
-            rotateLeft();
-          } else {
-            tEvent = t + 0.8f;
-            rotateRight();
-          }
-        }
-      }
-    }*/
-  }
-
 
  private:
   float x, y, theta;
