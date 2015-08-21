@@ -41,7 +41,11 @@ class GA {
         }
         t += dt;
       } else {
-        std::cout << generation++ << std::endl;
+        float davg = 0;
+        for (size_t i = 0; i < N; ++i)
+          davg += sqrt(Population[i].getDistance2());
+        davg /= N;
+        std::cout << generation++ << "  d = " << davg << std::endl;
         nextGeneration();
         //started = false;
         t = 0;
@@ -67,17 +71,24 @@ class GA {
     std::vector<RobotUnit> NP(N);
     static std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(0, Population.size() / 2 - 1);
-    for (size_t i = 0; i < Population.size() / 2; ++i) {
+    for (size_t i = 0; i < N; ++i) {
+      RobotUnit child;
+      child.getParentGenes(Population[i % 10].getBrain());
+      child.randomMutation();
+      NP[i] = child;
+    }
+    /*
+    for (size_t i = 0; i < Population.size() / 20; ++i) {
       size_t i0 = distribution(generator);
       size_t i1 = distribution(generator);
       RobotUnit x = Population[i0];
       RobotUnit y = Population[i1];
-      RobotUnit child1 = reproduce(x, y);
-      RobotUnit child2 = reproduce(x, y);
-      // random mutation here
-      NP[2 * i] = child1;
-      NP[2 * i + 1] = child2;
-    }
+      for (int j = 0; j < 20; ++j) {
+        RobotUnit child = reproduce(x, y);
+        child.randomMutation();
+        NP[20 * i + j] = child;
+      }
+    }*/
     Population = NP;
   }
 
@@ -116,7 +127,7 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-GA ga(100);
+GA ga(200);
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -141,7 +152,7 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  ga.update(0.03f);
+  ga.update(0.2f);
   ga.render();
   glutSwapBuffers();
 }
@@ -192,7 +203,7 @@ void normal_keys(unsigned char key, int x, int y) {
     case 's':
       break;
     case 32:
-      ga.startSimulation(15);
+      ga.startSimulation(8);
       glutPostRedisplay();
       break;
     case 27:

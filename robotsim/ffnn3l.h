@@ -57,7 +57,7 @@ class FFNN3L {
   }
 
   void setRandomWeights() {
-    std::default_random_engine generator;
+    static std::default_random_engine generator;
 
     double sigma0 = 1 / sqrt(NI + 1);
     std::normal_distribution<double> distribution0(0, sigma0);

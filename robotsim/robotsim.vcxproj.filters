@@ -53,5 +53,11 @@
     <ClInclude Include="point2d.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="robot_unit.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ffnn3l.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

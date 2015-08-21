@@ -19,13 +19,13 @@
 
 class RobotUnit {
  public:
-  RobotUnit(float d = 40) : brain(NI, NH, NO), d(d), input(NI), output(NO) {
+  RobotUnit(float d = 50) : brain(NI, NH, NO), d(d), input(NI), output(NO) {
     static std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(0.0, 2 * M_PI);
     float thetaTarget = distribution(generator);
     target.x = cos(thetaTarget) * d;
     target.y = sin(thetaTarget) * d;
-    float thetaRobot = distribution(generator);
+    float thetaRobot =  distribution(generator);
     robot.setAngle(thetaRobot);
     glow = false;
   }
@@ -37,11 +37,11 @@ class RobotUnit {
 
   void render() { 
     robot.render(glow); 
-    glColor3f(1, 1, 0);
-    glBegin(GL_LINES);
-    glVertex2f(robot.getX(), robot.getY());
-    glVertex2f(target.x, target.y);
-    glEnd();
+    //glColor3f(1, 1, 0);
+    //glBegin(GL_LINES);
+    //glVertex2f(robot.getX(), robot.getY());
+    //glVertex2f(target.x, target.y);
+    //glEnd();
   }
 
   Point2d getTarget() { return target; }
@@ -73,27 +73,69 @@ class RobotUnit {
     return brain;
   }
 
+
+  void randomMutation() {
+    static std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(0, 100);
+    std::normal_distribution<double> normal(0, 0.001f);
+
+    size_t p = distribution(generator);
+    if (p > 10) return;
+
+    for (size_t j = 0; j < NH; ++j) {
+      for (size_t i = 0; i <= NI; ++i) {
+          size_t ir = distribution(generator);
+          if (ir < 1)
+            brain.getW0()[j][i] += normal(generator);
+      }
+    }
+
+    for (size_t j = 0; j < NO; ++j) {
+      for (size_t i = 0; i <= NH; ++i) {
+        size_t ir = distribution(generator);
+        if (ir < 1)
+          brain.getW1()[j][i] += normal(generator);
+      }
+    }
+  }
+
+  void getParentGenes(FFNN3L& x) {
+    for (size_t j = 0; j < NH; ++j) {
+      for (size_t i = 0; i <= NI; ++i) {
+         brain.getW0()[j][i] = x.getW0()[j][i];
+      }
+    }
+
+    for (size_t j = 0; j < NO; ++j) {
+      for (size_t i = 0; i <= NH; ++i) {
+        brain.getW1()[j][i] = x.getW1()[j][i];
+      }
+    }
+  }
+
   void getParentsGenes(FFNN3L& x, FFNN3L& y) {
     static std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(0, 1);
 
-    for (size_t j = 0; j < NH; ++j)
+    for (size_t j = 0; j < NH; ++j) {
       for (size_t i = 0; i <= NI; ++i) {
         size_t ir = distribution(generator);
-        if (ir) 
+        if (ir == 0)
           brain.getW0()[j][i] = x.getW0()[j][i];
         else
           brain.getW0()[j][i] = y.getW0()[j][i];
       }
+    }
 
-    for (size_t j = 0; j < NO; ++j)
+    for (size_t j = 0; j < NO; ++j) {
       for (size_t i = 0; i <= NH; ++i) {
         size_t ir = distribution(generator);
-        if (ir) 
+        if (ir == 0)
           brain.getW1()[j][i] = x.getW1()[j][i];
         else
           brain.getW1()[j][i] = y.getW1()[j][i];
       }
+    }
   }
 
  private:
