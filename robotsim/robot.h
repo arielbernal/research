@@ -25,7 +25,7 @@ struct RobotEvent {
 
 class Robot {
  public:
-  Robot(float theta = M_PI / 2, float x = 0, float y = 0)
+  Robot(float theta = -M_PI / 2, float x = 0, float y = 0)
       : x(x), y(y), theta(theta) {
     r = 14.5 / 2.0f;
     rw = 3.4;
@@ -35,11 +35,16 @@ class Robot {
     k1 = 55.0f / 60.0f;
   }
 
-  void setPos(float posx, float posy, float angle) {
+  void setPos(float posx, float posy) {
     x = posx;
     y = posy;
-    theta = angle;
   }
+
+  void setPos(const Point2d& p) {
+    x = p.x;
+    y = p.y;
+  }
+
   void setAngle(float angle) { theta = angle; }
 
   void setMotors(float Left, float Right) {

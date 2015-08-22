@@ -19,39 +19,28 @@
 
 class RobotUnit {
  public:
-  RobotUnit(float d = 50) : brain(NI, NH, NO), d(d), input(NI), output(NO) {
+  RobotUnit() : brain(NI, NH, NO), input(NI), output(NO), distances(5) {
     static std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(0.0, 2 * M_PI);
-    float thetaTarget = distribution(generator);
-    target.x = cos(thetaTarget) * d;
-    target.y = sin(thetaTarget) * d;
     float thetaRobot =  distribution(generator);
     robot.setAngle(thetaRobot);
     glow = false;
   }
 
-  void print() {
-    std::cout << "T = " << target.x << ", " << target.y
-              << " Theta = " << RAD(robot.getAngle()) << std::endl;
+  void setPos(const Point2d& p) {
+    robot.setPos(p);
   }
 
   void render() { 
     robot.render(glow); 
-    //glColor3f(1, 1, 0);
-    //glBegin(GL_LINES);
-    //glVertex2f(robot.getX(), robot.getY());
-    //glVertex2f(target.x, target.y);
-    //glEnd();
   }
-
-  Point2d getTarget() { return target; }
 
   void update(float dt) {
     input[0] = robot.getMotorLeft() / 100.0f;
     input[1] = robot.getMotorRight() / 100.0f;
-    input[2] = target.x - robot.getX();
-    input[3] = target.y - robot.getY();
-    input[4] = robot.getAngle();
+    input[2] = 0;
+    input[3] = 0;
+    input[4] = robot.getAngle() / M_PI - 1;
     brain.feedForward(input, output);
     robot.setMotors(output[0] * 100, output[1] * 100);
     robot.update(dt);
@@ -62,8 +51,8 @@ class RobotUnit {
   }
 
   float getDistance2() const {
-    float dx = target.x - robot.getX();
-    float dy = target.y - robot.getY();
+    float dx = 0;
+    float dy = 0;
     return dx * dx + dy * dy;
   }
 
@@ -141,10 +130,9 @@ class RobotUnit {
  private:
   FFNN3L brain;
   Robot robot;
-  Point2d target;
-  float d;
   std::vector<double> input;
   std::vector<double> output;
+  std::vector<float> distances;
   bool glow;
 };
 
