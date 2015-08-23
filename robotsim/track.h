@@ -18,10 +18,6 @@ class Track {
     return Point2d(b->j * d - N * d / 2 + d / 2, (N - b->i) * d - N * d / 2 - d / 2);
   }
 
-  void getDistanceToEdge(Robot& r) {
-
-  }
-
  protected:
   void drawMaze(Maze& Mz, float d) {
     glColor3f(0, 0.4, 0.7);
@@ -53,6 +49,8 @@ class Track {
       }
     }
   }
+
+
 
  private:
   size_t N;

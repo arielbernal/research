@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffnn3l.h" />
+    <ClInclude Include="nndataset.h" />
     <ClInclude Include="include\arg.hpp" />
     <ClInclude Include="include\glheaders.h" />
     <ClInclude Include="include\glprimitives.h" />
@@ -94,10 +95,12 @@
     <ClInclude Include="include\lodepng.h" />
     <ClInclude Include="include\scoped_timer.h" />
     <ClInclude Include="include\svector.h" />
+    <ClInclude Include="maze.h" />
     <ClInclude Include="point2d.h" />
     <ClInclude Include="robot.h" />
     <ClInclude Include="robot_path.h" />
     <ClInclude Include="robot_unit.h" />
+    <ClInclude Include="track.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

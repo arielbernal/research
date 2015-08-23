@@ -25,7 +25,7 @@ struct RobotEvent {
 
 class Robot {
  public:
-  Robot(float theta = -M_PI / 2, float x = 0, float y = 0)
+  Robot(float theta = M_PI / 2, float x = 0, float y = 0)
       : x(x), y(y), theta(theta) {
     r = 14.5 / 2.0f;
     rw = 3.4;
@@ -74,7 +74,7 @@ class Robot {
   float getMotorLeft() { return MotorLeft; }
   float getMotorRight() { return MotorRight; }
 
-  void update(float dt) {
+  void simulate(float dt, float& xp, float& yp, float& thetap) {
     float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
     float Vr = MotorRight / 100.0f * k1 * 2 * M_PI * rw;
     float d = 2 * r;
@@ -87,14 +87,46 @@ class Robot {
       float dtheta = w * dt;
       float cosw = cos(dtheta);
       float sinw = sin(dtheta);
-      x = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
-      y = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
-      theta = theta + dtheta;
-      theta = theta - int(theta / (2 * M_PI)) * 2 * M_PI;
-    } else {
-      x = x + Vl * cos(theta) * dt;
-      y = y + Vl * sin(theta) * dt;
+      xp = cosw * (x - ICC.x) - sinw * (y - ICC.y) + ICC.x;
+      yp = sinw * (x - ICC.x) + cosw * (y - ICC.y) + ICC.y;
+      thetap = theta + dtheta;
+      thetap = thetap - int(thetap / (2 * M_PI)) * 2 * M_PI;
     }
+    else {
+      xp = x + Vl * cos(theta) * dt;
+      yp = y + Vl * sin(theta) * dt;
+      thetap = theta;
+    }
+  }
+
+
+  void relativeMove(float dt, float& dx, float& dy, float& dtheta) {
+    float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
+    float Vr = MotorRight / 100.0f * k1 * 2 * M_PI * rw;
+    float d = 2 * r;
+    float w = 0;
+    float R = 0;
+    if (Vl != Vr) {
+      w = (Vr - Vl) / d;
+      R = r * (Vr + Vl) / (Vr - Vl);
+      Point2d ICC(-R * sin(theta), R * cos(theta));
+      dtheta = w * dt;
+      float cosw = cos(dtheta);
+      float sinw = sin(dtheta);
+      dx = -cosw * ICC.x + sinw * ICC.y + ICC.x;
+      dy = -sinw * ICC.x - cosw * ICC.y + ICC.y;
+      dtheta = dtheta - int(dtheta / (2 * M_PI)) * 2 * M_PI;
+    }
+    else {
+      dx = Vl * cos(theta) * dt;
+      dy = Vl * sin(theta) * dt;
+      dtheta = 0;
+    }
+  }
+
+
+  void update(float dt) {
+    simulate(dt, x, y, theta);
   }
 
   void rotateLeft() {

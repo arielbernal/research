@@ -59,5 +59,14 @@
     <ClInclude Include="ffnn3l.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="track.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maze.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nndataset.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

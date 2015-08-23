@@ -17,13 +17,14 @@
 #include "ffnn3l.h"
 #include "maze.h"
 #include "track.h"
+#include "nndataset.h"
 
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-Track track;
-RobotUnit robot;
+Robot robot;
+NNDataset<double> dataset(3, 2);
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -48,7 +49,6 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  track.render();
   robot.render();
   glutSwapBuffers();
 }
@@ -109,6 +109,44 @@ void normal_keys(unsigned char key, int x, int y) {
   }
 }
 
+void createSet(const std::string& FileName, size_t N) {
+  std::vector<double> In(3);
+  std::vector<double> Out(2);
+  static std::default_random_engine generator;
+  std::uniform_int_distribution<int> uniform(-100, 100);
+
+  NNDataset<double> DataSet(3, 2);
+  float dt = 0.1f;
+  float dx, dy, dtheta;
+  robot.setMotors(100, 100);
+  robot.relativeMove(dt, dx, dy, dtheta);
+  float dyMax = dy;
+  robot.setMotors(100, 0);
+  robot.relativeMove(dt, dx, dy, dtheta);
+  float dxMax = 2 * dx;
+  std::cout << "Dx = " << dxMax << " Dy=" << dyMax << std::endl;
+
+  size_t in = 0;
+  while (in < N)  {
+    float Vl = uniform(generator);
+    float Vr = uniform(generator);
+    if (Vl + Vr < 0) continue;
+    robot.setMotors(Vl, Vr);
+    robot.relativeMove(dt, dx, dy, dtheta);
+    In[0] = dx / dxMax;
+    In[1] = dy / dyMax;
+    In[2] = dtheta / M_PI - 1;
+    Out[0] = robot.getMotorLeft() / 100.0f;
+    Out[1] = robot.getMotorRight() / 100.0f;
+    DataSet.addSample(In, Out);
+    in++;
+  }
+  DataSet.save(FileName);
+
+  DataSet.print();
+}
+
+
 void init_glut_window(int argc, char* argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
@@ -126,9 +164,23 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  robot.setPos(track.getBeginCenter());
+  createSet("tr50k.dat", 50);
 
+  //createSet("test20k.dat", 20000);
+  //dataset.load(50000, "tr50k.dat");
+
+  
   glutMainLoop();
+}
+
+
+
+float dot(const Point2d& a, const Point2d& b) {
+  return a.x *b.x + a.y *b.y;
+}
+
+bool lineSegmentIntersection(const Point2d& e, const Point2d& d, const Edge2d& a, const Point2d& I) {
+  return false;
 }
 
 int main(int argc, char** argv) {

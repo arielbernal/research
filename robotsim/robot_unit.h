@@ -21,9 +21,8 @@ class RobotUnit {
  public:
   RobotUnit() : brain(NI, NH, NO), input(NI), output(NO), distances(5) {
     static std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(0.0, 2 * M_PI);
-    float thetaRobot =  distribution(generator);
-    robot.setAngle(thetaRobot);
+    std::uniform_real_distribution<double> uniform(0.0, 2 * M_PI);
+    robot.setAngle(uniform(generator));
     glow = false;
   }
 
