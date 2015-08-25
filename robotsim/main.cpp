@@ -8,6 +8,7 @@
 #include <queue>
 #include <algorithm>
 #include <functional>
+#include <chrono>
 
 #include "ga.h"
 #include "robot_path.h"
@@ -25,6 +26,7 @@ int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
 Robot robot;
 NNDataset<double> dataset(3, 2);
+FFNN3L nn(3, 8, 2);
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -112,20 +114,13 @@ void normal_keys(unsigned char key, int x, int y) {
 void createSet(const std::string& FileName, size_t N) {
   std::vector<double> In(3);
   std::vector<double> Out(2);
-  static std::default_random_engine generator;
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
   std::uniform_int_distribution<int> uniform(-100, 100);
 
   NNDataset<double> DataSet(3, 2);
   float dt = 0.1f;
   float dx, dy, dtheta;
-  robot.setMotors(100, 100);
-  robot.relativeMove(dt, dx, dy, dtheta);
-  float dyMax = dy;
-  robot.setMotors(100, 0);
-  robot.relativeMove(dt, dx, dy, dtheta);
-  float dxMax = 2 * dx;
-  std::cout << "Dx = " << dxMax << " Dy=" << dyMax << std::endl;
-
   size_t in = 0;
   while (in < N)  {
     float Vl = uniform(generator);
@@ -133,17 +128,39 @@ void createSet(const std::string& FileName, size_t N) {
     if (Vl + Vr < 0) continue;
     robot.setMotors(Vl, Vr);
     robot.relativeMove(dt, dx, dy, dtheta);
-    In[0] = dx / dxMax;
-    In[1] = dy / dyMax;
-    In[2] = dtheta / M_PI - 1;
+    In[0] = dx;
+    In[1] = dy;
+    In[2] = dtheta;
+
     Out[0] = robot.getMotorLeft() / 100.0f;
     Out[1] = robot.getMotorRight() / 100.0f;
     DataSet.addSample(In, Out);
     in++;
   }
-  DataSet.save(FileName);
 
-  DataSet.print();
+
+  In[0] = 2.17403e-5;
+  In[1] = 0.651979;
+  In[2] = -9.38887e-05;
+  Out[0] = 0.333694;
+  Out[1] = 0.332999;
+
+  NNSample<double> a(In, Out);
+  DataSet.meanCancellation(a);
+
+  DataSet.save(FileName);
+  NNSample<double> avg = DataSet.averageSample();
+
+  std::cout << "Average-------------------" << std::endl;
+  std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << " dtheta = " << avg.Input[2] << std::endl;
+  std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] << std::endl;
+
+  //dt = 0.1f;
+  //dx = 2.17403e-05 dy = 0.651979 dtheta = -9.38887e-05
+  //Vl = 0.333694 Vr = 0.332999
+
+
+  //DataSet.print();
 }
 
 
@@ -164,10 +181,13 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  createSet("tr50k.dat", 50);
+  createSet("test500.dat", 500);
 
   //createSet("test20k.dat", 20000);
   //dataset.load(50000, "tr50k.dat");
+
+  nn.save("nn01.net");
+  nn.load("nn01.net");
 
   
   glutMainLoop();
