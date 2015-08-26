@@ -82,7 +82,7 @@ class NNDataset {
 
     for (size_t i = 0; i < N; ++i) {
       SampleType* S =
-          new SampleType(InputSize, OutputSize, i, (DT*)&Data[i * Size]);
+          new SampleType(InputSize, OutputSize, (DT*)&Data[i * Size]);
       Samples[i] = S;
     }
     return true;
@@ -106,11 +106,12 @@ class NNDataset {
   }
 
   Iterator begin() { return Samples.begin(); }
-
   Iterator end() { return Samples.end(); }
+  size_t size() { return N; }
 
   ConstIterator begin() const { return Samples.begin(); }
   ConstIterator end() const { return Samples.begin(); }
+  size_t size() const { return N; }
 
   std::vector<SampleType*>& getSamples() { return Samples; }
 

@@ -25,7 +25,6 @@ int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
 Robot robot;
-NNDataset<double> dataset(3, 2);
 FFNN3L nn(3, 8, 2);
 }
 
@@ -181,13 +180,16 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  createSet("test500.dat", 500);
+  //createSet("test500.dat", 500);
+  NNDataset<double> test(3, 2);
+  NNDataset<double> train(3, 2);
+  train.load(500, "tr500.dat");
+  test.load(500, "test500.dat");
 
-  //createSet("test20k.dat", 20000);
-  //dataset.load(50000, "tr50k.dat");
+  FFNN3L NN(3, 10, 2);
+  NN.train(train, 10000, 0.01, 0.8);
+  NN.test(test);
 
-  nn.save("nn01.net");
-  nn.load("nn01.net");
 
   
   glutMainLoop();

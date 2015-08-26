@@ -28,7 +28,7 @@ class FFNN3L {
         W0(NH, std::vector<double>(NI + 1)),
         W1(NO, std::vector<double>(NH + 1)) {
     Input[NI] = -1;
-    Hidden[NI] = -1;
+    Hidden[NH] = -1;
     setRandomWeights();
   }
 
@@ -116,61 +116,69 @@ class FFNN3L {
       for (size_t j = 0; j <= NI; ++j) ifs >> W0[i][j];
     for (size_t i = 0; i < NO; ++i)
       for (size_t j = 0; j <= NH; ++j) ifs >> W1[i][j];
-
     ifs.close();
   }
 
-  void train(const NNDataset<double>& Training, size_t MaxEpochs) {
+  void train(NNDataset<double>& Training, size_t MaxEpochs, double eta = 0.09,
+             double mu = 0.5) {
     DW0.resize(NH, std::vector<double>(NI + 1));
     DW1.resize(NO, std::vector<double>(NH + 1));
-    D0.resize(NI + 1);
-    D1.resize(NH + 1);
     std::vector<double> Result(NO);
     size_t epoch = 0;
+    std::cout << Training.size() << std::endl;
     while (epoch < MaxEpochs) {
-      // Training->sortByMSE();
-      // Training->randomizeOrder();
-      for (auto& e : Training) {
+      double MSETotal = 0;
+      for (auto& e : Training.getSamples()) {
         feedForward(e->Input, Result);
-        // e->MSE = MSE(Result.data(), e->Output);
-        backPropagate(e->Output);
+        MSETotal += MSE(Result, e->Output);
+        backPropagate(e->Output, eta, mu);
       }
+      std::cout << "Epoch = " << epoch
+                << "  Training MSETotal = " << MSETotal / Training.size() << std::endl;
       epoch++;
     }
-    DW0.clear();
-    DW1.clear();
-    D0.clear();
-    D1.clear();
+  }
+
+  void test(NNDataset<double>& Test) {
+    double MSETotal = 0;
+    std::vector<double> Result(NO);
+    for (auto& e : Test.getSamples()) {
+      feedForward(e->Input, Result);
+      MSETotal += MSE(Result, e->Output);
+    }
+    std::cout << "Test MSETotal = " << MSETotal / Test.size() << std::endl;
   }
 
  protected:
-  void backPropagate(const std::vector<double>& O) {
-    computeDeltas(O);
-    updateWeights(0.1, 0.9);
-    //updateWeights(LearningRate, Momentum);
-  }
-
-  void computeDeltas(const std::vector<double>& t) {
-    for (size_t k = 0; k < NO; ++k)
-      D1[k] = (Output[k] - t[k]) * DSIGMOID(Output[k]);
-    for (size_t j = 0; j <= NH; ++j) {
-      double S = 0;
-      for (size_t k = 0; k < NO; ++k) S += D1[k] * W1[k][j];
-      D0[j] = S * DSIGMOID(Hidden[j]);
+  double MSE(const std::vector<double>& a, const std::vector<double>& b) {
+    double S = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+      double dx = a[i] - b[i];
+      S += dx * dx;
     }
+    return S / 2;
   }
 
-  void updateWeights(double eta, double mu) {
-    for (size_t i = 0; i < NH; ++i)
-      for (size_t j = 0; j <= NI; ++j) {
-        DW0[i][j] = -eta * D0[i] * Input[j] + mu * DW0[i][j];
-        W0[i][j] += DW0[i][j];
-      }
-    for (size_t i = 0; i < NO; ++i)
-      for (size_t j = 0; j <= NH; ++j) {
-        DW1[i][j] = -eta * D1[i] * Hidden[j] + mu * DW1[i][j];
-        W1[i][j] += DW1[i][j];
-      }
+  void backPropagate(const std::vector<double>& t, double eta, double mu) {
+    for (size_t k = 0; k < NO; ++k) {
+      double dk = (Output[k] - t[k]) * DSIGMOID(Output[k]);
+      for (size_t j = 0; j <= NH; ++j)
+        DW1[k][j] = -eta * dk * Hidden[j] + mu * DW1[k][j];
+    }
+    for (size_t j = 0; j < NH; ++j) {
+      double S = 0;
+      for (size_t k = 0; k < NO; ++k)
+        S += (Output[k] - t[k]) * DSIGMOID(Output[k]) * W1[k][j];
+      // std::cout << "H = " << Hidden[j] << " DS = " << DSIGMOID(Output[j])
+      //           << std::endl;
+      double dj = S * DSIGMOID(Hidden[j]);
+      for (size_t i = 0; i <= NI; ++i)
+        DW0[j][i] = -eta * dj * Input[i] + mu * DW0[i][j];
+    }
+    for (size_t k = 0; k < NO; ++k)
+      for (size_t j = 0; j <= NI; ++j) W1[k][j] += DW1[k][j];
+    for (size_t j = 0; j < NH; ++j)
+      for (size_t i = 0; i <= NI; ++i) W0[j][i] += DW0[j][i];
   }
 
  private:
@@ -180,11 +188,8 @@ class FFNN3L {
   std::vector<double> Output;
   std::vector<std::vector<double>> W0;
   std::vector<std::vector<double>> W1;
-
   std::vector<std::vector<double>> DW0;
   std::vector<std::vector<double>> DW1;
-  std::vector<double> D0;
-  std::vector<double> D1;
 };
 
 #endif  // FFNN3L_H
