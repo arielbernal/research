@@ -186,13 +186,18 @@ void init_glut_window(int argc, char* argv[]) {
   train.load(500, "tr500.dat");
   test.load(500, "test500.dat");
 
-  FFNN3L NN(3, 10, 2);
-  NN.train(train, 10000, 0.01, 0.8);
+  FFNN3L NN(3, 8, 2);
+  //NN.train(train, 10000, 0.05, 0.8);
+  NN.test(train);
+  NN.test(test);
+  //NN.save("NN382.nn");
+  NN.load("NN382.nn");
+  NN.test(train);
   NN.test(test);
 
 
   
-  glutMainLoop();
+  //glutMainLoop();
 }
 
 

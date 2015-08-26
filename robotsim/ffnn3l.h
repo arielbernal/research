@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <random>
 #include "nndataset.h"
@@ -26,7 +27,9 @@ class FFNN3L {
         Hidden(NH + 1),
         Output(NO),
         W0(NH, std::vector<double>(NI + 1)),
-        W1(NO, std::vector<double>(NH + 1)) {
+        W1(NO, std::vector<double>(NH + 1)),
+        DW0(NH, std::vector<double>(NI + 1)),
+        DW1(NO, std::vector<double>(NH + 1)) {
     Input[NI] = -1;
     Hidden[NH] = -1;
     setRandomWeights();
@@ -112,6 +115,8 @@ class FFNN3L {
     Output.resize(NO);
     W0.resize(NH, std::vector<double>(NI + 1));
     W1.resize(NO, std::vector<double>(NH + 1));
+    DW0.resize(NH, std::vector<double>(NI + 1));
+    DW1.resize(NO, std::vector<double>(NH + 1));
     for (size_t i = 0; i < NH; ++i)
       for (size_t j = 0; j <= NI; ++j) ifs >> W0[i][j];
     for (size_t i = 0; i < NO; ++i)
@@ -121,8 +126,8 @@ class FFNN3L {
 
   void train(NNDataset<double>& Training, size_t MaxEpochs, double eta = 0.09,
              double mu = 0.5) {
-    DW0.resize(NH, std::vector<double>(NI + 1));
-    DW1.resize(NO, std::vector<double>(NH + 1));
+    for (auto& e : DW0)  for (auto &v : e)    v = 0;
+    for (auto& e : DW1)  for (auto &v : e)    v = 0;
     std::vector<double> Result(NO);
     size_t epoch = 0;
     std::cout << Training.size() << std::endl;
