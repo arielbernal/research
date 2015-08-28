@@ -15,10 +15,7 @@
 
 class RobotUnit {
  public:
-  RobotUnit() {
-    //  //    static std::default_random_engine generator;
-    //  //    std::uniform_real_distribution<double> uniform(0.0, 2 * M_PI);
-    //  //    robot.setAngle(M_PI/2);
+  RobotUnit() : NNPath(5, 8, 3), NNKinetic(3, 8, 2) {
     glow = false;
   }
 
@@ -26,104 +23,78 @@ class RobotUnit {
 
   void render() { robot.render(glow); }
 
-  void setTarget(const Point2d& t) {
+  void setTarget(const Point2d& t, float angle) {
     Target = t;
+    ttheta = angle;
   }
 
-  //  //  void update(float dt) {
-  //  //    input[0] = robot.getMotorLeft() / 100.0f;
-  //  //    input[1] = robot.getMotorRight() / 100.0f;
-  //  //    input[2] = 0;
-  //  //    input[3] = 0;
-  //  //    input[4] = robot.getAngle() / M_PI - 1;
-  //  //    brain.feedForward(input, output);
-  //  //    robot.setMotors(output[0] * 100, output[1] * 100);
-  //  //    robot.update(dt);
-  //  //  }
+  void updateRelativeTarget() {  
+    dtheta = theta -robot.getAngle();
+    float dx = t.x - robot.getX();
+    float dy = t.y - robot.getY();
+    float r = sqrt(dx * dx + dy * dy);
+    DTarget.x = -r * sin(robot.getAngle());
+    DTarget.y = r * cos(robot.getAngle());
+  }
 
-  //  //  float getDistance2() const {
-  //  //    float dx = 0;
-  //  //    float dy = 0;
-  //  //    return dx * dx + dy * dy;
-  //  //  }
+  void setNNKinetic(const FFNN3L& net) { NNKinetic = net; }
 
-  //  //  void setGlow() { glow = true; }
+  void update(float dt) {
+    updateRelativeTarget();
 
-  //  //  FFNN3L& getBrain() {
-  //  //    return brain;
-  //  //  }
+    std::vector<double> PathIn[5];
+    std::vector<double> PathOut[3];
+    PathIn[0] = robot.getMotorLeft() / 100.0f;
+    PathIn[1] = robot.getMotorRight() / 100.0f;
+    PathIn[2] = DTarget.x;
+    PathIn[3] = DTarget.y;
+    PathIn[4] = dtheta;
+    NNPath.feedForward(PathIn, PathOut);
 
-  //  //  void randomMutation() {
-  //  //    static std::default_random_engine generator;
-  //  //    std::uniform_int_distribution<int> distribution(0, 100);
-  //  //    std::normal_distribution<double> normal(0, 0.001f);
+    std::vector<double> KineticOut[2];
+    NNKinetic.feedForward(PathOut, KineticOut);
 
-  //  //    size_t p = distribution(generator);
-  //  //    if (p > 10) return;
+    robot.setMotors(KineticOut[0] * 100, KineticOut[1] * 100);
+    robot.update(dt);
+  }
 
-  //  //    for (size_t j = 0; j < NH; ++j) {
-  //  //      for (size_t i = 0; i <= NI; ++i) {
-  //  //          size_t ir = distribution(generator);
-  //  //          if (ir < 1)
-  //  //            brain.getW0()[j][i] += normal(generator);
-  //  //      }
-  //  //    }
+  void setGlow() { glow = true; }
 
-  //  //    for (size_t j = 0; j < NO; ++j) {
-  //  //      for (size_t i = 0; i <= NH; ++i) {
-  //  //        size_t ir = distribution(generator);
-  //  //        if (ir < 1)
-  //  //          brain.getW1()[j][i] += normal(generator);
-  //  //      }
-  //  //    }
-  //  //  }
+  FFNN3L& getNNPath() { return NNPath; }
 
-  //  //  void getParentGenes(FFNN3L& x) {
-  //  //    for (size_t j = 0; j < NH; ++j) {
-  //  //      for (size_t i = 0; i <= NI; ++i) {
-  //  //         brain.getW0()[j][i] = x.getW0()[j][i];
-  //  //      }
-  //  //    }
+  void crossOver(FFNN3L& x, FFNN3L& y) {
+    static std::default_random_engine generator;
+    std::uniform_real_distribution<float> distribution(0, 1);
+    size_t NI = NNPath.getNI();
+    size_t NH = NNPath.getNH();
+    size_t NO = NNPath.getNO();
 
-  //  //    for (size_t j = 0; j < NO; ++j) {
-  //  //      for (size_t i = 0; i <= NH; ++i) {
-  //  //        brain.getW1()[j][i] = x.getW1()[j][i];
-  //  //      }
-  //  //    }
-  //  //  }
+    float ir = 0.7f;  // distribution(generator);
 
-  //  //  void getParentsGenes(FFNN3L& x, FFNN3L& y) {
-  //  //    static std::default_random_engine generator;
-  //  //    std::uniform_int_distribution<int> distribution(0, 1);
+    for (size_t j = 0; j < NH; ++j) {
+      if (j <= ir * NH)
+        for (size_t i = 0; i <= NI; ++i) NNPath.getW0()[j][i] = x.getW0()[j][i];
+      else
+        for (size_t i = 0; i <= NI; ++i) NNPath.getW0()[j][i] = y.getW0()[j][i];
+    }
 
-  //  //    for (size_t j = 0; j < NH; ++j) {
-  //  //      for (size_t i = 0; i <= NI; ++i) {
-  //  //        size_t ir = distribution(generator);
-  //  //        if (ir == 0)
-  //  //          brain.getW0()[j][i] = x.getW0()[j][i];
-  //  //        else
-  //  //          brain.getW0()[j][i] = y.getW0()[j][i];
-  //  //      }
-  //  //    }
-
-  //  //    for (size_t j = 0; j < NO; ++j) {
-  //  //      for (size_t i = 0; i <= NH; ++i) {
-  //  //        size_t ir = distribution(generator);
-  //  //        if (ir == 0)
-  //  //          brain.getW1()[j][i] = x.getW1()[j][i];
-  //  //        else
-  //  //          brain.getW1()[j][i] = y.getW1()[j][i];
-  //  //      }
-  //  //    }
-  //  //  }
+    for (size_t j = 0; j < NO; ++j) {
+      if (j <= ir * NO)
+        for (size_t i = 0; i <= NH; ++i) NNPath.getW1()[j][i] = x.getW1()[j][i];
+      else
+        for (size_t i = 0; i <= NH; ++i) NNPath.getW1()[j][i] = y.getW1()[j][i];
+    }
+  }
 
  private:
   FFNN3L NNPath;
-  FFNN3L NNKinematics;
+  FFNN3L NNKinetic;
   Robot robot;
   bool glow;
   Point2d Target;
+  float ttheta;
   Point2d DTarget;
+  float dtheta;
 };
 
 #endif

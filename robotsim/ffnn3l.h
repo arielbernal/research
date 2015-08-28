@@ -19,6 +19,8 @@
 
 class FFNN3L {
  public:
+  FFNN3L() {}
+
   FFNN3L(size_t NI, size_t NH, size_t NO)
       : NI(NI),
         NH(NH),
@@ -37,6 +39,9 @@ class FFNN3L {
 
   const std::vector<std::vector<double>>& getW0() const { return W0; }
   const std::vector<std::vector<double>>& getW1() const { return W1; }
+  std::vector<std::vector<double>>& getW0() { return W0; }
+  std::vector<std::vector<double>>& getW1() { return W1; }
+
 
   size_t getNI() const { return NI; }
   size_t getNH() const { return NH; }
@@ -64,6 +69,8 @@ class FFNN3L {
     W1 = t.getW1();
     DW0.resize(NH, std::vector<double>(NI + 1));
     DW1.resize(NO, std::vector<double>(NH + 1));
+    Input[NI] = -1;
+    Hidden[NH] = -1;
     return *this;
   }
 
@@ -143,6 +150,8 @@ class FFNN3L {
     for (size_t i = 0; i < NO; ++i)
       for (size_t j = 0; j <= NH; ++j) ifs >> W1[i][j];
     ifs.close();
+    Input[NI] = -1;
+    Hidden[NH] = -1;
   }
 
   void train(NNDataset<double>& Training, size_t MaxEpochs, double eta = 0.09,
