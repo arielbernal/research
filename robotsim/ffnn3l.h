@@ -35,6 +35,38 @@ class FFNN3L {
     setRandomWeights();
   }
 
+  const std::vector<std::vector<double>>& getW0() const { return W0; }
+  const std::vector<std::vector<double>>& getW1() const { return W1; }
+
+  size_t getNI() const { return NI; }
+  size_t getNH() const { return NH; }
+  size_t getNO() const { return NO; }
+
+  void clear() {
+    Input.clear();
+    Hidden.clear();
+    Output.clear();
+    W0.clear();
+    W1.clear();
+    DW0.clear();
+    DW1.clear();
+  }
+
+  FFNN3L& operator=(const FFNN3L& t) {
+    clear();
+    NI = t.getNI();
+    NH = t.getNH();
+    NO = t.getNO();
+    Input.resize(NI + 1);
+    Hidden.resize(NH + 1);
+    Output.resize(NO);
+    W0 = t.getW0();
+    W1 = t.getW1();
+    DW0.resize(NH, std::vector<double>(NI + 1));
+    DW1.resize(NO, std::vector<double>(NH + 1));
+    return *this;
+  }
+
   void feedForward(const std::vector<double>& input, std::vector<double>& out) {
     for (size_t i = 0; i < NI; ++i) Input[i] = input[i];
     for (size_t j = 0; j < NH; ++j) {
@@ -73,17 +105,6 @@ class FFNN3L {
     std::normal_distribution<double> distribution1(0, sigma1);
     for (size_t i = 0; i < NO; ++i)
       for (size_t j = 0; j <= NH; ++j) W1[i][j] = distribution1(generator);
-  }
-
-  std::vector<std::vector<double>>& getW0() { return W0; }
-  std::vector<std::vector<double>>& getW1() { return W1; }
-
-  void clear() {
-    Input.clear();
-    Hidden.clear();
-    Output.clear();
-    W0.clear();
-    W1.clear();
   }
 
   void save(const std::string& Filename) {
@@ -126,8 +147,10 @@ class FFNN3L {
 
   void train(NNDataset<double>& Training, size_t MaxEpochs, double eta = 0.09,
              double mu = 0.5) {
-    for (auto& e : DW0)  for (auto &v : e)    v = 0;
-    for (auto& e : DW1)  for (auto &v : e)    v = 0;
+    for (auto& e : DW0)
+      for (auto& v : e) v = 0;
+    for (auto& e : DW1)
+      for (auto& v : e) v = 0;
     std::vector<double> Result(NO);
     size_t epoch = 0;
     std::cout << Training.size() << std::endl;
@@ -139,7 +162,8 @@ class FFNN3L {
         backPropagate(e->Output, eta, mu);
       }
       std::cout << "Epoch = " << epoch
-                << "  Training MSETotal = " << MSETotal / Training.size() << std::endl;
+                << "  Training MSETotal = " << MSETotal / Training.size()
+                << std::endl;
       epoch++;
     }
   }
