@@ -45,6 +45,12 @@ class Robot {
     y = p.y;
   }
 
+  void setPos(const Point2d& p, float angle) {
+    x = p.x;
+    y = p.y;
+    theta = angle;
+  }
+
   void setAngle(float angle) { theta = angle; }
 
   void setMotors(float Left, float Right) {

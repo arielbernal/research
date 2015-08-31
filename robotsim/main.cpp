@@ -19,12 +19,13 @@
 #include "maze.h"
 #include "track.h"
 #include "nndataset.h"
+#include "robot_ga.h"
 
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-Robot robot;
+RobotGA robot(5);
 FFNN3L nn(3, 8, 2);
 Track track;
 }
@@ -112,63 +113,63 @@ void normal_keys(unsigned char key, int x, int y) {
   }
 }
 
-void createSet(const std::string& FileName, size_t N) {
-  std::vector<double> In(3);
-  std::vector<double> Out(2);
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::default_random_engine generator(seed);
-  std::uniform_int_distribution<int> uniform(-100, 100);
+// void createSet(const std::string& FileName, size_t N) {
+//   std::vector<double> In(3);
+//   std::vector<double> Out(2);
+//   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+//   std::default_random_engine generator(seed);
+//   std::uniform_int_distribution<int> uniform(-100, 100);
 
-  NNDataset<double> DataSet(3, 2);
-  float dt = 0.1f;
-  float dx, dy, dtheta;
-  size_t in = 0;
-  while (in < N)  {
-    float Vl = uniform(generator);
-    float Vr = uniform(generator);
-    if (Vl + Vr < 0) continue;
-    robot.setMotors(Vl, Vr);
-    robot.relativeMove(dt, dx, dy, dtheta);
-    In[0] = dx;
-    In[1] = dy;
-    In[2] = dtheta;
+//   NNDataset<double> DataSet(3, 2);
+//   float dt = 0.1f;
+//   float dx, dy, dtheta;
+//   size_t in = 0;
+//   while (in < N)  {
+//     float Vl = uniform(generator);
+//     float Vr = uniform(generator);
+//     if (Vl + Vr < 0) continue;
+//     robot.setMotors(Vl, Vr);
+//     robot.relativeMove(dt, dx, dy, dtheta);
+//     In[0] = dx;
+//     In[1] = dy;
+//     In[2] = dtheta;
 
-    Out[0] = robot.getMotorLeft() / 100.0f;
-    Out[1] = robot.getMotorRight() / 100.0f;
-    DataSet.addSample(In, Out);
-    in++;
-  }
-
-
-  In[0] = 2.17403e-5;
-  In[1] = 0.651979;
-  In[2] = -9.38887e-05;
-  Out[0] = 0.333694;
-  Out[1] = 0.332999;
-
-  NNSample<double> a(In, Out);
-  DataSet.meanCancellation(a);
-
-  DataSet.save(FileName);
-  NNSample<double> avg = DataSet.averageSample();
-
-  std::cout << "Average-------------------" << std::endl;
-  std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << " dtheta = " << avg.Input[2] << std::endl;
-  std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] << std::endl;
-
-  //dt = 0.1f;
-  //dx = 2.17403e-05 dy = 0.651979 dtheta = -9.38887e-05
-  //Vl = 0.333694 Vr = 0.332999
+//     Out[0] = robot.getMotorLeft() / 100.0f;
+//     Out[1] = robot.getMotorRight() / 100.0f;
+//     DataSet.addSample(In, Out);
+//     in++;
+//   }
 
 
-  //DataSet.print();
-}
+//   In[0] = 2.17403e-5;
+//   In[1] = 0.651979;
+//   In[2] = -9.38887e-05;
+//   Out[0] = 0.333694;
+//   Out[1] = 0.332999;
+
+//   NNSample<double> a(In, Out);
+//   DataSet.meanCancellation(a);
+
+//   DataSet.save(FileName);
+//   NNSample<double> avg = DataSet.averageSample();
+
+//   std::cout << "Average-------------------" << std::endl;
+//   std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << " dtheta = " << avg.Input[2] << std::endl;
+//   std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] << std::endl;
+
+//   //dt = 0.1f;
+//   //dx = 2.17403e-05 dy = 0.651979 dtheta = -9.38887e-05
+//   //Vl = 0.333694 Vr = 0.332999
+
+
+//   //DataSet.print();
+// }
 
 
 void init_glut_window(int argc, char* argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
-  glutInitWindowPosition(1800, 100);
+  glutInitWindowPosition(800, 100);
   glutInitWindowSize(m_window_width, m_window_height);
   glutCreateWindow(m_window_title.c_str());
 
@@ -202,17 +203,16 @@ void init_glut_window(int argc, char* argv[]) {
   //track.addEdge(0, -15, 30, -15);
   track.makePolygon(0, 50, 50, 10);
   track.makePolygon(0, 50, 80, 10);
+  track.addEdge(-15.5, 2, -25, -26);
+  robot.setPos(Point2d(0, -12), 0);
+
   
   glutMainLoop();
 }
 
 
-
-float dot(const Point2d& a, const Point2d& b) {
-  return a.x *b.x + a.y *b.y;
-}
-
 bool lineSegmentIntersection(const Point2d& e, const Point2d& d, const Edge2d& a, const Point2d& I) {
+  
   return false;
 }
 

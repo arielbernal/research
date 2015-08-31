@@ -20,6 +20,12 @@ float distance(const Point2d &p1, const Point2d &p2) {
   return sqrt(dx * dx + dy * dy);
 }
 
+
+float dot(const Point2d& a, const Point2d& b) {
+  return a.x *b.x + a.y *b.y;
+}
+
+
 struct Edge2d {
   Edge2d(float x0, float y0, float x1, float y1) : p0(x0, y0), p1(x1, y1) {}
   
