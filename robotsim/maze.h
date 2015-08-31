@@ -83,13 +83,13 @@ public:
   }  
    
  
-  Cell *getGrid() {
+  Cell *getGrid() const {
     return Grid;
   }
-  unsigned getWidth() {
+  unsigned getWidth() const {
     return N;
   }
-  unsigned getHeight() {
+  unsigned getHeight() const {
     return M;
   }
   
@@ -101,11 +101,11 @@ public:
      End = &Grid[i * N + j];
   }
 
-  Cell *getBegin() {
+  Cell *getBegin() const{
     return Begin;
   }
 
-  Cell *getEnd() {
+  Cell *getEnd() const {
     return End;
   }
 

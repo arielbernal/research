@@ -25,13 +25,13 @@ class RobotUnit {
 
   void setTarget(const Point2d& t, float angle) {
     Target = t;
-    ttheta = angle;
+    Ttheta = angle;
   }
 
   void updateRelativeTarget() {  
-    dtheta = theta -robot.getAngle();
-    float dx = t.x - robot.getX();
-    float dy = t.y - robot.getY();
+    dtheta = Ttheta - robot.getAngle();
+    float dx = Target.x - robot.getX();
+    float dy = Target.y - robot.getY();
     float r = sqrt(dx * dx + dy * dy);
     DTarget.x = -r * sin(robot.getAngle());
     DTarget.y = r * cos(robot.getAngle());
@@ -42,8 +42,8 @@ class RobotUnit {
   void update(float dt) {
     updateRelativeTarget();
 
-    std::vector<double> PathIn[5];
-    std::vector<double> PathOut[3];
+    std::vector<double> PathIn(5);
+    std::vector<double> PathOut(3);
     PathIn[0] = robot.getMotorLeft() / 100.0f;
     PathIn[1] = robot.getMotorRight() / 100.0f;
     PathIn[2] = DTarget.x;
@@ -52,9 +52,9 @@ class RobotUnit {
     NNPath.feedForward(PathIn, PathOut);
 
     std::vector<double> KineticOut[2];
-    NNKinetic.feedForward(PathOut, KineticOut);
+    //NNKinetic.feedForward(PathOut, KineticOut);
 
-    robot.setMotors(KineticOut[0] * 100, KineticOut[1] * 100);
+    //robot.setMotors(KineticOut[0] * 100, KineticOut[1] * 100);
     robot.update(dt);
   }
 
@@ -92,7 +92,7 @@ class RobotUnit {
   Robot robot;
   bool glow;
   Point2d Target;
-  float ttheta;
+  float Ttheta;
   Point2d DTarget;
   float dtheta;
 };

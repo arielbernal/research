@@ -26,6 +26,7 @@ int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
 Robot robot;
 FFNN3L nn(3, 8, 2);
+Track track;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -51,6 +52,7 @@ void display() {
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
   robot.render();
+  track.render();
   glutSwapBuffers();
 }
 
@@ -180,24 +182,28 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  //createSet("test500.dat", 500);
-  NNDataset<double> test(3, 2);
-  NNDataset<double> train(3, 2);
-  train.load(500, "tr500.dat");
-  test.load(500, "test500.dat");
+  ////createSet("test500.dat", 500);
+  //NNDataset<double> test(3, 2);
+  //NNDataset<double> train(3, 2);
+  //train.load(500, "tr500.dat");
+  //test.load(500, "test500.dat");
 
-  FFNN3L NN(3, 8, 2);
-  //NN.train(train, 100000, 0.05, 0.8);
-  NN.test(train);
-  NN.test(test);
-  //NN.save("NN382.nn");
-  NN.load("NN382.nn");
-  NN.test(train);
-  NN.test(test);
+  //FFNN3L NN(3, 8, 2);
+  ////NN.train(train, 100000, 0.05, 0.8);
+  //NN.test(train);
+  //NN.test(test);
+  ////NN.save("NN382.nn");
+  //NN.load("NN382.nn");
+  //NN.test(train);
+  //NN.test(test);
 
 
+  //track.addEdge(0, 15, 30, 15);
+  //track.addEdge(0, -15, 30, -15);
+  track.makePolygon(0, 50, 50, 10);
+  track.makePolygon(0, 50, 80, 10);
   
-  //glutMainLoop();
+  glutMainLoop();
 }
 
 
