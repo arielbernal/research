@@ -44,7 +44,6 @@ class Track {
     edges.push_back(Edge2d(x0, y0, x1, y1));
   }
 
-
   void makePolygon(float xc, float yc, float r, float nedges) {
     float dalpha = 2 * M_PI / nedges;
     for (size_t i = 0; i < nedges; ++i) {
@@ -55,6 +54,10 @@ class Track {
       edges.push_back(Edge2d(x0, y0, x1, y1));
     }
   }
+
+
+  const std::vector<Edge2d>& getEdges() const { return edges; }
+
  private:
   std::vector<Edge2d> edges;
   Point2d Begin;

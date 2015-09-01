@@ -10,9 +10,61 @@ struct Point2d {
     x = xv;
     y = yv;
   }
+  void operator()(float X, float Y) { x = X; y = Y; }
+  void operator=(const Point2d& p) { x = p.x; y = p.y; }
+  Point2d operator+() { return *this; }
+  Point2d operator-() { Point2d t(-x, -y);  return t; }
+  Point2d &operator*=(float v) { x *= v; y *= v; return *this; }
+  Point2d &operator/=(float v) { x /= v; y /= v; return *this; }
+  Point2d &operator+=(const Point2d &v) {
+    x += v.x; y += v.y;
+    return *this;
+  }
+  Point2d &operator-=(const Point2d &v) {
+    x -= v.x; y -= v.y;
+    return *this;
+  }
+  float norm() { return sqrt(x * x + y * y); }
   float x;
   float y;
 };
+
+Point2d operator+(const Point2d &v, const Point2d &w) {
+  Point2d z(v);
+  z += w;
+  return z;
+}
+
+Point2d operator-(const Point2d &v, const Point2d &w) {
+  Point2d z(v);
+  z -= w;
+  return z;
+}
+
+Point2d operator*(const Point2d &v, const Point2d &w) {
+  Point2d z(v.x * w.x, v.y * w.y);
+  return z;
+}
+
+Point2d operator*(float &v, const Point2d &w) {
+  Point2d z(v * w.x, v * w.y);
+  return z;
+}
+
+Point2d operator*(const Point2d &v, float &w) {
+  Point2d z(v.x * w, v.y * w);
+  return z;
+}
+
+Point2d operator/(float &v, const Point2d &w) {
+  Point2d z(v / w.x, v / w.y);
+  return z;
+}
+
+Point2d operator/(const Point2d &v, float &w) {
+  Point2d z(v.x / w, v.y / w);
+  return z;
+}
 
 float distance(const Point2d &p1, const Point2d &p2) {
   float dx = p2.x - p1.x;

@@ -18,7 +18,7 @@ class RobotGA {
   RobotGA(size_t NSensors = 5) : NN(3, 8, 2), NSensors(NSensors) {
     glow = false;
   }
-
+  
   void setPos(const Point2d& p) { robot.setPos(p); }
   void setPos(const Point2d& p, float angle) { robot.setPos(p, angle); }
 
@@ -35,10 +35,29 @@ class RobotGA {
 //    Input[3] = DTarget.y;
 //    Input[4] = dtheta;
     
-    NN.feedForward(Input, Output);
-    robot.setMotors(Output[0] * 100, Output[1] * 100);
+    //NN.feedForward(Input, Output);
+    //robot.setMotors(Output[0] * 100, Output[1] * 100);
     robot.update(dt);
   }
+
+  bool checkCollision(const Track& track) {
+    Point2d C = robot.pos();
+    float R = robot.getR();
+    for (auto &e : track.getEdges()) {
+      Point2d A = e.p0;
+      Point2d B = e.p1;
+    
+      Point2d BA = B - A;
+      Point2d CA = C - A;
+      float area2 = fabs(BA.x * CA.y - BA.y * CA.x);
+      float LAB = BA.norm();
+      float h = area2 / LAB;
+      if (h < R) return true;
+    }
+    return false;
+  }
+
+
 
   void setGlow() { glow = true; }
 

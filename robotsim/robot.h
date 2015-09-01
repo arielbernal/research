@@ -79,6 +79,7 @@ class Robot {
   float getAngle() { return theta; }
   float getMotorLeft() { return MotorLeft; }
   float getMotorRight() { return MotorRight; }
+  float getR() { return r; }
 
   void simulate(float dt, float& xp, float& yp, float& thetap) {
     float Vl = MotorLeft / 100.0f * k0 * 2 * M_PI * rw;
