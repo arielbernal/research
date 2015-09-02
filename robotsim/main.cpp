@@ -27,7 +27,7 @@ int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
 //RobotGA robot(5);
 //FFNN3L nn(3, 8, 2);
-GA ga(10);
+GA ga(100);
 Track track;
 }
 

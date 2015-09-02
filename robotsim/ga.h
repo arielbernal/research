@@ -29,7 +29,7 @@ class GA {
 
   void render() {
     for (auto &e : Population) {
-      if (!e.isCollided()) e.render();
+      if (!e.isCollided() || e.isGlow()) e.render();
     }
   }
 

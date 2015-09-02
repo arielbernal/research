@@ -23,6 +23,7 @@ class RobotGA {
         TraveledDistance(0) {
     glow = false;
     collided = false;
+    idxLandmark = 0;
   }
 
   void setPos(const Point2d& p) { robot.setPos(p); }
@@ -30,7 +31,8 @@ class RobotGA {
 
   void render() {
     robot.render(glow);
-    renderSensorLines();
+    if (glow)
+      renderSensorLines();
   }
 
   void setNN(const FFNN3L& net) { NN = net; }
@@ -149,17 +151,21 @@ class RobotGA {
     const std::vector<Point2d>& landmarks = track.getLandmarks();
     size_t N = landmarks.size();
     float dmin = 10e20;
-    for (size_t i = 0; i < N; ++i) {
+    size_t imax = 0;
+    for (size_t i = 0; i <= idxLandmark; ++i) {
       float d = distance(robot.pos(), landmarks[i]);
       if (d < dmin) {
         dmin = d;
         TraveledDistance = i;
+        imax = i;
       }
     }
+    idxLandmark = imax + 1;
     return TraveledDistance;
   }
 
   void setGlow(bool v = true) { glow = v; }
+  bool isGlow() { return glow; }
 
   FFNN3L& getNN() { return NN; }
 
@@ -195,6 +201,7 @@ class RobotGA {
   std::vector<float> DistSensors;
   bool collided;
   float TraveledDistance;
+  size_t idxLandmark;
 };
 
 #endif

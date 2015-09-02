@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffnn3l.h" />
+    <ClInclude Include="ga.h" />
     <ClInclude Include="nndataset.h" />
     <ClInclude Include="include\arg.hpp" />
     <ClInclude Include="include\glheaders.h" />
