@@ -189,8 +189,8 @@ class Robot {
     glPopMatrix();
 
     Point2d p = posFront();
-    glColor3f(1, 0, 0);
-    drawDisk(p.x, p.y, 0.5, 20);
+    glColor3f(0, 1, 0);
+    drawDisk(p.x, p.y, 1, 20);
   }
 
   Point2d pos() { return Point2d(x, y); }

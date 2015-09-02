@@ -1,6 +1,8 @@
 #ifndef TRACK_H
 #define TRACK_H
 
+#include "maze.h"
+
 class Track {
  public:
   Track() {}
@@ -13,8 +15,17 @@ class Track {
       glVertex2f(e.p1.x, e.p1.y);
     }
     glEnd();
-  }
+    glColor3f(0.3, 0.3, 0.3);
 
+    size_t NL = landmarks.size();
+    for (size_t i = 0; i < NL; ++i) {
+      glColor3f(0.3, 0.3, 0.4);
+      if (i == 0) glColor3f(0.1, 0.3, 0.1);
+      if (i == NL - 1) glColor3f(0.3, 0.1, 0.1);
+      auto& e = landmarks[i];
+      drawDisk(e.x, e.y, 1, 20);
+    }
+  }
 
   void getEdgesFromMaze(const Maze& Mz, float d) {
     edges.clear();
@@ -37,10 +48,11 @@ class Track {
       }
     }
     Cell* b = Mz.getBegin();
-    Begin = Point2d(b->j * d - N * d / 2 + d / 2, (N - b->i) * d - N * d / 2 - d / 2);
+    Begin = Point2d(b->j * d - N * d / 2 + d / 2,
+                    (N - b->i) * d - N * d / 2 - d / 2);
   }
 
-  void addEdge(float x0, float y0, float x1, float y1){
+  void addEdge(float x0, float y0, float x1, float y1) {
     edges.push_back(Edge2d(x0, y0, x1, y1));
   }
 
@@ -55,11 +67,22 @@ class Track {
     }
   }
 
-
   const std::vector<Edge2d>& getEdges() const { return edges; }
+  const std::vector<Point2d>& getLandmarks() const { return landmarks; }
+
+  void makePoygonLandmarks(float xc, float yc, float r, float nedges,
+                           float alpha = 0) {
+    float dalpha = 2 * M_PI / nedges;
+    for (size_t i = 0; i < nedges; ++i) {
+      float x = xc + r * cos(alpha + dalpha * i);
+      float y = yc + r * sin(alpha + dalpha * i);
+      landmarks.push_back(Point2d(x, y));
+    }
+  }
 
  private:
   std::vector<Edge2d> edges;
+  std::vector<Point2d> landmarks;
   Point2d Begin;
 };
 

@@ -25,8 +25,9 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-RobotGA robot(5);
-FFNN3L nn(3, 8, 2);
+//RobotGA robot(5);
+//FFNN3L nn(3, 8, 2);
+GA ga(10);
 Track track;
 }
 
@@ -52,7 +53,8 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(300, 300);
   glTranslatef(150, 150, 0);
-  robot.render();
+  ga.update(0.01f, track);
+  ga.render();
   track.render();
   glutSwapBuffers();
 }
@@ -103,6 +105,7 @@ void normal_keys(unsigned char key, int x, int y) {
     case 's':
       break;
     case 32:
+      ga.startSimulation(20);
       glutPostRedisplay();
       break;
     case 27:
@@ -203,18 +206,21 @@ void init_glut_window(int argc, char* argv[]) {
   //track.addEdge(0, -15, 30, -15);
   track.makePolygon(0, 50, 50, 10);
   track.makePolygon(0, 50, 80, 10);
-  track.addEdge(-15.5, 2, -25, -26);
-  robot.setPos(Point2d(0, -12), 0);
+  track.addEdge(-15.5, 3, -25, -26);
+  track.makePoygonLandmarks(0, 50, 65, 20, -M_PI /2 );
 
-  
+  ga.setInitialPos(Point2d(0, -12), 0);
+  //robot.setPos(Point2d(0, -12), 0);
+  // robot.setPos(Point2d(18, -14), 0);
+  // if(robot.checkCollision(track))
+  //   robot.setGlow(true);
+  // else
+  //   robot.setGlow(false);
+  // robot.updateSensorDistances(track);
+
   glutMainLoop();
 }
 
-
-bool lineSegmentIntersection(const Point2d& e, const Point2d& d, const Edge2d& a, const Point2d& I) {
-  
-  return false;
-}
 
 int main(int argc, char** argv) {
   init_glut_window(argc, argv);

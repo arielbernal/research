@@ -1,7 +1,6 @@
 #ifndef GA_H
 #define GA_H
 
-
 #include <iostream>
 #include "include/glheaders.h"
 #include <cmath>
@@ -14,9 +13,67 @@
 #include "robot_path.h"
 #include "point2d.h"
 #include "robot.h"
-#include "robot_unit.h"
+#include "robot_ga.h"
 #include "ffnn3l.h"
 
+class GA {
+ public:
+  GA(size_t N)
+      : N(N), Population(N), TMax(0), t(0), generation(0), started(false) {
+    newPopulation();
+  }
+
+  void setInitialPos(const Point2d &p, float angle) {
+    for (auto &e : Population) e.setPos(p, angle);
+  }
+
+  void render() {
+    for (auto &e : Population) {
+      if (!e.isCollided()) e.render();
+    }
+  }
+
+  void update(float dt, const Track &track) {
+    if (t < TMax) {
+      float MaxTraveledDistance = 0;
+      size_t imax = 0;
+      for (size_t i = 0; i < N; ++i) {
+        auto &e = Population[i];
+        e.setGlow(false);
+        if (!e.isCollided()) {
+          e.update(dt);
+          if (e.checkCollision(track)) e.setCollided(true);
+          e.updateSensorDistances(track);
+        }
+        float d = e.updateTraveledDistance(track);
+        if (d > MaxTraveledDistance) {
+          MaxTraveledDistance  = d;
+          imax = i;
+        }
+      }
+      Population[imax].setGlow(true);
+      t += dt;
+    }
+  }
+
+  void startSimulation(float T) {
+    TMax = T;
+    started = true;
+  }
+
+ protected:
+  void newPopulation() {
+    for (size_t i = 0; i < N; ++i) Population[i] = RobotGA();
+  }
+
+ private:
+  size_t N;
+  std::vector<RobotGA> Population;
+  float TMax;
+  float t;
+  bool started;
+  size_t generation;
+};
 
 // class GA {
 //  public:
@@ -68,7 +125,8 @@
 //     Population[0].setGlow();
 //     std::vector<RobotUnit> NP(N);
 //     static std::default_random_engine generator;
-//     std::uniform_int_distribution<int> distribution(0, Population.size() / 2 - 1);
+//     std::uniform_int_distribution<int> distribution(0, Population.size() / 2
+//     - 1);
 //     for (size_t i = 0; i < N; ++i) {
 //       RobotUnit child;
 //       child.getParentGenes(Population[i % 2].getBrain());
