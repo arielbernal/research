@@ -101,7 +101,8 @@ class FFNN3L {
   }
 
   void setRandomWeights() {
-    static std::default_random_engine generator;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::default_random_engine generator(seed);
 
     double sigma0 = 1 / sqrt(NI + 1);
     std::normal_distribution<double> distribution0(0, sigma0);

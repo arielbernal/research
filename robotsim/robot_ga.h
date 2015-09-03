@@ -179,7 +179,8 @@ class RobotGA {
   FFNN3L& getNN() { return NN; }
 
   void crossOver(const FFNN3L& x, const FFNN3L& y) {
-    static std::default_random_engine generator;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::default_random_engine generator(seed);
     std::uniform_real_distribution<float> distribution(0, 1);
     size_t NI = NN.getNI();
     size_t NH = NN.getNH();
@@ -203,7 +204,8 @@ class RobotGA {
   }
 
   void randomMutation() {
-    static std::default_random_engine generator;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::default_random_engine generator(seed);
     std::uniform_real_distribution<float> uniform(0, 1);
     std::normal_distribution<float> normal(0, 1);
 

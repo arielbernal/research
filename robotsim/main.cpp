@@ -83,7 +83,18 @@ void reshape(int w, int h) {
 float mousex, mousey;
 int rmouseb;
 
-void mouse_wheel(int wheel, int direction, int x, int y) {}
+void mouse_wheel(int wheel, int direction, int x, int y) {
+  y = 1000 - y;
+  float xp = x / 1000.0f * mouse_vz - mouse_vx;
+  float yp = y / 1000.0f * mouse_vz - mouse_vy;
+  mouse_vz += direction > 0 ? 20 : -20;
+  if (mouse_vz > 2000) mouse_vz = 2000;
+  if (mouse_vz < 1) mouse_vz = 1;
+  mouse_vx = x / 1000.0f * mouse_vz - xp;
+  mouse_vy = y / 1000.0f * mouse_vz - yp;
+  mousex = x;
+  mousey = y;
+}
 
 void mouse_button(int button, int status, int x, int y) {
   y = 1000 - y;
