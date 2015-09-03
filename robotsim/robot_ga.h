@@ -17,13 +17,13 @@
 class RobotGA {
  public:
   RobotGA(size_t NSensors = 5)
-      : NN(7, 12, 2),
+      : NN(9, 12, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
-        TraveledDistance(0) {
+        Distance(0),
+        MaxDistance(1) {
     glow = false;
     collided = false;
-    idxLandmark = 0;
   }
 
   void setPos(const Point2d& p) { robot.setPos(p); }
@@ -31,8 +31,7 @@ class RobotGA {
 
   void render() {
     robot.render(glow);
-    if (glow)
-      renderSensorLines();
+    if (glow) renderSensorLines();
   }
 
   void setNN(const FFNN3L& net) { NN = net; }
@@ -48,6 +47,7 @@ class RobotGA {
     Input[5] = DistSensors[3] / 100.0f - 1;
     Input[6] = DistSensors[4] / 100.0f - 1;
     Input[7] = robot.getAngle() / M_PI - 1;
+    Input[8] = Distance / MaxDistance;
     NN.feedForward(Input, Output);
     robot.setMotors(Output[0] * 100, Output[1] * 100);
     robot.update(dt);
@@ -118,7 +118,7 @@ class RobotGA {
   }
 
   bool isCollided() { return collided; }
-  void setCollided(bool v = true) { collided = true; }
+  void setCollided(bool v = true) { collided = v; }
 
   bool checkCollision(const Track& track) {
     Point2d C = robot.pos();
@@ -149,34 +149,43 @@ class RobotGA {
 
   float updateTraveledDistance(const Track& track) {
     const std::vector<Point2d>& landmarks = track.getLandmarks();
-    size_t N = landmarks.size();
+    MaxDistance = track.getDk()[0];
+
+    size_t MSize = landmarks.size();
     float dmin = 10e20;
-    size_t imax = 0;
-    for (size_t i = 0; i <= idxLandmark; ++i) {
+    size_t kmin = 0;
+    for (size_t i = 0; i < MSize; ++i) {
       float d = distance(robot.pos(), landmarks[i]);
       if (d < dmin) {
         dmin = d;
-        TraveledDistance = i;
-        imax = i;
+        kmin = i;
       }
     }
-    idxLandmark = imax + 1;
-    return TraveledDistance;
+    Distance = dmin;
+    if (kmin == MSize - 1) return Distance;
+
+    Point2d P = robot.pos() - landmarks[kmin];
+    Point2d V = landmarks[kmin + 1] - landmarks[kmin];
+    float Projv = dot(P, V) / V.norm();
+    Distance = track.getDk()[kmin] - Projv;
+    return Distance;
   }
+
+  float getDistance() const { return Distance; }
 
   void setGlow(bool v = true) { glow = v; }
   bool isGlow() { return glow; }
 
   FFNN3L& getNN() { return NN; }
 
-  void crossOver(FFNN3L& x, FFNN3L& y) {
+  void crossOver(const FFNN3L& x, const FFNN3L& y) {
     static std::default_random_engine generator;
     std::uniform_real_distribution<float> distribution(0, 1);
     size_t NI = NN.getNI();
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float ir = 0.7f;  // distribution(generator);
+    float ir = 0.5f;  // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
       if (j <= ir * NH)
@@ -193,6 +202,31 @@ class RobotGA {
     }
   }
 
+  void randomMutation() {
+    static std::default_random_engine generator;
+    std::uniform_real_distribution<float> uniform(0, 1);
+    std::normal_distribution<float> normal(0, 1);
+
+    size_t NI = NN.getNI();
+    size_t NH = NN.getNH();
+    size_t NO = NN.getNO();
+
+    float k = 6.0f;
+    float pr = 0.8f;
+
+    for (size_t j = 0; j < NH; ++j)
+      for (size_t i = 0; i <= NI; ++i)
+        if (uniform(generator) > pr) {
+          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k) * normal(generator) + NN.getW0()[j][i];
+        }
+
+    for (size_t j = 0; j < NO; ++j)
+      for (size_t i = 0; i <= NH; ++i)
+        if (uniform(generator) > pr) {
+          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k) * normal(generator) + NN.getW1()[j][i];
+        }
+  }
+
  private:
   FFNN3L NN;
   Robot robot;
@@ -200,8 +234,8 @@ class RobotGA {
   size_t NSensors;
   std::vector<float> DistSensors;
   bool collided;
-  float TraveledDistance;
-  size_t idxLandmark;
+  float Distance;
+  float MaxDistance;
 };
 
 #endif

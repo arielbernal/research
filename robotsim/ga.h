@@ -19,11 +19,20 @@
 class GA {
  public:
   GA(size_t N)
-      : N(N), Population(N), TMax(0), t(0), generation(0), started(false) {
+      : N(N),
+        Population(N),
+        TMax(0),
+        t(0),
+        generation(0),
+        started(false),
+        InitialPos(0, 0),
+        InitialAngle(0) {
     newPopulation();
   }
 
   void setInitialPos(const Point2d &p, float angle) {
+    InitialPos = p;
+    InitialAngle = angle;
     for (auto &e : Population) e.setPos(p, angle);
   }
 
@@ -34,36 +43,80 @@ class GA {
   }
 
   void update(float dt, const Track &track) {
-    if (t < TMax) {
-      float MaxTraveledDistance = 0;
-      size_t imax = 0;
-      for (size_t i = 0; i < N; ++i) {
-        auto &e = Population[i];
-        e.setGlow(false);
-        if (!e.isCollided()) {
-          e.update(dt);
-          if (e.checkCollision(track)) e.setCollided(true);
-          e.updateSensorDistances(track);
+    if (started) {
+      if (t < TMax) {
+        float DistanceToTarget = 10E20;
+        size_t iBest = 0;
+        for (size_t i = 0; i < N; ++i) {
+          auto &e = Population[i];
+          e.setGlow(false);
+          if (!e.isCollided()) {
+            e.update(dt);
+            if (e.checkCollision(track)) e.setCollided(true);
+            e.updateSensorDistances(track);
+          }
+          float d = e.updateTraveledDistance(track);
+          if (d < DistanceToTarget) {
+            DistanceToTarget = d;
+            iBest = i;
+          }
         }
-        float d = e.updateTraveledDistance(track);
-        if (d > MaxTraveledDistance) {
-          MaxTraveledDistance  = d;
-          imax = i;
+        Population[iBest].setGlow(true);
+        t += dt;
+      } else {
+        int collisions = 0;
+        float davg = 0;
+        for (auto &e : Population) {
+          davg += e.getDistance();
+          if (e.isCollided()) collisions++;
         }
+        davg /= N;
+        std::cout << "Generation " << generation++ << "  DAvg = " << davg
+                  << " Collisions = " << collisions << std::endl;
+        nextGeneration();
+        // started = false;
+        t = 0;
       }
-      Population[imax].setGlow(true);
-      t += dt;
     }
   }
 
   void startSimulation(float T) {
     TMax = T;
     started = true;
+    t = 0;
+    resetConditions();
   }
 
  protected:
   void newPopulation() {
     for (size_t i = 0; i < N; ++i) Population[i] = RobotGA();
+  }
+
+  void sortPopulation() {
+    std::sort(Population.begin(), Population.end(),
+              [](const RobotGA &a, const RobotGA &b)
+                  -> bool { return (a.getDistance() < b.getDistance()); });
+  }
+
+  void resetConditions() {
+    setInitialPos(InitialPos, InitialAngle);
+    for (auto &e : Population) {
+      e.setGlow(false);
+      e.setCollided(false);
+    }
+  }
+
+  void nextGeneration() {
+    sortPopulation();
+    static std::default_random_engine generator;
+    std::uniform_int_distribution<int> uniform(0, N / 2);
+    for (size_t i = N / 2; i < N; ++i) {
+      const FFNN3L &NN1 = Population[uniform(generator)].getNN();
+      const FFNN3L &NN2 = Population[uniform(generator)].getNN();
+      Population[i].crossOver(NN1, NN2);
+      Population[i].randomMutation();
+    }
+    resetConditions();
   }
 
  private:
@@ -73,6 +126,8 @@ class GA {
   float t;
   bool started;
   size_t generation;
+  Point2d InitialPos;
+  float InitialAngle;
 };
 
 // class GA {

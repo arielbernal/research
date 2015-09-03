@@ -2,6 +2,7 @@
 #define TRACK_H
 
 #include "maze.h"
+#include "point2d.h"
 
 class Track {
  public:
@@ -69,20 +70,39 @@ class Track {
 
   const std::vector<Edge2d>& getEdges() const { return edges; }
   const std::vector<Point2d>& getLandmarks() const { return landmarks; }
+  const std::vector<float>& getDk() const { return Dk; }
 
   void makePoygonLandmarks(float xc, float yc, float r, float nedges,
-                           float alpha = 0) {
-    float dalpha = 2 * M_PI / nedges;
+                           float alpha = 0, float dalpha = 0) {
+    if (dalpha == 0) 
+      dalpha = 2 * M_PI / nedges;
     for (size_t i = 0; i < nedges; ++i) {
       float x = xc + r * cos(alpha + dalpha * i);
       float y = yc + r * sin(alpha + dalpha * i);
       landmarks.push_back(Point2d(x, y));
+    }
+    updateMarkDistances();
+  }
+
+  void addLandmark(float x, float y) {
+    landmarks.push_back(Point2d(x, y));
+  }
+
+  void updateMarkDistances() {
+    Dk.resize(landmarks.size());
+    float d = 0;
+    size_t N = landmarks.size();
+    Dk[N - 1] = 0;
+    for (int i = N - 2; i >= 0; --i) {
+      d += distance(landmarks[i + 1], landmarks[i]);
+      Dk[i] = d;
     }
   }
 
  private:
   std::vector<Edge2d> edges;
   std::vector<Point2d> landmarks;
+  std::vector<float> Dk;
   Point2d Begin;
 };
 

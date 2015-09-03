@@ -25,9 +25,9 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-//RobotGA robot(5);
-//FFNN3L nn(3, 8, 2);
-GA ga(100);
+// RobotGA robot(5);
+// FFNN3L nn(3, 8, 2);
+GA ga(1000);
 Track track;
 }
 
@@ -49,17 +49,22 @@ void set3DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
+float mouse_vz, mouse_vx, mouse_vy;
+
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  set2DMode(300, 300);
-  glTranslatef(150, 150, 0);
-  ga.update(0.01f, track);
+  set2DMode(mouse_vz, mouse_vz);
+  glTranslatef(mouse_vx, mouse_vy, 0);
+  for (int i = 0; i < 100; ++i) ga.update(0.01f, track);
   ga.render();
   track.render();
   glutSwapBuffers();
 }
 
 void init_display() {
+  mouse_vz = 300;
+  mouse_vx = 150;
+  mouse_vy = 150;
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -75,13 +80,56 @@ void reshape(int w, int h) {
   display();
 }
 
+float mousex, mousey;
+int rmouseb;
+
 void mouse_wheel(int wheel, int direction, int x, int y) {}
 
-void mouse_button(int button, int state, int x, int y) {}
+void mouse_button(int button, int status, int x, int y) {
+  y = 1000 - y;
+  rmouseb = GLUT_UP;
+  if ((button == 3) || (button == 4)) {
+    if (status == GLUT_DOWN) {
+      float xp = x / 1000.0f * mouse_vz - mouse_vx;
+      float yp = y / 1000.0f * mouse_vz - mouse_vy;
+      mouse_vz += button == 3 ? 20 : -20;
+      if (mouse_vz > 2000) mouse_vz = 2000;
+      if (mouse_vz < 1) mouse_vz = 1;
+      mouse_vx = x / 1000.0f * mouse_vz - xp;
+      mouse_vy = y / 1000.0f * mouse_vz - yp;
+      mousex = x;
+      mousey = y;     
+    }
+  }
+  if (button == GLUT_RIGHT_BUTTON) {
+    if (status == GLUT_DOWN) {
+      rmouseb = GLUT_DOWN;
+      mousex = x;
+      mousey = y;
+    }
+  }
+}
 
-void mouse_active_motion(int x, int y) {}
+void mouse_active_motion(int x, int y) {
+  y = 1000 - y;
+  if (rmouseb == GLUT_DOWN) {
+    float dx = (x - mousex) * mouse_vz / 1000;
+    float dy = (y - mousey) * mouse_vz / 1000;
+    mouse_vy += dy;
+    mouse_vx += dx;
+  }
 
-void mouse_passive_motion(int x, int y) {}
+  mousex = x;
+  mousey = y;
+}
+
+void mouse_passive_motion(int x, int y) {
+  y = 1000 - y;
+  mousex = x;
+  mousey = y;
+  float xp = x / 1000.0f * mouse_vz - mouse_vx;
+  float yp = y / 1000.0f * mouse_vz - mouse_vy;
+}
 
 void special_keys(int key, int x, int y) {
   switch (key) {
@@ -93,6 +141,12 @@ void special_keys(int key, int x, int y) {
       break;
     case GLUT_KEY_LEFT:
       break;
+    case GLUT_KEY_F10:
+      mouse_vz = 300;
+      mouse_vx = 150;
+      mouse_vy = 150;
+      glutPostRedisplay();
+      break;  
     default:
       break;
   }
@@ -105,7 +159,7 @@ void normal_keys(unsigned char key, int x, int y) {
     case 's':
       break;
     case 32:
-      ga.startSimulation(20);
+      ga.startSimulation(50);
       glutPostRedisplay();
       break;
     case 27:
@@ -119,7 +173,8 @@ void normal_keys(unsigned char key, int x, int y) {
 // void createSet(const std::string& FileName, size_t N) {
 //   std::vector<double> In(3);
 //   std::vector<double> Out(2);
-//   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+//   unsigned seed =
+//   std::chrono::system_clock::now().time_since_epoch().count();
 //   std::default_random_engine generator(seed);
 //   std::uniform_int_distribution<int> uniform(-100, 100);
 
@@ -143,7 +198,6 @@ void normal_keys(unsigned char key, int x, int y) {
 //     in++;
 //   }
 
-
 //   In[0] = 2.17403e-5;
 //   In[1] = 0.651979;
 //   In[2] = -9.38887e-05;
@@ -157,17 +211,17 @@ void normal_keys(unsigned char key, int x, int y) {
 //   NNSample<double> avg = DataSet.averageSample();
 
 //   std::cout << "Average-------------------" << std::endl;
-//   std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << " dtheta = " << avg.Input[2] << std::endl;
-//   std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] << std::endl;
+//   std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << "
+//   dtheta = " << avg.Input[2] << std::endl;
+//   std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] <<
+//   std::endl;
 
 //   //dt = 0.1f;
 //   //dx = 2.17403e-05 dy = 0.651979 dtheta = -9.38887e-05
 //   //Vl = 0.333694 Vr = 0.332999
 
-
 //   //DataSet.print();
 // }
-
 
 void init_glut_window(int argc, char* argv[]) {
   glutInit(&argc, argv);
@@ -187,30 +241,90 @@ void init_glut_window(int argc, char* argv[]) {
   glutReshapeFunc(reshape);
 
   ////createSet("test500.dat", 500);
-  //NNDataset<double> test(3, 2);
-  //NNDataset<double> train(3, 2);
-  //train.load(500, "tr500.dat");
-  //test.load(500, "test500.dat");
+  // NNDataset<double> test(3, 2);
+  // NNDataset<double> train(3, 2);
+  // train.load(500, "tr500.dat");
+  // test.load(500, "test500.dat");
 
-  //FFNN3L NN(3, 8, 2);
+  // FFNN3L NN(3, 8, 2);
   ////NN.train(train, 100000, 0.05, 0.8);
-  //NN.test(train);
-  //NN.test(test);
+  // NN.test(train);
+  // NN.test(test);
   ////NN.save("NN382.nn");
-  //NN.load("NN382.nn");
-  //NN.test(train);
-  //NN.test(test);
+  // NN.load("NN382.nn");
+  // NN.test(train);
+  // NN.test(test);
 
+  // track.addEdge(0, 15, 30, 15);
+  // track.addEdge(0, -15, 30, -15);
 
-  //track.addEdge(0, 15, 30, 15);
-  //track.addEdge(0, -15, 30, -15);
-  track.makePolygon(0, 50, 50, 10);
-  track.makePolygon(0, 50, 80, 10);
-  track.addEdge(-15.5, 3, -25, -26);
-  track.makePoygonLandmarks(0, 50, 65, 20, -M_PI /2 );
+  // track 1
+  // track.makePolygon(0, 50, 50, 10);
+  // track.makePolygon(0, 50, 80, 10);
+  // track.addEdge(-15.5, 3, -25, -26);
+  // track.makePoygonLandmarks(0, 50, 65, 20, -M_PI / 2, 2 * M_PI / 21);
 
-  ga.setInitialPos(Point2d(0, -12), 0);
-  //robot.setPos(Point2d(0, -12), 0);
+  #if 0
+   track.makePolygon(0, 50, 50, 10);
+   track.makePolygon(0, 50, 80, 10);
+   track.addEdge(-15.5, 3, -25, -26);
+   track.makePoygonLandmarks(0, 50, 65, 20, -M_PI / 2, 2 * M_PI / 21);
+   ga.setInitialPos(Point2d(0, -12), 0);
+  #endif
+
+  #if 1
+  track.addEdge(-15, 15, 15, 15);
+  track.addEdge(15, 15, 30, 30);
+  track.addEdge(30, 30, 30, 60);
+  track.addEdge(30, 60, 60, 60);
+  track.addEdge(60, 60, 60, 90);
+  track.addEdge(60, 90, -60, 90);
+  track.addEdge(-60, 90, -60, 15);
+  track.addEdge(-60, 15, -15, 15);
+
+  track.addEdge(-15, -15, 20, -15);
+  track.addEdge(20, -15, 55, 15);
+  track.addEdge(55, 15, 55, 35);
+  track.addEdge(55, 35, 85, 35);
+  track.addEdge(85, 35, 85, 120);
+  track.addEdge(85, 120, -90, 120);
+  track.addEdge(-90, 120, -90, -15);
+  track.addEdge(-90, -15, -15, -15);
+
+  track.addEdge(-15, 15, -15, -15);
+
+  track.addLandmark(0, 0);
+  track.addLandmark(15, 0);
+  track.addLandmark(30, 10);
+  track.addLandmark(40, 20);
+  track.addLandmark(40, 40);
+  track.addLandmark(55, 48);
+  track.addLandmark(70, 50);
+  track.addLandmark(70, 70);
+  track.addLandmark(70, 90);
+  track.addLandmark(70, 105);
+  track.addLandmark(50, 105);
+  track.addLandmark(30, 105);
+  track.addLandmark(10, 105);
+  track.addLandmark(-10, 105);
+  track.addLandmark(-30, 105);
+  track.addLandmark(-50, 105);
+  track.addLandmark(-75, 105);
+  track.addLandmark(-75, 85);
+  track.addLandmark(-75, 65);
+  track.addLandmark(-75, 45);
+  track.addLandmark(-75, 25);
+  track.addLandmark(-75, 0);  
+  track.addLandmark(-55, 0);  
+  track.addLandmark(-35, 0);  
+
+  track.updateMarkDistances();
+  ga.setInitialPos(Point2d(0, 0), 0);
+#endif
+
+  
+  //
+   //robot.setPos(Point2d(0, -12), 0);
   // robot.setPos(Point2d(18, -14), 0);
   // if(robot.checkCollision(track))
   //   robot.setGlow(true);
@@ -221,8 +335,8 @@ void init_glut_window(int argc, char* argv[]) {
   glutMainLoop();
 }
 
-
 int main(int argc, char** argv) {
   init_glut_window(argc, argv);
   return 0;
 }
+
