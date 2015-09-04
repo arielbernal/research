@@ -16,8 +16,8 @@
 
 class RobotGA {
  public:
-  RobotGA(size_t NSensors = 5)
-      : NN(9, 14, 2),
+  RobotGA(size_t NSensors = 7)
+      : NN(11, 18, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         Distance(0),
@@ -25,12 +25,16 @@ class RobotGA {
     glow = false;
     collided = false;
     T = 0;
+    TTarget = 0;
+    AtTarget = false;
   }
 
   void setPos(const Point2d& p) { robot.setPos(p); }
   void setPos(const Point2d& p, float angle) { robot.setPos(p, angle); }
   void setT(float t = 0) { T = t; }
   float getT() const { return T; }
+  float getTargetTime() const { return TTarget; }
+  bool isAtTarget() const { return AtTarget; }
 
   void render() {
     robot.render(glow);
@@ -40,7 +44,7 @@ class RobotGA {
   void setNN(const FFNN3L& net) { NN = net; }
 
   void update(float dt, const Track& track) {
-    std::vector<double> Input(8);
+    std::vector<double> Input(11);
     std::vector<double> Output(2);
     Input[0] = robot.getMotorLeft() / 100.0f;
     Input[1] = robot.getMotorRight() / 100.0f;
@@ -49,15 +53,22 @@ class RobotGA {
     Input[4] = DistSensors[2] / 100.0f - 1;
     Input[5] = DistSensors[3] / 100.0f - 1;
     Input[6] = DistSensors[4] / 100.0f - 1;
-    Input[7] = robot.getAngle() / M_PI - 1;
+    Input[7] = DistSensors[5] / 100.0f - 1;
+    Input[8] = DistSensors[6] / 100.0f - 1;
+    Input[9] = robot.getAngle() / M_PI - 1;
     Input[8] = Distance / MaxDistance;
     NN.feedForward(Input, Output);
     robot.setMotors(Output[0] * 100, Output[1] * 100);
     robot.update(dt);
     T += dt;
-    if (checkCollision(track)) setCollided(true);
-    updateSensorDistances(track);
-    updateTraveledDistance(track);
+    if (!isCollided()) {
+      if (checkCollision(track)) {
+        setCollided(true);
+      } else {
+        updateSensorDistances(track);
+        updateTraveledDistance(track);
+      }
+    }
   }
 
   void renderSensorLines() {
@@ -65,7 +76,7 @@ class RobotGA {
     float theta = robot.getAngle();
     glColor3f(0.5, 0.5, 0.5);
     float dalpha = M_PI / (NSensors - 1);
-    for (size_t i = 0; i < 5; ++i) {
+    for (size_t i = 0; i < NSensors; ++i) {
       float r = DistSensors[i];
       Point2d Q(C.x + r * cos(theta - M_PI / 2 + i * dalpha),
                 C.y + r * sin(theta - M_PI / 2 + i * dalpha));
@@ -139,9 +150,9 @@ class RobotGA {
     Point2d C = robot.pos();
     float theta = robot.getAngle();
     float dalpha = M_PI / (NSensors - 1);
-    float MaxDistance = 200;
+    float MD = 200;
     for (size_t i = 0; i < NSensors; ++i) {
-      DistSensors[i] = MaxDistance;
+      DistSensors[i] = MD;
       Point2d Q(C.x + 10 * cos(theta - M_PI / 2 + i * dalpha),
                 C.y + 10 * sin(theta - M_PI / 2 + i * dalpha));
       Edge2d L(C, Q);
@@ -169,12 +180,27 @@ class RobotGA {
       }
     }
     Distance = dmin;
-    if (kmin == MSize - 1) return Distance;
+    if (kmin != MSize - 1) {
+      Point2d P = robot.pos() - landmarks[kmin];
+      Point2d V = landmarks[kmin + 1] - landmarks[kmin];
+      float Projv = dot(P, V) / V.norm();
+      Distance = track.getDk()[kmin] - Projv;
+    }
 
-    Point2d P = robot.pos() - landmarks[kmin];
-    Point2d V = landmarks[kmin + 1] - landmarks[kmin];
-    float Projv = dot(P, V) / V.norm();
-    Distance = track.getDk()[kmin] - Projv;
+    if (Distance < 2) {
+      // if (!AtTarget) {
+      //   TTarget = T;
+      //   AtTarget = true;
+      // }
+      AtTarget = true;
+      if (fabs(robot.getMotorRight()) > 5 && fabs(robot.getMotorLeft()) > 5)  {
+        TTarget = T;
+      }
+    } else {
+      AtTarget = false;
+    }
+
+
     return Distance;
   }
 
@@ -188,22 +214,23 @@ class RobotGA {
   void crossOver(const FFNN3L& x, const FFNN3L& y) {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    std::uniform_real_distribution<float> distribution(0, 1);
+    std::uniform_real_distribution<float> distribution(0, 0.5);
     size_t NI = NN.getNI();
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float ir = 0.5f;  // distribution(generator);
+    float ir1 = 0.5f;  // distribution(generator);
+    float ir2 = 0.5f;  // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
-      if (j < ir * NH)
+      if (j < ir1 * NH)
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
       else
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
-      if (j < ir * NO)
+      if (j < ir2 * NO)
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
       else
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
@@ -220,7 +247,7 @@ class RobotGA {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k = 6.0f;
+    float k = 4.0f;
     float pr = 0.8f;
 
     for (size_t j = 0; j < NH; ++j)
@@ -252,6 +279,8 @@ class RobotGA {
   float Distance;
   float MaxDistance;
   float T;
+  float TTarget;
+  bool AtTarget;
 };
 
 #endif

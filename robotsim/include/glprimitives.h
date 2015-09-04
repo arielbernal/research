@@ -203,4 +203,22 @@ void drawDisk(float cx, float cy, float r, int num_segments) {
   glVertex2f(cx + r, cy);
   glEnd();
 }
+
+void printText(float x, float y, const std::string &text) {
+  glColor3f(1.0, 1.0, 1.0);
+  glRasterPos2f(x, y);
+  for (auto I = text.begin(), E = text.end(); I != E; ++I) {
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (*I));
+  }
+}
+
+
+void printFloat(float x, float y, const std::string& text, float v, int dig = 5, int dec = 2) {
+  char s[20];
+  char sformat[20];
+  sprintf(sformat, "%s%%%d.%df", text.c_str(), dig, dec);
+  sprintf(s, sformat, v);
+  printText(x, y, s);
+}
+
 #endif  // GLPRIMITIVES_H

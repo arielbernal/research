@@ -25,11 +25,12 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
-// RobotGA robot(5);
-// FFNN3L nn(3, 8, 2);
-GA ga(500);
+GA ga(1000);
 std::vector<Track> tracks(4);
 int itrack = 0;
+enum { SIM_GA, SIM_TEST };
+int SimulationMode = SIM_GA;
+int SimSpeed = 200;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -52,13 +53,33 @@ void set3DMode(size_t Width, size_t Height) {
 
 float mouse_vz, mouse_vx, mouse_vy;
 
+int iterTrack = 0;
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(mouse_vz, mouse_vz);
   glTranslatef(mouse_vx, mouse_vy, 0);
-  for (int i = 0; i < 200; ++i) ga.update(0.03f, tracks[itrack]);
-  ga.render();
+  if (SimulationMode == SIM_GA) {
+    ga.update(0.03f, tracks[itrack], SimSpeed);
+    ga.render();
+    iterTrack++;
+    if (iterTrack == -1) {
+      unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+      static std::default_random_engine generator(seed);
+      std::uniform_int_distribution<int> uniform(0, 3);
+      iterTrack = 0;
+      itrack = uniform(generator);
+      ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
+    }
+  }
+  if (SimulationMode == SIM_TEST) {
+    ga.updateSingle(0, 0.03f, tracks[itrack]);
+    ga.renderSingle(0);
+  }
   tracks[itrack].render();
+
+  set2DMode(1000, 1000);
+  printFloat(10, 1000 - 20, "Time = ", ga.getTime(), 3, 2);
+
   glutSwapBuffers();
 }
 
@@ -110,7 +131,7 @@ void mouse_button(int button, int status, int x, int y) {
       mouse_vx = x / 1000.0f * mouse_vz - xp;
       mouse_vy = y / 1000.0f * mouse_vz - yp;
       mousex = x;
-      mousey = y;     
+      mousey = y;
     }
   }
   if (button == GLUT_RIGHT_BUTTON) {
@@ -158,7 +179,7 @@ void special_keys(int key, int x, int y) {
       mouse_vx = 150;
       mouse_vy = 150;
       glutPostRedisplay();
-      break;  
+      break;
     default:
       break;
   }
@@ -166,18 +187,40 @@ void special_keys(int key, int x, int y) {
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
+    case '1':
+      SimulationMode = SIM_GA;
+      std::cout << "Simulation GA" << std::endl;
+      break;
+    case '2':
+      SimulationMode = SIM_TEST;
+      std::cout << "Simulation Test" << std::endl;
+      break;
+    case '3':
+      if (SimSpeed == 200) {
+        SimSpeed = 5;
+        std::cout << "Simulation Slow" << std::endl;
+      } else {
+        SimSpeed = 200;
+        std::cout << "Simulation Fast" << std::endl;
+      }
+      break;
     case 'a':
       itrack = (itrack + 1) % 4;
-      ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);      
+      ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
       break;
     case 's':
       ga.saveMostFit("nn/best01.nn");
+      std::cout << "Saved most fit" << std::endl;
       break;
     case 'l':
       ga.loadMostFit("nn/best01.nn");
-      break;      
+      std::cout << "Loaded most fit" << std::endl;
+      break;
+    case 'r':
+      ga.resetConditions();
+      break;
     case 32:
-      if(!ga.isStarted()) 
+      if (!ga.isStarted())
         ga.startSimulation(150);
       else
         ga.stopSimulation();
@@ -189,6 +232,38 @@ void normal_keys(unsigned char key, int x, int y) {
     default:
       break;
   }
+}
+
+void init_glut_window(int argc, char* argv[]) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
+  glutInitWindowPosition(800, 100);
+  glutInitWindowSize(m_window_width, m_window_height);
+  glutCreateWindow(m_window_title.c_str());
+
+  glutDisplayFunc(display);
+  glutIdleFunc(display);
+  glutKeyboardFunc(normal_keys);
+  glutSpecialFunc(special_keys);
+  glutMouseFunc(mouse_button);
+  glutMotionFunc(mouse_active_motion);
+  glutPassiveMotionFunc(mouse_passive_motion);
+  glutMouseWheelFunc(mouse_wheel);
+  glutReshapeFunc(reshape);
+
+  tracks[0].load("tracks/track1.trk");
+  tracks[1].load("tracks/track2.trk");
+  tracks[2].load("tracks/track3.trk");
+  tracks[3].load("tracks/track4.trk");
+
+  ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
+
+  glutMainLoop();
+}
+
+int main(int argc, char** argv) {
+  init_glut_window(argc, argv);
+  return 0;
 }
 
 // void createSet(const std::string& FileName, size_t N) {
@@ -243,71 +318,17 @@ void normal_keys(unsigned char key, int x, int y) {
 
 //   //DataSet.print();
 // }
+////createSet("test500.dat", 500);
+// NNDataset<double> test(3, 2);
+// NNDataset<double> train(3, 2);
+// train.load(500, "tr500.dat");
+// test.load(500, "test500.dat");
 
-void init_glut_window(int argc, char* argv[]) {
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
-  glutInitWindowPosition(800, 100);
-  glutInitWindowSize(m_window_width, m_window_height);
-  glutCreateWindow(m_window_title.c_str());
-
-  glutDisplayFunc(display);
-  glutIdleFunc(display);
-  glutKeyboardFunc(normal_keys);
-  glutSpecialFunc(special_keys);
-  glutMouseFunc(mouse_button);
-  glutMotionFunc(mouse_active_motion);
-  glutPassiveMotionFunc(mouse_passive_motion);
-  glutMouseWheelFunc(mouse_wheel);
-  glutReshapeFunc(reshape);
-
-  ////createSet("test500.dat", 500);
-  // NNDataset<double> test(3, 2);
-  // NNDataset<double> train(3, 2);
-  // train.load(500, "tr500.dat");
-  // test.load(500, "test500.dat");
-
-  // FFNN3L NN(3, 8, 2);
-  ////NN.train(train, 100000, 0.05, 0.8);
-  // NN.test(train);
-  // NN.test(test);
-  ////NN.save("NN382.nn");
-  // NN.load("NN382.nn");
-  // NN.test(train);
-  // NN.test(test);
-
-  // track.addEdge(0, 15, 30, 15);
-  // track.addEdge(0, -15, 30, -15);
-
-  // track 1
-  // track.makePolygon(0, 50, 50, 10);
-  // track.makePolygon(0, 50, 80, 10);
-  // track.addEdge(-15.5, 3, -25, -26);
-  // track.makePoygonLandmarks(0, 50, 65, 20, -M_PI / 2, 2 * M_PI / 21);
-
-
-  tracks[0].load("tracks/track1.trk");
-  tracks[1].load("tracks/track2.trk");
-  tracks[2].load("tracks/track3.trk");
-  tracks[3].load("tracks/track4.trk");
-
-  ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
-
-  
-  //
-   //robot.setPos(Point2d(0, -12), 0);
-  // robot.setPos(Point2d(18, -14), 0);
-  // if(robot.checkCollision(track))
-  //   robot.setGlow(true);
-  // else
-  //   robot.setGlow(false);
-  // robot.updateSensorDistances(track);
-
-  glutMainLoop();
-}
-
-int main(int argc, char** argv) {
-  init_glut_window(argc, argv);
-  return 0;
-}
-
+// FFNN3L NN(3, 8, 2);
+////NN.train(train, 100000, 0.05, 0.8);
+// NN.test(train);
+// NN.test(test);
+////NN.save("NN382.nn");
+// NN.load("NN382.nn");
+// NN.test(train);
+// NN.test(test);

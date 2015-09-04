@@ -38,30 +38,26 @@ class GA {
   }
 
   void render() {
-    for (auto &e : Population) {
-      if (!e.isCollided() || e.isGlow()) e.render();
-    }
+    // for (auto &e : Population) {
+    // if (!e.isCollided() || e.isGlow()) e.render();
+    //}
+    Population[0].setGlow(true);
+    for (size_t i = 0; i < 10; ++i) Population[i].render();
   }
 
-  void update(float dt, const Track &track) {
+  void update(float dt, const Track &track, size_t iterMax = 10) {
     if (started) {
       if (t < TMax) {
-        float DistanceToTarget = 10E20;
-        size_t iBest = 0;
-        for (size_t i = 0; i < N; ++i) {
-          auto &e = Population[i];
-          e.setGlow(false);
-          if (!e.isCollided()) {
-            e.update(dt, track);
+        size_t iter = 0;
+        while (t < TMax && iter < iterMax) {
+          for (size_t i = 0; i < N; ++i) {
+            auto &e = Population[i];
+            e.setGlow(false);
+            if (!e.isCollided()) e.update(dt, track);
           }
-          float d = e.getDistance();
-          if (d < DistanceToTarget) {
-            DistanceToTarget = d;
-            iBest = i;
-          }
+          t += dt;
+          iter++;
         }
-        Population[iBest].setGlow(true);
-        t += dt;
       } else {
         int collisions = 0;
         float davg = 0;
@@ -71,15 +67,41 @@ class GA {
         }
         davg /= N;
         std::cout << "Generation " << generation++ << "  DAvg = " << davg
-          << " Collisions = " << collisions;
+                  << " Collisions = " << collisions;
         sortPopulation();
-        std::cout << "Best Time = " << Population[0].getT() << std::endl;
+        std::cout << " Best Time = " << Population[0].getT() << std::endl;
+        for (size_t i = 0; i < 10; ++i) {
+          std::cout << "     " << Population[i].getDistance() << "   "
+                    << Population[i].getT() << "     "
+                    << Population[i].getTargetTime() << "     "
+                    << Population[i].isAtTarget() << std::endl;
+        }
+        TMax = Population[0].isAtTarget() ? Population[0].getTargetTime() : Population[0].getT();
         nextGeneration();
-        
+
         if (StopSimulation) {
           started = false;
         }
         t = 0;
+      }
+    }
+  }
+
+  void renderSingle(size_t idx) {
+    auto &e = Population[idx];
+    e.setGlow(true);
+    if (!e.isCollided() || e.isGlow()) e.render();
+  }
+
+  void updateSingle(size_t idx, float dt, const Track &track) {
+    if (started) {
+      if (t < TMax) {
+        auto &e = Population[idx];
+        e.setGlow(false);
+        if (!e.isCollided()) {
+          e.update(dt, track);
+        }
+        t += dt;
       }
     }
   }
@@ -93,34 +115,19 @@ class GA {
   }
 
   bool isStarted() { return started; }
-  void stopSimulation() { StopSimulation = true;}
+  void stopSimulation() { StopSimulation = true; }
 
-  void saveMostFit(const std::string& Filename) {
+  void saveMostFit(const std::string &Filename) {
     sortPopulation();
     Population[0].save(Filename);
   }
 
-  void loadMostFit(const std::string& Filename) {
-    for (size_t i = 0; i < N; ++i) {
+  void loadMostFit(const std::string &Filename) {
+    Population[0].load(Filename);
+    for (size_t i = 1; i < N; ++i) {
       Population[i].load(Filename);
-      Population[i].randomMutation(); 
+      Population[i].randomMutation();
     }
-  }
-
- protected:
-  void newPopulation() {
-    for (size_t i = 0; i < N; ++i) Population[i] = RobotGA();
-  }
-
-  void sortPopulation() {
-    float eps = 10;
-    std::sort(Population.begin(), Population.end(),
-              [eps](const RobotGA &a, const RobotGA &b) -> bool {
-      bool inRange = a.getDistance() < eps && b.getDistance() < eps;
-      bool bestTime = a.getT() < b.getT();
-      bool bestDistance = a.getDistance() < b.getDistance();
-      return ((inRange && bestTime) || (!inRange && bestDistance));
-    });
   }
 
   void resetConditions() {
@@ -130,14 +137,36 @@ class GA {
       e.setCollided(false);
       e.setT(0);
     }
+    t = 0;
+  }
+
+  float getTime() {
+    return t;
+  }
+
+ protected:
+  void newPopulation() {
+    for (size_t i = 0; i < N; ++i) Population[i] = RobotGA();
+  }
+
+  void sortPopulation() {
+    float eps = 2;
+    std::sort(Population.begin(), Population.end(),
+              [eps](const RobotGA &a, const RobotGA &b) -> bool {
+      bool inRange = a.isAtTarget() && b.isAtTarget();
+      bool bestTime = a.getTargetTime() < b.getTargetTime();
+      bool bestDistance = a.getDistance() < b.getDistance();
+      return ((!inRange && bestDistance) || (inRange && bestTime));
+    });
   }
 
   void nextGeneration() {
-    sortPopulation();
+    // sortPopulation();
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    std::uniform_int_distribution<int> uniform(0, N / 4);
-    for (size_t i = N / 4; i < N; ++i) {
+    int k = 5;
+    std::uniform_int_distribution<int> uniform(0, N / k);
+    for (size_t i = N / k; i < N; ++i) {
       const FFNN3L &NN1 = Population[uniform(generator)].getNN();
       const FFNN3L &NN2 = Population[uniform(generator)].getNN();
       Population[i].crossOver(NN1, NN2);
