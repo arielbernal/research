@@ -27,8 +27,8 @@ int m_window_height = 1000;
 std::string m_window_title = "RobotSim";
 // RobotGA robot(5);
 // FFNN3L nn(3, 8, 2);
-GA ga(1000);
-std::vector<Track> tracks(3);
+GA ga(500);
+std::vector<Track> tracks(4);
 int itrack = 0;
 }
 
@@ -167,7 +167,7 @@ void special_keys(int key, int x, int y) {
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
     case 'a':
-      itrack = (itrack + 1) % 3;
+      itrack = (itrack + 1) % 4;
       ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);      
       break;
     case 's':
@@ -178,7 +178,7 @@ void normal_keys(unsigned char key, int x, int y) {
       break;      
     case 32:
       if(!ga.isStarted()) 
-        ga.startSimulation(50);
+        ga.startSimulation(150);
       else
         ga.stopSimulation();
       glutPostRedisplay();
@@ -289,6 +289,7 @@ void init_glut_window(int argc, char* argv[]) {
   tracks[0].load("tracks/track1.trk");
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
+  tracks[3].load("tracks/track4.trk");
 
   ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
 

@@ -71,8 +71,11 @@ class GA {
         }
         davg /= N;
         std::cout << "Generation " << generation++ << "  DAvg = " << davg
-                  << " Collisions = " << collisions << std::endl;
+          << " Collisions = " << collisions;
+        sortPopulation();
+        std::cout << "Best Time = " << Population[0].getT() << std::endl;
         nextGeneration();
+        
         if (StopSimulation) {
           started = false;
         }
@@ -110,7 +113,7 @@ class GA {
   }
 
   void sortPopulation() {
-    float eps = 1;
+    float eps = 10;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotGA &a, const RobotGA &b) -> bool {
       bool inRange = a.getDistance() < eps && b.getDistance() < eps;
