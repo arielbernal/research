@@ -17,17 +17,20 @@
 class RobotGA {
  public:
   RobotGA(size_t NSensors = 5)
-      : NN(9, 12, 2),
+      : NN(9, 14, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         Distance(0),
         MaxDistance(1) {
     glow = false;
     collided = false;
+    T = 0;
   }
 
   void setPos(const Point2d& p) { robot.setPos(p); }
   void setPos(const Point2d& p, float angle) { robot.setPos(p, angle); }
+  void setT(float t = 0) { T = t; }
+  float getT() const { return T; }
 
   void render() {
     robot.render(glow);
@@ -36,7 +39,7 @@ class RobotGA {
 
   void setNN(const FFNN3L& net) { NN = net; }
 
-  void update(float dt) {
+  void update(float dt, const Track& track) {
     std::vector<double> Input(8);
     std::vector<double> Output(2);
     Input[0] = robot.getMotorLeft() / 100.0f;
@@ -51,6 +54,10 @@ class RobotGA {
     NN.feedForward(Input, Output);
     robot.setMotors(Output[0] * 100, Output[1] * 100);
     robot.update(dt);
+    T += dt;
+    if (checkCollision(track)) setCollided(true);
+    updateSensorDistances(track);
+    updateTraveledDistance(track);
   }
 
   void renderSensorLines() {
@@ -189,14 +196,14 @@ class RobotGA {
     float ir = 0.5f;  // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
-      if (j <= ir * NH)
+      if (j < ir * NH)
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
       else
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
-      if (j <= ir * NO)
+      if (j < ir * NO)
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
       else
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
@@ -219,15 +226,21 @@ class RobotGA {
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
         if (uniform(generator) > pr) {
-          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k) * normal(generator) + NN.getW0()[j][i];
+          NN.getW0()[j][i] =
+              fabs(NN.getW0()[j][i] / k) * normal(generator) + NN.getW0()[j][i];
         }
 
     for (size_t j = 0; j < NO; ++j)
       for (size_t i = 0; i <= NH; ++i)
         if (uniform(generator) > pr) {
-          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k) * normal(generator) + NN.getW1()[j][i];
+          NN.getW1()[j][i] =
+              fabs(NN.getW1()[j][i] / k) * normal(generator) + NN.getW1()[j][i];
         }
   }
+
+  void save(const std::string& Filename) { NN.save(Filename); }
+
+  void load(const std::string& Filename) { NN.load(Filename); }
 
  private:
   FFNN3L NN;
@@ -238,6 +251,7 @@ class RobotGA {
   bool collided;
   float Distance;
   float MaxDistance;
+  float T;
 };
 
 #endif

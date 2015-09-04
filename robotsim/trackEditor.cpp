@@ -24,12 +24,11 @@
 namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
-std::string m_window_title = "RobotSim";
-// RobotGA robot(5);
-// FFNN3L nn(3, 8, 2);
-GA ga(1000);
-std::vector<Track> tracks(3);
-int itrack = 0;
+std::string m_window_title = "TrackEditor";
+RobotGA robot(5);
+Track track;
+enum { MODE_NONE, MODE_EDGE, MODE_LANDMARK };
+int editMode = MODE_NONE;
 }
 
 void set2DMode(size_t Width, size_t Height) {
@@ -52,37 +51,14 @@ void set3DMode(size_t Width, size_t Height) {
 
 float mouse_vz, mouse_vx, mouse_vy;
 
-void display() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  set2DMode(mouse_vz, mouse_vz);
-  glTranslatef(mouse_vx, mouse_vy, 0);
-  for (int i = 0; i < 200; ++i) ga.update(0.03f, tracks[itrack]);
-  ga.render();
-  tracks[itrack].render();
-  glutSwapBuffers();
-}
 
-void init_display() {
-  mouse_vz = 300;
-  mouse_vx = 150;
-  mouse_vy = 150;
-  glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glLineWidth(1.5);
-}
-
-void reshape(int w, int h) {
-  glViewport(0, 0, w, h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  init_display();
-  display();
-}
 
 float mousex, mousey;
-int rmouseb;
+int rmouseb, lmouseb;
+
+bool newEdgeP0 = false;
+Edge2d newEdge;
+Point2d newPoint;
 
 void mouse_wheel(int wheel, int direction, int x, int y) {
   y = 1000 - y;
@@ -100,6 +76,7 @@ void mouse_wheel(int wheel, int direction, int x, int y) {
 void mouse_button(int button, int status, int x, int y) {
   y = 1000 - y;
   rmouseb = GLUT_UP;
+  lmouseb = GLUT_UP;
   if ((button == 3) || (button == 4)) {
     if (status == GLUT_DOWN) {
       float xp = x / 1000.0f * mouse_vz - mouse_vx;
@@ -120,6 +97,33 @@ void mouse_button(int button, int status, int x, int y) {
       mousey = y;
     }
   }
+  if (button == GLUT_LEFT_BUTTON) {
+    if (status == GLUT_DOWN) {
+      lmouseb = GLUT_DOWN;
+      mousex = x;
+      mousey = y;
+      if (editMode == MODE_EDGE) {
+        if (!newEdgeP0) {
+          newEdge.p0.x = x / 1000.0f * mouse_vz - mouse_vx;
+          newEdge.p0.y = y / 1000.0f * mouse_vz - mouse_vy;
+          newEdgeP0 = true;
+        } else {
+          newEdge.p1.x = x / 1000.0f * mouse_vz - mouse_vx;
+          newEdge.p1.y = y / 1000.0f * mouse_vz - mouse_vy;
+          track.addEdge(newEdge);
+          newEdgeP0 = false;
+          editMode = MODE_NONE;
+        }
+      }
+      if (editMode == MODE_LANDMARK) {
+        newPoint.x = x / 1000.0f * mouse_vz - mouse_vx;
+        newPoint.y = y / 1000.0f * mouse_vz - mouse_vy;
+        track.addLandmark(newPoint);
+        editMode = MODE_NONE;
+      }
+    }
+  }
+
 }
 
 void mouse_active_motion(int x, int y) {
@@ -141,6 +145,47 @@ void mouse_passive_motion(int x, int y) {
   mousey = y;
   float xp = x / 1000.0f * mouse_vz - mouse_vx;
   float yp = y / 1000.0f * mouse_vz - mouse_vy;
+}
+
+
+
+void display() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  set2DMode(mouse_vz, mouse_vz);
+  glTranslatef(mouse_vx, mouse_vy, 0);
+  robot.render();
+  track.render();
+  
+  if (editMode == MODE_EDGE && newEdgeP0) {
+    float xp = mousex / 1000.0f * mouse_vz - mouse_vx;
+    float yp = mousey / 1000.0f * mouse_vz - mouse_vy;
+    glColor3f(0, 0.5, 0.5);
+    glBegin(GL_LINES);
+    glVertex2f(newEdge.p0.x, newEdge.p0.y);
+    glVertex2f(xp, yp);
+    glEnd();
+  }
+
+  glutSwapBuffers();
+}
+
+void init_display() {
+  mouse_vz = 300;
+  mouse_vx = 150;
+  mouse_vy = 150;
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glLineWidth(1.5);
+}
+
+void reshape(int w, int h) {
+  glViewport(0, 0, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  init_display();
+  display();
 }
 
 void special_keys(int key, int x, int y) {
@@ -166,83 +211,44 @@ void special_keys(int key, int x, int y) {
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
+    case '1': {
+      std::cout << "Edge Mode Selected" << std::endl;
+      editMode = MODE_EDGE;
+      break;
+    }
+    case '2': {
+      std::cout << "Landmark Mode Selected" << std::endl;
+      editMode = MODE_LANDMARK;
+      break;
+    }
     case 'a':
-      itrack = (itrack + 1) % 3;
-      ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);      
       break;
     case 's':
-      ga.saveMostFit("nn/best01.nn");
+      track.save("tracks/track3.trk");
       break;
     case 'l':
-      ga.loadMostFit("nn/best01.nn");
+      track.load("tracks/track3.trk");
       break;      
     case 32:
-      if(!ga.isStarted()) 
-        ga.startSimulation(50);
-      else
-        ga.stopSimulation();
-      glutPostRedisplay();
       break;
-    case 27:
-      glutLeaveMainLoop();
+    case 27: {
+      if (editMode == MODE_NONE)  glutLeaveMainLoop();
+      if (editMode == MODE_EDGE) { 
+        std::cout << "Edge Mode Cancelled" << std::endl;
+        editMode = MODE_NONE;
+        newEdgeP0 = false;
+      }
+      if (editMode == MODE_LANDMARK) { 
+        std::cout << "Landmark Mode Cancelled" << std::endl;
+        editMode = MODE_NONE;
+      }      
       break;
+    }
     default:
       break;
   }
+  glutPostRedisplay();
 }
-
-// void createSet(const std::string& FileName, size_t N) {
-//   std::vector<double> In(3);
-//   std::vector<double> Out(2);
-//   unsigned seed =
-//   std::chrono::system_clock::now().time_since_epoch().count();
-//   std::default_random_engine generator(seed);
-//   std::uniform_int_distribution<int> uniform(-100, 100);
-
-//   NNDataset<double> DataSet(3, 2);
-//   float dt = 0.1f;
-//   float dx, dy, dtheta;
-//   size_t in = 0;
-//   while (in < N)  {
-//     float Vl = uniform(generator);
-//     float Vr = uniform(generator);
-//     if (Vl + Vr < 0) continue;
-//     robot.setMotors(Vl, Vr);
-//     robot.relativeMove(dt, dx, dy, dtheta);
-//     In[0] = dx;
-//     In[1] = dy;
-//     In[2] = dtheta;
-
-//     Out[0] = robot.getMotorLeft() / 100.0f;
-//     Out[1] = robot.getMotorRight() / 100.0f;
-//     DataSet.addSample(In, Out);
-//     in++;
-//   }
-
-//   In[0] = 2.17403e-5;
-//   In[1] = 0.651979;
-//   In[2] = -9.38887e-05;
-//   Out[0] = 0.333694;
-//   Out[1] = 0.332999;
-
-//   NNSample<double> a(In, Out);
-//   DataSet.meanCancellation(a);
-
-//   DataSet.save(FileName);
-//   NNSample<double> avg = DataSet.averageSample();
-
-//   std::cout << "Average-------------------" << std::endl;
-//   std::cout << "dx = " << avg.Input[0] << " dy = " << avg.Input[1] << "
-//   dtheta = " << avg.Input[2] << std::endl;
-//   std::cout << "Vl = " << avg.Output[0] << " Vr = " << avg.Output[1] <<
-//   std::endl;
-
-//   //dt = 0.1f;
-//   //dx = 2.17403e-05 dy = 0.651979 dtheta = -9.38887e-05
-//   //Vl = 0.333694 Vr = 0.332999
-
-//   //DataSet.print();
-// }
 
 void init_glut_window(int argc, char* argv[]) {
   glutInit(&argc, argv);
@@ -261,46 +267,7 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  ////createSet("test500.dat", 500);
-  // NNDataset<double> test(3, 2);
-  // NNDataset<double> train(3, 2);
-  // train.load(500, "tr500.dat");
-  // test.load(500, "test500.dat");
-
-  // FFNN3L NN(3, 8, 2);
-  ////NN.train(train, 100000, 0.05, 0.8);
-  // NN.test(train);
-  // NN.test(test);
-  ////NN.save("NN382.nn");
-  // NN.load("NN382.nn");
-  // NN.test(train);
-  // NN.test(test);
-
-  // track.addEdge(0, 15, 30, 15);
-  // track.addEdge(0, -15, 30, -15);
-
-  // track 1
-  // track.makePolygon(0, 50, 50, 10);
-  // track.makePolygon(0, 50, 80, 10);
-  // track.addEdge(-15.5, 3, -25, -26);
-  // track.makePoygonLandmarks(0, 50, 65, 20, -M_PI / 2, 2 * M_PI / 21);
-
-
-  tracks[0].load("tracks/track1.trk");
-  tracks[1].load("tracks/track2.trk");
-  tracks[2].load("tracks/track3.trk");
-
-  ga.setInitialPos(tracks[itrack].getInitialPoint(), 0);
-
-  
-  //
-   //robot.setPos(Point2d(0, -12), 0);
-  // robot.setPos(Point2d(18, -14), 0);
-  // if(robot.checkCollision(track))
-  //   robot.setGlow(true);
-  // else
-  //   robot.setGlow(false);
-  // robot.updateSensorDistances(track);
+  robot.setPos(Point2d(0, 0), 0);
 
   glutMainLoop();
 }

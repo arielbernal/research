@@ -137,8 +137,6 @@ class FFNN3L {
       return;
     }
     ifs >> NI >> NH >> NO;
-    std::cout << "FFNN3L(" << NI << ", " << NH << ", " << NO << ")"
-              << std::endl;
     Input.resize(NI + 1);
     Hidden.resize(NH + 1);
     Output.resize(NO);

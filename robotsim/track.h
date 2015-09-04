@@ -57,6 +57,11 @@ class Track {
     edges.push_back(Edge2d(x0, y0, x1, y1));
   }
 
+  void addEdge(const Edge2d& e) { edges.push_back(e); }
+
+  void addLandmark(float x, float y) { landmarks.push_back(Point2d(x, y)); }
+  void addLandmark(const Point2d& p) { landmarks.push_back(p); }
+
   void makePolygon(float xc, float yc, float r, float nedges) {
     float dalpha = 2 * M_PI / nedges;
     for (size_t i = 0; i < nedges; ++i) {
@@ -71,21 +76,17 @@ class Track {
   const std::vector<Edge2d>& getEdges() const { return edges; }
   const std::vector<Point2d>& getLandmarks() const { return landmarks; }
   const std::vector<float>& getDk() const { return Dk; }
+  Point2d getInitialPoint() { return landmarks[0]; }
 
   void makePoygonLandmarks(float xc, float yc, float r, float nedges,
                            float alpha = 0, float dalpha = 0) {
-    if (dalpha == 0) 
-      dalpha = 2 * M_PI / nedges;
+    if (dalpha == 0) dalpha = 2 * M_PI / nedges;
     for (size_t i = 0; i < nedges; ++i) {
       float x = xc + r * cos(alpha + dalpha * i);
       float y = yc + r * sin(alpha + dalpha * i);
       landmarks.push_back(Point2d(x, y));
     }
     updateMarkDistances();
-  }
-
-  void addLandmark(float x, float y) {
-    landmarks.push_back(Point2d(x, y));
   }
 
   void updateMarkDistances() {
@@ -97,6 +98,46 @@ class Track {
       d += distance(landmarks[i + 1], landmarks[i]);
       Dk[i] = d;
     }
+  }
+
+  void save(const std::string& Filename) {
+    std::ofstream ofs(Filename.c_str());
+    if (!ofs.is_open()) {
+      std::cout << "Error saving to file : " << Filename << std::endl;
+      return;
+    }
+
+    ofs << edges.size() << " " << landmarks.size() << "\n";
+    for (auto& e : edges)
+      ofs << e.p0.x << " " << e.p0.y << " " << e.p1.x << " " << e.p1.y << "\n";
+
+    for (auto& e : landmarks) ofs << e.x << " " << e.y << "\n";
+
+    ofs.close();
+  }
+
+  void load(const std::string& Filename) {
+    edges.clear();
+    landmarks.clear();
+
+    std::ifstream ifs(Filename.c_str());
+    if (!ifs.is_open()) {
+      std::cout << "Error loading file : " << Filename << std::endl;
+      return;
+    }
+    size_t NEdges, NLandmarks;
+    ifs >> NEdges >> NLandmarks;
+    for (size_t i = 0; i < NEdges; ++i) {
+      Edge2d e;
+      ifs >> e.p0.x >> e.p0.y >> e.p1.x >> e.p1.y;
+      edges.push_back(e);
+    }
+    for (size_t i = 0; i < NLandmarks; ++i) {
+      Point2d p;
+      ifs >> p.x >> p.y;
+      landmarks.push_back(p);
+    }
+    if(!landmarks.empty()) updateMarkDistances();
   }
 
  private:

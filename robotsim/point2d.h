@@ -4,6 +4,8 @@
 struct Point2d {
   Point2d(float x = 0, float y = 0) : x(x), y(y) {}
   Point2d(const Point2d &p) : x(p.x), y(p.y) {}
+  Point2d(float k) : x(k), y(k) {};
+
   void set(float xv, float yv) {
     x = xv;
     y = yv;
@@ -99,6 +101,8 @@ struct Edge2d {
   Edge2d(float x0, float y0, float x1, float y1) : p0(x0, y0), p1(x1, y1) {}
 
   Edge2d(Point2d p0, Point2d p1) : p0(p0), p1(p1) {}
+
+  Edge2d() {}
 
   float length() { return distance(p0, p1); }
 

@@ -26,7 +26,8 @@ class GA {
         generation(0),
         started(false),
         InitialPos(0, 0),
-        InitialAngle(0) {
+        InitialAngle(0),
+        StopSimulation(false) {
     newPopulation();
   }
 
@@ -51,11 +52,9 @@ class GA {
           auto &e = Population[i];
           e.setGlow(false);
           if (!e.isCollided()) {
-            e.update(dt);
-            if (e.checkCollision(track)) e.setCollided(true);
-            e.updateSensorDistances(track);
+            e.update(dt, track);
           }
-          float d = e.updateTraveledDistance(track);
+          float d = e.getDistance();
           if (d < DistanceToTarget) {
             DistanceToTarget = d;
             iBest = i;
@@ -74,7 +73,9 @@ class GA {
         std::cout << "Generation " << generation++ << "  DAvg = " << davg
                   << " Collisions = " << collisions << std::endl;
         nextGeneration();
-        // started = false;
+        if (StopSimulation) {
+          started = false;
+        }
         t = 0;
       }
     }
@@ -83,8 +84,24 @@ class GA {
   void startSimulation(float T) {
     TMax = T;
     started = true;
+    StopSimulation = false;
     t = 0;
     resetConditions();
+  }
+
+  bool isStarted() { return started; }
+  void stopSimulation() { StopSimulation = true;}
+
+  void saveMostFit(const std::string& Filename) {
+    sortPopulation();
+    Population[0].save(Filename);
+  }
+
+  void loadMostFit(const std::string& Filename) {
+    for (size_t i = 0; i < N; ++i) {
+      Population[i].load(Filename);
+      Population[i].randomMutation(); 
+    }
   }
 
  protected:
@@ -93,9 +110,14 @@ class GA {
   }
 
   void sortPopulation() {
+    float eps = 1;
     std::sort(Population.begin(), Population.end(),
-              [](const RobotGA &a, const RobotGA &b)
-                  -> bool { return (a.getDistance() < b.getDistance()); });
+              [eps](const RobotGA &a, const RobotGA &b) -> bool {
+      bool inRange = a.getDistance() < eps && b.getDistance() < eps;
+      bool bestTime = a.getT() < b.getT();
+      bool bestDistance = a.getDistance() < b.getDistance();
+      return ((inRange && bestTime) || (!inRange && bestDistance));
+    });
   }
 
   void resetConditions() {
@@ -103,14 +125,16 @@ class GA {
     for (auto &e : Population) {
       e.setGlow(false);
       e.setCollided(false);
+      e.setT(0);
     }
   }
 
   void nextGeneration() {
     sortPopulation();
-    static std::default_random_engine generator;
-    std::uniform_int_distribution<int> uniform(0, N / 2);
-    for (size_t i = N / 2; i < N; ++i) {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::default_random_engine generator(seed);
+    std::uniform_int_distribution<int> uniform(0, N / 4);
+    for (size_t i = N / 4; i < N; ++i) {
       const FFNN3L &NN1 = Population[uniform(generator)].getNN();
       const FFNN3L &NN2 = Population[uniform(generator)].getNN();
       Population[i].crossOver(NN1, NN2);
@@ -128,6 +152,7 @@ class GA {
   size_t generation;
   Point2d InitialPos;
   float InitialAngle;
+  bool StopSimulation;
 };
 
 // class GA {
