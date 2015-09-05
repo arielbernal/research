@@ -17,7 +17,7 @@
 class RobotGA {
  public:
   RobotGA(size_t NSensors = 7)
-      : NN(11, 18, 2),
+      : NN(11, 16, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         Distance(0),
@@ -205,6 +205,9 @@ class RobotGA {
   }
 
   float getDistance() const { return Distance; }
+  void setDistance(float d) { Distance = 0; }
+  void setAtTarget(bool v) { AtTarget = v; }
+  void setTTarget(float t) { TTarget = t; }
 
   void setGlow(bool v = true) { glow = v; }
   bool isGlow() { return glow; }
@@ -247,8 +250,8 @@ class RobotGA {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k = 4.0f;
-    float pr = 0.8f;
+    float k = 3.0f;
+    float pr = 0.75f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)

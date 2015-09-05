@@ -219,6 +219,13 @@ void normal_keys(unsigned char key, int x, int y) {
     case 'r':
       ga.resetConditions();
       break;
+    case 'n':
+      if (!ga.isStarted())
+        ga.startSimulation();
+      else
+        ga.stopSimulation();
+      glutPostRedisplay();
+      break;
     case 32:
       if (!ga.isStarted())
         ga.startSimulation(150);

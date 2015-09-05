@@ -76,7 +76,7 @@ class GA {
                     << Population[i].getTargetTime() << "     "
                     << Population[i].isAtTarget() << std::endl;
         }
-        TMax = Population[0].isAtTarget() ? Population[0].getTargetTime() : Population[0].getT();
+        //TMax = Population[0].isAtTarget() ? Population[0].getTargetTime() : Population[0].getT();
         nextGeneration();
 
         if (StopSimulation) {
@@ -103,7 +103,21 @@ class GA {
         }
         t += dt;
       }
+      else {
+          std::cout << "     " << Population[0].getDistance() << "   "
+            << Population[0].getT() << "     "
+            << Population[0].getTargetTime() << "     "
+            << Population[0].isAtTarget() << std::endl;
+          started = false;
+      }
     }
+  }
+
+  void startSimulation() {
+    started = true;
+    StopSimulation = false;
+    t = 0;
+    resetConditions();
   }
 
   void startSimulation(float T) {
@@ -136,6 +150,9 @@ class GA {
       e.setGlow(false);
       e.setCollided(false);
       e.setT(0);
+      e.setDistance(0);
+      e.setAtTarget(false);
+      e.setTTarget(0);
     }
     t = 0;
   }
