@@ -90,6 +90,11 @@ void mouse_wheel(int wheel, int direction, int x, int y) {
 }
 
 void mouse_button(int button, int status, int x, int y) {
+#ifndef WIN32
+  if ((button == 3) || (button == 4)) {
+    mouse_wheel(0, button == 3 ? 1 : -1, x, y);
+  }
+#endif  
   y = WinHeight - y;
   MouseButtonRight = false;
   if (button == GLUT_RIGHT_BUTTON){
@@ -168,7 +173,9 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseFunc(mouse_button);
   glutMotionFunc(mouse_active_motion);
   glutPassiveMotionFunc(mouse_passive_motion);
+#ifdef WIN32  
   glutMouseWheelFunc(mouse_wheel);
+#endif  
 
   tracks.resize(4);
   tracks[0].load("tracks/track1.trk");
