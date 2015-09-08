@@ -1,6 +1,10 @@
 #ifndef TRACK_H
 #define TRACK_H
 
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <cmath>
 #include "maze.h"
 #include "point2d.h"
 

@@ -1,17 +1,29 @@
 #define _USE_MATH_DEFINES
 
 #include <iostream>
-#include "include/glheaders.h"
 #include <cmath>
+#include <vector>
+#include "include/glheaders.h"
 #include "include/glprimitives.h"
+#include "robot.h"
+#include "track.h"
+
 
 namespace {
-int m_window_width = 1200;
-int m_window_height = 700;
-std::string m_window_title = "RobotSim";
+int WinWidth = 1200;
+int WinHeight = 700;
+float WinRatio = WinHeight / float(WinWidth);
+float ViewWidth = 300;
+float ViewHeight = ViewWidth * WinRatio;
+float ViewX0 = ViewWidth / 2;
+float ViewY0 = ViewHeight / 2;
+std::string WinTitle = "RobotSim";
+Robot robot;
+std::vector<Track> tracks;
+size_t itrack = 0;
 }
 
-void set2DMode(size_t Width, size_t Height) {
+void set2DMode(float Width, float Height) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluOrtho2D(0, Width, 0, Height);
@@ -19,31 +31,24 @@ void set2DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
-float mouse_vz, mouse_vx, mouse_vy;
+float MouseX, MouseY;
+bool MouseButtonRight;
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  set2DMode(12/7.0, 1);
-    
-  glBegin(GL_LINE_LOOP);
-  glVertex2f(0.5, 0.5);
-  glVertex2f(0.75, 0.5);
-  glVertex2f(0.75, 0.75);
-  glVertex2f(0.5, 0.75);
+  set2DMode(ViewWidth, ViewHeight);
+  glTranslatef(ViewX0, ViewY0 ,0);
+  draw_axes(150, 150, 0);
 
-  glEnd();
-  //glTranslatef(mouse_vx, mouse_vy, 0);
+  robot.render();
+  tracks[itrack].render();
 
-  //set2DMode(1000, 1000);
-  //printFloat(10, 1000 - 20, "Time = ",4444, 3, 2);
-
+  set2DMode(1000, 1000);
+  printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
   glutSwapBuffers();
 }
 
 void init_display() {
-  mouse_vz = 300;
-  mouse_vx = 150;
-  mouse_vy = 150;
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -52,73 +57,63 @@ void init_display() {
 }
 
 void reshape(int w, int h) {
-  glViewport(0, 0, w/2, h);
+  WinWidth = w;
+  WinHeight = h;
+  WinRatio = WinHeight / float(WinWidth);
+
+  float kx = ViewX0 / ViewWidth;
+  float ky = ViewY0 / ViewHeight;
+  ViewHeight = ViewWidth * WinRatio;
+  ViewX0 = kx * ViewWidth;
+  ViewY0 = ky * ViewHeight;
+
+  glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   init_display();
   display();
 }
 
-float mousex, mousey;
-int rmouseb;
 
 void mouse_wheel(int wheel, int direction, int x, int y) {
-  y = 1000 - y;
-  float xp = x / 1000.0f * mouse_vz - mouse_vx;
-  float yp = y / 1000.0f * mouse_vz - mouse_vy;
-  mouse_vz += direction > 0 ? 20 : -20;
-  if (mouse_vz > 2000) mouse_vz = 2000;
-  if (mouse_vz < 1) mouse_vz = 1;
-  mouse_vx = x / 1000.0f * mouse_vz - xp;
-  mouse_vy = y / 1000.0f * mouse_vz - yp;
-  mousex = x;
-  mousey = y;
+  y = WinHeight - y;
+  float k = ViewWidth / WinWidth;
+  float xp = x * k - ViewX0;
+  float yp = y * k - ViewY0;
+  float factor = 1.3;
+  float ViewZoom = direction > 0 ? factor : 1 / factor;
+  ViewWidth *= ViewZoom;
+  ViewHeight *= ViewZoom;
+  k = ViewWidth / WinWidth;
+  ViewX0 = x * k - xp;
+  ViewY0 = y * k - yp;
 }
 
 void mouse_button(int button, int status, int x, int y) {
-  y = 1000 - y;
-  rmouseb = GLUT_UP;
-  if ((button == 3) || (button == 4)) {
-    if (status == GLUT_DOWN) {
-      float xp = x / 1000.0f * mouse_vz - mouse_vx;
-      float yp = y / 1000.0f * mouse_vz - mouse_vy;
-      mouse_vz += button == 3 ? 20 : -20;
-      if (mouse_vz > 2000) mouse_vz = 2000;
-      if (mouse_vz < 1) mouse_vz = 1;
-      mouse_vx = x / 1000.0f * mouse_vz - xp;
-      mouse_vy = y / 1000.0f * mouse_vz - yp;
-      mousex = x;
-      mousey = y;
-    }
-  }
-  if (button == GLUT_RIGHT_BUTTON) {
-    if (status == GLUT_DOWN) {
-      rmouseb = GLUT_DOWN;
-      mousex = x;
-      mousey = y;
+  y = WinHeight - y;
+  MouseButtonRight = false;
+  if (button == GLUT_RIGHT_BUTTON){
+    if (status == GLUT_DOWN){
+      MouseButtonRight = true;
+      MouseX = x;
+      MouseY = y;
     }
   }
 }
 
 void mouse_active_motion(int x, int y) {
-  y = 1000 - y;
-  if (rmouseb == GLUT_DOWN) {
-    float dx = (x - mousex) * mouse_vz / 1000;
-    float dy = (y - mousey) * mouse_vz / 1000;
-    mouse_vy += dy;
-    mouse_vx += dx;
+  y = WinHeight - y;
+  if (MouseButtonRight){
+    float k = ViewWidth / WinWidth;
+    ViewX0 += (x - MouseX) * k;
+    ViewY0 += (y - MouseY) * k;
   }
-
-  mousex = x;
-  mousey = y;
+  MouseX = x;
+  MouseY = y;
 }
 
 void mouse_passive_motion(int x, int y) {
-  y = 1000 - y;
-  mousex = x;
-  mousey = y;
-  float xp = x / 1000.0f * mouse_vz - mouse_vx;
-  float yp = y / 1000.0f * mouse_vz - mouse_vy;
+  y = WinHeight - y;
 }
 
 void special_keys(int key, int x, int y) {
@@ -132,9 +127,6 @@ void special_keys(int key, int x, int y) {
     case GLUT_KEY_LEFT:
       break;
     case GLUT_KEY_F10:
-      mouse_vz = 300;
-      mouse_vx = 150;
-      mouse_vy = 150;
       glutPostRedisplay();
       break;
     default:
@@ -144,6 +136,9 @@ void special_keys(int key, int x, int y) {
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
+    case 'a':
+      itrack = (itrack + 1) % tracks.size();
+      break;
     case 32:
       glutPostRedisplay();
       break;
@@ -155,22 +150,31 @@ void normal_keys(unsigned char key, int x, int y) {
   }
 }
 
+
 void init_glut_window(int argc, char* argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(m_window_width, m_window_height);
-  glutCreateWindow(m_window_title.c_str());
+  glutInitWindowSize(WinWidth, WinHeight);
+  glutCreateWindow(WinTitle.c_str());
 
   glutDisplayFunc(display);
   glutIdleFunc(display);
+  glutReshapeFunc(reshape);
+
   glutKeyboardFunc(normal_keys);
   glutSpecialFunc(special_keys);
+  
   glutMouseFunc(mouse_button);
   glutMotionFunc(mouse_active_motion);
   glutPassiveMotionFunc(mouse_passive_motion);
   glutMouseWheelFunc(mouse_wheel);
-  glutReshapeFunc(reshape);
+
+  tracks.resize(4);
+  tracks[0].load("tracks/track1.trk");
+  tracks[1].load("tracks/track2.trk");
+  tracks[2].load("tracks/track3.trk");
+  tracks[3].load("tracks/track4.trk");
 
   glutMainLoop();
 }
