@@ -193,7 +193,7 @@ class Robot {
     drawDisk(p.x, p.y, 1, 20);
   }
 
-  Point2d pos() { return Point2d(x, y); }
+  Point2d getPos() { return Point2d(x, y); }
   Point2d posFront() { return Point2d(x + r * cos(theta), y + r * sin(theta)); }
 
  private:

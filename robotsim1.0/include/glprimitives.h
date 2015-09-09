@@ -213,9 +213,9 @@ void printText(float x, float y, const std::string &text) {
 }
 
 
-void printFloat(float x, float y, const std::string& text, float v, int dig = 5, int dec = 2) {
-  char s[20];
-  char sformat[20];
+void printFloat(float x, float y, const std::string& text, float v, int dig = 10, int dec = 2) {
+  char s[100];
+  char sformat[100];
   sprintf(sformat, "%s%%%d.%df", text.c_str(), dig, dec);
   sprintf(s, sformat, v);
   printText(x, y, s);
