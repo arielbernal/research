@@ -55,6 +55,13 @@ class Track {
     Cell* b = Mz.getBegin();
     Begin = Point2d(b->j * d - N * d / 2 + d / 2,
                     (N - b->i) * d - N * d / 2 - d / 2);
+    for (size_t i = 0; i < N; ++i) {
+      for (size_t j = 0; j < M; ++j) {
+        Point2d P(j * d - N * d / 2 + d / 2, (N - i) * d - N * d / 2 - d / 2);
+        landmarks.push_back(P);
+      }
+    }
+    updateMarkDistances();
   }
 
   void addEdge(float x0, float y0, float x1, float y1) {

@@ -5,20 +5,21 @@
 #include <vector>
 #include "include/glheaders.h"
 #include "include/glprimitives.h"
-#include "robot.h"
+#include "robot_unit.h"
 #include "track.h"
+#include "ga.h"
 
 
 namespace {
 int WinWidth = 1200;
-int WinHeight = 700;
+int WinHeight = 1000;
 float WinRatio = WinHeight / float(WinWidth);
 float ViewWidth = 300;
 float ViewHeight = ViewWidth * WinRatio;
 float ViewX0 = ViewWidth / 2;
 float ViewY0 = ViewHeight / 2;
 std::string WinTitle = "RobotSim";
-Robot robot;
+GA ga(1000);
 std::vector<Track> tracks;
 size_t itrack = 0;
 }
@@ -38,13 +39,14 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(ViewWidth, ViewHeight);
   glTranslatef(ViewX0, ViewY0 ,0);
-  draw_axes(150, 150, 0);
-
-  robot.render();
+  draw_axes(50, 50, 0);
+  ga.render();
   tracks[itrack].render();
-
+  float t = ga.getTime();
   set2DMode(1000, 1000);
   printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
+  printFloat(5, 1000 - 40, "Time = ", ga.getTime(), 3, 2);
+  printFloat(100, 1000 - 40, "dt = ", ga.getDt(), 3, 2);
   glutSwapBuffers();
 }
 
@@ -124,8 +126,10 @@ void mouse_passive_motion(int x, int y) {
 void special_keys(int key, int x, int y) {
   switch (key) {
     case GLUT_KEY_UP:
+      ga.slowDown(-1);
       break;
     case GLUT_KEY_DOWN:
+      ga.slowDown(+1);
       break;
     case GLUT_KEY_RIGHT:
       break;
@@ -143,9 +147,13 @@ void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
     case 'a':
       itrack = (itrack + 1) % tracks.size();
+      ga.setTrack(&tracks[itrack]);
+      break;
+    case 's':
+      ga.stopSimulation();
       break;
     case 32:
-      glutPostRedisplay();
+      ga.startSimulation(150, 0.1f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -177,11 +185,15 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif  
 
-  tracks.resize(4);
+  Maze a(8, 8);
+  tracks.resize(5);
   tracks[0].load("tracks/track1.trk");
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
   tracks[3].load("tracks/track4.trk");
+  tracks[4].getEdgesFromMaze(a, 30);
+
+  ga.setTrack(&tracks[0]);
 
   glutMainLoop();
 }

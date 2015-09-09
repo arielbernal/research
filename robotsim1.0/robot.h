@@ -11,18 +11,6 @@
 #define DEG(X) X / M_PI * 180.0
 #define RAD(X) X / 180.0 * M_PI
 
-struct RobotEvent {
-  int type;
-  float time;
-  float MotorLeft;
-  float MotorRight;
-
-  enum { STOP, LEFT, RIGHT, FORWARD };
-
-  RobotEvent(int type, float time, float MotorLeft = 0, float MotorRight = 0)
-      : type(type), time(time), MotorLeft(MotorLeft), MotorRight(MotorRight) {}
-};
-
 class Robot {
  public:
   Robot(float theta = M_PI / 2, float x = 0, float y = 0)
@@ -156,7 +144,7 @@ class Robot {
     MotorRight = 0;
   }
 
-  void render(bool glow = false) {
+  void render(float cr = 1, float cg = 1, float cb = 1, bool glow = false) {
     glPushMatrix();
     glTranslatef(x, y, 0);
     glRotatef(theta / M_PI * 180 - 90, 0, 0, 1);
@@ -164,10 +152,9 @@ class Robot {
     float arrowLength = r + 5;
     float dw2 = 0.4;
 
-    glColor3f(1, 1, 1);
+    glColor3f(cr, cg, cb);
     if (glow) {
       glLineWidth(4);
-      glColor3f(1, 0, 0);
     }
     drawCircle(0, 0, r, 30);
     if (glow) glLineWidth(1.5);
