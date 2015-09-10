@@ -104,10 +104,14 @@ protected:
         t += dt;
         Sleep(SlowDown);
       }
+      
+      int isCollided = 0;
+      for (auto &e : Population)
+        if (e.isCollided()) isCollided++;
       Sorting = true;
       sortPopulation();
       Sorting = false;
-      std::cout << " Best Time = " << Population[0].getTime() << std::endl;
+      std::cout << " Best Time = " << Population[0].getTime() << " Collided = " << isCollided << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         std::cout << "     " << Population[i].getDistance() << "   "
                   << Population[i].getTime() << " "
@@ -137,16 +141,15 @@ protected:
                 float db = b.getDistance();
                 bool la = a.isCollided();
                 bool lb = b.isCollided();
-                /*
                 if (!la && !lb)
                   return da > db;
                 if (!la)
                   return true;
                 if (!lb)
                   return false;
-                  */
-                return da > db;
-                // if (da == db)
+                  
+                //return da > db;
+                //if (da == db)
                 //  return a.getTime() < b.getTime();
                 // return da > db;
               });
@@ -155,10 +158,11 @@ protected:
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 10;
+    int k = 5;
     std::uniform_int_distribution<int> u2(0, N / k - 1);
     for (size_t i = N / k; i < N; ++i) {
-      const FFNN3L &NN1 = Population[u2(generator)].getNN();
+      int i0 = u2(generator);
+      const FFNN3L &NN1 = Population[i0].getNN();
       const FFNN3L &NN2 = Population[u2(generator)].getNN();
       Population[i].crossOver(NN1, NN2);
       Population[i].randomMutation();

@@ -60,10 +60,21 @@ public:
     Grid = new Cell[N * M];
     initialize();
   }
+
   ~Maze() {
     delete Grid;
   }
  
+  void generate(unsigned m, unsigned n) {
+    N = n;
+    M = m;
+    delete Grid;
+    Begin = 0;
+    End = 0;
+    Grid = new Cell[N * M];
+    initialize();
+  }
+
   void initialize() {
     for (unsigned i = 0; i < M; ++i)
       for (unsigned j = 0; j < N; ++j)

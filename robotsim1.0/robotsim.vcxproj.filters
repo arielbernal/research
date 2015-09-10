@@ -65,9 +65,6 @@
     <ClInclude Include="nndataset.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="robot_ga.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ga.h">
       <Filter>Source Files</Filter>
     </ClInclude>

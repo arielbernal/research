@@ -102,7 +102,6 @@
     <ClInclude Include="maze.h" />
     <ClInclude Include="point2d.h" />
     <ClInclude Include="robot.h" />
-    <ClInclude Include="robot_ga.h" />
     <ClInclude Include="robot_unit.h" />
     <ClInclude Include="track.h" />
   </ItemGroup>

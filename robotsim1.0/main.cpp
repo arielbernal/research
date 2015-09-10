@@ -19,7 +19,7 @@ float ViewHeight = ViewWidth * WinRatio;
 float ViewX0 = ViewWidth / 2;
 float ViewY0 = ViewHeight / 2;
 std::string WinTitle = "RobotSim";
-GA ga(500);
+GA ga(1000);
 std::vector<Track> tracks;
 size_t itrack = 0;
 }
@@ -39,7 +39,7 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(ViewWidth, ViewHeight);
   glTranslatef(ViewX0, ViewY0 ,0);
-  draw_axes(50, 50, 0);
+  //draw_axes(50, 50, 0);
   ga.render();
   tracks[itrack].render();
   float t = ga.getTime();
@@ -47,6 +47,7 @@ void display() {
   printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
   printFloat(5, 1000 - 40, "Time = ", ga.getTime(), 3, 2);
   printFloat(100, 1000 - 40, "dt = ", ga.getDt(), 3, 2);
+  Sleep(50);
   glutSwapBuffers();
 }
 
@@ -159,7 +160,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(250, 0.05f);
+      ga.startSimulation(250, 0.1f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -192,12 +193,14 @@ void init_glut_window(int argc, char* argv[]) {
 #endif  
 
   Maze a(8, 8);
-  tracks.resize(5);
+  tracks.resize(6);
   tracks[0].load("tracks/track1.trk");
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
   tracks[3].load("tracks/track4.trk");
   tracks[4].getEdgesFromMaze(a, 25);
+  a.generate(8, 8);
+  tracks[5].getEdgesFromMaze(a, 25);
 
   ga.setTrack(&tracks[0]);
 

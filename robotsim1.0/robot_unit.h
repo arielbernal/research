@@ -77,7 +77,7 @@ class RobotUnit {
       std::vector<double> Input(NSensors + 2);
       std::vector<double> Output(2);
       for (size_t i = 0; i < NSensors; ++i)
-        Input[i] = DistSensors[0] / 200.0f;
+        Input[i] = DistSensors[i] / 200.0f;
       Input[NSensors] = robot.getMotorLeft() / 100.0f;
       Input[NSensors + 1] = robot.getMotorRight() / 100.0f;
 
@@ -164,8 +164,8 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k = 4.0f;
-    float pr = 0.75f;
+    float k = 3.0f;
+    float pr = 0.95f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
