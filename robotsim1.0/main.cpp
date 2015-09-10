@@ -19,7 +19,7 @@ float ViewHeight = ViewWidth * WinRatio;
 float ViewX0 = ViewWidth / 2;
 float ViewY0 = ViewHeight / 2;
 std::string WinTitle = "RobotSim";
-GA ga(1000);
+GA ga(500);
 std::vector<Track> tracks;
 size_t itrack = 0;
 }
@@ -150,10 +150,16 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.setTrack(&tracks[itrack]);
       break;
     case 's':
+      ga.saveMostFit("nn/best01.nn");
+      break;
+    case 'l':
+      ga.loadMostFit("nn/best01.nn");
+      break;
+    case 't':
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(150, 0.1f);
+      ga.startSimulation(250, 0.05f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -191,7 +197,7 @@ void init_glut_window(int argc, char* argv[]) {
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
   tracks[3].load("tracks/track4.trk");
-  tracks[4].getEdgesFromMaze(a, 30);
+  tracks[4].getEdgesFromMaze(a, 25);
 
   ga.setTrack(&tracks[0]);
 

@@ -19,7 +19,7 @@
 class RobotUnit {
  public:
   RobotUnit(size_t NSensors = 7)
-      : NN(10, 16, 2),
+      : NN(NSensors + 2, 16, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         collided(false),
@@ -74,18 +74,13 @@ class RobotUnit {
 
   void update(float dt) {
     if (!isCollided()) {
-      std::vector<double> Input(10);
+      std::vector<double> Input(NSensors + 2);
       std::vector<double> Output(2);
-      Input[0] = robot.getMotorLeft() / 100.0f;
-      Input[1] = robot.getMotorRight() / 100.0f;
-      Input[2] = DistSensors[0] / 100.0f - 1;
-      Input[3] = DistSensors[1] / 100.0f - 1;
-      Input[4] = DistSensors[2] / 100.0f - 1;
-      Input[5] = DistSensors[3] / 100.0f - 1;
-      Input[6] = DistSensors[4] / 100.0f - 1;
-      Input[7] = DistSensors[5] / 100.0f - 1;
-      Input[8] = DistSensors[6] / 100.0f - 1;
-      Input[9] = distanceToTarget();
+      for (size_t i = 0; i < NSensors; ++i)
+        Input[i] = DistSensors[0] / 200.0f;
+      Input[NSensors] = robot.getMotorLeft() / 100.0f;
+      Input[NSensors + 1] = robot.getMotorRight() / 100.0f;
+
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
       robot.update(dt);
@@ -169,7 +164,7 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k = 3.0f;
+    float k = 4.0f;
     float pr = 0.75f;
 
     for (size_t j = 0; j < NH; ++j)
@@ -212,6 +207,7 @@ class RobotUnit {
     Landmarks.resize(track->getLandmarks().size());
     std::fill(Landmarks.begin(), Landmarks.end(), false);
     angle0 = angle;
+    updateSensorDistances();
   }
 
   void resetUnit() {
@@ -222,6 +218,7 @@ class RobotUnit {
       collided = false;
       Distance = 0;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
+      updateSensorDistances();
     }
   }
 
