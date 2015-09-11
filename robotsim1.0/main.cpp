@@ -47,7 +47,7 @@ void display() {
   printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
   printFloat(5, 1000 - 40, "Time = ", ga.getTime(), 3, 2);
   printFloat(100, 1000 - 40, "dt = ", ga.getDt(), 3, 2);
-  Sleep(50);
+  Sleep(33);
   glutSwapBuffers();
 }
 
@@ -193,7 +193,7 @@ void init_glut_window(int argc, char* argv[]) {
 #endif  
 
   Maze a(8, 8);
-  tracks.resize(6);
+  tracks.resize(7);
   tracks[0].load("tracks/track1.trk");
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
@@ -201,6 +201,8 @@ void init_glut_window(int argc, char* argv[]) {
   tracks[4].getEdgesFromMaze(a, 25);
   a.generate(8, 8);
   tracks[5].getEdgesFromMaze(a, 25);
+  a.generate(10, 10);
+  tracks[6].getEdgesFromMaze(a, 25);
 
   ga.setTrack(&tracks[0]);
 

@@ -17,17 +17,11 @@
 #include "geometry_utils.h"
 
 class RobotUnit {
- public:
+public:
   RobotUnit(size_t NSensors = 7)
-      : NN(NSensors + 2, 16, 2),
-        NSensors(NSensors),
-        DistSensors(NSensors),
-        collided(false),
-        glow(false),
-        t(0),
-        Distance(0),
-        track(0),
-        angle0(0) {}
+      : NN(NSensors + 2, NSensors + 6, 2), NSensors(NSensors),
+        DistSensors(NSensors), collided(false), glow(false), t(0), Distance(0),
+        track(0), angle0(0) {}
 
   void render() {
     float r = 1;
@@ -59,10 +53,10 @@ class RobotUnit {
     }
   }
 
-  FFNN3L& getNN() { return NN; }
-  void setNN(const FFNN3L& net) { NN = net; }
-  void setPos(const Point2d& p) { robot.setPos(p); }
-  void setPos(const Point2d& p, float angle) { robot.setPos(p, angle); }
+  FFNN3L &getNN() { return NN; }
+  void setNN(const FFNN3L &net) { NN = net; }
+  void setPos(const Point2d &p) { robot.setPos(p); }
+  void setPos(const Point2d &p, float angle) { robot.setPos(p, angle); }
 
   bool isCollided() const { return collided; }
   void setCollided(bool v = true) { collided = v; }
@@ -74,12 +68,12 @@ class RobotUnit {
 
   void update(float dt) {
     if (!isCollided()) {
-      std::vector<double> Input(NSensors + 2);
+      std::vector<double> Input;
       std::vector<double> Output(2);
+      Input.push_back(robot.getMotorLeft() / 100.0f);
+      Input.push_back(robot.getMotorRight() / 100.0f);
       for (size_t i = 0; i < NSensors; ++i)
-        Input[i] = DistSensors[i] / 200.0f;
-      Input[NSensors] = robot.getMotorLeft() / 100.0f;
-      Input[NSensors + 1] = robot.getMotorRight() / 100.0f;
+        Input.push_back(DistSensors[i] / 100.0f - 1);
 
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
@@ -98,7 +92,7 @@ class RobotUnit {
   bool checkCollision() {
     Point2d C = robot.getPos();
     float R = robot.getR();
-    for (auto& e : track->getEdges())
+    for (auto &e : track->getEdges())
       if (SegmentCircleIntersection(e, C, R))
         return true;
     return false;
@@ -115,7 +109,7 @@ class RobotUnit {
                 C.y + 10 * sin(theta - M_PI / 2 + i * dalpha));
       Edge2d L(C, Q);
       Point2d I;
-      for (auto& e : track->getEdges())
+      for (auto &e : track->getEdges())
         if (RayEdgeIntersection(e, L, I)) {
           float d = distance(C, I);
           if (DistSensors[i] > d)
@@ -124,7 +118,7 @@ class RobotUnit {
     }
   }
 
-  void crossOver(const FFNN3L& x, const FFNN3L& y) {
+  void crossOver(const FFNN3L &x, const FFNN3L &y) {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
     std::uniform_real_distribution<float> distribution(0, 0.5);
@@ -132,8 +126,8 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float ir1 = 0.5f;  // distribution(generator);
-    float ir2 = 0.5f;  // distribution(generator);
+    float ir1 = 0.7f; // distribution(generator);
+    float ir2 = 0.5f; // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
       if (j < ir1 * NH)
@@ -165,7 +159,7 @@ class RobotUnit {
     size_t NO = NN.getNO();
 
     float k = 3.0f;
-    float pr = 0.95f;
+    float pr = 0.75f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -182,11 +176,11 @@ class RobotUnit {
         }
   }
 
-  void save(const std::string& Filename) { NN.save(Filename); }
-  void load(const std::string& Filename) { NN.load(Filename); }
+  void save(const std::string &Filename) { NN.save(Filename); }
+  void load(const std::string &Filename) { NN.load(Filename); }
 
   void updateVisitedLandmarks() {
-    auto& e = track->getLandmarks();
+    auto &e = track->getLandmarks();
     for (size_t i = 0; i < e.size(); ++i)
       if (distance(robot.getPos(), e[i]) < 15) {
         Landmarks[i] = true;
@@ -198,16 +192,11 @@ class RobotUnit {
         Distance++;
   }
 
-  void setTrack(Track* trk, float angle = 0) {
-    t = 0;
-    collided = false;
-    Distance = 0;
+  void setTrack(Track *trk, float angle = 0) {
     track = trk;
-    robot.setPos(track->getInitialPoint(), angle);
-    Landmarks.resize(track->getLandmarks().size());
-    std::fill(Landmarks.begin(), Landmarks.end(), false);
     angle0 = angle;
-    updateSensorDistances();
+    Landmarks.resize(track->getLandmarks().size());
+    resetUnit();
   }
 
   void resetUnit() {
@@ -224,7 +213,7 @@ class RobotUnit {
 
   float distanceToTarget() { return 0; }
 
- private:
+private:
   FFNN3L NN;
   Robot robot;
   size_t NSensors;
@@ -233,7 +222,7 @@ class RobotUnit {
   bool glow;
   float t;
   float Distance;
-  Track* track;
+  Track *track;
   std::vector<bool> Landmarks;
   float angle0;
 };
