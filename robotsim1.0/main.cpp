@@ -160,7 +160,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(250, 0.1f);
+      ga.startSimulation(500, 0.08f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -201,7 +201,7 @@ void init_glut_window(int argc, char* argv[]) {
   tracks[4].getEdgesFromMaze(a, 25);
   a.generate(8, 8);
   tracks[5].getEdgesFromMaze(a, 25);
-  a.generate(10, 10);
+  a.generate(15, 15);
   tracks[6].getEdgesFromMaze(a, 25);
 
   ga.setTrack(&tracks[0]);

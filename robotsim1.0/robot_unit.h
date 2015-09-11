@@ -20,7 +20,7 @@ class RobotUnit {
 public:
   RobotUnit(size_t NSensors = 7)
       : NN(NSensors + 2, NSensors + 6, 2), NSensors(NSensors),
-        DistSensors(NSensors), collided(false), glow(false), t(0), Distance(0),
+      DistSensors(NSensors), collided(false), glow(false), t(0), Distance(0), DistanceT(0),
         track(0), angle0(0) {}
 
   void render() {
@@ -65,6 +65,7 @@ public:
   void setGlow(bool v) { glow = v; }
   float getDistance() const { return Distance; }
   float setDistance(float v) { Distance = v; }
+  float getDistanceT() const { return DistanceT;  }
 
   void update(float dt) {
     if (!isCollided()) {
@@ -77,7 +78,9 @@ public:
 
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
+      Point2d p = robot.getPos();
       robot.update(dt);
+      DistanceT += distance(p, robot.getPos());
       t += dt;
 
       if (checkCollision()) {
@@ -206,6 +209,7 @@ public:
       t = 0;
       collided = false;
       Distance = 0;
+      DistanceT = 0;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
       updateSensorDistances();
     }
@@ -222,6 +226,7 @@ private:
   bool glow;
   float t;
   float Distance;
+  float DistanceT;
   Track *track;
   std::vector<bool> Landmarks;
   float angle0;

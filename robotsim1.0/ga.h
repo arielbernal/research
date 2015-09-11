@@ -17,10 +17,18 @@
 #include "ffnn3l.h"
 
 class GA {
-public:
+ public:
   GA(size_t N)
-      : N(N), Population(N), TMax(0), t(0), generation(0), InitialAngle(0),
-        StopSimulation(false), dt(0.01f), isRunning(false), SlowDown(0),
+      : N(N),
+        Population(N),
+        TMax(0),
+        t(0),
+        generation(0),
+        InitialAngle(0),
+        StopSimulation(false),
+        dt(0.01f),
+        isRunning(false),
+        SlowDown(0),
         Sorting(false) {
     newPopulation();
   }
@@ -48,12 +56,12 @@ public:
     StopSimulation = true;
   }
 
-  void saveMostFit(const std::string &Filename) {
+  void saveMostFit(const std::string& Filename) {
     sortPopulation();
     Population[0].save(Filename);
   }
 
-  void loadMostFit(const std::string &Filename) {
+  void loadMostFit(const std::string& Filename) {
     for (size_t i = 0; i < N; ++i) {
       Population[i].load(Filename);
       if (i > 10)
@@ -62,7 +70,7 @@ public:
   }
 
   void resetConditions() {
-    for (auto &e : Population)
+    for (auto& e : Population)
       e.resetUnit();
     t = 0;
   }
@@ -70,9 +78,9 @@ public:
   float getTime() { return t; }
   float getDt() { return dt; }
 
-  void setTrack(Track *newTrack) {
+  void setTrack(Track* newTrack) {
     track = newTrack;
-    for (auto &e : Population)
+    for (auto& e : Population)
       e.setTrack(track);
   }
 
@@ -82,7 +90,7 @@ public:
       SlowDown = 0;
   }
 
-protected:
+ protected:
   void simulate() {
     isRunning = true;
     StopSimulation = false;
@@ -95,7 +103,7 @@ protected:
         done = true;
 #pragma omp parallel for
         for (int i = 0; i < N; ++i) {
-          auto &e = Population[i];
+          auto& e = Population[i];
           if (!e.isCollided()) {
             e.update(dt);
             done = false;
@@ -106,7 +114,7 @@ protected:
       }
 
       int isCollided = 0;
-      for (auto &e : Population)
+      for (auto& e : Population)
         if (e.isCollided())
           isCollided++;
       Sorting = true;
@@ -115,9 +123,16 @@ protected:
       std::cout << " Best Time = " << Population[0].getTime()
                 << " Collided = " << isCollided << std::endl;
       for (size_t i = 0; i < 10; ++i) {
+        auto &a = Population[i];
+        float da = a.getDistance();
+        float dta = a.getDistanceT();
+        float ca = !a.isCollided();
+        float va = da * 1000 + dta + ca * 20000 - a.getTime() * 100;
+
         std::cout << "     " << Population[i].getDistance() << "   "
+                  << Population[i].getDistanceT() << "  "
                   << Population[i].getTime() << " "
-                  << Population[i].isCollided() << std::endl;
+                  << Population[i].isCollided() << "  --- > " << va << std::endl;
       }
       nextGeneration();
     }
@@ -125,8 +140,8 @@ protected:
     std::cout << "Thread Stop" << std::endl;
   }
 
-  static void *static_simulate(void *This) {
-    ((GA *)This)->simulate();
+  static void* static_simulate(void* This) {
+    ((GA*)This)->simulate();
     return NULL;
   }
 
@@ -138,23 +153,32 @@ protected:
   void sortPopulation() {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
-              [eps](const RobotUnit &a, const RobotUnit &b) -> bool {
+              [eps](const RobotUnit& a, const RobotUnit& b) -> bool {
                 float da = a.getDistance();
                 float db = b.getDistance();
-                bool la = a.isCollided();
-                bool lb = b.isCollided();
-                if (!la && !lb) {
-                  if (da == db)
-                    return a.getTime() < b.getTime();
-                  else
-                    return da > db;
-                }
-                else if (!la && !lb)
-                  return da > db;
-                else if (!la)
-                  return true;
-                else
-                  return false;
+                float dta = a.getDistanceT();
+                float dtb = b.getDistanceT();
+                float ca = !a.isCollided();
+                float cb = !b.isCollided();
+
+                float va = da * 1000 + dta + ca * 80000 - a.getTime() * 100;
+                float vb = db * 1000 + dtb + cb * 80000 - b.getTime() * 100;
+
+                return va > vb;
+                // bool la = a.isCollided();
+                // bool lb = b.isCollided();
+                // if (!la && !lb) {
+                //  if (da == db)
+                //    return a.getTime() < b.getTime();
+                //  else
+                //    return da > db;
+                //}
+                // else if (!la && !lb)
+                //  return da > db;
+                // else if (!la)
+                //  return true;
+                // else
+                //  return false;
 
                 // if (!la)
                 //  return true;
@@ -162,20 +186,26 @@ protected:
                 //  return false;
                 // return da > db;
 
+                // if (da == db)
+                // return a.getTime() < b.getTime();
+                // return da > db;
+                
                 //if (da == db)
-                //  return a.getTime() < b.getTime();
+                //  return a.getDistanceT() > b.getDistanceT();
                 //return da > db;
+
+
               });
   }
 
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 5;
+    int k = 100;
     std::uniform_int_distribution<int> u2(0, N / k - 1);
     for (size_t i = N / k; i < N; ++i) {
-      const FFNN3L &NN1 = Population[u2(generator)].getNN();
-      const FFNN3L &NN2 = Population[u2(generator)].getNN();
+      const FFNN3L& NN1 = Population[u2(generator)].getNN();
+      const FFNN3L& NN2 = Population[u2(generator)].getNN();
       Population[i].crossOver(NN1, NN2);
       Population[i].randomMutation();
     }
@@ -183,14 +213,14 @@ protected:
     generation++;
   }
 
-private:
+ private:
   size_t N;
   std::vector<RobotUnit> Population;
   float TMax;
   float t;
   size_t generation;
   float InitialAngle;
-  Track *track;
+  Track* track;
   bool StopSimulation;
   bool isRunning;
   float dt;
