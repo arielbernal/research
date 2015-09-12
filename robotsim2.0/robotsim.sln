@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "robotsim", "robotsim.vcxproj", "{CD790FCC-8367-4181-A04A-397A6763D84D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trackEditor", "trackEditor.vcxproj", "{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD790FCC-8367-4181-A04A-397A6763D84D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD790FCC-8367-4181-A04A-397A6763D84D}.Debug|Win32.Build.0 = Debug|Win32
+		{CD790FCC-8367-4181-A04A-397A6763D84D}.Release|Win32.ActiveCfg = Release|Win32
+		{CD790FCC-8367-4181-A04A-397A6763D84D}.Release|Win32.Build.0 = Release|Win32
+		{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}.Debug|Win32.Build.0 = Debug|Win32
+		{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}.Release|Win32.ActiveCfg = Release|Win32
+		{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

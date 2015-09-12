@@ -14,7 +14,7 @@ namespace {
 int WinWidth = 1200;
 int WinHeight = 1000;
 float WinRatio = WinHeight / float(WinWidth);
-float ViewWidth = 300;
+float ViewWidth = 10 ;
 float ViewHeight = ViewWidth * WinRatio;
 float ViewX0 = ViewWidth / 2;
 float ViewY0 = ViewHeight / 2;
@@ -34,20 +34,61 @@ void set2DMode(float Width, float Height) {
 
 float MouseX, MouseY;
 bool MouseButtonRight;
+float Angle = 0;
+float Speed = 0;
+
+void drawRect(float angle) {
+  glPushMatrix();
+  glRotatef(angle, 0, 0, 1);
+  glBegin(GL_QUADS);
+  glColor3f(1, 0, 0);
+  glVertex2d(-1, -1);
+  glColor3f(0, 1, 0);
+  glVertex2d(1, -1);
+  glColor3f(0, 0, 1);
+  glVertex2d(1, 1);
+  glColor3f(1, 1, 0);
+  glVertex2d(-1, 1);
+  glEnd();
+  glPopMatrix();
+}
+
+
+void makeCircle(float x, float y, float r) {
+  glPushMatrix();
+  glTranslatef(x, y, 0);
+
+  glBegin(GL_LINES);
+  //.......
+
+  glEnd();
+  glPopMatrix();
+}
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(ViewWidth, ViewHeight);
   glTranslatef(ViewX0, ViewY0 ,0);
-  //draw_axes(50, 50, 0);
-  ga.render();
-  tracks[itrack].render();
-  float t = ga.getTime();
-  set2DMode(1000, 1000);
-  printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
+  draw_axes(50, 50, 0);
+  
+  Angle += Speed;
+  if (Angle > 360)  Angle = Angle - 360;
+
+  //drawRect(0);
+  //drawRect(Angle);
+  
+  makeCircle(3, 3, 2);
+ 
+
+ 
+  //ga.render();
+  //tracks[itrack].render();
+  //float t = ga.getTime();
+  //set2DMode(1000, 1000);
+  /*printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
   printFloat(5, 1000 - 40, "Time = ", ga.getTime(), 3, 2);
   printFloat(100, 1000 - 40, "dt = ", ga.getDt(), 3, 2);
-  Sleep(33);
+  Sleep(33);*/
   glutSwapBuffers();
 }
 
@@ -165,6 +206,12 @@ void normal_keys(unsigned char key, int x, int y) {
     case 27:
       glutLeaveMainLoop();
       break;
+    case 'f':
+      Speed += 0.1;
+      break;
+    case 'd':
+      Speed = Speed - 0.1;
+      break;
     default:
       break;
   }
@@ -193,17 +240,16 @@ void init_glut_window(int argc, char* argv[]) {
 #endif  
 
   Maze a(8, 8);
-  tracks.resize(8);
+  tracks.resize(7);
   tracks[0].load("tracks/track1.trk");
   tracks[1].load("tracks/track2.trk");
   tracks[2].load("tracks/track3.trk");
   tracks[3].load("tracks/track4.trk");
-  tracks[4].load("tracks/track5.trk");
-  tracks[5].getEdgesFromMaze(a, 25);
+  tracks[4].getEdgesFromMaze(a, 25);
   a.generate(8, 8);
-  tracks[6].getEdgesFromMaze(a, 25);
+  tracks[5].getEdgesFromMaze(a, 25);
   a.generate(15, 15);
-  tracks[7].getEdgesFromMaze(a, 25);
+  tracks[6].getEdgesFromMaze(a, 25);
 
   ga.setTrack(&tracks[0]);
 

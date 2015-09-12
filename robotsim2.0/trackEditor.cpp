@@ -25,7 +25,7 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "TrackEditor";
-Robot robot(5);
+RobotGA robot(5);
 Track track;
 enum { MODE_NONE, MODE_EDGE, MODE_LANDMARK };
 int editMode = MODE_NONE;
@@ -224,10 +224,10 @@ void normal_keys(unsigned char key, int x, int y) {
     case 'a':
       break;
     case 's':
-      track.save("tracks/track5.trk");
+      track.save("tracks/track3.trk");
       break;
     case 'l':
-      track.load("tracks/track5.trk");
+      track.load("tracks/track3.trk");
       break;      
     case 32:
       break;
