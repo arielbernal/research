@@ -104,7 +104,7 @@ class GA {
 #pragma omp parallel for
         for (int i = 0; i < N; ++i) {
           auto& e = Population[i];
-          if (!e.isCollided()) {
+          if (e.isAlive()) {
             e.update(dt);
             done = false;
           }
@@ -124,15 +124,10 @@ class GA {
                 << " Collided = " << isCollided << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         auto &a = Population[i];
-        float da = a.getDistance();
-        float dta = a.getDistanceT();
-        float ca = !a.isCollided();
-        float va = da * 1000 + dta + ca * 20000 - a.getTime() * 100;
-
-        std::cout << "     " << Population[i].getDistance() << "   "
-                  << Population[i].getDistanceT() << "  "
-                  << Population[i].getTime() << " "
-                  << Population[i].isCollided() << "  --- > " << va << std::endl;
+        std::cout << "     " << a.getDistance() << "   "
+                  << a.getDistanceT() << "  "
+                  << a.getTime() << " "
+                  << a.isAlive() << "  --- > " << a.getFitnessVal() << std::endl;
       }
       nextGeneration();
     }
@@ -154,17 +149,8 @@ class GA {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotUnit& a, const RobotUnit& b) -> bool {
-                float da = a.getDistance();
-                float db = b.getDistance();
-                float dta = a.getDistanceT();
-                float dtb = b.getDistanceT();
-                float ca = !a.isCollided();
-                float cb = !b.isCollided();
-
-                float va = da * 1000 + dta + ca * 80000 - a.getTime() * 100;
-                float vb = db * 1000 + dtb + cb * 80000 - b.getTime() * 100;
-
-                return va > vb;
+            
+                return a.getFitnessVal() > b.getFitnessVal();
                 // bool la = a.isCollided();
                 // bool lb = b.isCollided();
                 // if (!la && !lb) {
@@ -201,11 +187,13 @@ class GA {
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 100;
+    int k = 10;
     std::uniform_int_distribution<int> u2(0, N / k - 1);
+    int j = 0;
     for (size_t i = N / k; i < N; ++i) {
-      const FFNN3L& NN1 = Population[u2(generator)].getNN();
+      const FFNN3L& NN1 = Population[j % (N / k - 1)].getNN();
       const FFNN3L& NN2 = Population[u2(generator)].getNN();
+      j++;
       Population[i].crossOver(NN1, NN2);
       Population[i].randomMutation();
     }

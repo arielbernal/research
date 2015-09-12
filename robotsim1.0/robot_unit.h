@@ -20,8 +20,9 @@ class RobotUnit {
 public:
   RobotUnit(size_t NSensors = 7)
       : NN(NSensors + 2, NSensors + 6, 2), NSensors(NSensors),
-      DistSensors(NSensors), collided(false), glow(false), t(0), Distance(0), DistanceT(0),
-        track(0), angle0(0) {}
+        DistSensors(NSensors), collided(false), alive(true), glow(false), t(0),
+        Distance(0), DistanceT(0), FitnessVal(0), Energy(1000), track(0),
+        angle0(0) {}
 
   void render() {
     float r = 1;
@@ -60,15 +61,19 @@ public:
 
   bool isCollided() const { return collided; }
   void setCollided(bool v = true) { collided = v; }
+
+  bool isAlive() const { return alive; }
+  void setAlive(bool v = true) { alive = v; }
+
   void setTime(float T) { t = T; }
   float getTime() const { return t; }
   void setGlow(bool v) { glow = v; }
   float getDistance() const { return Distance; }
   float setDistance(float v) { Distance = v; }
-  float getDistanceT() const { return DistanceT;  }
+  float getDistanceT() const { return DistanceT; }
 
   void update(float dt) {
-    if (!isCollided()) {
+    if (alive) {
       std::vector<double> Input;
       std::vector<double> Output(2);
       Input.push_back(robot.getMotorLeft() / 100.0f);
@@ -82,13 +87,14 @@ public:
       robot.update(dt);
       DistanceT += distance(p, robot.getPos());
       t += dt;
-
       if (checkCollision()) {
         setCollided(true);
+        alive = false;
       } else {
         updateSensorDistances();
         updateVisitedLandmarks();
       }
+      updateFitnessVal(dt);
     }
   }
 
@@ -161,21 +167,23 @@ public:
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k = 3.0f;
-    float pr = 0.75f;
+    float k1 = 6.0f;
+    float k2 = 6.0f;
+    float pr1 = 0.85f;
+    float pr2 = 0.95f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
-        if (uniform(generator) > pr) {
+        if (uniform(generator) > pr1) {
           NN.getW0()[j][i] =
-              fabs(NN.getW0()[j][i] / k) * normal(generator) + NN.getW0()[j][i];
+              fabs(NN.getW0()[j][i] / k1) * normal(generator) + NN.getW0()[j][i];
         }
 
     for (size_t j = 0; j < NO; ++j)
       for (size_t i = 0; i <= NH; ++i)
-        if (uniform(generator) > pr) {
+        if (uniform(generator) > pr2) {
           NN.getW1()[j][i] =
-              fabs(NN.getW1()[j][i] / k) * normal(generator) + NN.getW1()[j][i];
+              fabs(NN.getW1()[j][i] / k2) * normal(generator) + NN.getW1()[j][i];
         }
   }
 
@@ -185,8 +193,9 @@ public:
   void updateVisitedLandmarks() {
     auto &e = track->getLandmarks();
     for (size_t i = 0; i < e.size(); ++i)
-      if (distance(robot.getPos(), e[i]) < 15) {
+      if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 15) {
         Landmarks[i] = true;
+        Energy += 2000;
         break;
       }
     Distance = 0;
@@ -208,8 +217,11 @@ public:
       robot.setMotors(0, 0);
       t = 0;
       collided = false;
+      alive = true;
       Distance = 0;
       DistanceT = 0;
+      FitnessVal = 0;
+      Energy = 1000;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
       updateSensorDistances();
     }
@@ -217,16 +229,38 @@ public:
 
   float distanceToTarget() { return 0; }
 
+  void updateFitnessVal(float dt) {
+    static const float K = 0.1 * 7.4; // 100 mA, 7.4v
+    
+    float de = dt * (fabs(robot.getMotorLeft()) + fabs(robot.getMotorRight())) * K;
+    if (Distance < Landmarks.size() - 1)
+      de += 50;
+    Energy -= de;
+    if (Energy < 0 || !alive) {
+      Energy = 100 * Distance + DistanceT ;
+      alive = false;
+    }
+    if (collided) Energy = -100000;
+    FitnessVal = Energy;
+  }
+
+  float getFitnessVal() const { return FitnessVal; }
+
+  float getEnergy() const { return Energy; }
+
 private:
   FFNN3L NN;
   Robot robot;
   size_t NSensors;
   std::vector<float> DistSensors;
   bool collided;
+  bool alive;
   bool glow;
   float t;
   float Distance;
   float DistanceT;
+  float FitnessVal;
+  float Energy;
   Track *track;
   std::vector<bool> Landmarks;
   float angle0;
