@@ -204,6 +204,46 @@ public:
     Sol.push_back(End);
     Visited.push_back(End);
   }
+
+  Cell *nextDistanceToEnd(Cell *Current, std::list<Cell*> VisitToEnd, size_t& Distance) {
+    Cell *Neighbors[4];
+    unsigned Dir[5];
+    unsigned NMax = 0;
+    for (unsigned k = 0; k < 4; ++k) {
+      if (!Current->hasWall(k)) {
+        Cell *Neighbor = getNeighbor(Current, k);
+        if (Neighbor && !Neighbor->visited) {
+          Neighbors[NMax] = Neighbor;
+          Dir[NMax] = k;
+          ++NMax;
+        }
+      }
+    }
+    if (NMax) {
+      unsigned n = rand() % NMax;
+      Cell *Neighbor = Neighbors[n];
+      Neighbor->visited = true;
+      Sol.push_back(Current);
+      Visited.push_back(Current);
+      return Neighbor;
+    }
+    else {
+      Cell *Neighbor = Sol.back();
+      Visited.push_back(Current);
+      Sol.pop_back();
+      return Neighbor;
+    }
+  }
+
+
+
+  void distanceToEnd(size_t i, size_t j) {
+    Cell *CurrentSol = &Grid[i * M + j];
+    std::list<Cell*> VisitedToEnd;
+    while (CurrentSol != End) {
+      CurrentSol = nextDistanceToEnd(CurrentSol, VisitedToEnd);
+    }
+  }
   
   typedef std::list<Cell*>::iterator Iterator;
   Iterator solBegin() {

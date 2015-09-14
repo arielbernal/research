@@ -53,17 +53,51 @@ void drawRect(float angle) {
   glPopMatrix();
 }
 
+struct Car {
+  Car(){}
 
-void makeCircle(float x, float y, float r) {
-  glPushMatrix();
-  glTranslatef(x, y, 0);
+  void drawCar(float r, float w, float h, float xc, float yc, float ww){
+    float h2 = h / 2;
+    float w2 = w / 2;
+    float wcx = w2 + ww/2;
+    float wcy = 3 * h / 8;
+    float ww2 = ww / 2;
 
-  glBegin(GL_LINES);
-  //.......
-
-  glEnd();
-  glPopMatrix();
-}
+    glPushMatrix();
+    glTranslatef(xc, yc, 0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(-w2, -h2);
+    glVertex2d(w2, -h2);
+    glVertex2d(w2, h2);
+    glVertex2d(-w2, h2);
+    glEnd();
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(wcx - ww2, -wcy - r );
+    glVertex2d(wcx + ww2, -wcy - r);
+    glVertex2d(wcx + ww2, -wcy + r);
+    glVertex2d(wcx -ww2, -wcy + r);
+    glEnd();  
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(-wcx - ww2, -wcy - r);
+    glVertex2d(-wcx + ww2, -wcy - r);
+    glVertex2d(-wcx + ww2, -wcy + r);
+    glVertex2d(-wcx - ww2, -wcy + r);
+    glEnd();
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(wcx - ww2, wcy - r);
+    glVertex2d(wcx + ww2, wcy - r);
+    glVertex2d(wcx + ww2, wcy + r);
+    glVertex2d(wcx - ww2, wcy + r);
+    glEnd();
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(-wcx - ww2, wcy - r);
+    glVertex2d(-wcx + ww2, wcy - r);
+    glVertex2d(-wcx + ww2, wcy + r);
+    glVertex2d(-wcx - ww2, wcy + r);
+    glEnd();
+    glPopMatrix();
+  }
+};
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -74,13 +108,12 @@ void display() {
   Angle += Speed;
   if (Angle > 360)  Angle = Angle - 360;
 
+
+  Car myCar;
+  myCar.drawCar(1.75, 5, 10, 0, 0, 1.5);
+
   //drawRect(0);
   //drawRect(Angle);
-  
-  makeCircle(3, 3, 2);
- 
-
- 
   //ga.render();
   //tracks[itrack].render();
   //float t = ga.getTime();

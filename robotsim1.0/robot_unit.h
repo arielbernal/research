@@ -18,8 +18,8 @@
 
 class RobotUnit {
 public:
-  RobotUnit(size_t NSensors = 7)
-      : NN(NSensors + 2, NSensors + 6, 2), NSensors(NSensors),
+  RobotUnit(size_t NSensors = 5)
+      : NN(NSensors + 2, NSensors + 4, 2), NSensors(NSensors),
         DistSensors(NSensors), collided(false), alive(true), glow(false), t(0),
         Distance(0), DistanceT(0), FitnessVal(0), Energy(1000), track(0),
         angle0(0) {}
@@ -41,11 +41,11 @@ public:
     Point2d C = robot.getPos();
     float theta = robot.getAngle();
     glColor3f(0.5, 0.5, 0.5);
-    float dalpha = M_PI / (NSensors - 1);
+    float dalpha = M_PI / (2 * (NSensors - 1));
     for (size_t i = 0; i < NSensors; ++i) {
       float r = DistSensors[i];
-      Point2d Q(C.x + r * cos(theta - M_PI / 2 + i * dalpha),
-                C.y + r * sin(theta - M_PI / 2 + i * dalpha));
+      Point2d Q(C.x + r * cos(theta - M_PI / 4 + i * dalpha),
+                C.y + r * sin(theta - M_PI / 4 + i * dalpha));
       drawDisk(Q.x, Q.y, 1, 20);
       glBegin(GL_LINES);
       glVertex2f(C.x, C.y);
@@ -110,12 +110,12 @@ public:
   void updateSensorDistances() {
     Point2d C = robot.getPos();
     float theta = robot.getAngle();
-    float dalpha = M_PI / (NSensors - 1);
+    float dalpha = M_PI / (2* (NSensors - 1));
     float MD = 200;
     for (size_t i = 0; i < NSensors; ++i) {
       DistSensors[i] = MD;
-      Point2d Q(C.x + 10 * cos(theta - M_PI / 2 + i * dalpha),
-                C.y + 10 * sin(theta - M_PI / 2 + i * dalpha));
+      Point2d Q(C.x + 10 * cos(theta - M_PI / 4 + i * dalpha),
+                C.y + 10 * sin(theta - M_PI / 4 + i * dalpha));
       Edge2d L(C, Q);
       Point2d I;
       for (auto &e : track->getEdges())
@@ -135,7 +135,7 @@ public:
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float ir1 = 0.7f; // distribution(generator);
+    float ir1 = 0.5f; // distribution(generator);
     float ir2 = 0.5f; // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
@@ -167,10 +167,10 @@ public:
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 6.0f;
+    float k1 = 3.0f;
     float k2 = 6.0f;
-    float pr1 = 0.85f;
-    float pr2 = 0.95f;
+    float pr1 = 0.75f;
+    float pr2 = 0.85f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -195,7 +195,8 @@ public:
     for (size_t i = 0; i < e.size(); ++i)
       if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 15) {
         Landmarks[i] = true;
-        Energy += 2000;
+        tLast = t;
+        Energy += 800;
         break;
       }
     Distance = 0;
@@ -233,11 +234,12 @@ public:
     static const float K = 0.1 * 7.4; // 100 mA, 7.4v
     
     float de = dt * (fabs(robot.getMotorLeft()) + fabs(robot.getMotorRight())) * K;
-    if (Distance < Landmarks.size() - 1)
-      de += 50;
+    if (Distance < Landmarks.size()) {
+      de += dt * 100;
+    }
     Energy -= de;
     if (Energy < 0 || !alive) {
-      Energy = 100 * Distance + DistanceT ;
+      Energy = 10 * Distance + 1 / (tLast +1);// +DistanceT / 10;
       alive = false;
     }
     if (collided) Energy = -100000;
@@ -257,6 +259,7 @@ private:
   bool alive;
   bool glow;
   float t;
+  float tLast;
   float Distance;
   float DistanceT;
   float FitnessVal;
