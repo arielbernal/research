@@ -193,17 +193,18 @@ void init_glut_window(int argc, char* argv[]) {
 #endif  
 
   Maze a(8, 8);
-  tracks.resize(8);
-  tracks[0].load("tracks/track1.trk");
-  tracks[1].load("tracks/track2.trk");
-  tracks[2].load("tracks/track3.trk");
-  tracks[3].load("tracks/track4.trk");
-  tracks[4].load("tracks/track5.trk");
-  tracks[5].getEdgesFromMaze(a, 25);
+  tracks.resize(3);
+  //tracks[0].load("tracks/track1.trk");
+  //tracks[1].load("tracks/track2.trk");
+  //tracks[2].load("tracks/track3.trk");
+  //tracks[3].load("tracks/track4.trk");
+  //tracks[4].load("tracks/track5.trk");
+  tracks[0].getEdgesFromMaze(a, 25);
   a.generate(8, 8);
-  tracks[6].getEdgesFromMaze(a, 25);
+  tracks[1].getEdgesFromMaze(a, 25);
   a.generate(15, 15);
-  tracks[7].getEdgesFromMaze(a, 25);
+  tracks[2].getEdgesFromMaze(a, 25);
+
 
   ga.setTrack(&tracks[0]);
 

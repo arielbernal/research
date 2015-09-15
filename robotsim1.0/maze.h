@@ -205,14 +205,15 @@ public:
     Visited.push_back(End);
   }
 
-  Cell *nextDistanceToEnd(Cell *Current, std::list<Cell*> VisitToEnd, size_t& Distance) {
+  Cell *nextDistanceToEnd(Cell *Current, std::vector<bool>& Visited, std::list<Cell*> Solution) {
     Cell *Neighbors[4];
     unsigned Dir[5];
     unsigned NMax = 0;
     for (unsigned k = 0; k < 4; ++k) {
       if (!Current->hasWall(k)) {
         Cell *Neighbor = getNeighbor(Current, k);
-        if (Neighbor && !Neighbor->visited) {
+        unsigned idx = Neighbor->i * M + Neighbor->j;
+        if (Neighbor && !Visited[idx]) {
           Neighbors[NMax] = Neighbor;
           Dir[NMax] = k;
           ++NMax;
@@ -222,27 +223,28 @@ public:
     if (NMax) {
       unsigned n = rand() % NMax;
       Cell *Neighbor = Neighbors[n];
-      Neighbor->visited = true;
+      unsigned idx = Neighbor->i * M + Neighbor->j;
+      Visited[idx] = true;
       Sol.push_back(Current);
-      Visited.push_back(Current);
       return Neighbor;
     }
     else {
       Cell *Neighbor = Sol.back();
-      Visited.push_back(Current);
       Sol.pop_back();
       return Neighbor;
     }
   }
 
-
-
-  void distanceToEnd(size_t i, size_t j) {
+  size_t distanceToEnd(size_t i, size_t j) {
     Cell *CurrentSol = &Grid[i * M + j];
-    std::list<Cell*> VisitedToEnd;
+    std::vector<bool> Visited(M * N);
+    std::fill(Visited.begin(), Visited.end(), false);
+    Visited[0] = true;
+    std::list<Cell*> Solution;
     while (CurrentSol != End) {
-      CurrentSol = nextDistanceToEnd(CurrentSol, VisitedToEnd);
+      CurrentSol = nextDistanceToEnd(CurrentSol, Visited, Solution);
     }
+    return Solution.size();
   }
   
   typedef std::list<Cell*>::iterator Iterator;
