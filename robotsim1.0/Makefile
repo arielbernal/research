@@ -1,13 +1,13 @@
 SOURCES := main.cpp
 
 PROGRAM := robotsim 
-CXX := clang++ 
+CXX := g++ 
 LDFLAGS := -L/usr/lib/gcc/x86_64-linux-gnu/4.8 -L/usr/lib/nvidia-331-updates 
 LDFLAGS +=  -lGL -lGLU -lglut -lGLEW -O3 -lserial -lpthread 
 CXXFLAGS := -I include
 CXXFLAGS += -std=c++11 -Wall -O3 -mfpmath=sse -msse4.1 
 CXXFLAGS += -I /usr/include -I /usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8
-CXXFLAGS += -fpermissive
+CXXFLAGS += -fpermissive -fopenmp
 OBJECTS := $(SOURCES:.cpp=.o)
 
 BIN := bin

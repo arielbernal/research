@@ -15,6 +15,7 @@
 #include "robot.h"
 #include "robot_unit.h"
 #include "ffnn3l.h"
+#include "utils.h"
 
 class GA {
  public:
@@ -114,9 +115,11 @@ class GA {
       }
 
       int isCollided = 0;
-      for (auto& e : Population)
+      for (auto& e : Population) {
         if (e.isCollided())
           isCollided++;
+        e.updateFitnessVal();
+      }
       Sorting = true;
       sortPopulation();
       Sorting = false;
@@ -124,9 +127,8 @@ class GA {
                 << " Collided = " << isCollided << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         auto& a = Population[i];
-        std::cout << "     " << a.getDistance() << "   " << a.getDistanceT()
-                  << "  " << a.getTime() << " " << a.isAlive() << "  --- > "
-                  << a.getFitnessVal() << std::endl;
+        std::cout << a.isAlive() << "  --- > "
+                  <<"D = " << a.getDistance() << " E = " << a.getEnergy() << " F = " << a.getFitnessVal() <<  std::endl;
       }
       nextGeneration();
     }
@@ -148,19 +150,24 @@ class GA {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotUnit& a, const RobotUnit& b) -> bool {
-                return a.getFitnessVal() > b.getFitnessVal();
+                return a.getFitnessVal() < b.getFitnessVal();
               });
   }
 
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 3;
-    std::uniform_int_distribution<int> u2(0, N / k - 1);
+    int k = 2;
+    std::uniform_int_distribution<int> uniform(0, N / k - 1);
     int j = 0;
     for (size_t i = N / k; i < N; ++i) {
-      const FFNN3L& NN1 = Population[u2(generator)].getNN();
-      const FFNN3L& NN2 = Population[u2(generator)].getNN();
+      size_t i0 = uniform(generator);
+      size_t i1 = uniform(generator);
+      while(i1 != i0) {
+        i1 = uniform(generator);
+      }
+      const FFNN3L& NN1 = Population[i0].getNN();
+      const FFNN3L& NN2 = Population[i1].getNN();
       j++;
       Population[i].crossOver(NN1, NN2);
       Population[i].randomMutation();

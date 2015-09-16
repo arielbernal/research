@@ -17,11 +17,20 @@
 #include "geometry_utils.h"
 
 class RobotUnit {
-public:
+ public:
   RobotUnit(size_t NSensors = 5)
-      : NN(NSensors + 2, NSensors + 4, 2), NSensors(NSensors),
-        DistSensors(NSensors), collided(false), alive(true), glow(false), t(0),
-        Distance(0), DistanceT(0), FitnessVal(0), Energy(1000), track(0),
+      : NN(NSensors + 2, NSensors + 2, 2),
+        NSensors(NSensors),
+        DistSensors(NSensors),
+        collided(false),
+        alive(true),
+        glow(false),
+        t(0),
+        Distance(0),
+        DistanceT(0),
+        FitnessVal(0),
+        Energy(1000),
+        track(0),
         angle0(0) {}
 
   void render() {
@@ -33,8 +42,7 @@ public:
       b = 0;
     }
     robot.render(r, g, b, glow);
-    if (glow)
-      renderSensorLines();
+    if (glow) renderSensorLines();
   }
 
   void renderSensorLines() {
@@ -69,32 +77,34 @@ public:
   float getTime() const { return t; }
   void setGlow(bool v) { glow = v; }
   float getDistance() const { return Distance; }
-  float setDistance(float v) { Distance = v; }
+  void setDistance(float v) { Distance = v; }
   float getDistanceT() const { return DistanceT; }
 
   void update(float dt) {
     if (alive) {
-      std::vector<double> Input;
+      static const float K = 0.1 * 7.4; // 100 mA, 7.4v
+      Energy += dt * (fabs(robot.getMotorLeft()) + fabs(robot.getMotorRight())) * K;      std::vector<double> Input;
+
       std::vector<double> Output(2);
-      Input.push_back(robot.getMotorLeft() / 100.0f);
-      Input.push_back(robot.getMotorRight() / 100.0f);
       for (size_t i = 0; i < NSensors; ++i)
         Input.push_back(DistSensors[i] / 100.0f - 1);
+      Input.push_back(robot.getMotorLeft() / 100.0f);
+      Input.push_back(robot.getMotorRight() / 100.0f);
 
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
       Point2d p = robot.getPos();
       robot.update(dt);
-      DistanceT += distance(p, robot.getPos());
+      //DistanceT += distance(p, robot.getPos());
       t += dt;
       if (checkCollision()) {
         setCollided(true);
         alive = false;
       } else {
         updateSensorDistances();
-        updateVisitedLandmarks();
+        //updateVisitedLandmarks();
       }
-      updateFitnessVal(dt);
+      //updateFitnessVal(dt);
     }
   }
 
@@ -102,15 +112,14 @@ public:
     Point2d C = robot.getPos();
     float R = robot.getR();
     for (auto &e : track->getEdges())
-      if (SegmentCircleIntersection(e, C, R))
-        return true;
+      if (SegmentCircleIntersection(e, C, R)) return true;
     return false;
   }
 
   void updateSensorDistances() {
     Point2d C = robot.getPos();
     float theta = robot.getAngle();
-    float dalpha = M_PI / (2* (NSensors - 1));
+    float dalpha = M_PI / (2 * (NSensors - 1));
     float MD = 200;
     for (size_t i = 0; i < NSensors; ++i) {
       DistSensors[i] = MD;
@@ -121,8 +130,7 @@ public:
       for (auto &e : track->getEdges())
         if (RayEdgeIntersection(e, L, I)) {
           float d = distance(C, I);
-          if (DistSensors[i] > d)
-            DistSensors[i] = d;
+          if (DistSensors[i] > d) DistSensors[i] = d;
         }
     }
   }
@@ -135,25 +143,21 @@ public:
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float ir1 = 0.5f; // distribution(generator);
-    float ir2 = 0.5f; // distribution(generator);
+    float ir1 = 0.5f;  // distribution(generator);
+    float ir2 = 0.5f;  // distribution(generator);
 
     for (size_t j = 0; j < NH; ++j) {
       if (j < ir1 * NH)
-        for (size_t i = 0; i <= NI; ++i)
-          NN.getW0()[j][i] = x.getW0()[j][i];
+        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
       else
-        for (size_t i = 0; i <= NI; ++i)
-          NN.getW0()[j][i] = y.getW0()[j][i];
+        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
       if (j < ir2 * NO)
-        for (size_t i = 0; i <= NH; ++i)
-          NN.getW1()[j][i] = x.getW1()[j][i];
+        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
       else
-        for (size_t i = 0; i <= NH; ++i)
-          NN.getW1()[j][i] = y.getW1()[j][i];
+        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
     }
   }
 
@@ -167,43 +171,41 @@ public:
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 3.0f;
-    float k2 = 6.0f;
-    float pr1 = 0.75f;
-    float pr2 = 0.85f;
+    float k1 = 10.0f;
+    float k2 = 10.0f;
+    float pr1 = 0.99f;
+    float pr2 = 0.99f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
         if (uniform(generator) > pr1) {
-          NN.getW0()[j][i] =
-              fabs(NN.getW0()[j][i] / k1) * normal(generator) + NN.getW0()[j][i];
+          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
+                             NN.getW0()[j][i];
         }
 
     for (size_t j = 0; j < NO; ++j)
       for (size_t i = 0; i <= NH; ++i)
         if (uniform(generator) > pr2) {
-          NN.getW1()[j][i] =
-              fabs(NN.getW1()[j][i] / k2) * normal(generator) + NN.getW1()[j][i];
+          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
+                             NN.getW1()[j][i];
         }
   }
 
   void save(const std::string &Filename) { NN.save(Filename); }
   void load(const std::string &Filename) { NN.load(Filename); }
 
-  void updateVisitedLandmarks() {
-    auto &e = track->getLandmarks();
-    for (size_t i = 0; i < e.size(); ++i)
-      if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 15) {
-        Landmarks[i] = true;
-        tLast = t;
-        Energy += 800;
-        break;
-      }
-    Distance = 0;
-    for (size_t i = 0; i < Landmarks.size(); ++i)
-      if (Landmarks[i])
-        Distance++;
-  }
+  // void updateVisitedLandmarks() {
+  //   auto &e = track->getLandmarks();
+  //   for (size_t i = 0; i < e.size(); ++i)
+  //     if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 15) {
+  //       Landmarks[i] = true;
+  //       tLast = t;
+  //       break;
+  //     }
+  //   Distance = 0;
+  //   for (size_t i = 0; i < Landmarks.size(); ++i)
+  //     if (Landmarks[i]) Distance++;
+  // }
 
   void setTrack(Track *trk, float angle = 0) {
     track = trk;
@@ -222,7 +224,7 @@ public:
       Distance = 0;
       DistanceT = 0;
       FitnessVal = 0;
-      Energy = 1000;
+      Energy = 0;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
       updateSensorDistances();
     }
@@ -230,27 +232,32 @@ public:
 
   float distanceToTarget() { return 0; }
 
-  void updateFitnessVal(float dt) {
-    static const float K = 0.1 * 7.4; // 100 mA, 7.4v
+  void updateFitnessVal() {
     
-    float de = dt * (fabs(robot.getMotorLeft()) + fabs(robot.getMotorRight())) * K;
-    if (Distance < Landmarks.size()) {
-      de += dt * 100;
+    //if (Distance < Landmarks.size()) {
+    //   de += dt * 100;
+    // }
+    // Energy -= de;
+    // if (Energy < 0 || !alive) {
+    //   Energy = 10 * Distance + 1 / (tLast +1);// +DistanceT / 10;
+    //   alive = false;
+    // }
+    // if (collided) Energy = -100000;
+    // FitnessVal = Energy;
+
+     if (collided)
+       FitnessVal = 100000;
+     else {
+      Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
+      FitnessVal = Distance + Energy / 100000;
     }
-    Energy -= de;
-    if (Energy < 0 || !alive) {
-      Energy = 10 * Distance + 1 / (tLast +1);// +DistanceT / 10;
-      alive = false;
-    }
-    if (collided) Energy = -100000;
-    FitnessVal = Energy;
   }
 
   float getFitnessVal() const { return FitnessVal; }
 
   float getEnergy() const { return Energy; }
 
-private:
+ private:
   FFNN3L NN;
   Robot robot;
   size_t NSensors;

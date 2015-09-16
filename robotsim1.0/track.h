@@ -11,6 +11,9 @@
 class Track {
  public:
   Track() {}
+  Track(size_t MazeM, size_t MazeN, float d) : Mz(MazeM, MazeN), DMaze(d) {
+    getEdgesFromMaze(Mz, d);
+  }
 
   void render() {
     glColor3f(0, 0.4, 0.7);
@@ -34,7 +37,7 @@ class Track {
 
   void getEdgesFromMaze(const Maze& Mz, float d) {
     edges.clear();
-    Cell* Grid = Mz.getGrid();
+    const std::vector<Cell>& Grid = Mz.getGrid();
     unsigned N = Mz.getWidth();
     unsigned M = Mz.getHeight();
     for (unsigned i = 0; i < M; ++i) {
@@ -52,7 +55,7 @@ class Track {
         if (Cell & BW) edges.push_back(Edge2d(x, y, x, y - d));
       }
     }
-    Cell* b = Mz.getBegin();
+    const Cell* b = Mz.getBegin();
     Begin = Point2d(b->j * d - N * d / 2 + d / 2,
                     (N - b->i) * d - N * d / 2 - d / 2);
     for (size_t i = 0; i < N; ++i) {
@@ -148,7 +151,26 @@ class Track {
       ifs >> p.x >> p.y;
       landmarks.push_back(p);
     }
-    if(!landmarks.empty()) updateMarkDistances();
+    if (!landmarks.empty()) updateMarkDistances();
+  }
+
+  const Maze& getMaze() const { return Mz; }
+
+  size_t getMazeDistance(size_t i0, size_t j0, size_t i1, size_t j1) {
+    return Mz.getDistance(i0, j0, i1, j1);
+  }
+
+  float getMazeDistanceTo(float x, float y, size_t i1, size_t j1) {
+    size_t M = Mz.getHeight();
+    size_t N = Mz.getWidth();
+
+    size_t j0 = x / DMaze + N / 2;  
+    size_t i0 = M / 2 - y / DMaze;
+    return getMazeDistance(i0, j0, i1, j1);
+  }
+
+  float getMazeDistanceToEnd(float x, float y) {
+    return getMazeDistanceTo(x, y, Mz.getEnd()->i, Mz.getEnd()->j);
   }
 
  private:
@@ -156,6 +178,9 @@ class Track {
   std::vector<Point2d> landmarks;
   std::vector<float> Dk;
   Point2d Begin;
+
+  Maze Mz;
+  float DMaze;
 };
 
 #endif

@@ -20,7 +20,7 @@ float ViewX0 = ViewWidth / 2;
 float ViewY0 = ViewHeight / 2;
 std::string WinTitle = "RobotSim";
 GA ga(1000);
-std::vector<Track> tracks;
+std::vector<Track*> tracks;
 size_t itrack = 0;
 }
 
@@ -39,9 +39,9 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(ViewWidth, ViewHeight);
   glTranslatef(ViewX0, ViewY0 ,0);
-  //draw_axes(50, 50, 0);
+//  draw_axes(50, 50, 0);
   ga.render();
-  tracks[itrack].render();
+  tracks[itrack]->render();
   float t = ga.getTime();
   set2DMode(1000, 1000);
   printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
@@ -148,7 +148,7 @@ void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
     case 'a':
       itrack = (itrack + 1) % tracks.size();
-      ga.setTrack(&tracks[itrack]);
+      ga.setTrack(tracks[itrack]);
       break;
     case 's':
       ga.saveMostFit("nn/best01.nn");
@@ -192,23 +192,25 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif  
 
-  Maze a(8, 8);
-  tracks.resize(3);
+  tracks.clear();
   //tracks[0].load("tracks/track1.trk");
   //tracks[1].load("tracks/track2.trk");
   //tracks[2].load("tracks/track3.trk");
   //tracks[3].load("tracks/track4.trk");
   //tracks[4].load("tracks/track5.trk");
-  tracks[0].getEdgesFromMaze(a, 25);
-  a.generate(8, 8);
-  tracks[1].getEdgesFromMaze(a, 25);
-  a.generate(15, 15);
-  tracks[2].getEdgesFromMaze(a, 25);
+  tracks.push_back(new Track(8, 8, 25));
+  tracks.push_back(new Track(7, 7, 25));
+  //std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) << std::endl;
+  //std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26, +26, 3, 3) << std::endl;
+  //std::cout << "getMazeDistanceToEnd = " << tracks[0]->getMazeDistanceToEnd(-26, +26) << std::endl;
 
-
-  ga.setTrack(&tracks[0]);
+  ga.setTrack(tracks[0]);
 
   glutMainLoop();
+
+  for (size_t i = 0; i < tracks.size(); ++i) {
+    delete tracks[i];
+  }
 }
 
 int main(int argc, char** argv) {
