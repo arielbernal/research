@@ -123,7 +123,7 @@ class Maze {
     }
   }
 
-  Cell *nextSolution(const Cell *Current, std::vector<bool> &Visited,
+  Cell *nextSolution(Cell *Current, std::vector<bool> &Visited,
                      std::list<Cell *> &Solution) {
     Cell *Neighbors[4];
     unsigned NMax = 0;
@@ -138,7 +138,7 @@ class Maze {
       }
     }
     if (NMax) {
-      unsigned n = 0;//rand() % NMax;
+      unsigned n = rand() % NMax;
       Cell *Neighbor = Neighbors[n];
       unsigned idx = Neighbor->i * M + Neighbor->j;
       Visited[idx] = true;
@@ -165,9 +165,9 @@ class Maze {
     while (CurrentSol != EndSol) {
       CurrentSol = nextSolution(CurrentSol, Visited, Solution);
     }
-    // for(auto &e : Solution) {
-    //   std::cout << "      " << e->i << " " << e->j << std::endl;
-    // }
+     //for(auto &e : Solution) {
+     //  std::cout << "      " << e->i << " " << e->j << std::endl;
+     //}
     return Solution.size();
   }
 

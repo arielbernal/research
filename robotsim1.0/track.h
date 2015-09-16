@@ -32,7 +32,7 @@ class Track {
       if (i == NL - 1) glColor3f(0.3, 0.1, 0.1);
       auto& e = landmarks[i];
       drawDisk(e.x, e.y, 1, 20);
-    }
+    }  
   }
 
   void getEdgesFromMaze(const Maze& Mz, float d) {
@@ -166,7 +166,18 @@ class Track {
 
     size_t j0 = x / DMaze + N / 2;  
     size_t i0 = M / 2 - y / DMaze;
+   // std::cout << " i0=" << i0 << " j0= " << j0 << std::endl;
     return getMazeDistance(i0, j0, i1, j1);
+  }
+
+  size_t getXId(float x) {
+    size_t N = Mz.getWidth();
+    return  x / DMaze + N / 2;
+  }
+
+  size_t getYId(float y) {
+    size_t M = Mz.getHeight();
+    return  M / 2 - y / DMaze;
   }
 
   float getMazeDistanceToEnd(float x, float y) {

@@ -202,7 +202,7 @@ void init_glut_window(int argc, char* argv[]) {
   tracks.push_back(new Track(7, 7, 25));
   //std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26, +26, 3, 3) << std::endl;
-  //std::cout << "getMazeDistanceToEnd = " << tracks[0]->getMazeDistanceToEnd(-26, +26) << std::endl;
+  //std::cout << "getMazeDistanceToEnd = " << tracks[0]->getMazeDistanceToEnd(-85.2489, 49.2236) << std::endl;
 
   ga.setTrack(tracks[0]);
 

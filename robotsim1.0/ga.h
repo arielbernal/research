@@ -128,7 +128,10 @@ class GA {
       for (size_t i = 0; i < 10; ++i) {
         auto& a = Population[i];
         std::cout << a.isAlive() << "  --- > "
-                  <<"D = " << a.getDistance() << " E = " << a.getEnergy() << " F = " << a.getFitnessVal() <<  std::endl;
+                  << "D = " << a.getDistance() << " E = " << a.getEnergy()
+                  << " F = " << a.getFitnessVal();
+        std::cout << " x = " << a.getX() << " y = " << a.getY()
+                  << " i=" << a.getYId() << " j=" << a.getXId() << " d = " << a.getD() << std::endl;
       }
       nextGeneration();
     }
@@ -157,13 +160,13 @@ class GA {
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 2;
+    int k = 3;
     std::uniform_int_distribution<int> uniform(0, N / k - 1);
     int j = 0;
     for (size_t i = N / k; i < N; ++i) {
       size_t i0 = uniform(generator);
       size_t i1 = uniform(generator);
-      while(i1 != i0) {
+      while (i1 != i0) {
         i1 = uniform(generator);
       }
       const FFNN3L& NN1 = Population[i0].getNN();

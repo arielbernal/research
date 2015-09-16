@@ -7,13 +7,11 @@
 #include <unistd.h>
 #endif
 
+#ifndef WIN32
 void Sleep(int sleepMs) {
-#ifdef WIN32
-  Sleep(sleepMs);
-#else
   // usleep takes sleep time in us (1 millionth of a second)
   usleep(sleepMs * 1000);
-#endif
 }
+#endif
 
 #endif
