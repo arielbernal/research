@@ -170,6 +170,7 @@ class Track {
     float d = Mz.solve(i0, j0, i1, j1, Solution);
     std::list<Cell*>::iterator it = Solution.begin();
     it++;
+    if (it == Solution.end()) it = Solution.begin();
     auto &e = (*it);
     float xn = (float(e->j) - N / 2 + 0.5) * DMaze;
     float yn = (M / 2 - float(e->i) - 0.5) * DMaze;

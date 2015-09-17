@@ -139,7 +139,7 @@ class GA {
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
                   << " F = " << a.getFitnessVal();
         std::cout << " x = " << a.getX() << " y = " << a.getY()
-                  << " i=" << a.getYId() << " j=" << a.getXId() << " d = " << a.getD() << std::endl;
+                  << " i=" << a.getYId() << " j=" << a.getXId() << " d = " << a.getDistanceT() << std::endl;
       }
       nextGeneration();
     }
@@ -161,7 +161,7 @@ class GA {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotUnit& a, const RobotUnit& b) -> bool {
-                return a.getFitnessVal() < b.getFitnessVal();
+                return a.getFitnessVal() > b.getFitnessVal();
               });
   }
 

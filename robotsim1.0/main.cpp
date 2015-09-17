@@ -200,8 +200,9 @@ void init_glut_window(int argc, char* argv[]) {
   //tracks[2].load("tracks/track3.trk");
   //tracks[3].load("tracks/track4.trk");
   //tracks[4].load("tracks/track5.trk");
-  tracks.push_back(new Track(8, 8, 25));
-  tracks.push_back(new Track(7, 7, 25));
+  tracks.push_back(new Track(5, 5, 25));
+  tracks.push_back(new Track(2, 2, 25));
+
   //std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26, +26, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceToEnd = " << tracks[0]->getMazeDistanceToEnd(-85.2489, 49.2236) << std::endl;

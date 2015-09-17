@@ -31,7 +31,9 @@ class RobotUnit {
         FitnessVal(0),
         Energy(1000),
         track(0),
-        angle0(0) {}
+        angle0(0) {
+    tDT = 0;
+  }
 
   void render() {
     float r = 1;
@@ -42,8 +44,7 @@ class RobotUnit {
       b = 0;
     }
     robot.render(r, g, b, glow);
-    if (glow)
-      renderSensorLines();
+    if (glow) renderSensorLines();
   }
 
   void renderSensorLines() {
@@ -80,6 +81,8 @@ class RobotUnit {
   float getDistance() const { return Distance; }
   void setDistance(float v) { Distance = v; }
   float getDistanceT() const { return DistanceT; }
+  float tDT;
+  Point2d pDT;
 
   void update(float dt) {
     if (alive) {
@@ -96,9 +99,17 @@ class RobotUnit {
 
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
-      Point2d p = robot.getPos();
+
+      if (tDT == 0) {
+        pDT = robot.getPos();
+      }
       robot.update(dt);
-      // DistanceT += distance(p, robot.getPos());
+      tDT++;
+      if (tDT > 100) {
+        tDT = 0;
+        DistanceT += distance(pDT, robot.getPos());
+      }
+
       t += dt;
       if (checkCollision()) {
         setCollided(true);
@@ -115,8 +126,7 @@ class RobotUnit {
     Point2d C = robot.getPos();
     float R = robot.getR();
     for (auto& e : track->getEdges())
-      if (SegmentCircleIntersection(e, C, R))
-        return true;
+      if (SegmentCircleIntersection(e, C, R)) return true;
     return false;
   }
 
@@ -134,8 +144,7 @@ class RobotUnit {
       for (auto& e : track->getEdges())
         if (RayEdgeIntersection(e, L, I)) {
           float d = distance(C, I);
-          if (DistSensors[i] > d)
-            DistSensors[i] = d;
+          if (DistSensors[i] > d) DistSensors[i] = d;
         }
     }
   }
@@ -151,17 +160,17 @@ class RobotUnit {
     size_t ir1 = 0.5f * NH;  // distribution(generator);
     size_t ir2 = 0.5f * NO;  // distribution(generator);
     for (size_t j = 0; j < NH; ++j) {
-     if (j < ir1)
-       for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
-     else
-       for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
+      if (j < ir1)
+        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
+      else
+        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
-     if (j < ir2)
-       for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
-     else
-       for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
+      if (j < ir2)
+        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
+      else
+        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
     }
 
     // size_t i1 = NI / 2;
@@ -202,16 +211,16 @@ class RobotUnit {
     float pr2 = 0.8f;
 
     for (size_t j = 0; j < NH; ++j)
-     for (size_t i = 0; i <= NI; ++i)
-       if (uniform(generator) > pr1)
-         NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
-                            NN.getW0()[j][i];
+      for (size_t i = 0; i <= NI; ++i)
+        if (uniform(generator) > pr1)
+          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
+                             NN.getW0()[j][i];
 
     for (size_t j = 0; j < NO; ++j)
-     for (size_t i = 0; i <= NH; ++i)
-       if (uniform(generator) > pr2) 
-         NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
-                            NN.getW1()[j][i];
+      for (size_t i = 0; i <= NH; ++i)
+        if (uniform(generator) > pr2)
+          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
+                             NN.getW1()[j][i];
     // double sigma0 = 1 / sqrt(NI + 1);
     // std::normal_distribution<double> distribution0(0, sigma0);
     // double sigma1 = 1 / sqrt(NH + 1);
@@ -281,12 +290,12 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-   //if (collided)
-//      FitnessVal = 100000;
-//    else {
-      Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
-      FitnessVal = Distance;// +Energy / 100000;
-//    }
+     if (collided)
+     FitnessVal = -1000000;
+     else {
+    // Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
+    FitnessVal = DistanceT - Energy / 1000;
+                             }
   }
 
   float getX() { return robot.getX(); }
