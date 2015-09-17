@@ -42,6 +42,8 @@ void display() {
 //  draw_axes(50, 50, 0);
   ga.render();
   tracks[itrack]->render();
+  //tracks[0]->drawPathToEnd(2,1);
+
   float t = ga.getTime();
   set2DMode(1000, 1000);
   printFloat(5, 1000 - 20, "ViewWidth = ",ViewWidth, 3, 2);
@@ -203,6 +205,8 @@ void init_glut_window(int argc, char* argv[]) {
   //std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26, +26, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceToEnd = " << tracks[0]->getMazeDistanceToEnd(-85.2489, 49.2236) << std::endl;
+  //tracks[0]->drawPathToEnd(1,0);
+  //exit(1);
 
   ga.setTrack(tracks[0]);
 

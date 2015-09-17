@@ -115,15 +115,23 @@ class GA {
       }
 
       int isCollided = 0;
+      float avgD = 0;
+      int iD = 0;
       for (auto& e : Population) {
         if (e.isCollided())
           isCollided++;
         e.updateFitnessVal();
+        if (e.isAlive()) {
+          avgD+= e.getDistance();
+          iD++;
+        }
+        
       }
+      avgD /= iD;
       Sorting = true;
       sortPopulation();
       Sorting = false;
-      std::cout << " Best Time = " << Population[0].getTime()
+      std::cout << " AverageD = " << avgD
                 << " Collided = " << isCollided << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         auto& a = Population[i];
@@ -160,7 +168,7 @@ class GA {
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 3;
+    int k = 5;
     std::uniform_int_distribution<int> uniform(0, N / k - 1);
     int j = 0;
     for (size_t i = N / k; i < N; ++i) {

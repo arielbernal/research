@@ -32,7 +32,7 @@ class Track {
       if (i == NL - 1) glColor3f(0.3, 0.1, 0.1);
       auto& e = landmarks[i];
       drawDisk(e.x, e.y, 1, 20);
-    }  
+    }
   }
 
   void getEdgesFromMaze(const Maze& Mz, float d) {
@@ -164,20 +164,42 @@ class Track {
     size_t M = Mz.getHeight();
     size_t N = Mz.getWidth();
 
-    size_t j0 = x / DMaze + N / 2;  
+    size_t j0 = x / DMaze + N / 2;
     size_t i0 = M / 2 - y / DMaze;
-   // std::cout << " i0=" << i0 << " j0= " << j0 << std::endl;
-    return getMazeDistance(i0, j0, i1, j1);
+    std::list<Cell*> Solution;
+    float d = Mz.solve(i0, j0, i1, j1, Solution);
+    std::list<Cell*>::iterator it = Solution.begin();
+    it++;
+    auto &e = (*it);
+    float xn = (float(e->j) - N / 2 + 0.5) * DMaze;
+    float yn = (M / 2 - float(e->i) - 0.5) * DMaze;
+    return d * DMaze + distance(Point2d(x, y), Point2d(xn, yn));
+  }
+
+  void drawPathToEnd(size_t i, size_t j) {
+    std::list<Cell*> Solution;
+    Mz.solve(i, j, Solution);
+
+    size_t M = Mz.getHeight();
+    size_t N = Mz.getWidth();   
+    glBegin(GL_LINE_STRIP);
+    for (auto& e : Solution) {
+      float x = (float(e->j) - N / 2 + 0.5) * DMaze;
+      float y = (M / 2 - float(e->i) - 0.5) * DMaze;
+   //   std::cout << e->i << " " << e->j << std::endl;
+      glVertex2f(x, y);
+    }
+    glEnd();
   }
 
   size_t getXId(float x) {
     size_t N = Mz.getWidth();
-    return  x / DMaze + N / 2;
+    return x / DMaze + N / 2;
   }
 
   size_t getYId(float y) {
     size_t M = Mz.getHeight();
-    return  M / 2 - y / DMaze;
+    return M / 2 - y / DMaze;
   }
 
   float getMazeDistanceToEnd(float x, float y) {

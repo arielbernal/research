@@ -18,8 +18,8 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 5)
-      : NN(NSensors + 2, NSensors + 2, 2),
+  RobotUnit(size_t NSensors = 7)
+      : NN(NSensors + 2, NSensors + 4, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         collided(false),
@@ -148,42 +148,42 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    // float ir1 = 0.5f * NH;  // distribution(generator);
-    // float ir2 = 0.5f * NO;  // distribution(generator);
-    // for (size_t j = 0; j < NH; ++j) {
-    //  if (j < NH)
-    //    for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
-    //  else
-    //    for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
-    //}
-
-    // for (size_t j = 0; j < NO; ++j) {
-    //  if (j < NO)
-    //    for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
-    //  else
-    //    for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
-    //}
-
-    size_t i1 = 2;
-    size_t i2 = 7;
-
-    for (size_t i = 0; i <= NI; ++i) {
-      if (i < i1)
-        for (size_t j = 0; j < NH; ++j)
-          NN.getW0()[j][i] = x.getW0()[j][i];
-      else
-        for (size_t j = 0; j < NH; ++j)
-          NN.getW0()[j][i] = y.getW0()[j][i];
+    size_t ir1 = 0.5f * NH;  // distribution(generator);
+    size_t ir2 = 0.5f * NO;  // distribution(generator);
+    for (size_t j = 0; j < NH; ++j) {
+     if (j < ir1)
+       for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
+     else
+       for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
-    for (size_t i = 0; i <= NH; ++i) {
-      if (i < i2)
-        for (size_t j = 0; j < NO; ++j)
-          NN.getW1()[j][i] = x.getW1()[j][i];
-      else
-        for (size_t j = 0; j < NO; ++j)
-          NN.getW1()[j][i] = y.getW1()[j][i];
+    for (size_t j = 0; j < NO; ++j) {
+     if (j < ir2)
+       for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
+     else
+       for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
     }
+
+    // size_t i1 = NI / 2;
+    // size_t i2 = NH / 2;
+
+    // for (size_t i = 0; i <= NI; ++i) {
+    //   if (i < i1)
+    //     for (size_t j = 0; j < NH; ++j)
+    //       NN.getW0()[j][i] = x.getW0()[j][i];
+    //   else
+    //     for (size_t j = 0; j < NH; ++j)
+    //       NN.getW0()[j][i] = y.getW0()[j][i];
+    // }
+
+    // for (size_t i = 0; i <= NH; ++i) {
+    //   if (i < i2)
+    //     for (size_t j = 0; j < NO; ++j)
+    //       NN.getW1()[j][i] = x.getW1()[j][i];
+    //   else
+    //     for (size_t j = 0; j < NO; ++j)
+    //       NN.getW1()[j][i] = y.getW1()[j][i];
+    // }
   }
 
   void randomMutation() {
@@ -196,38 +196,36 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 8.0f;
-    float k2 = 8.0f;
-    float pr1 = 0.9f;
-    float pr2 = 0.9f;
-
-    // for (size_t j = 0; j < NH; ++j)
-    //  for (size_t i = 0; i <= NI; ++i)
-    //    if (uniform(generator) > pr1) {
-    //      NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
-    //                         NN.getW0()[j][i];
-    //    }
-
-    // for (size_t j = 0; j < NO; ++j)
-    //  for (size_t i = 0; i <= NH; ++i)
-    //    if (uniform(generator) > pr2) {
-    //      NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
-    //                         NN.getW1()[j][i];
-    //    }
-    double sigma0 = 1 / sqrt(NI + 1);
-    std::normal_distribution<double> distribution0(0, sigma0);
-    double sigma1 = 1 / sqrt(NH + 1);
-    std::normal_distribution<double> distribution1(0, sigma1);
+    float k1 = 1.0f;
+    float k2 = 1.0f;
+    float pr1 = 0.7f;
+    float pr2 = 0.8f;
 
     for (size_t j = 0; j < NH; ++j)
-      for (size_t i = 0; i <= NI; ++i)
-        if (uniform(generator) > pr1)
-          NN.getW0()[j][i] = distribution1(generator);
+     for (size_t i = 0; i <= NI; ++i)
+       if (uniform(generator) > pr1)
+         NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
+                            NN.getW0()[j][i];
 
     for (size_t j = 0; j < NO; ++j)
-      for (size_t i = 0; i <= NH; ++i)
-        if (uniform(generator) > pr2)
-          NN.getW1()[j][i] = distribution1(generator);
+     for (size_t i = 0; i <= NH; ++i)
+       if (uniform(generator) > pr2) 
+         NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
+                            NN.getW1()[j][i];
+    // double sigma0 = 1 / sqrt(NI + 1);
+    // std::normal_distribution<double> distribution0(0, sigma0);
+    // double sigma1 = 1 / sqrt(NH + 1);
+    // std::normal_distribution<double> distribution1(0, sigma1);
+
+    // for (size_t j = 0; j < NH; ++j)
+    //   for (size_t i = 0; i <= NI; ++i)
+    //     if (uniform(generator) > pr1)
+    //       NN.getW0()[j][i] = distribution1(generator);
+
+    // for (size_t j = 0; j < NO; ++j)
+    //   for (size_t i = 0; i <= NH; ++i)
+    //     if (uniform(generator) > pr2)
+    //       NN.getW1()[j][i] = distribution1(generator);
   }
 
   void save(const std::string& Filename) { NN.save(Filename); }
@@ -283,12 +281,12 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-    if (collided)
-      FitnessVal = 100000;
-    else {
+   //if (collided)
+//      FitnessVal = 100000;
+//    else {
       Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
       FitnessVal = Distance;// +Energy / 100000;
-    }
+//    }
   }
 
   float getX() { return robot.getX(); }

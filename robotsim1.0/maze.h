@@ -130,7 +130,7 @@ class Maze {
     for (unsigned k = 0; k < 4; ++k) {
       if (!Current->hasWall(k)) {
         Cell *Neighbor = getNeighbor(Current, k);
-        unsigned idx = Neighbor->i * M + Neighbor->j;
+        unsigned idx = Neighbor->i * N + Neighbor->j;
         if (Neighbor && !Visited[idx]) {
           Neighbors[NMax] = Neighbor;
           ++NMax;
@@ -140,7 +140,7 @@ class Maze {
     if (NMax) {
       unsigned n = rand() % NMax;
       Cell *Neighbor = Neighbors[n];
-      unsigned idx = Neighbor->i * M + Neighbor->j;
+      unsigned idx = Neighbor->i * N + Neighbor->j;
       Visited[idx] = true;
       Solution.push_back(Current);
       return Neighbor;
@@ -151,30 +151,37 @@ class Maze {
     }
   }
 
-  // size_t solve(std::list<Cell *> &Solution) {
-  //   return solve(Begin->i, Begin->j, End->i, End->j, Solution);
-  // }
+  size_t solve(std::list<Cell *> &Solution) {
+    return solve(Begin->i, Begin->j, End->i, End->j, Solution);
+  }
+
+  size_t solve(size_t i, size_t j, std::list<Cell *> &Solution) {
+   return solve(i, j, End->i, End->j, Solution); 
+  }
 
   size_t solve(size_t i0, size_t j0, size_t i1, size_t j1,
                std::list<Cell *> &Solution) {
-    Cell *CurrentSol = &Grid[i0 * M + j0];
-    Cell *EndSol = &Grid[i1 * M + j1];
+    Cell *CurrentSol = &Grid[i0 * N + j0];
+    Cell *EndSol = &Grid[i1 * N + j1];
     Solution.clear();
     std::vector<bool> Visited(M * N);
     std::fill(Visited.begin(), Visited.end(), false);
+    Visited[i0 * N + j0] = true;
     while (CurrentSol != EndSol) {
       CurrentSol = nextSolution(CurrentSol, Visited, Solution);
     }
+    Solution.push_back(EndSol);
      //for(auto &e : Solution) {
      //  std::cout << "      " << e->i << " " << e->j << std::endl;
      //}
-    return Solution.size();
+    return Solution.size()-1;
   }
 
   size_t getDistance(size_t i0, size_t j0, size_t i1, size_t j1) {
     std::list<Cell *> Solution;
     return solve(i0, j0, i1, j1, Solution);
   }
+
 
   const Cell *getBegin() const { return Begin; }
   const Cell *getEnd() const  { return End; }
