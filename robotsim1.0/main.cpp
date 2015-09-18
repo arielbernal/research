@@ -162,7 +162,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(500, 0.08f);
+      ga.startSimulation(150, 0.08f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -200,8 +200,8 @@ void init_glut_window(int argc, char* argv[]) {
   //tracks[2].load("tracks/track3.trk");
   //tracks[3].load("tracks/track4.trk");
   //tracks[4].load("tracks/track5.trk");
-  tracks.push_back(new Track(5, 5, 25));
-  tracks.push_back(new Track(2, 2, 25));
+  tracks.push_back(new Track(5, 5, 22.5));
+  tracks.push_back(new Track(2, 2, 22.5));
 
   //std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) << std::endl;
   //std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26, +26, 3, 3) << std::endl;

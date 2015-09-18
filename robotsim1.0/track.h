@@ -62,6 +62,15 @@ class Track {
       for (size_t j = 0; j < M; ++j) {
         Point2d P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2);
         landmarks.push_back(P);
+        P(j * d - (M - 1) * d / 2 - d / 4, (N - i) * d - (N + 1) * d / 2 + d /4 );
+        landmarks.push_back(P);
+        P(j * d - (M - 1) * d / 2 + d / 4, (N - i) * d - (N + 1) * d / 2 - d /4 );
+        landmarks.push_back(P);
+        P(j * d - (M - 1) * d / 2 + d / 4, (N - i) * d - (N + 1) * d / 2 + d /4 );
+        landmarks.push_back(P);
+        P(j * d - (M - 1) * d / 2 - d / 4, (N - i) * d - (N + 1) * d / 2 - d /4 );
+        landmarks.push_back(P);
+
       }
     }
     updateMarkDistances();

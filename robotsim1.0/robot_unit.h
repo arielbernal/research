@@ -116,7 +116,7 @@ class RobotUnit {
         alive = false;
       } else {
         updateSensorDistances();
-        // updateVisitedLandmarks();
+        updateVisitedLandmarks();
       }
       // updateFitnessVal(dt);
     }
@@ -240,18 +240,18 @@ class RobotUnit {
   void save(const std::string& Filename) { NN.save(Filename); }
   void load(const std::string& Filename) { NN.load(Filename); }
 
-  // void updateVisitedLandmarks() {
-  //   auto &e = track->getLandmarks();
-  //   for (size_t i = 0; i < e.size(); ++i)
-  //     if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 15) {
-  //       Landmarks[i] = true;
-  //       tLast = t;
-  //       break;
-  //     }
-  //   Distance = 0;
-  //   for (size_t i = 0; i < Landmarks.size(); ++i)
-  //     if (Landmarks[i]) Distance++;
-  // }
+  void updateVisitedLandmarks() {
+    auto &e = track->getLandmarks();
+    for (size_t i = 0; i < e.size(); ++i)
+      if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 10) {
+        Landmarks[i] = true;
+        tLast = t;
+        break;
+      }
+    Distance = 0;
+    for (size_t i = 0; i < Landmarks.size(); ++i)
+      if (Landmarks[i]) Distance++;
+  }
 
   void setTrack(Track* trk, float angle = 0) {
     track = trk;
@@ -269,6 +269,7 @@ class RobotUnit {
       alive = true;
       Distance = 0;
       DistanceT = 0;
+      tLast = 0;
       FitnessVal = 0;
       Energy = 0;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
@@ -290,12 +291,13 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-     if (collided)
-     FitnessVal = -1000000;
-     else {
-    // Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
-    FitnessVal = DistanceT - Energy / 1000;
-                             }
+    // if (collided)
+    //  FitnessVal = -1000000;
+    //  else {
+    // // Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
+    // FitnessVal = DistanceT - Energy / 1000;
+    //                          }
+    FitnessVal = Distance + 1 / (tLast + 1);
   }
 
   float getX() { return robot.getX(); }
