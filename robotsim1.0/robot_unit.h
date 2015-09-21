@@ -205,21 +205,21 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 1.0f;
-    float k2 = 1.0f;
-    float pr1 = 0.7f;
-    float pr2 = 0.8f;
+    float k1 = 0.3f;
+    float k2 = 0.3f;
+    float pr1 = 0.6f;
+    float pr2 = 0.6f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
         if (uniform(generator) > pr1)
-          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] / k1) * normal(generator) +
+          NN.getW0()[j][i] = fabs(NN.getW0()[j][i] * k1) * normal(generator) +
                              NN.getW0()[j][i];
 
     for (size_t j = 0; j < NO; ++j)
       for (size_t i = 0; i <= NH; ++i)
         if (uniform(generator) > pr2)
-          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] / k2) * normal(generator) +
+          NN.getW1()[j][i] = fabs(NN.getW1()[j][i] * k2) * normal(generator) +
                              NN.getW1()[j][i];
     // double sigma0 = 1 / sqrt(NI + 1);
     // std::normal_distribution<double> distribution0(0, sigma0);
@@ -241,9 +241,9 @@ class RobotUnit {
   void load(const std::string& Filename) { NN.load(Filename); }
 
   void updateVisitedLandmarks() {
-    auto &e = track->getLandmarks();
+    auto& e = track->getLandmarks();
     for (size_t i = 0; i < e.size(); ++i)
-      if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 10) {
+      if (!Landmarks[i] && distance(robot.getPos(), e[i]) < 8) {
         Landmarks[i] = true;
         tLast = t;
         break;
@@ -291,15 +291,10 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-    // if (collided)
-    //  FitnessVal = -1000000;
-    //  else {
-    // // Distance = track->getMazeDistanceToEnd(robot.getX(), robot.getY());
-    // FitnessVal = DistanceT - Energy / 1000;
-    //                          }
-    FitnessVal = Distance + 1 / (tLast + 1);
+      FitnessVal = Distance + 1 / (tLast + 1);
+      if (collided) 
+        FitnessVal *= 0.99;
   }
-
   float getX() { return robot.getX(); }
   float getY() { return robot.getY(); }
   float getXId() { return track->getXId(robot.getX()); }

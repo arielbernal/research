@@ -45,6 +45,38 @@ class Track {
         unsigned Cell = Grid[i * N + j].v;
         float x = j * d - N * d / 2;
         float y = (M - i) * d - N * d / 2;
+
+        Point2d P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2);
+        landmarks.push_back(P);
+        // P(j * d - (M - 1) * d / 2 - d / 4,
+        //   (N - i) * d - (N + 1) * d / 2 + d / 4);
+        // landmarks.push_back(P);
+        // P(j * d - (M - 1) * d / 2 + d / 4,
+        //   (N - i) * d - (N + 1) * d / 2 - d / 4);
+        // landmarks.push_back(P);
+        // P(j * d - (M - 1) * d / 2 + d / 4,
+        //   (N - i) * d - (N + 1) * d / 2 + d / 4);
+        // landmarks.push_back(P);
+        // P(j * d - (M - 1) * d / 2 - d / 4,
+        //   (N - i) * d - (N + 1) * d / 2 - d / 4);
+        // landmarks.push_back(P);
+        if (!(Cell & WN) && !(Cell & BN)) {
+          P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2 + 1 * d / 4);
+          landmarks.push_back(P);
+          P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2 + 2 * d / 4);
+          landmarks.push_back(P);
+          P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2 + 3 * d / 4);
+          landmarks.push_back(P);
+        }
+        if (!(Cell & WE) && !(Cell & BE)) {
+          P(j * d - (M - 1) * d / 2 + 1 * d / 4, (N - i) * d - (N + 1) * d / 2);
+          landmarks.push_back(P);
+          P(j * d - (M - 1) * d / 2 + 2 * d / 4, (N - i) * d - (N + 1) * d / 2);
+          landmarks.push_back(P);
+          P(j * d - (M - 1) * d / 2 + 3 * d / 4, (N - i) * d - (N + 1) * d / 2);
+          landmarks.push_back(P);
+        }
+
         if (Cell & WN) edges.push_back(Edge2d(x, y, x + d, y));
         if (Cell & WE) edges.push_back(Edge2d(x + d, y, x + d, y - d));
         if (Cell & WS) edges.push_back(Edge2d(x, y - d, x + d, y - d));
@@ -56,23 +88,8 @@ class Track {
       }
     }
     const Cell* b = Mz.getBegin();
-    Begin = Point2d(b->j * d - (M - 1) * d / 2,
-                    (N - b->i) * d - (N + 1) * d / 2);
-    for (size_t i = 0; i < N; ++i) {
-      for (size_t j = 0; j < M; ++j) {
-        Point2d P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2);
-        landmarks.push_back(P);
-        P(j * d - (M - 1) * d / 2 - d / 4, (N - i) * d - (N + 1) * d / 2 + d /4 );
-        landmarks.push_back(P);
-        P(j * d - (M - 1) * d / 2 + d / 4, (N - i) * d - (N + 1) * d / 2 - d /4 );
-        landmarks.push_back(P);
-        P(j * d - (M - 1) * d / 2 + d / 4, (N - i) * d - (N + 1) * d / 2 + d /4 );
-        landmarks.push_back(P);
-        P(j * d - (M - 1) * d / 2 - d / 4, (N - i) * d - (N + 1) * d / 2 - d /4 );
-        landmarks.push_back(P);
-
-      }
-    }
+    Begin =
+        Point2d(b->j * d - (M - 1) * d / 2, (N - b->i) * d - (N + 1) * d / 2);
     updateMarkDistances();
   }
 
@@ -180,7 +197,7 @@ class Track {
     std::list<Cell*>::iterator it = Solution.begin();
     it++;
     if (it == Solution.end()) it = Solution.begin();
-    auto &e = (*it);
+    auto& e = (*it);
     float xn = (float(e->j) - N / 2 + 0.5) * DMaze;
     float yn = (M / 2 - float(e->i) - 0.5) * DMaze;
     return d * DMaze + distance(Point2d(x, y), Point2d(xn, yn));
@@ -191,12 +208,12 @@ class Track {
     Mz.solve(i, j, Solution);
 
     size_t M = Mz.getHeight();
-    size_t N = Mz.getWidth();   
+    size_t N = Mz.getWidth();
     glBegin(GL_LINE_STRIP);
     for (auto& e : Solution) {
       float x = (float(e->j) - N / 2 + 0.5) * DMaze;
       float y = (M / 2 - float(e->i) - 0.5) * DMaze;
-   //   std::cout << e->i << " " << e->j << std::endl;
+      //   std::cout << e->i << " " << e->j << std::endl;
       glVertex2f(x, y);
     }
     glEnd();

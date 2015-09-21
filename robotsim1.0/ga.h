@@ -58,7 +58,6 @@ class GA {
   }
 
   void saveMostFit(const std::string& Filename) {
-    sortPopulation();
     Population[0].save(Filename);
   }
 
@@ -68,6 +67,7 @@ class GA {
       if (i > 10)
         Population[i].randomMutation();
     }
+    resetConditions();
   }
 
   void resetConditions() {
