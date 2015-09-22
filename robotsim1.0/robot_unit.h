@@ -18,8 +18,8 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 7)
-      : NN(NSensors + 2, NSensors + 4, 2),
+  RobotUnit(size_t NSensors = 10)
+      : NN(NSensors, 8, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         collided(false),
@@ -92,8 +92,8 @@ class RobotUnit {
       std::vector<double> Input;
       std::vector<double> Output(2);
 
-      Input.push_back(robot.getMotorLeft() / 100.0f);
-      Input.push_back(robot.getMotorRight() / 100.0f);
+    //Input.push_back(robot.getMotorLeft() / 100.0f);
+    //Input.push_back(robot.getMotorRight() / 100.0f);
       for (size_t i = 0; i < NSensors; ++i)
         Input.push_back(DistSensors[i] / 100.0f - 1);
 
@@ -207,8 +207,8 @@ class RobotUnit {
 
     float k1 = 0.15f;
     float k2 = 0.15f;
-    float pr1 = 0.7f;
-    float pr2 = 0.7f;
+    float pr1 = 0.8f;
+    float pr2 = 0.8f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -291,9 +291,9 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-      FitnessVal = Distance + 1 / (tLast + 1);
+      FitnessVal = Distance ;//+ 1 / (tLast + 1);
       if (collided) 
-        FitnessVal *= 0.98;
+        FitnessVal *= 0.90;
   }
   float getX() { return robot.getX(); }
   float getY() { return robot.getY(); }
