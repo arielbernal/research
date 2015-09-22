@@ -1,5 +1,5 @@
-#ifndef GA_H
-#define GA_H
+#ifndef SA_H
+#define SA_H
 
 #include <iostream>
 #include <cmath>
@@ -17,28 +17,14 @@
 #include "ffnn3l.h"
 #include "utils.h"
 
-class GA {
+class SA {
  public:
-  GA(size_t N)
-      : N(N),
-        Population(N),
-        TMax(0),
-        t(0),
-        generation(0),
-        InitialAngle(0),
-        StopSimulation(false),
-        dt(0.01f),
-        isRunning(false),
-        SlowDown(0),
-        Sorting(false) {
-    newPopulation();
-  }
+  SA(size_t N) : N(N) {}
 
   void render() {
     if (!Sorting) {
       Population[0].setGlow(true);
-      for (size_t i = 0; i < 10; ++i)
-        Population[i].render();
+      for (size_t i = 0; i < 10; ++i) Population[i].render();
       Population[0].setGlow(false);
     }
   }
@@ -58,21 +44,19 @@ class GA {
   }
 
   void saveMostFit(const std::string& Filename) {
+    sortPopulation();
     Population[0].save(Filename);
   }
 
   void loadMostFit(const std::string& Filename) {
     for (size_t i = 0; i < N; ++i) {
       Population[i].load(Filename);
-      if (i > 10)
-        Population[i].randomMutation();
+      if (i > 10) Population[i].randomMutation();
     }
-    resetConditions();
   }
 
   void resetConditions() {
-    for (auto& e : Population)
-      e.resetUnit();
+    for (auto& e : Population) e.resetUnit();
     t = 0;
   }
 
@@ -81,14 +65,12 @@ class GA {
 
   void setTrack(Track* newTrack) {
     track = newTrack;
-    for (auto& e : Population)
-      e.setTrack(track);
+    for (auto& e : Population) e.setTrack(track);
   }
 
   void slowDown(float dv) {
     SlowDown += dv;
-    if (SlowDown < 0)
-      SlowDown = 0;
+    if (SlowDown < 0) SlowDown = 0;
   }
 
  protected:
@@ -118,29 +100,27 @@ class GA {
       float avgD = 0;
       int iD = 0;
       for (auto& e : Population) {
-        if (e.isCollided())
-          isCollided++;
+        if (e.isCollided()) isCollided++;
         e.updateFitnessVal();
         if (e.isAlive()) {
-          avgD+= e.getDistance();
+          avgD += e.getDistance();
           iD++;
         }
-        
       }
-      if (iD != 0)
-        avgD /= iD;
+      avgD /= iD;
       Sorting = true;
       sortPopulation();
       Sorting = false;
-      std::cout << " AverageD = " << avgD
-                << " Collided = " << isCollided << std::endl;
+      std::cout << " AverageD = " << avgD << " Collided = " << isCollided
+                << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         auto& a = Population[i];
         std::cout << a.isAlive() << "  --- > "
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
                   << " F = " << a.getFitnessVal();
         std::cout << " x = " << a.getX() << " y = " << a.getY()
-                  << " i=" << a.getYId() << " j=" << a.getXId() << " d = " << a.getDistanceT() << std::endl;
+                  << " i=" << a.getYId() << " j=" << a.getXId()
+                  << " d = " << a.getDistanceT() << std::endl;
       }
       nextGeneration();
     }
@@ -149,58 +129,12 @@ class GA {
   }
 
   static void* static_simulate(void* This) {
-    ((GA*)This)->simulate();
+    ((SA*)This)->simulate();
     return NULL;
   }
 
-  void newPopulation() {
-    for (size_t i = 0; i < N; ++i)
-      Population[i] = RobotUnit();
-  }
-
-  void sortPopulation() {
-    float eps = 2;
-    std::sort(Population.begin(), Population.end(),
-              [eps](const RobotUnit& a, const RobotUnit& b) -> bool {
-                return a.getFitnessVal() > b.getFitnessVal();
-              });
-  }
-
-  void nextGeneration() {
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    static std::default_random_engine generator(seed);
-    int k = 5;
-    std::uniform_int_distribution<int> uniform(0, N / k - 1);
-    int j = 0;
-    for (size_t i = N / k; i < N; ++i) {
-      size_t i0 = uniform(generator);
-      size_t i1 = uniform(generator);
-      while (i1 != i0) {
-        i1 = uniform(generator);
-      }
-      const FFNN3L& NN1 = Population[i0].getNN();
-      const FFNN3L& NN2 = Population[i1].getNN();
-      j++;
-      Population[i].crossOver(NN1, NN2);
-      Population[i].randomMutation();
-    }
-    resetConditions();
-    generation++;
-  }
-
  private:
-  size_t N;
-  std::vector<RobotUnit> Population;
-  float TMax;
-  float t;
-  size_t generation;
-  float InitialAngle;
-  Track* track;
-  bool StopSimulation;
-  bool isRunning;
-  float dt;
-  float SlowDown;
-  bool Sorting;
+  RobotUnit robot;
 };
 
 #endif

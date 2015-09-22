@@ -205,10 +205,10 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 0.3f;
-    float k2 = 0.3f;
-    float pr1 = 0.6f;
-    float pr2 = 0.6f;
+    float k1 = 0.15f;
+    float k2 = 0.15f;
+    float pr1 = 0.7f;
+    float pr2 = 0.7f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -293,7 +293,7 @@ class RobotUnit {
 
       FitnessVal = Distance + 1 / (tLast + 1);
       if (collided) 
-        FitnessVal *= 0.99;
+        FitnessVal *= 0.98;
   }
   float getX() { return robot.getX(); }
   float getY() { return robot.getY(); }
