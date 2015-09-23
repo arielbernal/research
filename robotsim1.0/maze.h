@@ -64,6 +64,14 @@ class Maze {
     End = &Grid[M * N - 1]; 
   }
 
+  Maze(unsigned M, unsigned N, unsigned i0, unsigned j0)
+      : N(N), M(M), Grid(N * M) {
+    initialize();
+    Begin = &Grid[i0 * M + j0];
+    End = &Grid[M * N - 1]; 
+  }
+
+
   void initialize() {
     for (unsigned i = 0; i < M; ++i)
       for (unsigned j = 0; j < N; ++j) Grid[i * M + j].set(i, j, 0x0F);

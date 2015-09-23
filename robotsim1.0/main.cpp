@@ -191,8 +191,8 @@ void init_glut_window(int argc, char* argv[]) {
   // tracks[2].load("tracks/track3.trk");
   // tracks[3].load("tracks/track4.trk");
   // tracks[4].load("tracks/track5.trk");
-  for (int i = 0; i < 100; ++i) {
-    ga.addTrack(new Track(6, 6, 22.5));
+  for (int i = 0; i < 20; ++i) {
+    ga.addTrack(new Track(4, 4, 22.5, rand() % 4, rand() % 4));
   }
 
   // std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) <<

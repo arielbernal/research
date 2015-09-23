@@ -18,10 +18,11 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 10)
-      : NN(NSensors, 8, 2),
+  RobotUnit(size_t NSensors = 7)
+      : NN(2 * NSensors, 2 * NSensors + 4, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
+        VSensors(NSensors),
         collided(false),
         alive(true),
         glow(false),
@@ -92,10 +93,12 @@ class RobotUnit {
       std::vector<double> Input;
       std::vector<double> Output(2);
 
-    //Input.push_back(robot.getMotorLeft() / 100.0f);
-    //Input.push_back(robot.getMotorRight() / 100.0f);
-      for (size_t i = 0; i < NSensors; ++i)
+      Input.push_back(robot.getMotorLeft() / 100.0f);
+      Input.push_back(robot.getMotorRight() / 100.0f);
+      for (size_t i = 0; i < NSensors; ++i) {
         Input.push_back(DistSensors[i] / 100.0f - 1);
+        Input.push_back(VSensors[i] / 100.0f);
+      }
 
       NN.feedForward(Input, Output);
       robot.setMotors(Output[0] * 100, Output[1] * 100);
@@ -136,6 +139,7 @@ class RobotUnit {
     float dalpha = M_PI / (2 * (NSensors - 1));
     float MD = 200;
     for (size_t i = 0; i < NSensors; ++i) {
+      float temp = DistSensors[i];
       DistSensors[i] = MD;
       Point2d Q(C.x + 10 * cos(theta - M_PI / 4 + i * dalpha),
                 C.y + 10 * sin(theta - M_PI / 4 + i * dalpha));
@@ -146,6 +150,7 @@ class RobotUnit {
           float d = distance(C, I);
           if (DistSensors[i] > d) DistSensors[i] = d;
         }
+      VSensors[i] = DistSensors[i] - temp;
     }
   }
 
@@ -291,9 +296,9 @@ class RobotUnit {
     // if (collided) Energy = -100000;
     // FitnessVal = Energy;
 
-      FitnessVal = Distance ;//+ 1 / (tLast + 1);
+      FitnessVal = Distance + 1 / (tLast + 1);
       if (collided) 
-        FitnessVal *= 0.90;
+        FitnessVal *= 1;
   }
   float getX() { return robot.getX(); }
   float getY() { return robot.getY(); }
@@ -312,6 +317,7 @@ class RobotUnit {
   Robot robot;
   size_t NSensors;
   std::vector<float> DistSensors;
+  std::vector<float> VSensors;
   bool collided;
   bool alive;
   bool glow;

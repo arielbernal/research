@@ -155,7 +155,7 @@ class GA {
                 << std::endl;
       nextGeneration();
       iMazeChange++;
-      if (iMazeChange > 10) {
+      if (iMazeChange > 3) {
         idTrack++;
         if (idTrack >= tracks.size()) idTrack = 0;
         // idTrack = rand() % tracks.size();
