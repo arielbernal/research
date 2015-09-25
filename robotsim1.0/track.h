@@ -51,18 +51,6 @@ public:
 
         Point2d P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2);
         landmarks.push_back(P);
-        // P(j * d - (M - 1) * d / 2 - d / 4,
-        //   (N - i) * d - (N + 1) * d / 2 + d / 4);
-        // landmarks.push_back(P);
-        // P(j * d - (M - 1) * d / 2 + d / 4,
-        //   (N - i) * d - (N + 1) * d / 2 - d / 4);
-        // landmarks.push_back(P);
-        // P(j * d - (M - 1) * d / 2 + d / 4,
-        //   (N - i) * d - (N + 1) * d / 2 + d / 4);
-        // landmarks.push_back(P);
-        // P(j * d - (M - 1) * d / 2 - d / 4,
-        //   (N - i) * d - (N + 1) * d / 2 - d / 4);
-        // landmarks.push_back(P);
         if (!(Cell & WN) && !(Cell & BN)) {
           P(j * d - (M - 1) * d / 2, (N - i) * d - (N + 1) * d / 2 + 1 * d / 4);
           landmarks.push_back(P);
@@ -99,10 +87,8 @@ public:
       }
     }
     const Cell *b = Mz.getBegin();
-    std::cout << b->j << " " << b->i << std::endl;
     Begin =
         Point2d(b->j * d - (M - 1) * d / 2, (N - b->i) * d - (N + 1) * d / 2);
-    updateMarkDistances();
   }
 
   void addEdge(float x0, float y0, float x1, float y1) {
@@ -129,29 +115,6 @@ public:
   const std::vector<Point2d> &getLandmarks() const { return landmarks; }
   const std::vector<float> &getDk() const { return Dk; }
   Point2d getInitialPoint() { return Begin; }
-
-  void makePoygonLandmarks(float xc, float yc, float r, float nedges,
-                           float alpha = 0, float dalpha = 0) {
-    if (dalpha == 0)
-      dalpha = 2 * M_PI / nedges;
-    for (size_t i = 0; i < nedges; ++i) {
-      float x = xc + r * cos(alpha + dalpha * i);
-      float y = yc + r * sin(alpha + dalpha * i);
-      landmarks.push_back(Point2d(x, y));
-    }
-    updateMarkDistances();
-  }
-
-  void updateMarkDistances() {
-    Dk.resize(landmarks.size());
-    float d = 0;
-    size_t N = landmarks.size();
-    Dk[N - 1] = 0;
-    for (int i = N - 2; i >= 0; --i) {
-      d += distance(landmarks[i + 1], landmarks[i]);
-      Dk[i] = d;
-    }
-  }
 
   void save(const std::string &Filename) {
     std::ofstream ofs(Filename.c_str());
@@ -191,8 +154,6 @@ public:
       ifs >> p.x >> p.y;
       landmarks.push_back(p);
     }
-    if (!landmarks.empty())
-      updateMarkDistances();
   }
 
   const Maze &getMaze() const { return Mz; }

@@ -10,8 +10,8 @@
 #include "ga.h"
 
 namespace {
-int WinWidth = 1200;
-int WinHeight = 1000;
+int WinWidth = 600;//1200;
+int WinHeight = 600;//1000;
 float WinRatio = WinHeight / float(WinWidth);
 float ViewWidth = 300;
 float ViewHeight = ViewWidth * WinRatio;
@@ -45,8 +45,8 @@ void display() {
   float t = ga.getTime();
   set2DMode(1000, 1000);
   printFloat(5, 1000 - 20, "ViewWidth = ", ViewWidth, 3, 2);
-  printFloat(5, 1000 - 40, "Time = ", ga.getTime(), 3, 2);
-  printFloat(100, 1000 - 40, "dt = ", ga.getDt(), 3, 2);
+  printFloat(5, 1000 - 50, "Time = ", ga.getTime(), 3, 2);
+  printFloat(250, 1000 - 50, "dt = ", ga.getDt(), 3, 2);
   Sleep(33);
   glutSwapBuffers();
 }
@@ -147,15 +147,17 @@ void normal_keys(unsigned char key, int x, int y) {
       break;
     case 's':
       ga.saveMostFit("nn/best01.nn");
+      std::cout << "Saved Most Fit" << std::endl;
       break;
     case 'l':
       ga.loadMostFit("nn/best01.nn");
+      std::cout << "Loaded Most Fit" << std::endl;
       break;
     case 't':
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(150, 0.08f);
+      ga.startSimulation(80, 0.033f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -186,23 +188,9 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif
 
-  // tracks[0].load("tracks/track1.trk");
-  // tracks[1].load("tracks/track2.trk");
-  // tracks[2].load("tracks/track3.trk");
-  // tracks[3].load("tracks/track4.trk");
-  // tracks[4].load("tracks/track5.trk");
-  for (int i = 0; i < 20; ++i) {
-    ga.addTrack(new Track(4, 4, 22.5, rand() % 4, rand() % 4));
-  }
+  for (int i = 0; i < 20; ++i)
+    ga.addTrack(new Track(10, 10, 23, 0, 0));
 
-  // std::cout << "Maze Distance " << tracks[0].getMazeDistance(0, 0, 3, 3) <<
-  // std::endl;
-  // std::cout << "getMazeDistanceTo = " << tracks[0].getMazeDistanceTo(-26,
-  // +26, 3, 3) << std::endl;
-  // std::cout << "getMazeDistanceToEnd = " <<
-  // tracks[0]->getMazeDistanceToEnd(-85.2489, 49.2236) << std::endl;
-  // tracks[0]->drawPathToEnd(1,0);
-  // exit(1);
   ga.setTrack(0);
 
   glutMainLoop();
