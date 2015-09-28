@@ -10,8 +10,8 @@
 #include "ga.h"
 
 namespace {
-int WinWidth = 600;//1200;
-int WinHeight = 600;//1000;
+int WinWidth = 1200;//600;//1200;
+int WinHeight = 1000;//600;//1000;
 float WinRatio = WinHeight / float(WinWidth);
 float ViewWidth = 300;
 float ViewHeight = ViewWidth * WinRatio;
@@ -82,7 +82,11 @@ void mouse_wheel(int wheel, int direction, int x, int y) {
   float k = ViewWidth / WinWidth;
   float xp = x * k - ViewX0;
   float yp = y * k - ViewY0;
+#ifndef WIN32
+  float factor = 1.1;
+#else  
   float factor = 1.3;
+#endif  
   float ViewZoom = direction > 0 ? factor : 1 / factor;
   ViewWidth *= ViewZoom;
   ViewHeight *= ViewZoom;
@@ -157,7 +161,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(80, 0.033f);
+      ga.startSimulation(500, 0.033f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -188,8 +192,8 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif
 
-  for (int i = 0; i < 20; ++i)
-    ga.addTrack(new Track(10, 10, 23, 0, 0));
+  for (int i = 0; i < 200; ++i)
+    ga.addTrack(new Track(6, 6, 23, 0, 0));
 
   ga.setTrack(0);
 

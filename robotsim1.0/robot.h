@@ -159,7 +159,7 @@ class Robot {
     drawCircle(0, 0, r, 30);
     if (glow) glLineWidth(1.5);
 
-    glColor3f(1, 1, 0);
+    glColor3f(0.5, 0.5, 0);
     glBegin(GL_LINE_LOOP);
     glVertex2f(-r - dw2, rw);
     glVertex2f(-r - dw2, -rw);
