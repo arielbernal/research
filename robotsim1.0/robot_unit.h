@@ -256,10 +256,10 @@ class RobotUnit {
   float distanceToTarget() { return 0; }
 
   void updateFitnessVal() {
-    FitnessVal = Distance + 1 / (tLast + 1);
-    if (alive) FitnessVal += 1.5;
+    FitnessVal = Distance + 1 / (tLast + 1) + DistanceT / 1000;
+    if (alive) FitnessVal += 0.5;
     if (!alive) {
-      FitnessVal += DistanceT / 1000 - 5;
+      FitnessVal += -5;
     }
   }
 

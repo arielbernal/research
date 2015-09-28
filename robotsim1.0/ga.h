@@ -18,18 +18,10 @@
 #include "utils.h"
 
 class GA {
- public:
+public:
   GA(size_t N)
-      : N(N),
-        Population(N),
-        TMax(0),
-        t(0),
-        generation(0),
-        InitialAngle(0),
-        StopSimulation(false),
-        dt(0.01f),
-        isRunning(false),
-        SlowDown(0),
+      : N(N), Population(N), TMax(0), t(0), generation(0), InitialAngle(0),
+        StopSimulation(false), dt(0.01f), isRunning(false), SlowDown(0),
         Sorting(false) {
     newPopulation();
     idTrack = 0;
@@ -44,8 +36,8 @@ class GA {
       Population[0].setGlow(true);
       Population[0].render();
       Population[0].setGlow(false);
-      for (size_t i = 1; i < 1000; ++i) Population[i].render();
-      
+      for (size_t i = 1; i < 1000; ++i)
+        Population[i].render();
     }
     tracks[idTrack]->render();
   }
@@ -71,13 +63,15 @@ class GA {
   void loadMostFit(const std::string &Filename) {
     for (size_t i = 0; i < N; ++i) {
       Population[i].load(Filename);
-      if (i > 10) Population[i].randomMutation();
+      if (i > 10)
+        Population[i].randomMutation();
     }
     resetConditions();
   }
 
   void resetConditions() {
-    for (auto &e : Population) e.resetUnit();
+    for (auto &e : Population)
+      e.resetUnit();
     t = 0;
   }
 
@@ -85,12 +79,14 @@ class GA {
   float getDt() { return dt; }
 
   void setTrack(size_t i) {
-    for (auto &e : Population) e.setTrack(tracks[i]);
+    for (auto &e : Population)
+      e.setTrack(tracks[i]);
   }
 
   void slowDown(float dv) {
     SlowDown += dv;
-    if (SlowDown < 0) SlowDown = 0;
+    if (SlowDown < 0)
+      SlowDown = 0;
   }
 
   void addTrack(Track *track) {
@@ -100,7 +96,7 @@ class GA {
 
   void getTrack() { return tracks[idTrack]; }
 
- protected:
+protected:
   void simulate() {
     isRunning = true;
     StopSimulation = false;
@@ -121,27 +117,30 @@ class GA {
           }
         }
         t += dt;
-        if (SlowDown) Sleep(SlowDown);
+        if (SlowDown)
+          Sleep(SlowDown);
       }
-      TMax += 0.01;
+      TMax += 0.1;
 
       int isCollided = 0;
       int isNotAlive = 0;
-      float avgD = 0;
-      int iD = 0;
       for (auto &e : Population) {
-        if (e.isCollided()) isCollided++;
+        if (e.isCollided())
+          isCollided++;
+        if (!e.isAlive())
+          isNotAlive++;       
         e.updateFitnessVal();
-        if (e.isAlive()) {
-          avgD += e.getDistance();
-          iD++;
-        } else
-          isNotAlive++;
       }
-      if (iD != 0) avgD /= iD;
+
       Sorting = true;
       sortPopulation();
       Sorting = false;
+      D[idTrack] = Population[0].getDistance();
+      float AvgD = 0;
+      for (size_t i = 0; i < idTrack; ++i)
+        AvgD += D[i];
+      AvgD = AvgD / (idTrack + 1);
+
       std::cout << " AverageD = " << avgD << " Collided = " << isCollided
                 << " Death toll = " << isNotAlive << std::endl;
       for (size_t i = 0; i < 10; ++i) {
@@ -149,20 +148,17 @@ class GA {
         std::cout << a.isAlive() << "  --- > "
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
                   << " F = " << a.getFitnessVal();
-        std::cout << " x = " << a.getX() << " y = " << a.getY()
-                  << " i=" << a.getYId() << " j=" << a.getXId()
-                  << " d = " << a.getDistanceT() << std::endl;
+        std::cout << " d = " << a.getDistanceT() << std::endl;
       }
-      D[idTrack] = Population[0].getDistance();
-      float DTotal = 0;
-      for (auto &e : D) DTotal += e;
       std::cout << "Track = " << idTrack << " Max D = " << D[idTrack]
-                << "  Total = " << DTotal / D.size() << std::endl;
+                << "  AvgD = " << AvgD << std::endl;
+
       nextGeneration();
       iMazeChange++;
-      if (iMazeChange > 3 && isNotAlive < 1000) {
+      if (iMazeChange > 3) {
         idTrack++;
-        if (idTrack >= tracks.size()) idTrack = 0;
+        if (idTrack >= tracks.size())
+          idTrack = 0;
         // idTrack = rand() % tracks.size();
         setTrack(idTrack);
         iMazeChange = 0;
@@ -181,14 +177,15 @@ class GA {
   }
 
   void newPopulation() {
-    for (size_t i = 0; i < N; ++i) Population[i] = RobotUnit();
+    for (size_t i = 0; i < N; ++i)
+      Population[i] = RobotUnit();
   }
 
   void sortPopulation() {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotUnit &a, const RobotUnit &b)
-                  ->bool { return a.getFitnessVal() > b.getFitnessVal(); });
+                  -> bool { return a.getFitnessVal() > b.getFitnessVal(); });
   }
 
   void nextGeneration() {
@@ -212,7 +209,7 @@ class GA {
     generation++;
   }
 
- private:
+private:
   size_t N;
   std::vector<RobotUnit> Population;
   float TMax;
