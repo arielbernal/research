@@ -257,10 +257,8 @@ class RobotUnit {
 
   void updateFitnessVal() {
     FitnessVal = Distance + 1 / (tLast + 1) + DistanceT / 1000;
-    if (alive) FitnessVal += 0.5;
-    if (!alive) {
-      FitnessVal += -5;
-    }
+   // if (alive) FitnessVal += 0.5;
+   // if (!alive) FitnessVal += -5;
   }
 
   float getX() { return robot.getX(); }

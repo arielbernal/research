@@ -161,7 +161,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(150, 0.033f);
+      ga.startSimulation(50, 0.033f);
       break;
     case 27:
       glutLeaveMainLoop();

@@ -137,11 +137,11 @@ protected:
       Sorting = false;
       D[idTrack] = Population[0].getDistance();
       float AvgD = 0;
-      for (size_t i = 0; i < idTrack; ++i)
+      for (size_t i = 0; i <= idTrack; ++i)
         AvgD += D[i];
       AvgD = AvgD / (idTrack + 1);
 
-      std::cout << " AverageD = " << avgD << " Collided = " << isCollided
+      std::cout << " Collided = " << isCollided
                 << " Death toll = " << isNotAlive << std::endl;
       for (size_t i = 0; i < 10; ++i) {
         auto &a = Population[i];
@@ -155,7 +155,7 @@ protected:
 
       nextGeneration();
       iMazeChange++;
-      if (iMazeChange > 3) {
+      if (iMazeChange > 5) {
         idTrack++;
         if (idTrack >= tracks.size())
           idTrack = 0;
