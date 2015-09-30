@@ -198,8 +198,8 @@ class RobotUnit {
 
     float k1 = 0.15f;
     float k2 = 0.15f;
-    float pr1 = 0.85f;
-    float pr2 = 0.85f;
+    float pr1 = 0.98f;
+    float pr2 = 0.98f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -257,7 +257,7 @@ class RobotUnit {
 
   void updateFitnessVal() {
     FitnessVal = Distance + 1 / (tLast + 1) + DistanceT / 1000;
-   // if (alive) FitnessVal += 0.5;
+    //if (alive) FitnessVal += 0.2;
    // if (!alive) FitnessVal += -5;
   }
 
