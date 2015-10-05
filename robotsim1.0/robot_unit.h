@@ -18,8 +18,8 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 15)
-      : NN(NSensors + 2, 100, 2),
+  RobotUnit(size_t NSensors = 50)
+      : NN(NSensors + 2, 25, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         VSensors(NSensors),
@@ -164,7 +164,7 @@ class RobotUnit {
   void crossOver(const FFNN3L &x, const FFNN3L &y) {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    std::uniform_real_distribution<float> distribution(0, 0.5);
+    std::uniform_real_distribution<float> uniform(0, 1);
     size_t NI = NN.getNI();
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
@@ -172,14 +172,14 @@ class RobotUnit {
     size_t ir1 = 0.5f * NH;  // distribution(generator);
     size_t ir2 = 0.5f * NO;  // distribution(generator);
     for (size_t j = 0; j < NH; ++j) {
-      if (j < ir1)
+      if (uniform(generator) < 0.5)
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
       else
         for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
-      if (j < ir2)
+      if (uniform(generator) < 0.5)
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
       else
         for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
@@ -198,8 +198,8 @@ class RobotUnit {
 
     float k1 = 0.15f;
     float k2 = 0.15f;
-    float pr1 = 0.98f;
-    float pr2 = 0.98f;
+    float pr1 = 0.95f;
+    float pr2 = 0.95f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)

@@ -147,23 +147,25 @@ class GA {
 
       std::cout << "TMax = " << TMax << " Collided = " << isCollided
                 << " Death toll = " << isNotAlive << std::endl;
+      size_t alive10 = 0;
       for (size_t i = 0; i < 10; ++i) {
         auto &a = Population[i];
         std::cout << a.isAlive() << "  --- > "
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
                   << " F = " << a.getFitnessVal();
         std::cout << " d = " << a.getDistanceT() << std::endl;
+        if (a.isAlive()) alive10++;
       }
       std::cout << "Track = " << idTrack << " Max D = " << D[idTrack]
                 << "  AvgD = " << AvgD << std::endl;
 
       nextGeneration();
-      iMazeChange++;
-      if (iMazeChange > 5) {
-        // idTrack++;
-        // if (idTrack >= tracks.size())
-        //  idTrack = 0;
-        idTrack = rand() % tracks.size();
+      iMazeChange++;//&& alive10 > 5
+      if (iMazeChange > 5 && alive10 > 5) {
+        idTrack++;
+        if (idTrack >= tracks.size())
+          idTrack = 0;
+        //idTrack = rand() % tracks.size();
         setTrack(idTrack);
         iMazeChange = 0;
         std::cout << "Saving" << std::endl;
