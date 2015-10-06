@@ -18,8 +18,8 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 50)
-      : NN(NSensors + 2, 25, 2),
+  RobotUnit(size_t NSensors = 30)
+      : NN(NSensors + 2, 30, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         VSensors(NSensors),

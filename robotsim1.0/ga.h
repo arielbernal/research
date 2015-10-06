@@ -44,7 +44,7 @@ class GA {
       Population[0].setGlow(true);
       Population[0].render();
       Population[0].setGlow(false);
-      for (size_t i = 1; i < 1000; ++i) Population[i].render();
+      for (size_t i = 1; i < 500; ++i) Population[i].render();
     }
     tracks[idTrack]->render();
   }
@@ -122,8 +122,7 @@ class GA {
         t += dt;
         if (SlowDown) Sleep(SlowDown);
       }
-      TMax += 0.1;
-
+      
       int isCollided = 0;
       int isNotAlive = 0;
       for (auto &e : Population) {
@@ -154,14 +153,14 @@ class GA {
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
                   << " F = " << a.getFitnessVal();
         std::cout << " d = " << a.getDistanceT() << std::endl;
-        if (a.isAlive()) alive10++;
+        if (a.isAlive()) alive10++;        
       }
       std::cout << "Track = " << idTrack << " Max D = " << D[idTrack]
                 << "  AvgD = " << AvgD << std::endl;
 
       nextGeneration();
-      iMazeChange++;//&& alive10 > 5
-      if (iMazeChange > 5 && alive10 > 5) {
+      iMazeChange++;// 
+      if (iMazeChange > 3&& alive10 > 5) {
         idTrack++;
         if (idTrack >= tracks.size())
           idTrack = 0;
@@ -170,6 +169,7 @@ class GA {
         iMazeChange = 0;
         std::cout << "Saving" << std::endl;
         saveMostFit("nn/best01.nn");
+        TMax += 0.1;
       }
       resetConditions();
     }

@@ -83,7 +83,7 @@ class FFNN3L {
     for (size_t k = 0; k < NO; ++k) {
       double Z = weightedSum(Hidden, W1[k]);
       Output[k] = Z;
-      out[k] = Output[k];
+      out[k] = SIGMOID(Z);//Output[k];
     }
   }
 
