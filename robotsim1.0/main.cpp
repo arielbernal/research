@@ -161,7 +161,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(100, 0.033f);
+      ga.startSimulation(80, 0.033f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -192,7 +192,7 @@ void init_glut_window(int argc, char* argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif
 
-  for (int i = 0; i < 20; ++i)
+  for (int i = 0; i < 10; ++i)
     ga.addTrack(new Track(4, 4, 22, 0, 0));
 
   ga.setTrack(0);

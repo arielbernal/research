@@ -160,7 +160,7 @@ class GA {
 
       nextGeneration();
       iMazeChange++;// 
-      if (iMazeChange > 3&& alive10 > 5) {
+      if (iMazeChange > 3 && alive10 > 9) {
         idTrack++;
         if (idTrack >= tracks.size())
           idTrack = 0;

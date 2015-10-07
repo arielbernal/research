@@ -18,8 +18,8 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 30)
-      : NN(NSensors + 2, 30, 2),
+  RobotUnit(size_t NSensors = 10)
+      : NN(NSensors + 2, 10, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         VSensors(NSensors),
@@ -196,10 +196,10 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 0.15f;
-    float k2 = 0.15f;
-    float pr1 = 0.95f;
-    float pr2 = 0.95f;
+    float k1 = 0.10f;
+    float k2 = 0.10f;
+    float pr1 = 0.90f;
+    float pr2 = 0.90f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
