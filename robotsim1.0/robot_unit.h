@@ -18,8 +18,9 @@
 
 class RobotUnit {
  public:
-  RobotUnit(size_t NSensors = 10)
-      : NN(NSensors + 2, 10, 2),
+  RobotUnit(size_t ID = 0, size_t NSensors = 10)
+      : ID(ID),
+        NN(NSensors + 2, 20, 2),
         NSensors(NSensors),
         DistSensors(NSensors),
         VSensors(NSensors),
@@ -88,6 +89,7 @@ class RobotUnit {
   float getDistance() const { return Distance; }
   void setDistance(float v) { Distance = v; }
   float getDistanceT() const { return DistanceT; }
+  size_t getID() const {return ID; }
   float tDT;
   Point2d pDT;
 
@@ -103,7 +105,7 @@ class RobotUnit {
       Input.push_back(robot.getMotorRight() / 100.0f);
       for (size_t i = 0; i < NSensors; ++i) {
         Input.push_back(DistSensors[i] / 100.0f - 1);
-        // Input.push_back(VSensors[i] / 100.0f);
+        //Input.push_back(VSensors[i] / 100.0f - 1);
       }
 
       NN.feedForward(Input, Output);
@@ -157,7 +159,7 @@ class RobotUnit {
           float d = distance(C, I);
           if (DistSensors[i] > d) DistSensors[i] = d;
         }
-      VSensors[i] = DistSensors[i] - temp;
+      VSensors[i] = temp;
     }
   }
 
@@ -196,10 +198,10 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    float k1 = 0.10f;
-    float k2 = 0.10f;
-    float pr1 = 0.90f;
-    float pr2 = 0.90f;
+    float k1 = 0.05f;
+    float k2 = 0.05f;
+    float pr1 = 0.95f;
+    float pr2 = 0.95f;
 
     for (size_t j = 0; j < NH; ++j)
       for (size_t i = 0; i <= NI; ++i)
@@ -223,9 +225,6 @@ class RobotUnit {
         tLast = t;
         break;
       }
-    Distance = 0;
-    for (size_t i = 0; i < Landmarks.size(); ++i)
-      if (Landmarks[i]) Distance++;
   }
 
   void setTrack(Track *trk, float angle = 0) {
@@ -247,6 +246,7 @@ class RobotUnit {
       tLast = 0;
       FitnessVal = 0;
       Energy = 0;
+      tDT = 0;
       std::fill(Landmarks.begin(), Landmarks.end(), false);
       std::fill(VSensors.begin(), VSensors.end(), 0);
       updateSensorDistances();
@@ -256,7 +256,10 @@ class RobotUnit {
   float distanceToTarget() { return 0; }
 
   void updateFitnessVal() {
-    FitnessVal = Distance + 1 / (tLast + 1) + DistanceT / 1000;
+    Distance = 0;
+    for (size_t i = 0; i < Landmarks.size(); ++i)
+      if (Landmarks[i]) Distance++;
+    FitnessVal = Distance  + 1 / (tLast + 1) + DistanceT / 1000;
     //if (alive) FitnessVal += 0.2;
    // if (!alive) FitnessVal += -5;
   }
@@ -274,6 +277,7 @@ class RobotUnit {
   float getEnergy() const { return Energy; }
 
  private:
+  size_t ID;
   FFNN3L NN;
   Robot robot;
   size_t NSensors;

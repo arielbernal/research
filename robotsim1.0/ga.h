@@ -18,18 +18,10 @@
 #include "utils.h"
 
 class GA {
- public:
+public:
   GA(size_t N)
-      : N(N),
-        Population(N),
-        TMax(0),
-        t(0),
-        generation(0),
-        InitialAngle(0),
-        StopSimulation(false),
-        dt(0.01f),
-        isRunning(false),
-        SlowDown(0),
+      : N(N), Population(N), TMax(0), t(0), generation(0), InitialAngle(0),
+        StopSimulation(false), dt(0.01f), isRunning(false), SlowDown(0),
         Sorting(false) {
     newPopulation();
     idTrack = 0;
@@ -44,7 +36,13 @@ class GA {
       Population[0].setGlow(true);
       Population[0].render();
       Population[0].setGlow(false);
-      for (size_t i = 1; i < 500; ++i) Population[i].render();
+      for (size_t i = 1; i < 1000; ++i)
+        if (!Population[i].isAlive())
+          Population[i].render();
+
+      for (size_t i = 1; i < 1000; ++i)
+        if (Population[i].isAlive())
+          Population[i].render();
     }
     tracks[idTrack]->render();
   }
@@ -70,13 +68,15 @@ class GA {
   void loadMostFit(const std::string &Filename) {
     for (size_t i = 0; i < N; ++i) {
       Population[i].load(Filename);
-      if (i > 10) Population[i].randomMutation();
+      if (i > 2)
+        Population[i].randomMutation();
     }
     resetConditions();
   }
 
   void resetConditions() {
-    for (auto &e : Population) e.resetUnit();
+    for (auto &e : Population)
+      e.resetUnit();
     t = 0;
   }
 
@@ -84,12 +84,14 @@ class GA {
   float getDt() { return dt; }
 
   void setTrack(size_t i) {
-    for (auto &e : Population) e.setTrack(tracks[i]);
+    for (auto &e : Population)
+      e.setTrack(tracks[i]);
   }
 
   void slowDown(float dv) {
     SlowDown += dv;
-    if (SlowDown < 0) SlowDown = 0;
+    if (SlowDown < 0)
+      SlowDown = 0;
   }
 
   void addTrack(Track *track) {
@@ -99,7 +101,7 @@ class GA {
 
   void getTrack() { return tracks[idTrack]; }
 
- protected:
+protected:
   void simulate() {
     isRunning = true;
     StopSimulation = false;
@@ -120,14 +122,17 @@ class GA {
           }
         }
         t += dt;
-        if (SlowDown) Sleep(SlowDown);
+        if (SlowDown)
+          Sleep(SlowDown);
       }
-      
+
       int isCollided = 0;
       int isNotAlive = 0;
       for (auto &e : Population) {
-        if (e.isCollided()) isCollided++;
-        if (!e.isAlive()) isNotAlive++;
+        if (e.isCollided())
+          isCollided++;
+        if (!e.isAlive())
+          isNotAlive++;
         e.updateFitnessVal();
       }
 
@@ -151,20 +156,21 @@ class GA {
         auto &a = Population[i];
         std::cout << a.isAlive() << "  --- > "
                   << "D = " << a.getDistance() << " E = " << a.getEnergy()
-                  << " F = " << a.getFitnessVal();
-        std::cout << " d = " << a.getDistanceT() << std::endl;
-        if (a.isAlive()) alive10++;        
+                  << " F = " << a.getFitnessVal() << " d = " << a.getDistanceT()
+                  << " ID = " << a.getID() << std::endl;
+        if (a.isAlive())
+          alive10++;
       }
       std::cout << "Track = " << idTrack << " Max D = " << D[idTrack]
                 << "  AvgD = " << AvgD << std::endl;
 
       nextGeneration();
-      iMazeChange++;// 
-      if (iMazeChange > 3 && alive10 > 9) {
+      iMazeChange++; // && alive10 > 9
+      if (iMazeChange > 3 ) {
         idTrack++;
         if (idTrack >= tracks.size())
           idTrack = 0;
-        //idTrack = rand() % tracks.size();
+        // idTrack = rand() % tracks.size();
         setTrack(idTrack);
         iMazeChange = 0;
         std::cout << "Saving" << std::endl;
@@ -183,38 +189,45 @@ class GA {
   }
 
   void newPopulation() {
-    for (size_t i = 0; i < N; ++i) Population[i] = RobotUnit();
+    for (size_t i = 0; i < N; ++i)
+      Population[i] = RobotUnit(i);
   }
 
   void sortPopulation() {
     float eps = 2;
     std::sort(Population.begin(), Population.end(),
               [eps](const RobotUnit &a, const RobotUnit &b)
-                  ->bool { return a.getFitnessVal() > b.getFitnessVal(); });
+                  -> bool { return a.getFitnessVal() > b.getFitnessVal(); });
   }
 
   void nextGeneration() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     static std::default_random_engine generator(seed);
-    int k = 10;
+    int k = 20;
     std::uniform_int_distribution<int> uniform(0, N / k - 1);
-    int j = 0;
+    size_t j = 0;
     for (size_t i = N / k; i < N; ++i) {
-      size_t i0 = uniform(generator);
-      size_t i1 = uniform(generator);
-      while (i1 != i0) {
-        i1 = uniform(generator);
-      }
-      const FFNN3L &NN1 = Population[i0].getNN();
-      const FFNN3L &NN2 = Population[i1].getNN();
-      j++;
-      Population[i].crossOver(NN1, NN2);
+      Population[i].setNN(Population[j].getNN());
       Population[i].randomMutation();
+      ++j;
+      if (j == N / k) j = 0;
     }
+
+    // for (size_t i = N / k +  10; i < N; ++i) {
+    //   size_t i0 = uniform(generator);
+    //   size_t i1 = uniform(generator);
+    //   while (i1 != i0) {
+    //     i1 = uniform(generator);
+    //   }
+    //   const FFNN3L &NN1 = Population[i0].getNN();
+    //   const FFNN3L &NN2 = Population[i1].getNN();
+    //   Population[i].crossOver(NN1, NN2);
+    //   Population[i].randomMutation();
+    // }
     generation++;
   }
 
- private:
+private:
   size_t N;
   std::vector<RobotUnit> Population;
   float TMax;
