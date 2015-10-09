@@ -11,71 +11,107 @@
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
-#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
+#define SIGMOID_A2 (SIGMOID_A *SIGMOID_A)
 #define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
-#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
-#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
+#define DSIGMOID(S) (SIGMOID_BA *(SIGMOID_A2 - S *S))
+#define SIGMOID(x) (SIGMOID_A *tanh(SIGMOID_B *x))
 //#define SIGMOID(x) (tanh(x))
+
+struct GENNeuron;
+
+struct GENSynapse {
+  GENSynapse(GENNeuron *Input, double W) : Input(Input), W(W) {}
+  GENNeuron *Input;
+  double W;  // weight
+};
 
 struct GENNeuron {
   enum { INPUT, OUTPUT, HIDDEN };
-  GENNeuron(size_t nntype, float x, float y, float z)
-      : x(x), y(y), z(z), nntype(nntype) {}
-  float x, y, z; // position
+  GENNeuron(size_t id, size_t nntype, float x, float y, float z)
+      : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), val(0) {}
+
+  void addSynapse(GENNeuron *Neuron, double W) {
+    Inputs.push_back(GENSynapse(Neuron, W));
+  }
+
+  void cleanUpInputs() {
+    Inputs.remove_if([](GENSynapse &S) { return S.Input->alive; });
+  }
+
+  size_t id;
   size_t nntype;
-  std::list<GENNeuron *> input;
+  float x, y, z;  // position
+  bool alive;
+  double val;
+  std::list<GENSynapse> Inputs;
 };
 
 class GENNeuralNet {
-public:
+ public:
   GENNeuralNet(size_t NInput, size_t NOutput, size_t NHidden = 0,
                float XSize = 1, float YSize = 1, float ZSize = 1)
-      : NInput(NInput), NOutput(NOutput), NHidden(NHidden), XSize(XSize),
-        YSize(YSize), ZSize(ZSize) {
+      : NInput(NInput),
+        NOutput(NOutput),
+        NHidden(NHidden),
+        XSize(XSize),
+        YSize(YSize),
+        ZSize(ZSize) {
     initializeRandomNet();
   }
 
-protected:
+ protected:
   void initializeRandomNet() {
     // unsigned seed =
     // std::chrono::system_clock::now().time_since_epoch().count();
     auto uniform =
         std::bind(std::uniform_real_distribution<float>(0, 1), generator);
 
+    size_t j = 0;
     for (size_t i = 0; i < NInput; ++i) {
       GENNeuron *Neuron =
-          new GENNeuron(GENNeuron::INPUT, uniform(), uniform(), uniform());
+          new GENNeuron(j++, GENNeuron::INPUT, uniform(), uniform(), uniform());
       Input.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NOutput; ++i) {
-      GENNeuron *Neuron =
-          new GENNeuron(GENNeuron::OUTPUT, uniform(), uniform(), uniform());
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::OUTPUT, uniform(),
+                                        uniform(), uniform());
       Output.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NHidden; ++i) {
-      GENNeuron *Neuron =
-          new GENNeuron(GENNeuron::HIDDEN, uniform(), uniform(), uniform());
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::HIDDEN, uniform(),
+                                        uniform(), uniform());
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
   }
 
   void addHiddenNeuron() {
+    auto uniform =
+        std::bind(std::uniform_real_distribution<float>(0, 1), generator);
+
     NHidden++;
+    size_t id = Neurons.size();
     GENNeuron *Neuron =
-        new GENNeuron(GENNeuron::HIDDEN, uniform(), uniform(), uniform());
+        new GENNeuron(id, GENNeuron::HIDDEN, uniform(), uniform(), uniform());
     Hidden.push_back(Neuron);
     Neurons.push_back(Neuron);
   }
 
+  void addSynapse(size_t in, size_t out, double W) {
+    Neurons[out]->addSynapse(Neurons[in], W);
+  }
 
-  void addSynapse(size_t i , size_t j) {
+  void feed(std::vector<double>& In) {
+    for (size_t i = i < )
+    for (auto &e : Input) {
+      e->val = In[]
+    }
 
   }
 
-private:
+ private:
   size_t NInput;
   size_t NOutput;
   size_t NHidden;
@@ -84,7 +120,8 @@ private:
   std::vector<GENNeuron *> Output;
   std::vector<GENNeuron *> Hidden;
   std::vector<GENNeuron *> Neurons;
+
   std::default_random_engine generator;
 };
 
-#endif // FFNN3L_H
+#endif  // FFNN3L_H
