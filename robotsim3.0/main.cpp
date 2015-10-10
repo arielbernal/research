@@ -162,7 +162,7 @@ void normal_keys(unsigned char key, int x, int y) {
       ga.stopSimulation();
       break;
     case 32:
-      ga.startSimulation(6, 0.033f);
+      ga.startSimulation(20, 0.033f);
       break;
     case 27:
       glutLeaveMainLoop();
@@ -202,9 +202,9 @@ void init_glut_window(int argc, char* argv[]) {
 }
 
 int main(int argc, char** argv) {
-  //init_glut_window(argc, argv);
+  init_glut_window(argc, argv);
 
-  GENNeuralNet  NN(10, 2);
+  //GENNeuralNet  NN(10, 2);
 
   return 0;
 }

@@ -166,7 +166,7 @@ protected:
 
       nextGeneration();
       iMazeChange++; // && alive10 > 9
-      if (iMazeChange > 3 ) {
+      if (iMazeChange > 5 && alive10 > 9) {
         idTrack++;
         if (idTrack >= tracks.size())
           idTrack = 0;

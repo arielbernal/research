@@ -17,23 +17,12 @@
 #include "geometry_utils.h"
 
 class RobotUnit {
- public:
+public:
   RobotUnit(size_t ID = 0, size_t NSensors = 10)
-      : ID(ID),
-        NN(NSensors + 2, 20, 2),
-        NSensors(NSensors),
-        DistSensors(NSensors),
-        VSensors(NSensors),
-        collided(false),
-        alive(true),
-        glow(false),
-        t(0),
-        Distance(0),
-        DistanceT(0),
-        FitnessVal(0),
-        Energy(1000),
-        track(0),
-        angle0(0) {
+      : ID(ID), NN(NSensors + 4, 20, 4), NSensors(NSensors),
+        DistSensors(NSensors), VSensors(NSensors), collided(false), alive(true),
+        glow(false), t(0), Distance(0), DistanceT(0), FitnessVal(0),
+        Energy(1000), track(0), angle0(0) {
     tDT = 0;
   }
 
@@ -52,7 +41,8 @@ class RobotUnit {
       b = 0;
     }
     robot.render(r, g, b, glow);
-    if (glow) renderSensorLines();
+    if (glow)
+      renderSensorLines();
   }
 
   void renderSensorLines() {
@@ -89,27 +79,29 @@ class RobotUnit {
   float getDistance() const { return Distance; }
   void setDistance(float v) { Distance = v; }
   float getDistanceT() const { return DistanceT; }
-  size_t getID() const {return ID; }
+  size_t getID() const { return ID; }
   float tDT;
   Point2d pDT;
 
   void update(float dt) {
     if (alive) {
-      static const float K = 0.1 * 7.4;  // 100 mA, 7.4v
+      static const float K = 0.1 * 7.4; // 100 mA, 7.4v
       Energy +=
           dt * (fabs(robot.getMotorLeft()) + fabs(robot.getMotorRight())) * K;
       std::vector<double> Input;
-      std::vector<double> Output(2);
+      std::vector<double> Output(4);
 
-      Input.push_back(robot.getMotorLeft() / 100.0f);
-      Input.push_back(robot.getMotorRight() / 100.0f);
+      NN.getOutput(Output);
+      for (size_t i = 0; i < 4; ++i)
+        Input.push_back(Output[i]);
       for (size_t i = 0; i < NSensors; ++i) {
         Input.push_back(DistSensors[i] / 100.0f - 1);
-        //Input.push_back(VSensors[i] / 100.0f - 1);
+        // Input.push_back(VSensors[i] / 100.0f - 1);
       }
 
       NN.feedForward(Input, Output);
-      robot.setMotors(Output[0] * 100, Output[1] * 100);
+      robot.setMotors((Output[0] + Output[1]) / 2 * 100,
+                      (Output[2] + Output[3]) / 2 * 100);
 
       if (tDT == 0) {
         pDT = robot.getPos();
@@ -120,7 +112,8 @@ class RobotUnit {
         tDT = 0;
         float d = distance(pDT, robot.getPos());
         DistanceT += d;
-        if (d < 2) alive = false;
+        if (d < 2)
+          alive = false;
       }
 
       t += dt;
@@ -138,7 +131,8 @@ class RobotUnit {
     Point2d C = robot.getPos();
     float R = robot.getR();
     for (auto &e : track->getEdges())
-      if (SegmentCircleIntersection(e, C, R)) return true;
+      if (SegmentCircleIntersection(e, C, R))
+        return true;
     return false;
   }
 
@@ -157,7 +151,8 @@ class RobotUnit {
       for (auto &e : track->getEdges())
         if (RayEdgeIntersection(e, L, I)) {
           float d = distance(C, I);
-          if (DistSensors[i] > d) DistSensors[i] = d;
+          if (DistSensors[i] > d)
+            DistSensors[i] = d;
         }
       VSensors[i] = temp;
     }
@@ -171,20 +166,24 @@ class RobotUnit {
     size_t NH = NN.getNH();
     size_t NO = NN.getNO();
 
-    size_t ir1 = 0.5f * NH;  // distribution(generator);
-    size_t ir2 = 0.5f * NO;  // distribution(generator);
+    size_t ir1 = 0.5f * NH; // distribution(generator);
+    size_t ir2 = 0.5f * NO; // distribution(generator);
     for (size_t j = 0; j < NH; ++j) {
       if (uniform(generator) < 0.5)
-        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = x.getW0()[j][i];
+        for (size_t i = 0; i <= NI; ++i)
+          NN.getW0()[j][i] = x.getW0()[j][i];
       else
-        for (size_t i = 0; i <= NI; ++i) NN.getW0()[j][i] = y.getW0()[j][i];
+        for (size_t i = 0; i <= NI; ++i)
+          NN.getW0()[j][i] = y.getW0()[j][i];
     }
 
     for (size_t j = 0; j < NO; ++j) {
       if (uniform(generator) < 0.5)
-        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = x.getW1()[j][i];
+        for (size_t i = 0; i <= NH; ++i)
+          NN.getW1()[j][i] = x.getW1()[j][i];
       else
-        for (size_t i = 0; i <= NH; ++i) NN.getW1()[j][i] = y.getW1()[j][i];
+        for (size_t i = 0; i <= NH; ++i)
+          NN.getW1()[j][i] = y.getW1()[j][i];
     }
   }
 
@@ -258,10 +257,11 @@ class RobotUnit {
   void updateFitnessVal() {
     Distance = 0;
     for (size_t i = 0; i < Landmarks.size(); ++i)
-      if (Landmarks[i]) Distance++;
-    FitnessVal = Distance  + 1 / (tLast + 1) + DistanceT / 1000;
-    //if (alive) FitnessVal += 0.2;
-   // if (!alive) FitnessVal += -5;
+      if (Landmarks[i])
+        Distance++;
+    FitnessVal = Distance + 1 / (tLast + 1) + DistanceT / 1000;
+    // if (alive) FitnessVal += 0.2;
+    // if (!alive) FitnessVal += -5;
   }
 
   float getX() { return robot.getX(); }
@@ -276,7 +276,7 @@ class RobotUnit {
 
   float getEnergy() const { return Energy; }
 
- private:
+private:
   size_t ID;
   FFNN3L NN;
   Robot robot;
