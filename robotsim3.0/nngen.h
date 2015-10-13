@@ -49,6 +49,7 @@ struct GENNeuron {
 
   void updateSynapses() {
     for (auto &e : Inputs) {
+      if (v != 0 && e.Input->v != 0)
       double DW = nu * (1 - e.W) * v * e.Input->v;
     }
   }
@@ -102,7 +103,8 @@ protected:
 
   void addHiddenNeuron() {
     auto uniform =
-        std::bind(std::uniform_real_distribution<float>(0, 1), generator);
+        std::bind(std+
+          ::uniform_real_distribution<float>(0, 1), generator);
 
     NHidden++;
     size_t id = Neurons.size();
