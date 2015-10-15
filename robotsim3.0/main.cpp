@@ -39,8 +39,8 @@ void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   set2DMode(ViewWidth, ViewHeight);
   glTranslatef(ViewX0, ViewY0, 0);
-  //  draw_axes(50, 50, 0);
-  ga.render();
+  // draw_axes(50, 50, 0);
+  // ga.render();
   // tracks[0]->drawPathToEnd(2,1);
 
   float t = ga.getTime();
@@ -202,9 +202,10 @@ void init_glut_window(int argc, char* argv[]) {
 }
 
 int main(int argc, char** argv) {
-  init_glut_window(argc, argv);
+//  init_glut_window(argc, argv);
 
-  //GENNeuralNet  NN(10, 2);
+  GENNeuralNet  NN(4, 2, 2, 1);
+  NN.dump();
 
   return 0;
 }

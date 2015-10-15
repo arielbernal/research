@@ -34,7 +34,7 @@ void drawArrow(float x1, float y1, float z1, float x2, float y2, float z2,
   quadObj = gluNewQuadric();
   gluQuadricDrawStyle(quadObj, GLU_FILL);
   gluQuadricNormals(quadObj, GLU_SMOOTH);
-  gluCylinder(quadObj, 2 * D, 0.0, 4 * D, 32, 4);
+  gluCylinder(quadObj, 3 * D, 0.0, 6 * D, 32, 4);
   gluDeleteQuadric(quadObj);
 
   quadObj = gluNewQuadric();

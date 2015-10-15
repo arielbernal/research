@@ -7,14 +7,16 @@
 #include <string>
 #include <fstream>
 #include <random>
+#include <list>
+#include <map>
 #include "nndataset.h"
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
-#define SIGMOID_A2 (SIGMOID_A *SIGMOID_A)
+#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
 #define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
-#define DSIGMOID(S) (SIGMOID_BA *(SIGMOID_A2 - S *S))
-#define SIGMOID(x) (SIGMOID_A *tanh(SIGMOID_B *x))
+#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
+#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
 //#define SIGMOID(x) (tanh(x))
 
 struct GENNeuron;
@@ -31,24 +33,27 @@ struct GENNeuron {
   enum { INPUT, OUTPUT, EXCITATORY, INHIBITORY };
   GENNeuron(size_t id, size_t nntype, float x, float y, float z)
       : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), v(0), theta(0.5),
-        Ap(0), Rp(0), H(-0.2), D(0.2) {}
+        Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.01) {}
 
-  ~GENNeuron() {
-    for (auto e : PosSynapses)
-      delete e;
-    PosSynapses.clear();
-    PreSynapses.clear();
-  }
+  ~GENNeuron() { PreSynapses.clear(); }
 
   void addSynapse(GENNeuron *PosNeuron, double W = 0) {
     if (nntype == INPUT)
       W = 1;
     GENSynapse *S = new GENSynapse(this, PosNeuron, W);
-    PosSynapses.push_back(S);
     PosNeuron->PreSynapses.push_back(S);
   }
 
-  // Inputs.remove_if([](GENSynapse &S) { return !S.Input->alive; });
+  void deleteDeadSynapses() {
+    // PreSynapses.remove_if([](GENSynapse &S) { return S.W == 0; });
+    auto I = PreSynapses.begin();
+    while (I != PreSynapses.end()) {
+      if ((*I)->W == 0) {
+        delete (*I);
+        I = PreSynapses.erase(I);
+      }
+    }
+  }
 
   void update() {
     Ap = 0;
@@ -72,13 +77,42 @@ struct GENNeuron {
           e->W += Dw;
         else
           e->W -= Dw;
+        if (e->W > 1)
+          e->W = 1;
+        if (e->W < 0)
+          e->W = 0;
       } else if (e->PreNeuron->nntype == INHIBITORY && e->PreNeuron->Ap == 1) {
         if (Ap == 1)
-          e->W -= Dw;
-        else
           e->W += Dw;
+        else
+          e->W -= Dw;
+        if (e->W > 0)
+          e->W = 0;
+        if (e->W < -1)
+          e->W = -1;
       }
     }
+  }
+
+  std::string getTypeStr() {
+    switch (nntype) {
+    case INPUT:
+      return "INPUT";
+    case OUTPUT:
+      return "OUTPUT";
+    case INHIBITORY:
+      return "INHIBITORY";
+    case EXCITATORY:
+      return "EXCITATORY";
+    }
+    return "ERROR";
+  }
+
+  void print() {
+    printf("Id = %zu - Type = %s - Ap = %f - v = %f\n", id,
+           getTypeStr().c_str(), Ap, v);
+    for (auto &e : PreSynapses)
+      printf("  From Id = %zu - W = %f\n", e->PreNeuron->id, e->W);
   }
 
   size_t id;
@@ -91,14 +125,15 @@ struct GENNeuron {
   double Rp;    // Resting potential
   double H;     // Hyperpolarizing afterpotential
   double D;     // Repolarization
+  double Dw;    // NeuroPlasticity constant
   std::list<GENSynapse *> PreSynapses;
-  std::list<GENSynapse *> PosSynapses;
 };
 
 class GENNeuralNet {
 public:
   GENNeuralNet(size_t NInput, size_t NOutput, size_t NExcitatory = 0,
-               float XSize = 1, float YSize = 1, float ZSize = 1)
+               size_t NInhibitory = 0, float XSize = 1, float YSize = 1,
+               float ZSize = 1)
       : NInput(NInput), NOutput(NOutput), NHidden(NExcitatory + NInhibitory),
         NExcitatory(NExcitatory), NInhibitory(NInhibitory), XSize(XSize),
         YSize(YSize), ZSize(ZSize) {
@@ -108,6 +143,23 @@ public:
   ~GENNeuralNet() {
     for (auto e : Neurons)
       delete e;
+  }
+
+  void dump() {
+    for (auto &e : Neurons) {
+      e->print();
+    }
+  }
+
+  std::vector<GENNeuron *> &getNeurons() { return Neurons; }
+
+  void feed(const std::vector<double> &In) {
+    for (size_t i = 0; i < Input.size(); ++i)
+      Input[i]->Ap = In[i];
+    for (auto &e : Hidden)
+      e->update();
+    for (auto &e : Output)
+      e->update();
   }
 
 protected:
@@ -147,7 +199,6 @@ protected:
   void addHiddenNeuron(size_t nntype) {
     auto uniform =
         std::bind(std::uniform_real_distribution<float>(0, 1), generator);
-
     NHidden++;
     size_t id = Neurons.size();
     GENNeuron *Neuron =
@@ -160,16 +211,14 @@ protected:
     Neurons[target]->addSynapse(Neurons[src], W);
   }
 
-  void feed(const std::vector<double> &In) {
-    for (size_t i = 0; i < Input.size(); ++i)
-      Input[i]->Ap = In[i];
-    for (auto &e : Hidden)
-      e->update();
-    for (auto &e : Output)
-      e->update();
-  }
-
   void updateSynapses() {}
+
+  void generateRandomSynapse() {
+    // float dx = e->x - f->x;
+    // float dy = e->y - f->y;
+    // float dz = e->z - f->z;
+    // float d = sqrt(dx * dx + dy * dy + dz * dz);
+  }
 
 private:
   size_t NInput;
@@ -182,7 +231,6 @@ private:
   std::vector<GENNeuron *> Output;
   std::vector<GENNeuron *> Hidden;
   std::vector<GENNeuron *> Neurons;
-
   std::default_random_engine generator;
 };
 
