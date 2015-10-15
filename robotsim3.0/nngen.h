@@ -11,17 +11,19 @@
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
-#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
+#define SIGMOID_A2 (SIGMOID_A *SIGMOID_A)
 #define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
-#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
-#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
+#define DSIGMOID(S) (SIGMOID_BA *(SIGMOID_A2 - S *S))
+#define SIGMOID(x) (SIGMOID_A *tanh(SIGMOID_B *x))
 //#define SIGMOID(x) (tanh(x))
 
 struct GENNeuron;
 
 struct GENSynapse {
-  GENSynapse(GENNeuron *Input, double W) : Input(Input), W(W) {}
-  GENNeuron *Input;
+  GENSynapse(GENNeuron *PreNeuron, GENNeuron *PosNeuron, double W)
+      : PreNeuron(PreNeuron), PosNeuron(PosNeuron), W(W) {}
+  GENNeuron *PreNeuron;
+  GENNeuron *PosNeuron;
   double W; // weight
 };
 
@@ -31,18 +33,27 @@ struct GENNeuron {
       : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), v(0), theta(0.5),
         Ap(0), Rp(0), H(-0.2), D(0.2) {}
 
-  void addSynapse(GENNeuron *Neuron, double W) {
-    Inputs.push_back(GENSynapse(Neuron, W));
+  ~GENNeuron() {
+    for (auto e : PosSynapses)
+      delete e;
+    PosSynapses.clear();
+    PreSynapses.clear();
   }
 
-  void cleanUpInputs() {
-    Inputs.remove_if([](GENSynapse &S) { return !S.Input->alive; });
+  void addSynapse(GENNeuron *PosNeuron, double W = 0) {
+    if (nntype == INPUT)
+      W = 1;
+    GENSynapse *S = new GENSynapse(this, PosNeuron, W);
+    PosSynapses.push_back(S);
+    PosNeuron->PreSynapses.push_back(S);
   }
+
+  // Inputs.remove_if([](GENSynapse &S) { return !S.Input->alive; });
 
   void update() {
     Ap = 0;
-    for (auto &e : Inputs)
-      v += e.W * e.Input->Ap;
+    for (auto &e : PreSynapses)
+      v += e->W * e->PreNeuron->Ap;
     if (v > theta) {
       Ap = 1;
       v = H;
@@ -54,7 +65,21 @@ struct GENNeuron {
       v = v + D > Rp ? Rp : v + D;
   }
 
-  void updateSynapses() {}
+  void updateSynapses() {
+    for (auto &e : PreSynapses) {
+      if (e->PreNeuron->nntype == EXCITATORY && e->PreNeuron->Ap == 1) {
+        if (Ap == 1)
+          e->W += Dw;
+        else
+          e->W -= Dw;
+      } else if (e->PreNeuron->nntype == INHIBITORY && e->PreNeuron->Ap == 1) {
+        if (Ap == 1)
+          e->W -= Dw;
+        else
+          e->W += Dw;
+      }
+    }
+  }
 
   size_t id;
   size_t nntype;
@@ -66,7 +91,8 @@ struct GENNeuron {
   double Rp;    // Resting potential
   double H;     // Hyperpolarizing afterpotential
   double D;     // Repolarization
-  std::list<GENSynapse> Inputs;
+  std::list<GENSynapse *> PreSynapses;
+  std::list<GENSynapse *> PosSynapses;
 };
 
 class GENNeuralNet {
@@ -77,6 +103,11 @@ public:
         NExcitatory(NExcitatory), NInhibitory(NInhibitory), XSize(XSize),
         YSize(YSize), ZSize(ZSize) {
     initializeRandomNet();
+  }
+
+  ~GENNeuralNet() {
+    for (auto e : Neurons)
+      delete e;
   }
 
 protected:
@@ -115,7 +146,7 @@ protected:
 
   void addHiddenNeuron(size_t nntype) {
     auto uniform =
-        std::bind(std + ::uniform_real_distribution<float>(0, 1), generator);
+        std::bind(std::uniform_real_distribution<float>(0, 1), generator);
 
     NHidden++;
     size_t id = Neurons.size();
@@ -131,7 +162,7 @@ protected:
 
   void feed(const std::vector<double> &In) {
     for (size_t i = 0; i < Input.size(); ++i)
-      Input[i]->v = In[i];
+      Input[i]->Ap = In[i];
     for (auto &e : Hidden)
       e->update();
     for (auto &e : Output)
