@@ -202,7 +202,7 @@ void init_glut_window(int argc, char* argv[]) {
 }
 
 int main(int argc, char** argv) {
-//  init_glut_window(argc, argv);
+  init_glut_window(argc, argv);
 
   GENNeuralNet  NN(4, 2, 2, 1);
   NN.dump();

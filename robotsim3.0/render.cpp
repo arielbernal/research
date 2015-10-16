@@ -124,13 +124,13 @@ void init_glut_window(int argc, char *argv[]) {
   // glewInit();
   glutMainLoop();
 }
-int main1(int argc, char **argv) {
+int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }
 
 
-int main()
+int main1()
 {
   const int nrolls = 10000; // number of experiments
   const int nstars = 100;   // maximum number of stars to distribute

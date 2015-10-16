@@ -57,7 +57,7 @@ public:
 
   void drawNN(float k) {
 
-    glColor3f(0.2, 0, 0);
+    glColor3f(0.4, 0, 0);
     glPushMatrix();
     glTranslatef(k / 2, k / 2, k / 2);
     glutWireCube(k);
@@ -77,8 +77,11 @@ public:
         glColor3f(0, 1, 0);
 
       glutSolidSphere(0.4, 20, 20);
+      glColor4f(0, 0, 0, 1);
+      glutWireSphere(0.43, 9, 9);
+
       if (e->Ap > 0) {
-        glColor4f(0, 0.5, 0.5, 0.5);
+        glColor4f(0.5, 0.3, 0.3, 0.5);
         glutWireSphere(0.6, 9, 9);
       }
 

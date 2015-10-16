@@ -94,6 +94,18 @@ struct GENNeuron {
     }
   }
 
+  void computeDistances(const std::vector<GENNeuron *> &Neurons) {
+    for (auto &e : Neurons) {
+      if (e->id != id) {
+        float dx = e->x - f->x;
+        float dy = e->y - f->y;
+        float dz = e->z - f->z;
+        float d = sqrt(dx * dx + dy * dy + dz * dz);
+        Distances[d] = e->id;
+      }
+    }
+  }
+
   std::string getTypeStr() {
     switch (nntype) {
     case INPUT:
@@ -127,6 +139,7 @@ struct GENNeuron {
   double D;     // Repolarization
   double Dw;    // NeuroPlasticity constant
   std::list<GENSynapse *> PreSynapses;
+  std::map<float, size_t> Distances;
 };
 
 class GENNeuralNet {
@@ -214,10 +227,6 @@ protected:
   void updateSynapses() {}
 
   void generateRandomSynapse() {
-    // float dx = e->x - f->x;
-    // float dy = e->y - f->y;
-    // float dz = e->z - f->z;
-    // float d = sqrt(dx * dx + dy * dy + dz * dz);
   }
 
 private:
