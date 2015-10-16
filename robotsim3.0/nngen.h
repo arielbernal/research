@@ -1,6 +1,7 @@
 #ifndef NNGEN_H
 #define NNGEN_H
 
+#include <algorithm>
 #include <vector>
 #include <functional>
 #include <iostream>
@@ -9,6 +10,7 @@
 #include <random>
 #include <list>
 #include <map>
+#include <chrono>
 #include "nndataset.h"
 
 #define SIGMOID_A (1.715904709)
@@ -45,7 +47,6 @@ struct GENNeuron {
   }
 
   void deleteDeadSynapses() {
-    // PreSynapses.remove_if([](GENSynapse &S) { return S.W == 0; });
     auto I = PreSynapses.begin();
     while (I != PreSynapses.end()) {
       if ((*I)->W == 0) {
@@ -95,14 +96,45 @@ struct GENNeuron {
   }
 
   void computeDistances(const std::vector<GENNeuron *> &Neurons) {
+    Distances.resize(Neurons.size() - 1);
+    size_t j = 0;
     for (auto &e : Neurons) {
-      if (e->id != id) {
-        float dx = e->x - f->x;
-        float dy = e->y - f->y;
-        float dz = e->z - f->z;
+      if ((e->id != id) && !(e->nntype == INPUT) &&
+          !((e->nntype == OUTPUT) && (nntype == OUTPUT))) {
+        float dx = e->x - x;
+        float dy = e->y - y;
+        float dz = e->z - z;
         float d = sqrt(dx * dx + dy * dy + dz * dz);
-        Distances[d] = e->id;
+        std::pair<size_t, float> p(e->id, d);
+        Distances[j++] = p;
       }
+    }
+    Distances.resize(j);
+    std::sort(
+        Distances.begin(), Distances.end(),
+        [](const std::pair<size_t, float> &a,
+           const std::pair<size_t, float> &b) { return a.second < b.second; });
+  }
+
+  void createRandomSynapse(const std::vector<GENNeuron *> &Neurons) {
+    static std::default_random_engine generator;
+    static std::normal_distribution<float> normal(0, 0.4f);
+    float dd = fabs(normal(generator)) + 0.07;
+    std::cout << dd << std::endl;
+    int id = -1;
+    float dmax = 0;
+    for (auto &e : Distances)
+      if (e.second > dd) {
+        break;
+      }
+      else {
+        id = e.first;
+        dmax = e.second;
+      }
+
+    if (id > 0) {
+      float PosW = 1;
+      addSynapse(Neurons[id], PosW);
     }
   }
 
@@ -123,8 +155,9 @@ struct GENNeuron {
   void print() {
     printf("Id = %zu - Type = %s - Ap = %f - v = %f\n", id,
            getTypeStr().c_str(), Ap, v);
-    for (auto &e : PreSynapses)
-      printf("  From Id = %zu - W = %f\n", e->PreNeuron->id, e->W);
+    for (auto &e : PreSynapses) {
+      printf("  From Id = %zu - W = %f \n", e->PreNeuron->id, e->W);
+    }
   }
 
   size_t id;
@@ -139,7 +172,7 @@ struct GENNeuron {
   double D;     // Repolarization
   double Dw;    // NeuroPlasticity constant
   std::list<GENSynapse *> PreSynapses;
-  std::map<float, size_t> Distances;
+  std::vector<std::pair<size_t, float>> Distances;
 };
 
 class GENNeuralNet {
@@ -175,8 +208,16 @@ public:
       e->update();
   }
 
+  void generateRandomSynapse() {
+    static std::uniform_int_distribution<size_t> dist(0, Neurons.size() - 1);
+    size_t id = dist(generator);
+    std::cout << "ID = " << id << std::endl;
+    Neurons[id]->createRandomSynapse(Neurons);
+  }
+
 protected:
   void initializeRandomNet() {
+    
     // unsigned seed =
     // std::chrono::system_clock::now().time_since_epoch().count();
     auto uniform =
@@ -207,6 +248,8 @@ protected:
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
+    for (auto &e : Neurons)
+      e->computeDistances(Neurons);
   }
 
   void addHiddenNeuron(size_t nntype) {
@@ -222,11 +265,6 @@ protected:
 
   void addSynapse(size_t src, size_t target, double W) {
     Neurons[target]->addSynapse(Neurons[src], W);
-  }
-
-  void updateSynapses() {}
-
-  void generateRandomSynapse() {
   }
 
 private:

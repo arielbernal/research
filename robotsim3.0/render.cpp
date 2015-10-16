@@ -118,36 +118,35 @@ void init_glut_window(int argc, char *argv[]) {
   I[3] = 0.2;
 
   NN.feed(I);
-  
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();
+  NN.generateRandomSynapse();  
   NN.dump();
 
   // glewInit();
   glutMainLoop();
 }
+
 int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }
 
 
-int main1()
-{
-  const int nrolls = 10000; // number of experiments
-  const int nstars = 100;   // maximum number of stars to distribute
-
-  std::default_random_engine generator;
-  std::poisson_distribution<int> distribution(0.9);
-
-  int p[10]={};
-
-  for (int i=0; i<nrolls; ++i) {
-    int number = distribution(generator);
-    if (number<10) ++p[number];
-  }
-
-  std::cout << "poisson_distribution (mean=4.1):" << std::endl;
-  for (int i=0; i<10; ++i)
-    std::cout << i << ": " << std::string(p[i]*nstars/nrolls,'*') << std::endl;
-
-  return 0;
-}
