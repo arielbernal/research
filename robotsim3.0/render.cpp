@@ -8,7 +8,7 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "GENN";
-GENNeuralNet NN(80, 40, 400, 400);
+GENNeuralNet NN(100, 100, 400, 400);
 GLNGENNN GLNN(&NN);
 }
 
@@ -125,6 +125,22 @@ void init_glut_window(int argc, char *argv[]) {
   I[3] = 0.2;
 
   NN.feed(I);
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
   NN.generateSynapses();
   NN.generateSynapses();
   NN.generateSynapses();

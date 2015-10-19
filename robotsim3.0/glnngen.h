@@ -21,11 +21,12 @@ public:
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
-    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    //ColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     GLfloat position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat ambient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat diffuse[] = { 8.0f, 8.0f, 8.0f, 1.0f };
     GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     glPushMatrix();
@@ -34,7 +35,7 @@ public:
     if (al >= 360)
       al = 0;
 
-    glTranslatef(10, 10, 20);
+    glTranslatef(20, 20, 40);
     glColor3f(1, 1, 1);
     glutSolidSphere(0.2, 20, 20);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
@@ -42,7 +43,7 @@ public:
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
     glPopMatrix();
     glPushMatrix();
-    glTranslatef(-10, -10, 20);
+    glTranslatef(-20, -20, 40);
     glColor3f(1, 1, 1);
     glutSolidSphere(0.2, 20, 20);
     glLightfv(GL_LIGHT1, GL_POSITION, position);
@@ -58,7 +59,7 @@ public:
   void drawNN(float k) {
     glPushMatrix();
     glScalef(k, k, k);
-    glColor3f(0.3, 0.3, 0.3);
+    glColor4f(0.3, 0.0, 0.0, 0.5);
     // glutWireCube(1);
     glutWireSphere(1, 20, 20);
     // glTranslatef(-1 / 2.0, -1 / 2.0, -1 / 2.0);
@@ -68,21 +69,33 @@ public:
     for (auto &e : Neurons) {
       glPushMatrix();
 
-      if (e->Ap > 0)
+      if (true || e->Ap > 0)
         for (auto &h : e->PosSynapses) {
-          GENNeuron *p = h->PosNeuron;
-          if (e->nntype == GENNeuron::INPUT)
-            glColor3f(1, 1, 0);
-          if (e->nntype == GENNeuron::OUTPUT)
-            glColor3f(1, 0, 1);
-          if (e->nntype == GENNeuron::INHIBITORY)
-            glColor3f(1, 0, 0);
-          if (e->nntype == GENNeuron::EXCITATORY)
-            glColor3f(0, 1, 0);
+          GENNeuron *p = h.second->PosNeuron;
+          float khw = h.second->W / 10;
+          glColor3f(khw, khw, khw);
           glBegin(GL_LINES);
           glVertex3f(e->x, e->y, e->z);
           glVertex3f(p->x, p->y, p->z);
           glEnd();
+          if (e->nntype == GENNeuron::INPUT)
+            glColor3f(1, 1, 0);
+          if (e->nntype == GENNeuron::OUTPUT)
+            glColor3f(0, 1, 1);
+          if (e->nntype == GENNeuron::INHIBITORY)
+            glColor3f(1, 0, 0);
+          if (e->nntype == GENNeuron::EXCITATORY)
+            glColor3f(0, 1, 0);
+
+          glPushMatrix();
+          svector::float4 v1(e->x, e->y, e->z);
+          svector::float4 v2(p->x, p->y, p->z);
+          svector::float4 d = v2 - v1;
+          d.normalize();
+          svector::float4 r = v2 - d * (rn + rn / 6);
+          glTranslatef(r.x, r.y, r.z);
+          glutSolidSphere(rn / 4, 6, 6);
+          glPopMatrix();
         }
 
       float kc = 0.3f;
@@ -98,7 +111,7 @@ public:
         glColor3f(0, kc, 0);
 
       glTranslatef(e->x, e->y, e->z);
-      glutSolidSphere(rn, 20, 20);
+      glutSolidSphere(rn, 9, 9);
       glColor4f(0, 0, 0, 1);
       glutWireSphere(rnr, 9, 9);
 
@@ -133,10 +146,10 @@ public:
     glRotatef(-90, 1, 0, 0);
     glRotatef(-90, 0, 0, 1);
 
-    glDisable(GL_LIGHTING);
-    draw_axes_arrow(25, 25, 25, 0.05);
+//    glDisable(GL_LIGHTING);
+//    draw_axes_arrow(25, 25, 25, 0.05);
 
-    // enableLight();
+//     enableLight();
     // glTranslatef(-10, -10, -10);
     drawNN(20);
 

@@ -39,7 +39,7 @@ struct GENNeuron {
 
   ~GENNeuron() {
     for (auto &e : PreSynapses)
-      delete e;
+      delete e.second;
     PosSynapses.clear();
     PreSynapses.clear();
   }
@@ -47,19 +47,32 @@ struct GENNeuron {
   void addSynapse(GENNeuron *PosNeuron, double W = 0) {
     if (nntype == INPUT)
       W = 1;
-    GENSynapse *S = new GENSynapse(this, PosNeuron, W);
-    PosNeuron->PreSynapses.push_back(S);
-    PosSynapses.push_back(S);
+    auto e = PosSynapses.find(PosNeuron->id); 
+    if (e == PosSynapses.end()) {
+      GENSynapse *S = new GENSynapse(this, PosNeuron, W);
+      PosNeuron->PreSynapses[id] = S;
+      PosSynapses[PosNeuron->id] = S;
+    }
+    else {
+      e->second->W += W;
+      std::cout << "Multiple synapse = " << e->second->W << std::endl;
+    }
   }
 
-  void deletePosSynapse(GENSynapse *S) { for (auto &e : PosSynapses) }
+  void deleteSynapse(GENSynapse *S) {
+    PosSynapses.erase(S->PosNeuron->id);
+    S->PosNeuron->deletePreSynapse(S);
+  }
+
+  void deletePreSynapse(GENSynapse *S) {
+    PreSynapses.erase(S->PreNeuron->id);
+  }
 
   void deleteDeadSynapses() {
     auto I = PreSynapses.begin();
     while (I != PreSynapses.end()) {
-      if ((*I)->W == 0) {
-        delete (*I);
-        I = PreSynapses.erase(I);
+      if (I->second->W == 0) {
+        deleteSynapse(I->second);
       }
     }
   }
@@ -67,7 +80,7 @@ struct GENNeuron {
   void update() {
     Ap = 0;
     for (auto &e : PreSynapses)
-      v += e->W * e->PreNeuron->Ap;
+      v += e.second->W * e.second->PreNeuron->Ap;
     if (v > theta) {
       Ap = 1;
       v = H;
@@ -81,24 +94,25 @@ struct GENNeuron {
 
   void updateSynapses() {
     for (auto &e : PreSynapses) {
-      if (e->PreNeuron->nntype == EXCITATORY && e->PreNeuron->Ap == 1) {
+      GENSynapse *S = e.second;
+      if (S->PreNeuron->nntype == EXCITATORY && S->PreNeuron->Ap == 1) {
         if (Ap == 1)
-          e->W += Dw;
+          S->W += Dw;
         else
-          e->W -= Dw;
-        if (e->W > 1)
-          e->W = 1;
-        if (e->W < 0)
-          e->W = 0;
-      } else if (e->PreNeuron->nntype == INHIBITORY && e->PreNeuron->Ap == 1) {
+          S->W -= Dw;
+        if (S->W > 1)
+          S->W = 1;
+        if (S->W < 0)
+          S->W = 0;
+      } else if (S->PreNeuron->nntype == INHIBITORY && S->PreNeuron->Ap == 1) {
         if (Ap == 1)
-          e->W += Dw;
+          S->W += Dw;
         else
-          e->W -= Dw;
-        if (e->W > 0)
-          e->W = 0;
-        if (e->W < -1)
-          e->W = -1;
+          S->W -= Dw;
+        if (S->W > 0)
+          S->W = 0;
+        if (S->W < -1)
+          S->W = -1;
       }
     }
   }
@@ -126,21 +140,28 @@ struct GENNeuron {
 
   void createRandomSynapse(const std::vector<GENNeuron *> &Neurons) {
     static std::default_random_engine generator;
-    static std::normal_distribution<float> normal(0.2, 0.2f);
+    static std::normal_distribution<float> normal(0, 0.2f);
     float dd = fabs(normal(generator)) + 0.07;
-    int id = -1;
+    int idmax = -1;
     float dmax = 0;
-    for (auto &e : Distances)
+    for (size_t i = 0; i < Distances.size(); ++i) {
+      auto e = Distances[i];
       if (e.second > dd) {
         break;
       } else {
-        id = e.first;
+        idmax = i;
         dmax = e.second;
       }
+    }
 
-    if (id > 0) {
+    if (idmax >= 0) {
       float PosW = 1;
-      addSynapse(Neurons[id], PosW);
+      std::uniform_int_distribution<size_t> uniform(0, idmax);
+      
+      size_t idd = idmax;//uniform(generator);
+      std::cout << "HERE ------ . " << dmax << "   " << idmax << " Selected = " << idd << std::endl;
+      size_t idPosN = Distances[idd].first;
+      addSynapse(Neurons[idPosN], PosW);
     }
   }
 
@@ -162,8 +183,9 @@ struct GENNeuron {
     printf("Id = %zu - Type = %s - Ap = %f - v = %f\n", id,
            getTypeStr().c_str(), Ap, v);
     for (auto &e : PreSynapses) {
-      printf("  From Id = %zu - W = %f \n", e->second->PreNeuron->id,
-             e->second->W);
+      GENSynapse *S = e.second;
+      printf("  From Id = %zu - W = %f \n", S->PreNeuron->id,
+             S->W);
     }
   }
 
@@ -269,8 +291,8 @@ protected:
 
     // unsigned seed =
     // std::chrono::system_clock::now().time_since_epoch().count();
-    auto uniform =
-        std::bind(std::uniform_real_distribution<float>(-1, 1), generator);
+    // auto uniform =
+    //     std::bind(std::uniform_real_distribution<float>(-1, 1), generator);
 
     size_t j = 0;
     for (size_t i = 0; i < NInput; ++i) {
@@ -289,14 +311,14 @@ protected:
     }
     for (size_t i = 0; i < NExcitatory; ++i) {
       float px, py, pz;
-      uniformSphere(px, py, pz, 0.9, false);
+      uniformSphere(px, py, pz, 0.98, false);
       GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::EXCITATORY, px, py, pz);
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NInhibitory; ++i) {
       float px, py, pz;
-      uniformSphere(px, py, pz, 0.9, false);
+      uniformSphere(px, py, pz, 0.98, false);
       GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::INHIBITORY, px, py, pz);
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
