@@ -15,10 +15,10 @@
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
-#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
+#define SIGMOID_A2 (SIGMOID_A *SIGMOID_A)
 #define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
-#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
-#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
+#define DSIGMOID(S) (SIGMOID_BA *(SIGMOID_A2 - S *S))
+#define SIGMOID(x) (SIGMOID_A *tanh(SIGMOID_B *x))
 //#define SIGMOID(x) (tanh(x))
 
 struct GENNeuron;
@@ -37,14 +37,22 @@ struct GENNeuron {
       : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), v(0), theta(0.5),
         Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.01) {}
 
-  ~GENNeuron() { PreSynapses.clear(); }
+  ~GENNeuron() {
+    for (auto &e : PreSynapses)
+      delete e;
+    PosSynapses.clear();
+    PreSynapses.clear();
+  }
 
   void addSynapse(GENNeuron *PosNeuron, double W = 0) {
     if (nntype == INPUT)
       W = 1;
     GENSynapse *S = new GENSynapse(this, PosNeuron, W);
     PosNeuron->PreSynapses.push_back(S);
+    PosSynapses.push_back(S);
   }
+
+  void deletePosSynapse(GENSynapse *S) { for (auto &e : PosSynapses) }
 
   void deleteDeadSynapses() {
     auto I = PreSynapses.begin();
@@ -118,16 +126,14 @@ struct GENNeuron {
 
   void createRandomSynapse(const std::vector<GENNeuron *> &Neurons) {
     static std::default_random_engine generator;
-    static std::normal_distribution<float> normal(0, 0.4f);
+    static std::normal_distribution<float> normal(0.2, 0.2f);
     float dd = fabs(normal(generator)) + 0.07;
-    std::cout << dd << std::endl;
     int id = -1;
     float dmax = 0;
     for (auto &e : Distances)
       if (e.second > dd) {
         break;
-      }
-      else {
+      } else {
         id = e.first;
         dmax = e.second;
       }
@@ -156,7 +162,8 @@ struct GENNeuron {
     printf("Id = %zu - Type = %s - Ap = %f - v = %f\n", id,
            getTypeStr().c_str(), Ap, v);
     for (auto &e : PreSynapses) {
-      printf("  From Id = %zu - W = %f \n", e->PreNeuron->id, e->W);
+      printf("  From Id = %zu - W = %f \n", e->second->PreNeuron->id,
+             e->second->W);
     }
   }
 
@@ -171,8 +178,9 @@ struct GENNeuron {
   double H;     // Hyperpolarizing afterpotential
   double D;     // Repolarization
   double Dw;    // NeuroPlasticity constant
-  std::list<GENSynapse *> PreSynapses;
-  std::vector<std::pair<size_t, float>> Distances;
+  std::map<size_t, GENSynapse *> PreSynapses;
+  std::map<size_t, GENSynapse *> PosSynapses;
+  std::vector<std::pair<size_t, float> > Distances;
 };
 
 class GENNeuralNet {
@@ -215,36 +223,81 @@ public:
     Neurons[id]->createRandomSynapse(Neurons);
   }
 
+  void generateSynapses() {
+    for (auto &e : Neurons)
+      e->createRandomSynapse(Neurons);
+  }
+
+  size_t getNSynapses() {
+    size_t s = 0;
+    for (auto &e : Neurons)
+      s += e->PosSynapses.size();
+    return s;
+  }
+
+  size_t getNNeurons() { return Neurons.size(); }
+
+  size_t getNInput() { return NInput; }
+
+  size_t getNOutput() { return NOutput; }
+
+  size_t getNExitatory() { return NExcitatory; }
+
+  size_t getNInhibitory() { return NInhibitory; }
+
 protected:
+  void uniformSphere(float &x, float &y, float &z, float radius = 1,
+                     bool surface = false) {
+    static std::normal_distribution<float> normal(0, 1);
+    x = normal(generator);
+    y = normal(generator);
+    z = normal(generator);
+    float dnorm = sqrt(x * x + y * y + z * z);
+    x = radius * x / dnorm;
+    y = radius * y / dnorm;
+    z = radius * z / dnorm;
+    if (!surface) {
+      static std::uniform_real_distribution<float> uniform(0, 1);
+      float k = std::pow(uniform(generator), 1.0f / 3.0f);
+      x *= k;
+      y *= k;
+      z *= k;
+    }
+  }
+
   void initializeRandomNet() {
-    
+
     // unsigned seed =
     // std::chrono::system_clock::now().time_since_epoch().count();
     auto uniform =
-        std::bind(std::uniform_real_distribution<float>(0, 1), generator);
+        std::bind(std::uniform_real_distribution<float>(-1, 1), generator);
 
     size_t j = 0;
     for (size_t i = 0; i < NInput; ++i) {
-      GENNeuron *Neuron =
-          new GENNeuron(j++, GENNeuron::INPUT, uniform(), uniform(), uniform());
+      float px, py, pz;
+      uniformSphere(px, py, pz, 1, true);
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::INPUT, px, py, pz);
       Input.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NOutput; ++i) {
-      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::OUTPUT, uniform(),
-                                        uniform(), uniform());
+      float px, py, pz;
+      uniformSphere(px, py, pz, 1, true);
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::OUTPUT, px, py, pz);
       Output.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NExcitatory; ++i) {
-      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::EXCITATORY, uniform(),
-                                        uniform(), uniform());
+      float px, py, pz;
+      uniformSphere(px, py, pz, 0.9, false);
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::EXCITATORY, px, py, pz);
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
     }
     for (size_t i = 0; i < NInhibitory; ++i) {
-      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::INHIBITORY, uniform(),
-                                        uniform(), uniform());
+      float px, py, pz;
+      uniformSphere(px, py, pz, 0.9, false);
+      GENNeuron *Neuron = new GENNeuron(j++, GENNeuron::INHIBITORY, px, py, pz);
       Hidden.push_back(Neuron);
       Neurons.push_back(Neuron);
     }

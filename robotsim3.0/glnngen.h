@@ -23,10 +23,10 @@ public:
     glEnable(GL_LIGHT1);
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
-    GLfloat position[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat ambient[] = {0.8f, 0.8f, 0.8f, 1.0f};
-    GLfloat diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    GLfloat position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    GLfloat ambient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     glPushMatrix();
     // glRotatef(al, 0, 0, 1);
@@ -56,51 +56,56 @@ public:
   }
 
   void drawNN(float k) {
-    glPushMatrix();    
-    glScalef(k, k ,k);
-    glColor3f(0.4, 0, 0);
-    glutWireCube(1);
-    glTranslatef(-1 / 2.0, -1 / 2.0, -1 / 2.0);
+    glPushMatrix();
+    glScalef(k, k, k);
+    glColor3f(0.3, 0.3, 0.3);
+    // glutWireCube(1);
+    glutWireSphere(1, 20, 20);
+    // glTranslatef(-1 / 2.0, -1 / 2.0, -1 / 2.0);
+    float rn = 0.015;
+    float rnr = 0.016;
     std::vector<GENNeuron *> &Neurons = NN->getNeurons();
     for (auto &e : Neurons) {
       glPushMatrix();
-      
 
-      glBegin(GL_LINES);
-      for (auto &h : e->PreSynapses) {
-        GENNeuron* p = h->PreNeuron;
-        if (p->nntype == GENNeuron::INPUT)
-          glColor3f(1, 1, 0);
-        if (p->nntype == GENNeuron::OUTPUT)
-          glColor3f(1, 0, 1);
-        if (p->nntype == GENNeuron::INHIBITORY)
-          glColor3f(1, 0, 0);
-        if (p->nntype == GENNeuron::EXCITATORY)
-          glColor3f(0, 1, 0);
-        glVertex3f(e->x, e->y, e->z);
-        glVertex3f(p->x, p->y, p->z);
-      } 
-      glEnd();
-      
+      if (e->Ap > 0)
+        for (auto &h : e->PosSynapses) {
+          GENNeuron *p = h->PosNeuron;
+          if (e->nntype == GENNeuron::INPUT)
+            glColor3f(1, 1, 0);
+          if (e->nntype == GENNeuron::OUTPUT)
+            glColor3f(1, 0, 1);
+          if (e->nntype == GENNeuron::INHIBITORY)
+            glColor3f(1, 0, 0);
+          if (e->nntype == GENNeuron::EXCITATORY)
+            glColor3f(0, 1, 0);
+          glBegin(GL_LINES);
+          glVertex3f(e->x, e->y, e->z);
+          glVertex3f(p->x, p->y, p->z);
+          glEnd();
+        }
+
+      float kc = 0.3f;
+      if (e->Ap > 0)
+        kc = 1.0f;
       if (e->nntype == GENNeuron::INPUT)
-        glColor3f(1, 1, 0);
+        glColor3f(kc, kc, 0);
       if (e->nntype == GENNeuron::OUTPUT)
-        glColor3f(1, 0, 1);
+        glColor3f(0, kc, kc);
       if (e->nntype == GENNeuron::INHIBITORY)
-        glColor3f(1, 0, 0);
+        glColor3f(kc, 0, 0);
       if (e->nntype == GENNeuron::EXCITATORY)
-        glColor3f(0, 1, 0);
-
+        glColor3f(0, kc, 0);
 
       glTranslatef(e->x, e->y, e->z);
-      glutSolidSphere(0.04, 20, 20);
+      glutSolidSphere(rn, 20, 20);
       glColor4f(0, 0, 0, 1);
-      glutWireSphere(0.043, 9, 9);
+      glutWireSphere(rnr, 9, 9);
 
-      if (e->Ap > 0) {
-        glColor4f(0.5, 0.3, 0.3, 0.5);
-        glutWireSphere(0.06, 9, 9);
-      }
+      // if (e->Ap > 0) {
+      //   glColor4f(0.5, 0.3, 0.3, 0.5);
+      //   glutWireSphere(0.04, 9, 9);
+      // }
       glPopMatrix();
     }
     glPopMatrix();
@@ -132,7 +137,7 @@ public:
     draw_axes_arrow(25, 25, 25, 0.05);
 
     // enableLight();
-    //glTranslatef(-10, -10, -10);
+    // glTranslatef(-10, -10, -10);
     drawNN(20);
 
     glPopMatrix();

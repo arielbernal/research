@@ -212,6 +212,12 @@ void printText(float x, float y, const std::string &text) {
   }
 }
 
+template<typename T>
+std::string format(const std::string fmt, T v) {
+  char s[200];
+  sprintf(s, fmt.c_str(), v);
+  return s;
+}
 
 void printFloat(float x, float y, const std::string& text, float v, int dig = 10, int dec = 2) {
   char s[100];

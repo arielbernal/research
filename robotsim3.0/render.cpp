@@ -8,14 +8,14 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "GENN";
-GENNeuralNet NN(4, 2, 2, 1);
+GENNeuralNet NN(80, 40, 400, 400);
 GLNGENNN GLNN(&NN);
 }
 
 void set2DMode(size_t Width, size_t Height) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, Width, 0, Height);
+  gluOrtho2D(0, Width, Height, 0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -38,6 +38,13 @@ void display() {
   int height = viewport[3];
   set3DMode(width, height);
   GLNN.render();
+  set2DMode(width, height);
+  printText(10, 20, format("Neurons       = %8zu", NN.getNNeurons()));
+  printText(10, 40, format("   Exitatory  = %8zu", NN.getNExitatory()));
+  printText(10, 60, format("   Inhibitory = %8zu", NN.getNInhibitory()));
+  printText(10, 80, format("   Input      = %8zu", NN.getNInput()));
+  printText(10,100, format("   Output     = %8zu", NN.getNOutput()));
+  printText(10,120, format("Synapses      = %8zu", NN.getNSynapses()));
 
   glutSwapBuffers();
 }
@@ -118,27 +125,12 @@ void init_glut_window(int argc, char *argv[]) {
   I[3] = 0.2;
 
   NN.feed(I);
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();
-  NN.generateRandomSynapse();  
-  NN.dump();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+  NN.generateSynapses();
+
+//  NN.dump();
 
   // glewInit();
   glutMainLoop();
@@ -148,5 +140,6 @@ int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }
+
 
 
