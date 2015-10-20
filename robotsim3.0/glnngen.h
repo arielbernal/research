@@ -59,7 +59,7 @@ public:
   void drawNN(float k) {
     glPushMatrix();
     glScalef(k, k, k);
-    glColor4f(0.3, 0.0, 0.0, 0.5);
+    glColor4f(0.5, 0.0, 0.0, 1.0);
     // glutWireCube(1);
     glutWireSphere(1, 20, 20);
     // glTranslatef(-1 / 2.0, -1 / 2.0, -1 / 2.0);
