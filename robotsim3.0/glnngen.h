@@ -72,7 +72,7 @@ public:
       if (true || e->Ap > 0)
         for (auto &h : e->PosSynapses) {
           GENNeuron *p = h.second->PosNeuron;
-          float khw = h.second->W / 10;
+          float khw = h.second->W / (0.5f * 10 * 0.5f);
           glColor3f(khw, khw, khw);
           glBegin(GL_LINES);
           glVertex3f(e->x, e->y, e->z);

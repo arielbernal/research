@@ -47,6 +47,7 @@ struct GENNeuron {
   void addSynapse(GENNeuron *PosNeuron, double W = 0) {
     if (nntype == INPUT)
       W = 1;
+    if (nntype == INHIBITORY) W *= -1;
     auto e = PosSynapses.find(PosNeuron->id); 
     if (e == PosSynapses.end()) {
       GENSynapse *S = new GENSynapse(this, PosNeuron, W);
@@ -55,7 +56,7 @@ struct GENNeuron {
     }
     else {
       e->second->W += W;
-      std::cout << "Multiple synapse = " << e->second->W << std::endl;
+      //std::cout << "Multiple synapse = " << e->second->W << std::endl;
     }
   }
 
@@ -81,6 +82,7 @@ struct GENNeuron {
     Ap = 0;
     for (auto &e : PreSynapses)
       v += e.second->W * e.second->PreNeuron->Ap;
+    std::cout << v << std::endl;
     if (v > theta) {
       Ap = 1;
       v = H;
@@ -155,11 +157,10 @@ struct GENNeuron {
     }
 
     if (idmax >= 0) {
-      float PosW = 1;
+      float PosW = 0.5f * 10 * theta / 10.0f;
+
       std::uniform_int_distribution<size_t> uniform(0, idmax);
-      
       size_t idd = idmax;//uniform(generator);
-      std::cout << "HERE ------ . " << dmax << "   " << idmax << " Selected = " << idd << std::endl;
       size_t idPosN = Distances[idd].first;
       addSynapse(Neurons[idPosN], PosW);
     }

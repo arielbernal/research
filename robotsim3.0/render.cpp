@@ -43,8 +43,8 @@ void display() {
   printText(10, 40, format("   Exitatory  = %8zu", NN.getNExitatory()));
   printText(10, 60, format("   Inhibitory = %8zu", NN.getNInhibitory()));
   printText(10, 80, format("   Input      = %8zu", NN.getNInput()));
-  printText(10,100, format("   Output     = %8zu", NN.getNOutput()));
-  printText(10,120, format("Synapses      = %8zu", NN.getNSynapses()));
+  printText(10, 100, format("   Output     = %8zu", NN.getNOutput()));
+  printText(10, 120, format("Synapses      = %8zu", NN.getNSynapses()));
 
   glutSwapBuffers();
 }
@@ -70,33 +70,38 @@ void mouse_passive_motion(int x, int y) { GLNN.mouse_passive_motion(x, y); }
 
 void special_keys(int key, int x, int y) {
   switch (key) {
-    case GLUT_KEY_UP:
-      break;
-    case GLUT_KEY_DOWN:
-      break;
-    case GLUT_KEY_RIGHT:
-      break;
-    case GLUT_KEY_LEFT:
-      break;
-    default:
-      break;
+  case GLUT_KEY_UP:
+    break;
+  case GLUT_KEY_DOWN:
+    break;
+  case GLUT_KEY_RIGHT:
+    break;
+  case GLUT_KEY_LEFT:
+    break;
+  default:
+    break;
   }
 }
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
-    case 'r':
-      break;
-    case 's':
-      break;
-    case 'h':
-      glutPostRedisplay();
-      break;
-    case 27:
-      glutLeaveMainLoop();
-      break;
-    default:
-      break;
+  case 32: {
+    std::vector<double> I(8);
+    for (size_t i = 0; i < 8; ++i)
+      I[0] = ((i % 8) + 1) / 9.0 * 0.1;
+    NN.feed(I);
+    break;
+  }
+  case 's':
+    break;
+  case 'h':
+    glutPostRedisplay();
+    break;
+  case 27:
+    glutLeaveMainLoop();
+    break;
+  default:
+    break;
   }
 }
 
@@ -117,19 +122,17 @@ void init_glut_window(int argc, char *argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
+  std::vector<double> I(8);
+  for (size_t i = 0; i < 8; ++i)
+    I[0] = ((i % 8) + 1) / 9.0 * 0.01;
 
-  std::vector<double> I(4);
-  I[0] = 0.5;
-  I[1] = 0.6;
-  I[2] = 0.8;
-  I[3] = 0.2;
-
-  NN.feed(I);
-  for (size_t i = 0; i < 100; ++i) {
+  for (size_t i = 0; i < 200; ++i) {
     NN.generateSynapses();
   }
 
-//  NN.dump();
+  NN.feed(I);
+
+  //  NN.dump();
 
   // glewInit();
   glutMainLoop();
@@ -139,6 +142,3 @@ int main(int argc, char **argv) {
   init_glut_window(argc, argv);
   return 0;
 }
-
-
-
