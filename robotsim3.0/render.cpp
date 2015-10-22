@@ -30,6 +30,10 @@ void set3DMode(size_t Width, size_t Height) {
   glLoadIdentity();
 }
 
+float fc(float t, float V0, float VP, float tau) {
+  return V0 * (1 - exp(-t/tau)) + VP;
+}
+
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int viewport[4];
@@ -37,7 +41,7 @@ void display() {
   int width = viewport[2];
   int height = viewport[3];
   set3DMode(width, height);
-  GLNN.render();
+  //GLNN.render();
   set2DMode(width, height);
   printText(10, 20, format("Neurons       = %8zu", NN.getNNeurons()));
   printText(10, 40, format("   Exitatory  = %8zu", NN.getNExitatory()));
@@ -45,6 +49,31 @@ void display() {
   printText(10, 80, format("   Input      = %8zu", NN.getNInput()));
   printText(10, 100, format("   Output     = %8zu", NN.getNOutput()));
   printText(10, 120, format("Synapses      = %8zu", NN.getNSynapses()));
+  
+  //glScalef(1, -1, 1);
+  float kc = 10;
+  float kcx = 20;
+  float V0 = 40;
+  float VV = 0;
+  float VP = 10;
+  float v = VP;
+  float tau = 5;
+  float h = 0.01;
+  
+  glBegin(GL_POINTS);
+  for (size_t i = 0; i < 100; ++i) {
+    float x0 = i * kcx;
+    float y0 = fc(i, V0, VP, tau) * kc;
+    glVertex2f(x0, height - y0);
+    //glVertex2f(x1, height - y1);
+    v += h * V0 /tau * exp(-i * h / tau);
+    float y1 = v * kc;
+    std::cout << "  " << y0 << " " << y1 << std::endl;
+    glColor3f(1, 1, 0);
+    glVertex2f(x0, height - y1);
+  }
+  glEnd();
+  exit(-1);
 
   glutSwapBuffers();
 }
