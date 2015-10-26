@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <queue>
 #include "include/glheaders.h"
 #include "nngen.h"
 #include "glnngen.h"
@@ -8,27 +9,12 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "GENN";
-GENNeuralNet NN(8, 8, 40, 40);
+GENNeuralNet NN(2, 2, 4, 2);
 GLNGENNN GLNN(&NN);
+std::queue<float> TrainInput;
+std::queue<float> TrainOutput;
 }
 
-void set2DMode(size_t Width, size_t Height) {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluOrtho2D(0, Width, Height, 0);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-}
-
-void set3DMode(size_t Width, size_t Height) {
-  glEnable(GL_DEPTH_TEST);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(60.0, float(Width) / Height, 0.01f, 1000);
-  gluLookAt(0, 0, 40, 0, 0, 0, 0.0, 1.0, 0.0);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-}
 
 float fc(float t, float V0, float VP, float tau) {
   return V0 * (1 - exp(-t/tau)) + VP;
@@ -40,8 +26,8 @@ void display() {
   glGetIntegerv(GL_VIEWPORT, viewport);
   int width = viewport[2];
   int height = viewport[3];
-  set3DMode(width, height);
-  //GLNN.render();
+  GLNN.render(width, height);
+
   set2DMode(width, height);
   printText(10, 20, format("Neurons       = %8zu", NN.getNNeurons()));
   printText(10, 40, format("   Exitatory  = %8zu", NN.getNExitatory()));
@@ -51,30 +37,6 @@ void display() {
   printText(10, 120, format("Synapses      = %8zu", NN.getNSynapses()));
   
   //glScalef(1, -1, 1);
-  float kc = 10;
-  float kcx = 20;
-  float V0 = 40;
-  float VV = 0;
-  float VP = 10;
-  float v = VP;
-  float tau = 5;
-  float h = 0.01;
-  
-  glBegin(GL_POINTS);
-  for (size_t i = 0; i < 100; ++i) {
-    float x0 = i * kcx;
-    float y0 = fc(i, V0, VP, tau) * kc;
-    glVertex2f(x0, height - y0);
-    //glVertex2f(x1, height - y1);
-    v += h * V0 /tau * exp(-i * h / tau);
-    float y1 = v * kc;
-    std::cout << "  " << y0 << " " << y1 << std::endl;
-    glColor3f(1, 1, 0);
-    glVertex2f(x0, height - y1);
-  }
-  glEnd();
-  exit(-1);
-
   glutSwapBuffers();
 }
 
@@ -112,16 +74,41 @@ void special_keys(int key, int x, int y) {
   }
 }
 
+
+void populateBurst(float x, float y, float c) {
+  char cx = char(x);
+  char cy = char(y);
+  char cc = char(c);
+  for (size_t i = 0; i < 3; ++i) {
+    TrainInput.push(cx & 0x01);
+    TrainInput.push(cy & 0x01);
+    TrainOutput.push(cc & 0x01);
+    cx >>= 1;
+    cy >>= 1;
+    cc >>= 1;
+  }
+  TrainInput.push(0);
+  TrainInput.push(0);
+  TrainOutput.push(0);
+  TrainOutput.push(0);
+}
+
+
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
   case 32: {
-    std::vector<double> I(8);
-    for (size_t i = 0; i < 8; ++i)
-      I[0] = ((i % 8) + 1) / 9.0 * 0.1;
-    NN.feed(I);
+    NN.setInput(TrainInput);
+    NN.update();
+    glutPostRedisplay();
     break;
   }
+  case 't':
+    NN.feedback(TrainOutput);
+    glutPostRedisplay();
+    break;  
   case 's':
+    populateBurst(7, 4, 1);
+    glutPostRedisplay();
     break;
   case 'h':
     glutPostRedisplay();
@@ -151,15 +138,8 @@ void init_glut_window(int argc, char *argv[]) {
   glutMouseWheelFunc(mouse_wheel);
   glutReshapeFunc(reshape);
 
-  std::vector<double> I(8);
-  for (size_t i = 0; i < 8; ++i)
-    I[0] = ((i % 8) + 1) / 9.0 * 0.01;
-
-  for (size_t i = 0; i < 200; ++i) {
+  for (size_t i = 0; i < 15; ++i)
     NN.generateSynapses();
-  }
-
-  NN.feed(I);
 
   //  NN.dump();
 
