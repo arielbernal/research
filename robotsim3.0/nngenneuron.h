@@ -14,10 +14,10 @@
 
 #define SIGMOID_A (1.715904709)
 #define SIGMOID_B (0.6666666667)
-#define SIGMOID_A2 (SIGMOID_A *SIGMOID_A)
+#define SIGMOID_A2 (SIGMOID_A * SIGMOID_A)
 #define SIGMOID_BA (SIGMOID_B / SIGMOID_A)
-#define DSIGMOID(S) (SIGMOID_BA *(SIGMOID_A2 - S *S))
-#define SIGMOID(x) (SIGMOID_A *tanh(SIGMOID_B *x))
+#define DSIGMOID(S) (SIGMOID_BA * (SIGMOID_A2 - S * S))
+#define SIGMOID(x) (SIGMOID_A * tanh(SIGMOID_B * x))
 //#define SIGMOID(x) (tanh(x))
 
 struct GENNeuron;
@@ -33,8 +33,12 @@ struct GENSynapse {
 struct GENNeuron {
   enum { INPUT, OUTPUT, EXCITATORY, INHIBITORY };
   GENNeuron(size_t id, size_t nntype, float x, float y, float z)
-      : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), v(0), theta(0.5),
-        Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.01) {}
+      : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), theta(0.5),
+        Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.005) {
+    iv = 0;
+    for (size_t i = 0; i < 3; ++i)
+      v[i] = 0;
+  }
 
   ~GENNeuron() {
     for (auto &e : PreSynapses)
@@ -75,22 +79,31 @@ struct GENNeuron {
 
   void update() {
     Ap = 0;
-    v = 0;
+    float temp = 0;
     for (auto &e : PreSynapses) {
-      v += e.second->W * e.second->PreNeuron->Ap;
+      temp += e.second->W * e.second->PreNeuron->Ap;
       // std::cout << "    " << e.second->PreNeuron->id << " - " << e.second->W
       //           << " - " << e.second->PreNeuron->Ap << std::endl;
     }
-    std::cout << id << " " << v << std::endl;
-    if (v > theta) {
+    // std::cout << id << " " << v << std::endl;
+    v[iv] = temp;
+    iv++;
+    if (iv >= 3)
+      iv = 0;
+    float vtemp = 0;
+    for (size_t i = 0; i < 3; ++i)
+      vtemp += v[i];
+    if (vtemp > theta) {
       Ap = 1;
-      v = H;
+      for (size_t i = 0; i < 3; ++i)
+        v[i] = 0;
     }
   }
 
   void updateSynapses() {
     for (auto &e : PreSynapses) {
       GENSynapse *S = e.second;
+      std::cout << "   " << S->W;
       if (S->PreNeuron->nntype == EXCITATORY && S->PreNeuron->Ap == 1) {
         if (Ap == 1)
           S->W += Dw;
@@ -110,6 +123,7 @@ struct GENNeuron {
         if (S->W < -1)
           S->W = -1;
       }
+      std::cout << "   " << S->W << std::endl;
     }
   }
 
@@ -152,7 +166,7 @@ struct GENNeuron {
     }
 
     if (idmax >= 0) {
-      float PosW = 0.5f * 20 * theta / 10.0f;
+      float PosW = 0.5f * 0.10 * theta / 10.0f;
 
       std::uniform_int_distribution<size_t> uniform(0, idmax);
       size_t idd = idmax; // uniform(generator);
@@ -176,8 +190,8 @@ struct GENNeuron {
   }
 
   void print() {
-    printf("Id = %zu - Type = %s - Ap = %f - v = %f\n", id,
-           getTypeStr().c_str(), Ap, v);
+    printf("Id = %zu - Type = %s - Ap = %f \n", id,
+           getTypeStr().c_str(), Ap);
     for (auto &e : PreSynapses) {
       GENSynapse *S = e.second;
       printf("  From Id = %zu - W = %f \n", S->PreNeuron->id, S->W);
@@ -188,7 +202,8 @@ struct GENNeuron {
   size_t nntype;
   float x, y, z; // Position
   bool alive;
-  double v;     // Potential
+  double v[3]; // Potential
+  size_t iv;
   double theta; // Threshold
   double Ap;    // Action potential
   double Rp;    // Resting potential
@@ -197,7 +212,7 @@ struct GENNeuron {
   double Dw;    // NeuroPlasticity constant
   std::map<size_t, GENSynapse *> PreSynapses;
   std::map<size_t, GENSynapse *> PosSynapses;
-  std::vector<std::pair<size_t, float> > Distances;
+  std::vector<std::pair<size_t, float>> Distances;
 };
 
 #endif // FFNN3L_H

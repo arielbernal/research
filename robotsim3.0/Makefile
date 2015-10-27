@@ -1,4 +1,4 @@
-SOURCES := render.cpp
+SOURCES := test.cpp
 
 PROGRAM := robotsim 
 CXX := g++ 

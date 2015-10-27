@@ -38,11 +38,13 @@ public:
 
   std::vector<GENNeuron *> &getNeurons() { return Neurons; }
   std::vector<GENNeuron *> &getInputs() { return Input; }
+  std::vector<GENNeuron *> &getOutputs() { return Output; }
 
   void setInput(std::queue<float> &Q) {
     for (auto &e : Input) {
       if (!Q.empty()) {
         e->Ap = Q.front();
+        std::cout << "Set Input " << e->Ap << std::endl;
         Q.pop();
       }
     }
@@ -51,17 +53,18 @@ public:
   void feedback(std::queue<float> &Q) {
     for (auto &e : Output) {
       if (!Q.empty()) {
+        std::cout << "Output = " << e->Ap << " Test = " << Q.front()
+                  << std::endl;
         e->Ap = Q.front();
         Q.pop();
-      }      
+      }
     }
 
-    for (auto &e : Hidden)
-      e->updateSynapses();
     for (auto &e : Output)
       e->updateSynapses();
+    for (auto &e : Hidden)
+      e->updateSynapses();
   }
-
 
   void update() {
     for (auto &e : Hidden)

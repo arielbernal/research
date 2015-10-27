@@ -9,15 +9,14 @@ namespace {
 int m_window_width = 1000;
 int m_window_height = 1000;
 std::string m_window_title = "GENN";
-GENNeuralNet NN(2, 2, 4, 2);
+GENNeuralNet NN(2, 1, 4, 2);
 GLNGENNN GLNN(&NN);
 std::queue<float> TrainInput;
 std::queue<float> TrainOutput;
 }
 
-
 float fc(float t, float V0, float VP, float tau) {
-  return V0 * (1 - exp(-t/tau)) + VP;
+  return V0 * (1 - exp(-t / tau)) + VP;
 }
 
 void display() {
@@ -35,8 +34,8 @@ void display() {
   printText(10, 80, format("   Input      = %8zu", NN.getNInput()));
   printText(10, 100, format("   Output     = %8zu", NN.getNOutput()));
   printText(10, 120, format("Synapses      = %8zu", NN.getNSynapses()));
-  
-  //glScalef(1, -1, 1);
+
+  // glScalef(1, -1, 1);
   glutSwapBuffers();
 }
 
@@ -74,25 +73,49 @@ void special_keys(int key, int x, int y) {
   }
 }
 
-
 void populateBurst(float x, float y, float c) {
   char cx = char(x);
   char cy = char(y);
   char cc = char(c);
-  for (size_t i = 0; i < 3; ++i) {
-    TrainInput.push(cx & 0x01);
-    TrainInput.push(cy & 0x01);
-    TrainOutput.push(cc & 0x01);
-    cx >>= 1;
-    cy >>= 1;
-    cc >>= 1;
-  }
-  TrainInput.push(0);
+  char mask = 0x04;
   TrainInput.push(0);
   TrainOutput.push(0);
+  for (size_t i = 0; i < 3; ++i) {
+    char sx = (cx & mask) != 0;
+    char sy = (cy & mask) != 0;
+    char sc = (cc & mask) != 0;
+    TrainInput.push(sx);
+    TrainInput.push(sy);
+    TrainOutput.push(sc);
+    // std::cout << "  " << int(sx) << " " << int(sy) << " " << int(sc)
+    //           << std::endl;
+    mask >>= 1;
+  }
+  TrainInput.push(0);
   TrainOutput.push(0);
 }
 
+void trainNN() {
+  std::default_random_engine generator;
+  static std::uniform_int_distribution<size_t> uniform(0, 7);
+  for (size_t r = 0; r < 10000; ++r) {
+    size_t err = 0;
+    for (size_t i = 0; i < 1000; ++i) {
+      float x = uniform(generator);
+      float y = uniform(generator);
+      float c = x > 4 && y > 4 ? 1 : 0;
+      populateBurst(x, y, c);
+    }
+    while (!TrainInput.empty()) {
+      NN.setInput(TrainInput);
+      NN.update();
+      if (NN.getOutputs()[0]->Ap != TrainOutput.front())
+        err++;
+      NN.feedback(TrainOutput);
+    }
+    std::cout << "r = " << r << " Errors = " << err << " Ratio = " << err / 1000.f <<  std::endl;
+  }
+}
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
@@ -103,9 +126,9 @@ void normal_keys(unsigned char key, int x, int y) {
     break;
   }
   case 't':
-    NN.feedback(TrainOutput);
+    trainNN();
     glutPostRedisplay();
-    break;  
+    break;
   case 's':
     populateBurst(7, 4, 1);
     glutPostRedisplay();
