@@ -97,7 +97,7 @@ void init_glut_window(int argc, char *argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif
 
-  for (size_t i = 0; i < 15; ++i)
+  for (size_t i = 0; i < 20; ++i)
     NN.generateSynapses();
 
   glutMainLoop();

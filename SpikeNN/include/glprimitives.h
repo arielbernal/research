@@ -218,6 +218,20 @@ template <typename T> std::string format(const std::string fmt, T v) {
   return s;
 }
 
+template <typename T1, typename T2>
+std::string format(const std::string fmt, T1 v1, T2 v2) {
+  char s[200];
+  sprintf(s, fmt.c_str(), v1, v2);
+  return s;
+}
+
+template <typename T1, typename T2, typename T3>
+std::string format(const std::string fmt, T1 v1, T2 v2, T3 v3) {
+  char s[200];
+  sprintf(s, fmt.c_str(), v1, v2, v3);
+  return s;
+}
+
 void printFloat(float x, float y, const std::string &text, float v,
                 int dig = 10, int dec = 2) {
   char s[100];

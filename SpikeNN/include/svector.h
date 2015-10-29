@@ -323,6 +323,11 @@ inline float dot(const float4 &v, const float4 &w,
 #endif
 }
 
+inline float distance(const float4 &v, const float4 &w) {
+  float4 d = w - v;
+  return d.norm();
+}
+
 inline float4 cross3d(const float4 &v, const float4 &w) {
   float4 x(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x);
   return x;
