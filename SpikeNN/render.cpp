@@ -171,6 +171,11 @@ void init_glut_window(int argc, char *argv[]) {
 }
 
 int main(int argc, char **argv) {
+
+
+
+
   init_glut_window(argc, argv);
+
   return 0;
 }

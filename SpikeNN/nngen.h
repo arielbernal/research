@@ -17,10 +17,14 @@
 
 class GEN1DTest {
 public:
-  GEN1DTest() {}
+  GEN1DTest(size_t n, size_t nb) : n(n), nb(nb) {
+    generateData();
+    generateSpikes();
+  }
 
-  void generateData(size_t n, size_t nb) {
-    static std::uniform_int_distribution<size_t> uniform(0, std::pow(2.0f, nb) - 1);
+  void generateData() {
+    static std::uniform_int_distribution<size_t> uniform(0, std::pow(2.0f, nb) -
+                                                                1);
     In.clear();
     Out.clear();
     for (size_t i = 0; i < 10; ++i) {
@@ -31,32 +35,61 @@ public:
       else
         Out.push_back(0);
     }
-    generateSpikes(nb);
   }
 
-  void generateSpikes(size_t nb) {
+  void generateSpikes() {
     clearSpikeQueues();
     for (auto &e : In)
       for (size_t i = 0; i < nb; ++i) {
-        int cb = int(e) & int(std::pow(2.0f, nb - i - 1.0f));
+        int cb = ((int(e) & int(std::pow(2.0f, nb - i - 1.0f))) != 0);
         SpikesIn.push(cb);
       }
     for (auto &e : Out)
       for (size_t i = 0; i < nb; ++i) {
-        int cb = int(e) & int(std::pow(2.0f, nb - i - 1.0f));
+        int cb = ((int(e) & int(std::pow(2.0f, nb - i - 1.0f))) != 0);
         SpikesOut.push(cb);
       }
   }
 
+  void dump() {
+    std::cout << "Intput" << std::endl;
+    for (auto &e : In) {
+      std::cout << e << " -> ";
+      for (size_t i = 0; i < nb; ++i) {
+        int cb = ((int(e) & int(std::pow(2.0f, nb - i - 1.0f))) != 0);
+        std::cout << cb << " ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << "Output" << std::endl;
+    for (auto &e : Out) {
+      std::cout << e << " -> ";
+      for (size_t i = 0; i < nb; ++i) {
+        int cb = ((int(e) & int(std::pow(2.0f, nb - i - 1.0f))) != 0);
+        std::cout << cb << " ";
+      }      
+      std::cout << std::endl;
+    }
+  }
+
+  std::queue<float> &getSpikesIn() { return SpikesIn; }
+  std::queue<float> &getSpikesOut() { return SpikesOut; }
+
+private:
   void clearSpikeQueues() {
-    while (!SpikesIn.empty()) SpikesIn.pop();
-    while (!SpikesOut.empty()) SpikesOut.pop();
+    while (!SpikesIn.empty())
+      SpikesIn.pop();
+    while (!SpikesOut.empty())
+      SpikesOut.pop();
   }
 
   std::vector<float> In;
   std::vector<float> Out;
   std::queue<float> SpikesIn;
   std::queue<float> SpikesOut;
+  size_t n;
+  size_t nb;
+
   std::default_random_engine generator;
 };
 
