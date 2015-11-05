@@ -103,6 +103,24 @@ void init_glut_window(int argc, char *argv[]) {
   glutMainLoop();
 }
 
+std::string format1(const char *fmt, ...) {
+  std::vector<char> buf(1024);
+
+  for (;;) {
+    va_list va;
+    va_start(va, fmt);
+    int bsize = static_cast<int>(buf.size());
+    int len = vsnprintf(&buf[0], bsize, fmt, va);
+    va_end(va);
+
+    if (len < 0 || len >= bsize) {
+      buf.resize(std::max(bsize << 1, len + 1));
+      continue;
+    }
+    return std::string(&buf[0], len);
+  }
+}
+
 int main(int argc, char **argv) {
   init_glut_window(argc, argv);
 

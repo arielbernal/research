@@ -15,6 +15,51 @@
 #include "nndataset.h"
 #include "nngenneuron.h"
 
+class GEN1DTest {
+public:
+  GEN1DTest() {}
+
+  void generateData(size_t n, size_t nb) {
+    static std::uniform_int_distribution<size_t> uniform(0, std::pow(2.0f, nb) - 1);
+    In.clear();
+    Out.clear();
+    for (size_t i = 0; i < 10; ++i) {
+      size_t id = uniform(generator);
+      In.push_back(id);
+      if (id >= 4 && id <= 6)
+        Out.push_back(1);
+      else
+        Out.push_back(0);
+    }
+    generateSpikes(nb);
+  }
+
+  void generateSpikes(size_t nb) {
+    clearSpikeQueues();
+    for (auto &e : In)
+      for (size_t i = 0; i < nb; ++i) {
+        int cb = int(e) & int(std::pow(2.0f, nb - i - 1.0f));
+        SpikesIn.push(cb);
+      }
+    for (auto &e : Out)
+      for (size_t i = 0; i < nb; ++i) {
+        int cb = int(e) & int(std::pow(2.0f, nb - i - 1.0f));
+        SpikesOut.push(cb);
+      }
+  }
+
+  void clearSpikeQueues() {
+    while (!SpikesIn.empty()) SpikesIn.pop();
+    while (!SpikesOut.empty()) SpikesOut.pop();
+  }
+
+  std::vector<float> In;
+  std::vector<float> Out;
+  std::queue<float> SpikesIn;
+  std::queue<float> SpikesOut;
+  std::default_random_engine generator;
+};
+
 class GENNeuralNet {
 public:
   GENNeuralNet(size_t NInput, size_t NOutput, size_t NExcitatory = 0,
