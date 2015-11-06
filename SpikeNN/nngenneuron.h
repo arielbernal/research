@@ -34,7 +34,7 @@ struct GENNeuron {
   enum { INPUT, OUTPUT, EXCITATORY, INHIBITORY };
   GENNeuron(size_t id, size_t nntype, float x, float y, float z)
       : id(id), nntype(nntype), x(x), y(y), z(z), alive(true), theta(0.5),
-        Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.005) {
+        Ap(0), Rp(0), H(-0.2), D(0.2), Dw(0.00001) {
     iv = 0;
     for (size_t i = 0; i < 3; ++i)
       v[i] = 0;
@@ -103,8 +103,10 @@ struct GENNeuron {
   void updateSynapses() {
     for (auto &e : PreSynapses) {
       GENSynapse *S = e.second;
-      std::cout << "   " << S->W;
-      if (S->PreNeuron->nntype == EXCITATORY && S->PreNeuron->Ap == 1) {
+      // std::cout << "   " << S->W;
+      if ((S->PreNeuron->nntype == EXCITATORY ||
+           S->PreNeuron->nntype == INPUT || S->PreNeuron->nntype == OUTPUT) &&
+          S->PreNeuron->Ap == 1) {
         if (Ap == 1)
           S->W += Dw;
         else
@@ -123,7 +125,20 @@ struct GENNeuron {
         if (S->W < -1)
           S->W = -1;
       }
-      std::cout << "   " << S->W << std::endl;
+      if ((S->PreNeuron->nntype == EXCITATORY ||
+           S->PreNeuron->nntype == INPUT || S->PreNeuron->nntype == OUTPUT) &&
+          S->PreNeuron->Ap == 0) {
+        if (Ap == 1)
+          S->W -= Dw;
+        if (S->W < 0)
+          S->W = 0;
+      } else if (S->PreNeuron->nntype == INHIBITORY && S->PreNeuron->Ap == 0) {
+        if (Ap == 0)
+          S->W += Dw;
+        if (S->W > 0)
+          S->W = 0;
+      }
+      //  std::cout << "   " << S->W << std::endl;
     }
   }
 
@@ -190,8 +205,7 @@ struct GENNeuron {
   }
 
   void print() {
-    printf("Id = %zu - Type = %s - Ap = %f \n", id,
-           getTypeStr().c_str(), Ap);
+    printf("Id = %zu - Type = %s - Ap = %f \n", id, getTypeStr().c_str(), Ap);
     for (auto &e : PreSynapses) {
       GENSynapse *S = e.second;
       printf("  From Id = %zu - W = %f \n", S->PreNeuron->id, S->W);

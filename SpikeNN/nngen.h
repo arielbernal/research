@@ -27,7 +27,7 @@ public:
                                                                 1);
     In.clear();
     Out.clear();
-    for (size_t i = 0; i < 10; ++i) {
+    for (size_t i = 0; i < n; ++i) {
       size_t id = uniform(generator);
       In.push_back(id);
       if (id >= 4 && id <= 6)
@@ -35,6 +35,8 @@ public:
       else
         Out.push_back(0);
     }
+    In.push_back(0);
+    Out.push_back(0);
   }
 
   void generateSpikes() {
@@ -67,13 +69,16 @@ public:
       for (size_t i = 0; i < nb; ++i) {
         int cb = ((int(e) & int(std::pow(2.0f, nb - i - 1.0f))) != 0);
         std::cout << cb << " ";
-      }      
+      }
       std::cout << std::endl;
     }
   }
 
   std::queue<float> &getSpikesIn() { return SpikesIn; }
   std::queue<float> &getSpikesOut() { return SpikesOut; }
+  size_t getN() { return n; }
+  size_t getNb() { return nb; }
+  size_t getSpikesSize() { return n * nb; }
 
 private:
   void clearSpikeQueues() {
@@ -124,26 +129,32 @@ public:
     for (auto &e : Input) {
       if (!Q.empty()) {
         e->Ap = Q.front();
-        std::cout << "Set Input " << e->Ap << std::endl;
+//        std::cout << "Set Input " << e->Ap << std::endl;
         Q.pop();
       }
     }
   }
 
-  void feedback(std::queue<float> &Q) {
+  size_t feedback(std::queue<float> &Q) {
+    size_t errors = 0;
     for (auto &e : Output) {
       if (!Q.empty()) {
-        std::cout << "Output = " << e->Ap << " Test = " << Q.front()
-                  << std::endl;
+        if (e->Ap != Q.front())
+          errors++;
+        // std::cout << "Output = " << e->Ap << " Test = " << Q.front()
+        //           << std::endl;
+
         e->Ap = Q.front();
         Q.pop();
       }
     }
 
-    for (auto &e : Output)
-      e->updateSynapses();
+
     for (auto &e : Hidden)
       e->updateSynapses();
+    for (auto &e : Output)
+      e->updateSynapses();    
+    return errors;
   }
 
   void update() {

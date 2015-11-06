@@ -14,9 +14,9 @@ int WinWidth = 1200;
 int WinHeight = 1000;
 int ViewWidth = 300;
 std::string WinTitle = "SpikeNN";
-GENNeuralNet NN(1, 1, 2, 1);
+GENNeuralNet NN(1, 1, 8, 2);
 GL2DGENNN glNN(&NN, ViewWidth, WinWidth, WinHeight);
-GEN1DTest test(10, 3);
+GEN1DTest test(100, 3);
 }
 
 void display() {
@@ -62,17 +62,27 @@ void normal_keys(unsigned char key, int x, int y) {
   case 'a':
     break;
   case 'f':
-    NN.feedback(test.getSpikesOut());
-    NN.update();
+
     break;
   case 'l':
     break;
   case 't':
     break;
-  case 32:
-    NN.setInput(test.getSpikesIn());
-    NN.update();
+  case 32: {
+    size_t errors = 0;
+
+    while(!test.getSpikesIn().empty()) {
+      NN.setInput(test.getSpikesIn());
+      NN.update();
+      errors += NN.feedback(test.getSpikesOut());
+      NN.update();
+    }
+    std::cout << "Errors = " << errors << " / " << test.getSpikesSize() << std::endl;
+    test.generateData();
+    test.generateSpikes();
+    glutPostRedisplay();
     break;
+  }
   case 27:
     glutLeaveMainLoop();
     break;
@@ -102,7 +112,7 @@ void init_glut_window(int argc, char *argv[]) {
   glutMouseWheelFunc(mouse_wheel);
 #endif
 
-  for (size_t i = 0; i < 500; ++i)
+  for (size_t i = 0; i < 5000; ++i)
     NN.generateSynapses();
 
   glutMainLoop();

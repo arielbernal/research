@@ -16,11 +16,12 @@ public:
             int WinHeight = 1000)
       : GL2DModel(ViewWidth, WinWidth, WinHeight), NN(NN),
         NeuronPos(NN->getNNeurons()) {
+    std::cout << "started laying out the thing\n";          
     for (auto &e : NN->getNeurons()) {
       bool notFound = true;
       while (notFound) {
-        float x = rand() / float(RAND_MAX) * 200;
-        float y = rand() / float(RAND_MAX) * 200;
+        float x = rand() / float(RAND_MAX) * 500;
+        float y = rand() / float(RAND_MAX) * 500;
         float4 p(x, y, 0, 0);
         notFound = false;
         for (size_t i = 0; i < NeuronPos.size(); ++i)
@@ -30,6 +31,7 @@ public:
           NeuronPos[e->id](x, y, 0, 0);
       }
     }
+    std::cout << "Finished laying out the thing\n";
   }
 
   void drawSynapse(GENSynapse *S) {
