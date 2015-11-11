@@ -92,13 +92,13 @@ public:
   void mouse_passive_motion(int x, int y) {}
 
 private:
-  int WinWidth;     // = 1200;//600;//1200;
-  int WinHeight;    // = 1000;//600;//1000;
-  float WinRatio;   // = WinHeight / float(WinWidth);
-  float ViewWidth;  // = 300;
-  float ViewHeight; // = ViewWidth * WinRatio;
-  float ViewX0;     // = ViewWidth / 2;
-  float ViewY0;     // = ViewHeight / 2;
+  int WinWidth;     
+  int WinHeight;    
+  float WinRatio;   
+  float ViewWidth;  
+  float ViewHeight; 
+  float ViewX0;     
+  float ViewY0;     
 
   float MouseX, MouseY;
   bool MouseButtonRight;

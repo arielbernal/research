@@ -6,9 +6,11 @@
 
 class GL3DModel {
 public:
-  GL3DModel(float Scale, bool DrawAxes = false, bool EnableLighting = false)
-      : qCamera(0, 0, 0, 1), mouse_vx(0), mouse_vy(0), mouse_vz(-Scale),
-        Scale(Scale), DrawAxes(DrawAxes), EnableLighting(EnableLighting) {}
+  GL3DModel(int WinWidth = 1200, int WinHeight = 1000, bool DrawAxes = false,
+            bool EnableLighting = false)
+      : WinWidth(WinWidth), WinHeight(WinHeight), qCamera(0, 0, 0, 1),
+        mouse_vx(0), mouse_vy(0), mouse_vz(-Scale), DrawAxes(DrawAxes),
+        EnableLighting(EnableLighting) {}
 
   void enableLight() {
     glEnable(GL_LIGHTING);
@@ -17,10 +19,10 @@ public:
     // ColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    GLfloat position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-    GLfloat diffuse[] = { 8.0f, 8.0f, 8.0f, 1.0f };
-    GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat position[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    GLfloat ambient[] = {0.3f, 0.3f, 0.3f, 1.0f};
+    GLfloat diffuse[] = {8.0f, 8.0f, 8.0f, 1.0f};
+    GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
     glPushMatrix();
     glTranslatef(20, 20, 40);
     glColor3f(1, 1, 1);
@@ -45,8 +47,13 @@ public:
 
   virtual void render3D(float Scale) = 0;
 
-  void render(size_t width, size_t height) {
-    set3DMode(width, height);
+  void reshape(int w, int h) {
+    WinWidth = w;
+    WinHeight = h;
+  }
+
+  void render(float Scale) {
+    set3DMode(WinWidth, WinHeight);
     // glClearColor(0.0f, 76 / 255.0f, 153 / 255.0f, 0.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
@@ -132,6 +139,8 @@ public:
   }
 
 private:
+  int WinWidth;
+  int WinHeight;
   svector::float4 qCamera;
   int left_button_status;
   int right_button_status;

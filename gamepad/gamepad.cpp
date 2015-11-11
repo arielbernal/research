@@ -14,19 +14,18 @@ namespace {
   float WinRatio = WinHeight / float(WinWidth);
   int ViewHeight = ViewWidth * WinRatio;
   std::string WinTitle = "Cube";
-  GLCube3D cube3d(10,false);
+  GLCube3D cube3d(WinWidth, WinHeight, false);
 }
 
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  cube3d.render(WinWidth, WinHeight);
+  cube3d.render(1);
   glutSwapBuffers();
 }
 
 void reshape(int w, int h) {
-  WinWidth = w;
-  WinHeight = h;
+  cube3d.reshape(w, h);
 }
 
 void mouse_wheel(int wheel, int direction, int x, int y) {

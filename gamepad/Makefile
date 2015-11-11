@@ -1,4 +1,4 @@
-SOURCES := main.cpp
+SOURCES := gamepad.cpp
 
 PROGRAM := robotsim 
 CXX := g++ 
