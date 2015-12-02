@@ -24,8 +24,10 @@ public:
 
   void display() {
     set2DMode(ViewWidth, ViewHeight);
+    glPushMatrix();
     glTranslatef(ViewX0, ViewY0, 0);
     render();
+    glPopMatrix();
   }
 
   void reshape(int w, int h) {

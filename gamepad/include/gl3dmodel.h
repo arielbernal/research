@@ -57,9 +57,10 @@ public:
     // glClearColor(0.0f, 76 / 255.0f, 153 / 255.0f, 0.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+   // glDepthFunc(GL_LESS);
     glPushMatrix();
     glTranslatef(mouse_vx, -mouse_vy, mouse_vz);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -138,7 +139,7 @@ public:
     left_button_down_x = x;
   }
 
-private:
+protected:
   int WinWidth;
   int WinHeight;
   svector::float4 qCamera;

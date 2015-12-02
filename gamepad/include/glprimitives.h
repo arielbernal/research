@@ -259,8 +259,6 @@ std::string format(const char *fmt, ...) {
 }
 
 
-
-
 void printFloat(float x, float y, const std::string &text, float v,
                 int dig = 10, int dec = 2) {
   char s[100];

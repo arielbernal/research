@@ -11,10 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{264EE03F-B7F4-4A21-BC8C-F48B948EACE4}</ProjectGuid>
+    <ProjectGuid>{B4FE13E7-B3EF-4DA2-8370-268978CCAFB0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>robotsim</RootNamespace>
-    <ProjectName>robot_control</ProjectName>
+    <RootNamespace>robot_sim</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,15 +82,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gamepad.cpp" />
-    <ClCompile Include="cube3d.cpp" />
+    <ClInclude Include="..\include\gl2dmodel.h" />
+    <ClInclude Include="..\include\glprimitives.h" />
+    <ClInclude Include="glRobotSim2d.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gamepad.h" />
-    <ClInclude Include="glcube3d.h" />
-    <ClInclude Include="include\gl3dmodel.h" />
-    <ClInclude Include="include\glprimitives.h" />
-    <ClInclude Include="SerialPort.h" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
