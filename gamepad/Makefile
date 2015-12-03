@@ -1,10 +1,10 @@
-SOURCES := gamepad.cpp
+SOURCES := ./robot_sim/main.cpp
 
 PROGRAM := robotsim 
 CXX := g++ 
 LDFLAGS := -L/usr/lib/gcc/x86_64-linux-gnu/4.8 -L/usr/lib/nvidia-331-updates 
 LDFLAGS +=  -lGL -lGLU -lglut -lGLEW -O3 -lserial -lpthread 
-CXXFLAGS := -I include
+CXXFLAGS := -I include -I robot_sim
 CXXFLAGS += -std=c++11 -Wall -O3 -mfpmath=sse -msse4.1 
 CXXFLAGS += -I /usr/include -I /usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8
 CXXFLAGS += -fpermissive -fopenmp

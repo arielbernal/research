@@ -21,12 +21,12 @@ namespace {
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  robot.setV(80, 255);
+  //robot.setV(200, 255);
   robot.update(0.001f);
   glRobot.display();
-  printText(1, 10, format("Time = %f", robot.T));
-  printText(1, 20, format("X = %f, y = %f, theta = %f", robot.x, robot.y, robot.theta /M_PI * 180));
-  printText(1, 30, format("EncL = %f, EncR = %f", robot.EncL, robot.EncR));
+  printText(1, 10, format("Time = %5.5f", robot.T));
+  printText(1, 20, format("X = %5.2f, y = %5.2f, theta = %5.2f", robot.x, robot.y, robot.theta /M_PI * 180));
+  printText(1, 30, format("EncL = %5.2f, EncR = %5.2f", robot.EncL, robot.EncR));
   glutSwapBuffers();
 }
 
