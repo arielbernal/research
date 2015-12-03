@@ -63,43 +63,76 @@ public:
       tEst = T;
       EncL = 0;
       EncR = 0;
-    }    
+    }
   }
 
   void updateEncodersCounter(float dt) {
     EncL += WL * dt * 3200;
-    EncR += WR * dt * 3200;    
+    EncR += WR * dt * 3200;
   }
 
   void update(float dt) {
     T += dt;
     float VL = 2 * M_PI * rw * WL;
     float VR = 2 * M_PI * rw * WR;
-    forwardKinematics(VL, VR, dt,x, y, theta, x, y, theta);
+    forwardKinematics(VL, VR, dt, x, y, theta, x, y, theta);
     updateEncodersCounter(dt);
     updateEstimatePosition();
     updatePIDLoop();
   }
 
-  void updatePIDLoop() {
-    if (xTarget != x || yTarget != y) {
-      float Errx = x - xTarget;
-      float Erry = y - yTarget;
-      float d = sqrt(Errx * Errx + Erry * Erry);
-      if (dTarget >= d) {
+  float clamp(float v, float vmin, float vmax) {
+    if (v < vmin)
+      v = vmin;
+    if (v > vmax)
+      v = vmax;
+    return v;
+  }
 
+  void inverseKinematics(float &vl, float &vr) {
+    float cosp = cos(M_PI / 2 - theta);
+    float sinp = sin(M_PI / 2 - theta);
+    float DTx = xTarget - x;
+    float DTy = yTarget - y;
+    float dx = DTx * cosp - DTy * sinp;
+    float dy = DTx * sinp + DTy * cosp;
+    if (dy >= 0) {
+      float vy, vx;
+      if (dy > fabs(dx)) {
+        vy = clamp(dy, -10, 10) / 10.0f * 255;
+        if (dy != 0)
+          vx = clamp(dx, -10, 10) / 10.0f * 255 * dx / dy;
+        else
+          vx = clamp(dx, -10, 10) / 10.0f * 255;
+      } else {
+        if (dx != 0)
+          vy = clamp(dy, -10, 10) / 10.0f * 255 * dy / dx;
+        else
+          vy = clamp(dy, -10, 10) / 10.0f * 255;
+        vx = clamp(dx, -10, 10) / 10.0f * 255;
       }
-
+      if (vx > 0) {
+        vl = 255 - vx;
+        vr = vy;
+      } else {
+        vr = 255 + vx;
+        vl = vy;
+      }
+    } else {
+      if (dx != 0)  vr = 255; else vr = 0;
+      vl = 0;
     }
+  }
+
+  void updatePIDLoop() {
+    float vr, vl;
+    inverseKinematics(vl, vr);
+    setThrottle(vl, vr);
   }
 
   void setTarget(float xt, float yt) {
     xTarget = xt;
     yTarget = yt;
-    float Errx = x - xTarget;
-    float Erry = y - yTarget;
-    dTarget = sqrt(Errx * Errx + Erry * Erry);
-    setThrottle(100, 100);
   }
 
   float x;
