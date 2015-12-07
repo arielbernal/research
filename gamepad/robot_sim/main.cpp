@@ -76,6 +76,7 @@ void special_keys(int key, int x, int y) {
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
   case 'a':
+    robot.setTarget(0, 100);
     break;
   case 32: {
     glutPostRedisplay();

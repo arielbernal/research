@@ -4,158 +4,8 @@
 #include <svector.h>
 #include "../include/glprimitives.h"
 #include "../include/gl2dmodel.h"
+#include "Robot2d.h"
 
-using namespace svector;
-
-class Robot2D {
-public:
-  Robot2D(float L, float rw, float x0, float y0, float theta)
-      : L(L), rw(rw), T(0), x(x0), y(y0), theta(theta), xEst(0), yEst(0),
-        tEst(0), thetaEst(theta) {}
-
-  void setPos(float xp, float yp, float thetap) {
-    x = xp;
-    y = yp;
-    theta = thetap;
-    thetaEst = theta;
-  }
-
-#define MAXRPS 2
-
-  void setThrottle(float throttleL, float throttleR) { // 0..255
-    WL = throttleL / 255.0f * MAXRPS;
-    WR = throttleR / 255.0f * MAXRPS;
-  }
-
-  void forwardKinematics(float VL, float VR, float dt, float x, float y,
-                         float theta, float &xp, float &yp, float &thetap) {
-    float xtemp;
-    float ytemp;
-    float thetatemp;
-    if (VL != VR) {
-      float R = L / 2 * (VR + VL) / (VR - VL);
-      float w = (VR - VL) / L;
-      float ICCx = x - R * sin(theta);
-      float ICCy = y + R * cos(theta);
-      float wdt = w * dt;
-      float coswdt = cos(wdt);
-      float sinwdt = sin(wdt);
-      xtemp = coswdt * (x - ICCx) - sinwdt * (y - ICCy) + ICCx;
-      ytemp = sinwdt * (x - ICCx) + coswdt * (y - ICCy) + ICCy;
-      thetatemp = theta + wdt;
-      thetatemp = thetatemp - int(thetatemp / (2 * M_PI)) * 2 * M_PI;
-    } else {
-      xtemp = x - VL * sin(theta) * dt;
-      ytemp = y + VL * cos(theta) * dt;
-      thetatemp = theta;
-    }
-    xp = xtemp;
-    yp = ytemp;
-    thetap = thetatemp;
-  }
-
-  void updateEstimatePosition() {
-    if (T - tEst > 0.020f) {
-      float DT = T - tEst;
-      float VL = 2 * M_PI * rw * EncL / 3200 / DT;
-      float VR = 2 * M_PI * rw * EncR / 3200 / DT;
-      forwardKinematics(VL, VR, DT, xEst, yEst, thetaEst, xEst, yEst, thetaEst);
-      tEst = T;
-      EncL = 0;
-      EncR = 0;
-    }
-  }
-
-  void updateEncodersCounter(float dt) {
-    EncL += WL * dt * 3200;
-    EncR += WR * dt * 3200;
-  }
-
-  void update(float dt) {
-    T += dt;
-    float VL = 2 * M_PI * rw * WL;
-    float VR = 2 * M_PI * rw * WR;
-    forwardKinematics(VL, VR, dt, x, y, theta, x, y, theta);
-    updateEncodersCounter(dt);
-    updateEstimatePosition();
-    updatePIDLoop();
-  }
-
-  float clamp(float v, float vmin, float vmax) {
-    if (v < vmin)
-      v = vmin;
-    if (v > vmax)
-      v = vmax;
-    return v;
-  }
-
-  void inverseKinematics(float &vl, float &vr) {
-    float cosp = cos(M_PI / 2 - theta);
-    float sinp = sin(M_PI / 2 - theta);
-    float DTx = xTarget - x;
-    float DTy = yTarget - y;
-    float dx = DTx * cosp - DTy * sinp;
-    float dy = DTx * sinp + DTy * cosp;
-    if (dy >= 0) {
-      float vy, vx;
-      if (dy > fabs(dx)) {
-        vy = clamp(dy, -10, 10) / 10.0f * 255;
-        if (dy != 0)
-          vx = clamp(dx, -10, 10) / 10.0f * 255 * dx / dy;
-        else
-          vx = clamp(dx, -10, 10) / 10.0f * 255;
-      } else {
-        if (dx != 0)
-          vy = clamp(dy, -10, 10) / 10.0f * 255 * dy / dx;
-        else
-          vy = clamp(dy, -10, 10) / 10.0f * 255;
-        vx = clamp(dx, -10, 10) / 10.0f * 255;
-      }
-      if (vx > 0) {
-        vl = 255 - vx;
-        vr = vy;
-      } else {
-        vr = 255 + vx;
-        vl = vy;
-      }
-    } else {
-      if (dx != 0)  vr = 255; else vr = 0;
-      vl = 0;
-    }
-  }
-
-  void updatePIDLoop() {
-    float vr, vl;
-    inverseKinematics(vl, vr);
-    setThrottle(vl, vr);
-  }
-
-  void setTarget(float xt, float yt) {
-    xTarget = xt;
-    yTarget = yt;
-  }
-
-  float x;
-  float y;
-  float theta;
-  float L;  // Leght of the robot
-  float rw; // radius wheel
-  float T;  // Time
-  float WR; // angular velocity right
-  float WL; // angular velocity left
-
-  float EncL; // Encoders count
-  float EncR;
-
-  float tEst; // Last estimated time
-  float xEst; // Estimated position
-  float yEst;
-  float thetaEst;
-
-  float xTarget;
-  float yTarget;
-  float dTarget;
-};
 
 class GLRobotSim2D : public GL2DModel {
 public:
@@ -171,6 +21,9 @@ public:
     float arrowLength = r + 5;
     float dw2 = 0.4;
 
+    glColor3f(1, 0, 0);
+    drawCircle(robot.xTarget, robot.yTarget, 2, 30);
+    
     glPushMatrix();
     glTranslatef(robot.x, robot.y, 0);
     glRotatef(robot.theta / M_PI * 180 - 90, 0, 0, 1);

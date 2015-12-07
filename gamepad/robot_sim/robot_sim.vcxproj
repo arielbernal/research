@@ -85,6 +85,7 @@
     <ClInclude Include="..\include\gl2dmodel.h" />
     <ClInclude Include="..\include\glprimitives.h" />
     <ClInclude Include="glRobotSim2d.h" />
+    <ClInclude Include="Robot2d.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

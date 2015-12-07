@@ -24,6 +24,9 @@
     <ClInclude Include="glRobotSim2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Robot2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
