@@ -62,30 +62,51 @@ public:
     float VL = 2 * M_PI * rw * WL;
     float VR = 2 * M_PI * rw * WR;
     forwardKinematics(VL, VR, dt, x, y, theta, x, y, theta);
+    updateEstimatePosition();
     updateEncodersCounter(dt);
     followTarget();
   }
 
   void followTarget() {
-    float cost = cos(theta);
-    float sint = sin(theta);
-    float dx = cost * (xTarget - x) + sint * (yTarget - y);
-    float dy = -sint * (xTarget - x) + cost * (yTarget - y);
+    float cost = cos(M_PI / 2 - theta);
+    float sint = sin(M_PI / 2 - theta);
+    float dx = cost * (xTarget - x) - sint * (yTarget - y);
+    float dy = sint * (xTarget - x) + cost * (yTarget - y);
+     // std::cout << "theta = " << theta / M_PI * 180 << "  Dx = " << dx
+     //           << "  Dy = " << dy << std::endl;
     float VL, VR;
-    VR = 100;
-    if (dx != 0) {
-      float R = (dx * dx - dy * dy) / (2 * dx);
-      VL = VR * (R - 1) / (R + 1);
-    }
-    else if (dy == 0) {
-      VL = VR = 0;
-    }
-    else if (dy < 0) {
+    VR = 2 * M_PI * rw * 255 / 255.0f * MAXRPS;
+    VL = 2 * M_PI * rw * 255 / 255.0f * MAXRPS;
+    if (dy > 0) {
+      if (fabs(dx) > 0.01) {
+        float R = -(dx * dx + dy * dy) / (2 * dx);
+        ICCR = R;
+        ICCx = x - R * sin(theta);
+        ICCy = y + R * cos(theta);
+        if (R > 0)
+          VL = VR * (R - L / 2) / (R + L / 2);
+        else
+          VR = VL * (R + L / 2) / (R - L / 2);
+        // float R1 = L / 2 * (VR + VL) / (VR - VL);
+        // float ICCx1 = x + R1 * sin(theta);
+        // float ICCy1 = y - R1 * cos(theta);
+        //  std::cout << "   x = " << x << "  y = " << y << " VL = " << VL
+        //            << "  VR = " << VR << std::endl;
+        //  std::cout << "       R = " << R << " ICCx = " << ICCx
+        //            << "  ICCy = " << ICCy << std::endl;
+        // // std::cout << "       R1 = " << R1 << " ICCx1 = " << ICCx1
+        //           << "  ICCy1 = " << ICCy1 << std::endl;
+      } else if (abs(dy) < 0.1) {
+        VL = VR = 0;
+      }
+    } else {
+      if (dx > 0)
+        VR = -VR;
       VL = -VR;
     }
-    float TL = VL / (2 * M_PI * rw) *255.0f / MAXRPS;
-    float TR = VR / (2 * M_PI * rw) *255.0f / MAXRPS;
-    setThrottle(TR, TR);
+    float TL = VL * 255.0f / (2 * M_PI * rw * MAXRPS);
+    float TR = VR * 255.0f / (2 * M_PI * rw * MAXRPS);
+    setThrottle(TL, TR);
   }
 
   void updateEstimatePosition() {
@@ -133,6 +154,10 @@ public:
   float xTarget;
   float yTarget;
   float dTarget;
+
+  float ICCx;
+  float ICCy;
+  float ICCR;
 };
 
 #endif // GLROBOT2D_H

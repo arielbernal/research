@@ -93,14 +93,51 @@ public:
 
   void mouse_passive_motion(int x, int y) {}
 
-private:
-  int WinWidth;     
-  int WinHeight;    
-  float WinRatio;   
-  float ViewWidth;  
-  float ViewHeight; 
-  float ViewX0;     
-  float ViewY0;     
+  void convertScreenToWorldCoords(int x, int y, float &wx, float &wy) {
+    int viewport[4];
+    float modelViewMatrix[16];
+    float projectionMatrix[16];
+
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+    glGetFloatv(GL_PROJECTION_MATRIX, projectionMatrix);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    float vector[4];
+    glhUnProjectf(x, y, 0, modelViewMatrix, projectionMatrix, viewport, vector);
+    
+    wx = vector[0];
+    wy = vector[1];
+  }
+
+  void UnProject(double *projection, double *view, int w, int h, int x, int y,
+                 double *vector) {
+    double v[4];
+    v[0] = 2.0f * x / float(w - 1);
+    v[1] = -2.0f * y / float(h - 1);
+    v[2] = 0;
+    v[3] = 1.0f;
+    double viewInv[16];
+    double projInv[16];
+    gluInvertMatrix(view, viewInv);
+    gluInvertMatrix(projection, projInv);
+    double v1[4];
+    gluTransform(projInv, v, v1);
+    gluTransform(viewInv, v1, vector);
+    if (fabs(vector[3]) > 0.00000000001) {
+      vector[0] /= vector[3];
+      vector[1] /= vector[3];
+      vector[2] /= vector[3];
+    }
+  }
+
+protected:
+  int WinWidth;
+  int WinHeight;
+  float WinRatio;
+  float ViewWidth;
+  float ViewHeight;
+  float ViewX0;
+  float ViewY0;
 
   float MouseX, MouseY;
   bool MouseButtonRight;
