@@ -95,7 +95,7 @@ public:
         glPushMatrix();
         set2DMode(ViewWidth, ViewHeight);
         glTranslatef(ViewX0, ViewY0, 0);
-        glScalef(1, 1, 1);
+        glScalef(1, -1, 1);
         float wx, wy;
         convertScreenToWorldCoords(x, y, wx, wy);
         std::cout << x << " " << y << "  ->  " << wx << " " << wy << std::endl;

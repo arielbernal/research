@@ -103,33 +103,11 @@ public:
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     float vector[4];
-    glhUnProjectf(x, y, 0, modelViewMatrix, projectionMatrix, viewport, vector);
+    glhUnProjectf(x, viewport[3] - y, 0, modelViewMatrix, projectionMatrix, viewport, vector);
     
     wx = vector[0];
     wy = vector[1];
   }
-
-  void UnProject(double *projection, double *view, int w, int h, int x, int y,
-                 double *vector) {
-    double v[4];
-    v[0] = 2.0f * x / float(w - 1);
-    v[1] = -2.0f * y / float(h - 1);
-    v[2] = 0;
-    v[3] = 1.0f;
-    double viewInv[16];
-    double projInv[16];
-    gluInvertMatrix(view, viewInv);
-    gluInvertMatrix(projection, projInv);
-    double v1[4];
-    gluTransform(projInv, v, v1);
-    gluTransform(viewInv, v1, vector);
-    if (fabs(vector[3]) > 0.00000000001) {
-      vector[0] /= vector[3];
-      vector[1] /= vector[3];
-      vector[2] /= vector[3];
-    }
-  }
-
 protected:
   int WinWidth;
   int WinHeight;

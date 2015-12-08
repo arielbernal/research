@@ -20,9 +20,13 @@ public:
 
 #define MAXRPS 2
 
+  void calcW(float throttleL, float throttleR, float &wl, float &wr) {
+    wl = throttleL / 255.0f * MAXRPS *0.80;
+    wr = throttleR / 255.0f * MAXRPS;
+  }
+
   void setThrottle(float throttleL, float throttleR) { // 0..255
-    WL = throttleL / 255.0f * MAXRPS;
-    WR = throttleR / 255.0f * MAXRPS;
+    calcW(throttleL, throttleR, WL, WR);
   }
 
   void forwardKinematics(float VL, float VR, float dt, float x, float y,
@@ -75,8 +79,10 @@ public:
      // std::cout << "theta = " << theta / M_PI * 180 << "  Dx = " << dx
      //           << "  Dy = " << dy << std::endl;
     float VL, VR;
-    VR = 2 * M_PI * rw * 255 / 255.0f * MAXRPS;
-    VL = 2 * M_PI * rw * 255 / 255.0f * MAXRPS;
+    float wl, wr;
+    calcW(255, 255, wl, wr);
+    VL = 2 * M_PI * rw * wl;
+    VR = 2 * M_PI * rw * wr;
     if (dy > 0) {
       if (fabs(dx) > 0.01) {
         float R = -(dx * dx + dy * dy) / (2 * dx);
