@@ -2,6 +2,8 @@
 #define GLROBOT2D_H
 
 #include <svector.h>
+#include <list>
+#include <tuple>
 
 using namespace svector;
 
@@ -21,13 +23,13 @@ public:
 #define MAXRPS 2
 
   void phiW(float throttleL, float throttleR, float &wl, float &wr) {
-    wl = throttleL / 255.0f * MAXRPS *0.50;
+    wl = throttleL / 255.0f * MAXRPS * 0.50;
     wr = throttleR / 255.0f * MAXRPS;
   }
 
   void idealPhiW(float throttleL, float throttleR, float &wl, float &wr) {
     wl = throttleL / 255.0f * MAXRPS;
-    wr = throttleR / 255.0f * MAXRPS;    
+    wr = throttleR / 255.0f * MAXRPS;
   }
 
   void setThrottle(float throttleL, float throttleR) { // 0..255
@@ -73,7 +75,31 @@ public:
     forwardKinematics(WL, WR, dt, x, y, theta, x, y, theta);
     updateEstimatePosition();
     updateEncodersCounter(dt);
-    followTarget();
+    // followTarget();
+  }
+
+  std::list<std::tuple<size_t, size_t> > EncodersQueue;
+  void enqueueRotateAngle(float dtheta) {
+    size_t TCL = 0;
+    size_t TCR = 0;
+    EncodersQueue.push_back(std::make_tuple(TCL, TCR));
+  }
+
+  void enqueueForward(float dist) {
+    size_t TCL = 0;
+    size_t TCR = 0;    
+    EncodersQueue.push_back(std::make_tuple(TCL, TCR));
+  }
+
+  void gotoTarget(float xt, float yt) {
+    setTarget(xt, yt);
+    float dy = yt - yEst;
+    float dx = xt - xEst;
+    float alpha = atan2(dy, dx);
+    float dtheta = alpha - theta;
+    float dist = sqrt(dx * dx + dy * dy);
+    enqueueRotateAngle(dtheta);
+    enqueueForward(dist);
   }
 
   void followTarget() {
@@ -107,7 +133,6 @@ public:
     float TR = VR * 255.0f / (2 * M_PI * rw * MAXRPS);
     setThrottle(TL, TR);
   }
-
 
   void updateEstimatePosition() {
     if (T - tEst > 0.002f) {

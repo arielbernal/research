@@ -87,7 +87,7 @@ void normal_keys(unsigned char key, int x, int y) {
 }
 
 void init_glut_window(int argc, char *argv[]) {
-  putenv((char *)"__GL_SYNC_TO_VBLANK=1");
+//  putenv((char *)"__GL_SYNC_TO_VBLANK=1");
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowPosition(0, 0);
