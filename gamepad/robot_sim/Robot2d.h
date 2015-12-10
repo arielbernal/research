@@ -20,20 +20,27 @@ public:
 
 #define MAXRPS 2
 
-  void calcW(float throttleL, float throttleR, float &wl, float &wr) {
-    wl = throttleL / 255.0f * MAXRPS *0.80;
+  void phiW(float throttleL, float throttleR, float &wl, float &wr) {
+    wl = throttleL / 255.0f * MAXRPS *0.50;
     wr = throttleR / 255.0f * MAXRPS;
   }
 
-  void setThrottle(float throttleL, float throttleR) { // 0..255
-    calcW(throttleL, throttleR, WL, WR);
+  void idealPhiW(float throttleL, float throttleR, float &wl, float &wr) {
+    wl = throttleL / 255.0f * MAXRPS;
+    wr = throttleR / 255.0f * MAXRPS;    
   }
 
-  void forwardKinematics(float VL, float VR, float dt, float x, float y,
+  void setThrottle(float throttleL, float throttleR) { // 0..255
+    phiW(throttleL, throttleR, WL, WR);
+  }
+
+  void forwardKinematics(float wl, float wr, float dt, float x, float y,
                          float theta, float &xp, float &yp, float &thetap) {
     float xtemp;
     float ytemp;
     float thetatemp;
+    float VL = 2 * M_PI * rw * wl;
+    float VR = 2 * M_PI * rw * wr;
     if (VL != VR) {
       float R = L / 2 * (VR + VL) / (VR - VL);
       float w = (VR - VL) / L;
@@ -63,9 +70,7 @@ public:
 
   void update(float dt) {
     T += dt;
-    float VL = 2 * M_PI * rw * WL;
-    float VR = 2 * M_PI * rw * WR;
-    forwardKinematics(VL, VR, dt, x, y, theta, x, y, theta);
+    forwardKinematics(WL, WR, dt, x, y, theta, x, y, theta);
     updateEstimatePosition();
     updateEncodersCounter(dt);
     followTarget();
@@ -74,15 +79,12 @@ public:
   void followTarget() {
     float cost = cos(M_PI / 2 - theta);
     float sint = sin(M_PI / 2 - theta);
-    float dx = cost * (xTarget - x) - sint * (yTarget - y);
-    float dy = sint * (xTarget - x) + cost * (yTarget - y);
-     // std::cout << "theta = " << theta / M_PI * 180 << "  Dx = " << dx
-     //           << "  Dy = " << dy << std::endl;
-    float VL, VR;
+    float dx = cost * (xTarget - xEst) - sint * (yTarget - yEst);
+    float dy = sint * (xTarget - xEst) + cost * (yTarget - yEst);
     float wl, wr;
-    calcW(255, 255, wl, wr);
-    VL = 2 * M_PI * rw * wl;
-    VR = 2 * M_PI * rw * wr;
+    idealPhiW(255, 255, wl, wr);
+    float VL = 2 * M_PI * rw * wl;
+    float VR = 2 * M_PI * rw * wr;
     if (dy > 0) {
       if (fabs(dx) > 0.01) {
         float R = -(dx * dx + dy * dy) / (2 * dx);
@@ -93,15 +95,6 @@ public:
           VL = VR * (R - L / 2) / (R + L / 2);
         else
           VR = VL * (R + L / 2) / (R - L / 2);
-        // float R1 = L / 2 * (VR + VL) / (VR - VL);
-        // float ICCx1 = x + R1 * sin(theta);
-        // float ICCy1 = y - R1 * cos(theta);
-        //  std::cout << "   x = " << x << "  y = " << y << " VL = " << VL
-        //            << "  VR = " << VR << std::endl;
-        //  std::cout << "       R = " << R << " ICCx = " << ICCx
-        //            << "  ICCy = " << ICCy << std::endl;
-        // // std::cout << "       R1 = " << R1 << " ICCx1 = " << ICCx1
-        //           << "  ICCy1 = " << ICCy1 << std::endl;
       } else if (abs(dy) < 0.1) {
         VL = VR = 0;
       }
@@ -115,12 +108,13 @@ public:
     setThrottle(TL, TR);
   }
 
+
   void updateEstimatePosition() {
-    if (T - tEst > 0.020f) {
+    if (T - tEst > 0.002f) {
       float DT = T - tEst;
-      float VL = 2 * M_PI * rw * EncL / 3200 / DT;
-      float VR = 2 * M_PI * rw * EncR / 3200 / DT;
-      forwardKinematics(VL, VR, DT, xEst, yEst, thetaEst, xEst, yEst, thetaEst);
+      float wl = EncL / 3200 / DT;
+      float wr = EncR / 3200 / DT;
+      forwardKinematics(wl, wr, DT, xEst, yEst, thetaEst, xEst, yEst, thetaEst);
       tEst = T;
       EncL = 0;
       EncR = 0;
