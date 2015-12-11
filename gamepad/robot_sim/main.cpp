@@ -19,11 +19,21 @@ GLRobotSim2D glRobot(robot, 200);
 }
 
 bool stopped = true;
+bool stepping = false;
+bool stepgo = false;
+
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // robot.setV(200, 255);
   if (!stopped) {
-    robot.update(0.001f);
+    if (stepping) {
+      if (stepgo) {
+        robot.update(0.001f);
+        stepgo = false;
+      }
+    } else {
+      robot.update(0.001f);
+    }
   }
   glRobot.display();
   printText(1, 10, format("Time = %5.5f", robot.T));
@@ -70,8 +80,19 @@ void special_keys(int key, int x, int y) {
 
 void normal_keys(unsigned char key, int x, int y) {
   switch (key) {
-  case 'a':
-    robot.setTarget(-3, -10);
+  case '1':
+    // robot.setTarget(-3, -10);
+    robot.gotoTarget(-5, 30);
+    break;
+  case '2':
+    stepping = !stepping;
+    std::cout << "Stopped = " << stopped << "Stepping = " << stepping
+              << " stepgo = " << stepgo << std::endl;
+    break;
+  case '3':
+    stepgo = true;
+    std::cout << "Stopped = " << stopped << "Stepping = " << stepping
+              << " stepgo = " << stepgo << std::endl;
     break;
   case 32: {
     stopped = !stopped;
@@ -87,7 +108,7 @@ void normal_keys(unsigned char key, int x, int y) {
 }
 
 void init_glut_window(int argc, char *argv[]) {
-//  putenv((char *)"__GL_SYNC_TO_VBLANK=1");
+  //  putenv((char *)"__GL_SYNC_TO_VBLANK=1");
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowPosition(0, 0);
@@ -97,7 +118,6 @@ void init_glut_window(int argc, char *argv[]) {
   glutDisplayFunc(display);
   glutIdleFunc(display);
   glutReshapeFunc(reshape);
-
 
   glutKeyboardFunc(normal_keys);
   glutSpecialFunc(special_keys);

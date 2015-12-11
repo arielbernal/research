@@ -7,6 +7,9 @@
 
 using namespace svector;
 
+#define MAXRPS 2
+#define COUNTS_PER_REV 3200
+
 class Robot2D {
 public:
   Robot2D(float L, float rw, float x0, float y0, float theta)
@@ -20,11 +23,9 @@ public:
     thetaEst = theta;
   }
 
-#define MAXRPS 2
-
   void phiW(float throttleL, float throttleR, float &wl, float &wr) {
-    wl = throttleL / 255.0f * MAXRPS * 0.50;
-    wr = throttleR / 255.0f * MAXRPS;
+    wl = throttleL / 255.0f * MAXRPS;
+    wr = throttleR / 255.0f * MAXRPS * 0.95;
   }
 
   void idealPhiW(float throttleL, float throttleR, float &wl, float &wr) {
@@ -33,6 +34,8 @@ public:
   }
 
   void setThrottle(float throttleL, float throttleR) { // 0..255
+    TL = throttleL;
+    TR = throttleR;
     phiW(throttleL, throttleR, WL, WR);
   }
 
@@ -66,8 +69,62 @@ public:
   }
 
   void updateEncodersCounter(float dt) {
-    EncL += WL * dt * 3200;
-    EncR += WR * dt * 3200;
+    EncL += WL * dt * COUNTS_PER_REV;
+    EncR += WR * dt * COUNTS_PER_REV;
+  }
+
+#define sign(a) (((a) < 0) ? -1 : ((a) > 0))
+
+  void processQueue() {
+    if (!EncodersQueue.empty()) {
+      auto &E = EncodersQueue.front();
+      int TCL = std::get<0>(E);
+      int TCR = std::get<1>(E);
+      float coeffl = std::get<2>(E);
+      float coeffr = std::get<3>(E);
+      if (!std::get<4>(E)) {
+        EncL = 0;
+        EncR = 0;
+        std::get<4>(E) = true;
+        TL = 255 * coeffl;
+        TR = 255 * coeffr;
+        std::cout << "TCL = " << TCL << " TCR = " << TCR << " TL = " << TL
+                  << "  TR = " << TR << "  " << coeffl << " " << coeffr
+                  << std::endl;
+        setThrottle(TL, TR);
+      } else {
+        float error = fabs(EncL / coeffl) - fabs(EncR / coeffr);
+        // float adjust = error != 0 ? (error > 0 ? 1 : -1) : 0;
+        float Kp = 5;
+        float adjust = Kp * error;
+
+        TL -= adjust * sign(TCL);
+        TR -= adjust * sign(TCR);
+        if (TL > 255) {
+          TL = 255;
+        }
+        if (TR > 255) {
+          TR = 255;
+        }
+        if (TL < -255) {
+          TL = -255;
+        }
+        if (TR < -255) {
+          TR = -255;
+        }
+
+        std::cout << "     ENCL = " << EncL << " ENCR = " << EncR
+                  << " TCL = " << TCL << " TCR = " << TCR << " TL = " << TL
+                  << "  TR = " << TR << " ERROR = " << error << std::endl;
+        setThrottle(TL, TR);
+        float dl = EncL - TCL;
+        float dr = EncR - TCR;
+        if (sqrt(dr * dr + dl * dl) < 10) {
+          setThrottle(0, 0);
+          EncodersQueue.pop_front();
+        }
+      }
+    }
   }
 
   void update(float dt) {
@@ -75,20 +132,30 @@ public:
     forwardKinematics(WL, WR, dt, x, y, theta, x, y, theta);
     updateEstimatePosition();
     updateEncodersCounter(dt);
+    processQueue();
     // followTarget();
   }
 
-  std::list<std::tuple<size_t, size_t> > EncodersQueue;
+  std::list<std::tuple<int, int, float, float, bool>> EncodersQueue;
+
+  void enqueueTuple(int tcl, int tcr) {
+    float coeffl = sign(tcl);
+    float coeffr = sign(tcr);
+    if (fabs(tcl) >= fabs(tcr))
+      coeffr = tcr / fabs(tcl);
+    else
+      coeffl = tcl / fabs(tcr);
+    EncodersQueue.push_back(std::make_tuple(tcl, tcr, coeffl, coeffr, false));
+  }
+
   void enqueueRotateAngle(float dtheta) {
-    size_t TCL = 0;
-    size_t TCR = 0;
-    EncodersQueue.push_back(std::make_tuple(TCL, TCR));
+    float tc = dtheta * L / (2 * M_PI * rw) * COUNTS_PER_REV;
+    enqueueTuple(-tc, tc);
   }
 
   void enqueueForward(float dist) {
-    size_t TCL = 0;
-    size_t TCR = 0;    
-    EncodersQueue.push_back(std::make_tuple(TCL, TCR));
+    float tc = dist / (2 * M_PI * rw) * COUNTS_PER_REV;
+    enqueueTuple(tc, tc);
   }
 
   void gotoTarget(float xt, float yt) {
@@ -129,8 +196,8 @@ public:
         VR = -VR;
       VL = -VR;
     }
-    float TL = VL * 255.0f / (2 * M_PI * rw * MAXRPS);
-    float TR = VR * 255.0f / (2 * M_PI * rw * MAXRPS);
+    TL = VL * 255.0f / (2 * M_PI * rw * MAXRPS);
+    TR = VR * 255.0f / (2 * M_PI * rw * MAXRPS);
     setThrottle(TL, TR);
   }
 
@@ -141,8 +208,11 @@ public:
       float wr = EncR / 3200 / DT;
       forwardKinematics(wl, wr, DT, xEst, yEst, thetaEst, xEst, yEst, thetaEst);
       tEst = T;
-      EncL = 0;
-      EncR = 0;
+      //  EncL = 0;
+      //      EncR = 0;
+      xEst = x;
+      yEst = y;
+      thetaEst = theta;
     }
   }
 
@@ -162,11 +232,13 @@ public:
   float x;
   float y;
   float theta;
-  float L;  // Leght of the robot
-  float rw; // radius wheel
+  float L;  // Diameter of the robot
+  float rw; // Radius wheel
   float T;  // Time
-  float WR; // angular velocity right
-  float WL; // angular velocity left
+  float WR; // Wheel angular velocity right
+  float WL; // Wheel angular velocity left
+  float TL; // Throttle left
+  float TR; // Throttle right
 
   float EncL; // Encoders count
   float EncR;
